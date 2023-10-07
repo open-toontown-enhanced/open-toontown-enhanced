@@ -73,13 +73,12 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
         self.sleepCallback = None
         self.accept('wakeup', self.wakeUp)
         self.jumpLandAnimFixTask = None
-        self.fov = OTPGlobals.DefaultCameraFov
+        self.minFov = OTPGlobals.DefaultCameraMinFov
         self.accept('avatarMoving', self.clearPageUpDown)
         self.nametag2dNormalContents = Nametag.CSpeech
         self.showNametag2d()
         self.setPickable(0)
         self.posCameraSeq = None
-        return
 
     def useSwimControls(self):
         self.controlManager.use('swim', self)
@@ -455,7 +454,7 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
 
     def clearPageUpDown(self):
         if self.isPageDown or self.isPageUp:
-            self.lerpCameraFov(self.fov, 0.6)
+            self.lerpCameraFov(self.minFov, 0.6)
             self.isPageDown = 0
             self.isPageUp = 0
             self.setCameraPositionByIndex(self.cameraIndex)
@@ -839,16 +838,16 @@ class LocalAvatar(DistributedAvatar.DistributedAvatar, DistributedSmoothNode.Dis
         oldFov = base.camLens.getHfov()
         if abs(fov - oldFov) > 0.1:
 
-            def setCamFov(fov):
-                base.camLens.setFov(fov)
+            def setCamMinFov(minFov):
+                base.camLens.setMinFov(minFov)
 
-            self.camLerpInterval = LerpFunctionInterval(setCamFov, fromData=oldFov, toData=fov, duration=time, name='cam-fov-lerp')
+            self.camLerpInterval = LerpFunctionInterval(setCamMinFov, fromData=oldFov, toData=fov, duration=time, name='cam-fov-lerp')
             self.camLerpInterval.start()
 
-    def setCameraFov(self, fov):
-        self.fov = fov
+    def setCameraMinFov(self, minFov: float):
+        self.minFov = minFov
         if not (self.isPageDown or self.isPageUp):
-            base.camLens.setFov(self.fov)
+            base.camLens.setMinFov(self.minFov)
 
     def gotoNode(self, node, eyeHeight = 3):
         possiblePoints = (Point3(3, 6, 0),

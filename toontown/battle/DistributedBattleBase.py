@@ -53,8 +53,8 @@ class DistributedBattleBase(DistributedNode, BattleBase):
     id = 0
     camPos = ToontownBattleGlobals.BattleCamDefaultPos
     camHpr = ToontownBattleGlobals.BattleCamDefaultHpr
-    camFov = ToontownBattleGlobals.BattleCamDefaultFov
-    camMenuFov = ToontownBattleGlobals.BattleCamMenuFov
+    camMinFov = ToontownBattleGlobals.BattleCamDefaultMinFov
+    camMenuMinFov = ToontownBattleGlobals.BattleCamMenuMinFov
     camJoinPos = ToontownBattleGlobals.BattleCamJoinPos
     camJoinHpr = ToontownBattleGlobals.BattleCamJoinHpr
 
@@ -170,7 +170,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.fsm.requestFinalState()
         if self.hasLocalToon():
             self.removeLocalToon()
-            base.camLens.setFov(ToontownGlobals.DefaultCameraFov)
+            base.camLens.setMinFov(ToontownGlobals.DefaultCameraMinFov)
 
         self.localToonFsm.request('WaitForServer')
         self.ignoreAll()
@@ -854,10 +854,10 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         if av == base.localAvatar:
             camTrack = Sequence()
 
-            def setCamFov(fov):
-                base.camLens.setFov(fov)
+            def setCamMinFov(minFov: float):
+                base.camLens.setMinFov(minFov)
 
-            camTrack.append(Func(setCamFov, self.camFov))
+            camTrack.append(Func(setCamMinFov, self.camMinFov))
             camTrack.append(Func(base.camera.wrtReparentTo, self))
             camTrack.append(Func(base.camera.setPos, self.camJoinPos))
             camTrack.append(Func(base.camera.setHpr, self.camJoinHpr))
@@ -1086,7 +1086,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
     def __enterLocalToonWaitForInput(self):
         self.notify.debug('enterLocalToonWaitForInput()')
         base.camera.setPosHpr(self.camPos, self.camHpr)
-        base.camLens.setFov(self.camMenuFov)
+        base.camLens.setMinFov(self.camMenuMinFov)
         NametagGlobals.setMasterArrowsOn(0)
         self.townBattle.setState('Attack')
         self.accept(self.localToonBattleEvent, self.__handleLocalToonBattleEvent)
@@ -1133,7 +1133,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.notify.debug('exitWaitForInput()')
         if self.localToonActive():
             self.townBattle.setState('Off')
-            base.camLens.setFov(self.camFov)
+            base.camLens.setMinFov(self.camMinFov)
             self.ignore(self.localToonBattleEvent)
             self.__stopTimer()
 
@@ -1318,7 +1318,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
                 base.localAvatar.inventory.setInteractivePropTrackBonus(self.interactivePropTrackBonus)
 
         base.camera.wrtReparentTo(self)
-        base.camLens.setFov(self.camFov)
+        base.camLens.setMinFov(self.camMinFov)
 
     def exitHasLocalToon(self):
         self.ignore(self.localToonBattleEvent)
@@ -1339,7 +1339,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             base.camera.wrtReparentTo(base.localAvatar)
             messenger.send('localToonLeftBattle')
 
-        base.camLens.setFov(ToontownGlobals.DefaultCameraFov)
+        base.camLens.setMinFov(ToontownGlobals.DefaultCameraMinFov)
 
     def enterNoLocalToon(self):
         self.notify.debug('enterNoLocalToon()')

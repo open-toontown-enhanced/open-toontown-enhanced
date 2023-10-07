@@ -230,7 +230,7 @@ class DistributedDivingGame(DistributedMinigame):
         camera.setZ(36)
         camera.setH(0)
         camera.setX(0)
-        base.camLens.setFov(45)
+        base.camLens.setMinFov(33.75)
         camera.setY(-54)
         base.camLens.setFar(1500)
         self.introMovie = self.getIntroMovie()
@@ -294,7 +294,7 @@ class DistributedDivingGame(DistributedMinigame):
             self.toonSDs[avId].exit()
 
         base.camLens.setFar(ToontownGlobals.DefaultCameraFar)
-        base.camLens.setFov(ToontownGlobals.DefaultCameraFov)
+        base.camLens.setMinFov(ToontownGlobals.DefaultCameraMinFov)
         base.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)
         self.arrowKeys.destroy()
         del self.arrowKeys

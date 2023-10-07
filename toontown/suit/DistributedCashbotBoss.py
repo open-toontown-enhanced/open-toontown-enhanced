@@ -769,7 +769,7 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.midVault.stash()
         self.__hideResistanceToon()
         self.moveLocalToonToBattleThreePos()
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.generateHealthBar()
         self.updateHealthBar()
         base.playMusic(self.battleThreeMusic, looping=1, volume=0.9)
@@ -783,7 +783,7 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.cleanupAttacks()
         self.setDizzy(0)
         self.removeHealthBar()
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         if self.newState != 'Victory':
             self.battleThreeMusic.stop()
         taskMgr.remove(self.uniqueName('physics'))

@@ -699,7 +699,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             table = self.tables[self.tableIndex]
             table.tableGroup.hide()
         self.loop('neutral')
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.clearChat()
         self.controlToons()
         self.setToonsToNeutral(self.involvedToons)
@@ -721,7 +721,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.notify.debug('----- exitVictory')
         self.stopAnimate()
         self.unstash()
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.phaseFourMusic.stop()
 
     def makeVictoryMovie(self):

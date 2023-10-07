@@ -263,7 +263,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         track = Parallel()
         camera.reparentTo(render)
         camera.setPosHpr(0, 25, 30, 0, 0, 0)
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         dooberTrack = Parallel()
         if self.doobers:
             self.__doobersToPromotionPosition(self.doobers[:4], self.battleANode)
@@ -412,7 +412,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         if hasLocalToon:
             seq += [Func(camera.reparentTo, render),
              Func(camera.setPosHpr, self.cage, 0, -50, 0, 0, 0, 0),
-             Func(localAvatar.setCameraFov, ToontownGlobals.CogHQCameraFov),
+             Func(base.localAvatar.setCameraMinFov, ToontownGlobals.CogHQCameraMinFov),
              Func(self.hide)]
         seq += [Wait(0.5),
          Parallel(self.cage.posInterval(1, self.cagePos[self.cageIndex + 1], blendType='easeInOut'), SoundInterval(self.cageLowerSfx, duration=1)),
@@ -787,7 +787,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.setCageIndex(2)
         camera.reparentTo(render)
         camera.setPosHpr(self.cage, 0, -17, 3.3, 0, 0, 0)
-        (localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov),)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.hide()
         self.acceptOnce('doneChatPage', self.__onToBattleTwo)
         self.cagedToon.setLocalPageChat(TTLocalizer.CagedToonPrepareBattleTwo, 1)
@@ -846,7 +846,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.setCageIndex(4)
         camera.reparentTo(render)
         camera.setPosHpr(self.cage, 0, -17, 3.3, 0, 0, 0)
-        (localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov),)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.hide()
         self.acceptOnce('doneChatPage', self.__onToBattleThree)
         self.cagedToon.setLocalPageChat(TTLocalizer.CagedToonPrepareBattleThree, 1)
@@ -883,7 +883,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.accept('localPieSplat', self.__localPieSplat)
         self.accept('outOfPies', self.__outOfPies)
         self.accept('begin-pie', self.__foundPieButton)
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         taskMgr.doMethodLater(30, self.__howToGetPies, self.uniqueName('PieAdvice'))
         self.stickBossToFloor()
         self.bossDamageMovie = self.__makeBossDamageMovie()
@@ -911,7 +911,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.ignore('begin-pie')
         self.__clearOnscreenMessage()
         taskMgr.remove(self.uniqueName('PieAdvice'))
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.__removeCageShadow()
         self.bossDamageMovie.finish()
         self.bossDamageMovie = None
@@ -938,7 +938,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.accept('pieSplat', self.__finalPieSplat)
         self.accept('localPieSplat', self.__localPieSplat)
         self.accept('outOfPies', self.__outOfPies)
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.happy = 0
         self.raised = 0
         self.forward = 1
@@ -953,7 +953,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.ignore('outOfPies')
         self.__clearOnscreenMessage()
         taskMgr.remove(self.uniqueName('PieAdvice'))
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.__removeCageShadow()
         self.setDizzy(0)
         self.battleThreeMusicTime = self.battleThreeMusic.getTime()
@@ -961,7 +961,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
 
     def enterVictory(self):
         self.cleanupIntervals()
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.reparentTo(render)
         self.setPos(*ToontownGlobals.SellbotBossDeathPos)
         self.setHpr(*ToontownGlobals.SellbotBossBattleThreeHpr)
@@ -988,7 +988,7 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.stopAnimate()
         self.unstash()
         self.__removeCageShadow()
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.battleThreeMusicTime = self.battleThreeMusic.getTime()
         self.battleThreeMusic.stop()
 

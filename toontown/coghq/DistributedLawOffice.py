@@ -29,7 +29,6 @@ class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
         self.suitsInitialized = 0
         self.goonClipPlanes = {}
         self.level = None
-        return
 
     def generate(self):
         self.notify.debug('generate')
@@ -65,5 +64,5 @@ class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
 
     def startSignal(self):
         base.camera.setScale(base.localAvatar.getScale())
-        localAvatar.setCameraFov(DefaultCameraFov)
+        base.localAvatar.setCameraMinFov(DefaultCameraMinFov)
         base.camera.clearMat()

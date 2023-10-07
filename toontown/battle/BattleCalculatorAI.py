@@ -34,6 +34,7 @@ class BattleCalculatorAI:
     suitsAlwaysMiss = simbase.config.GetBool('suits-always-miss', 0)
     immortalSuits = simbase.config.GetBool('immortal-suits', 0)
     propAndOrganicBonusStack = simbase.config.GetBool('prop-and-organic-bonus-stack', 0)
+    ttoStyleKnockback = simbase.config.GetBool('want-tto-style-knockback', False)
 
     def __init__(self, battle, tutorialFlag=0):
         self.battle = battle
@@ -747,12 +748,11 @@ class BattleCalculatorAI:
         toonId = self.toonAtkOrder[attackIndex]
         attack = self.battle.toonAttacks[toonId]
         atkTrack = self.__getActualTrack(attack)
-        TTOStyle = simbase.config.GetBool('want-tto-style-knockback', False)
         if atkTrack == HEAL or atkTrack == PETSOS:
             return
         tgts = self.__createToonTargetList(toonId)
         for currTgt in tgts:
-            if not TTOStyle:
+            if not self.ttoStyleKnockback:
                tgtPos = self.battle.activeSuits.index(currTgt)
             else:
                tgtPos = self.battle.suits.index(currTgt)

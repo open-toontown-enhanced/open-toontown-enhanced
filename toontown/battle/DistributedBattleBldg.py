@@ -18,7 +18,7 @@ from toontown.toonbase import ToontownGlobals
 
 class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleBldg')
-    camFOFov = 30.0
+    camFOMinFov = 22.5
     camFOPos = Point3(0, -10, 4)
 
     def __init__(self, cr):
@@ -110,11 +110,11 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
 
         camTrack = Sequence()
 
-        def setCamFov(fov):
-            base.camLens.setFov(fov)
+        def setCamMinFov(minFov: float):
+            base.camLens.setMinFov(minFov)
 
         camTrack.append(Func(camera.wrtReparentTo, suitLeader))
-        camTrack.append(Func(setCamFov, self.camFOFov))
+        camTrack.append(Func(setCamMinFov, self.camFOMinFov))
         suitHeight = suitLeader.getHeight()
         suitOffsetPnt = Point3(0, 0, suitHeight)
         MidTauntCamHeight = suitHeight * 0.66
@@ -130,21 +130,19 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         camPos = Point3(0, -6, 4)
         camHpr = Vec3(0, 0, 0)
         camTrack.append(Func(camera.reparentTo, base.localAvatar))
-        camTrack.append(Func(setCamFov, ToontownGlobals.DefaultCameraFov))
+        camTrack.append(Func(setCamMinFov, ToontownGlobals.DefaultCameraMinFov))
         camTrack.append(Func(camera.setPosHpr, camPos, camHpr))
         mtrack = Parallel(suitTrack, toonTrack, camTrack)
         done = Func(callback)
         track = Sequence(mtrack, done, name=name)
         track.start(ts)
         self.storeInterval(track, name)
-        return
 
     def enterFaceOff(self, ts):
         if len(self.toons) > 0 and base.localAvatar == self.toons[0]:
             Emote.globalEmote.disableAll(self.toons[0], 'dbattlebldg, enterFaceOff')
         self.delayDeleteMembers()
         self.__faceOff(ts, self.faceOffName, self.__handleFaceOffDone)
-        return None
 
     def __handleFaceOffDone(self):
         self.notify.debug('FaceOff done')
@@ -157,8 +155,7 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         self.clearInterval(self.faceOffName)
         self._removeMembersKeep()
         camera.wrtReparentTo(self)
-        base.camLens.setFov(self.camFov)
-        return None
+        base.camLens.setMinFov(self.camMinFov)
 
     def __playReward(self, ts, callback):
         toonTracks = Parallel()
@@ -176,7 +173,6 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         self.notify.debug('enterReward()')
         self.delayDeleteMembers()
         self.__playReward(ts, self.__handleFloorRewardDone)
-        return None
 
     def __handleFloorRewardDone(self):
         return None
@@ -189,14 +185,11 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         for toon in self.toons:
             toon.startSmooth()
 
-        return None
-
     def enterBuildingReward(self, ts):
         self.delayDeleteMembers()
         if self.hasLocalToon():
             NametagGlobals.setMasterArrowsOn(0)
         self.movie.playReward(ts, self.uniqueName('building-reward'), self.__handleBuildingRewardDone, noSkip=True)
-        return None
 
     def __handleBuildingRewardDone(self):
         if self.hasLocalToon():
@@ -208,12 +201,10 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         self.movie.resetReward(finish=1)
         self._removeMembersKeep()
         NametagGlobals.setMasterArrowsOn(1)
-        return None
 
     def enterResume(self, ts = 0):
         if self.hasLocalToon():
             self.removeLocalToon()
-        return None
 
     def exitResume(self):
         return None

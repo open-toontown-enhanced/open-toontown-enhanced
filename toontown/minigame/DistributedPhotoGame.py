@@ -259,10 +259,9 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
         self.__startIntro()
         base.transitions.irisIn()
         base.playMusic(self.music, looping=1, volume=0.8)
-        orgFov = base.camLens.getFov()
+        orgFov = base.camLens.getMinFov()
         self.outFov = orgFov.getX()
         self.zoomFov = orgFov.getX() * ZOOMRATIO
-        self.currentFov = self.outFov
         self.__setupCapture()
 
     def offstage(self):
@@ -626,16 +625,14 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
             self.notify.debug('Zoom In')
             hMove = hMDegree * (1.0 - ZOOMRATIO)
             vMove = vMDegree * (1.0 - ZOOMRATIO)
-            self.currentFov = self.zoomFov
-            base.camLens.setFov(self.zoomFov)
+            base.camLens.setMinFov(self.zoomFov)
             self.blackoutNode.show()
             self.swivel.setHpr(self.swivel, hMove * -self.zoomFlip, vMove * self.zoomFlip, 0)
         else:
             self.notify.debug('Zoom Out')
             hMove = hMDegree * ((1.0 - ZOOMRATIO) / ZOOMRATIO)
             vMove = vMDegree * ((1.0 - ZOOMRATIO) / ZOOMRATIO)
-            self.currentFov = self.outFov
-            base.camLens.setFov(self.outFov)
+            base.camLens.setMinFov(self.outFov)
             self.blackoutNode.hide()
             self.swivel.setHpr(self.swivel, hMove * self.zoomFlip, vMove * -self.zoomFlip, 0)
 
@@ -663,8 +660,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
             self.notify.debug('Zoom In')
             hMove = hMDegree * (1.0 - ZOOMRATIO)
             vMove = vMDegree * (1.0 - ZOOMRATIO)
-            self.currentFov = self.zoomFov
-            base.camLens.setFov(self.zoomFov)
+            base.camLens.setMinFov(self.zoomFov)
             self.blackoutNode.show()
             orgQuat = self.swivel.getQuat()
             self.swivel.setHpr(self.swivel, hMove * -self.zoomFlip, vMove * self.zoomFlip, 0)
@@ -673,7 +669,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
             self.swivel.setQuat(orgQuat)
             zoomTrack = Parallel()
             zoomTrack.append(LerpQuatInterval(self.swivel, ZOOMTIME, newQuat))
-            zoomTrack.append(LerpFunc(base.camLens.setFov, fromData=self.outFov, toData=self.zoomFov, duration=ZOOMTIME))
+            zoomTrack.append(LerpFunc(base.camLens.setMinFov, fromData=self.outFov, toData=self.zoomFov, duration=ZOOMTIME))
             zoomTrack.append(LerpFunc(self.setBlackout, fromData=0.0, toData=0.5, duration=ZOOMTIME))
             self.cameraTrack.append(zoomTrack)
             self.cameraTrack.append(Func(self.finishZoom, 1))
@@ -681,8 +677,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
             self.notify.debug('Zoom Out')
             hMove = hMDegree * ((1.0 - ZOOMRATIO) / ZOOMRATIO)
             vMove = vMDegree * ((1.0 - ZOOMRATIO) / ZOOMRATIO)
-            self.currentFov = self.outFov
-            base.camLens.setFov(self.outFov)
+            base.camLens.setMinFov(self.outFov)
             orgQuat = self.swivel.getQuat()
             self.swivel.setHpr(self.swivel, hMove * self.zoomFlip, vMove * -self.zoomFlip, 0)
             self.swivel.setR(0.0)
@@ -690,7 +685,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
             self.swivel.setQuat(orgQuat)
             zoomTrack = Parallel()
             zoomTrack.append(LerpQuatInterval(self.swivel, ZOOMTIME, newQuat))
-            zoomTrack.append(LerpFunc(base.camLens.setFov, fromData=self.zoomFov, toData=self.outFov, duration=ZOOMTIME))
+            zoomTrack.append(LerpFunc(base.camLens.setMinFov, fromData=self.zoomFov, toData=self.outFov, duration=ZOOMTIME))
             zoomTrack.append(LerpFunc(self.setBlackout, fromData=0.5, toData=0.0, duration=ZOOMTIME))
             self.cameraTrack.append(zoomTrack)
             self.cameraTrack.append(Func(self.blackoutNode.hide))
@@ -967,7 +962,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
              -4.0,
              6.0])
             panel.setR(rot)
-            textureBuffer = base.win.makeTextureBuffer('Photo Capture', 128, 128)
+            textureBuffer = base.win.makeTextureBuffer('Photo Capture', 512, 512)
             dr = textureBuffer.makeDisplayRegion()
             dr.setCamera(self.captureCam)
             texture = textureBuffer.getTexture()

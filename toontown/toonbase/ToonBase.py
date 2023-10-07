@@ -29,11 +29,11 @@ class ToonBase(OTPBase.OTPBase):
             music = self.settings.getSetting('music', True)
             sfx = self.settings.getSetting('sfx', True)
             toonChatSounds = self.settings.getSetting('toon-chat-sounds', True)
-            res = self.settings.getSetting('resolution', (800, 600))
+            res = self.settings.getSetting('resolution', (1280, 720))
             if mode == None:
                 mode = 1
             if res == None:
-                res = (800, 600)
+                res = (1280, 720)
             loadPrcFileData('toonBase Settings Window Res', 'win-size %s %s' % (res[0], res[1]))
             loadPrcFileData('toonBase Settings Window FullScreen', 'fullscreen %s' % mode)
             loadPrcFileData('toonBase Settings Music Active', 'audio-music-active %s' % music)
@@ -55,7 +55,7 @@ class ToonBase(OTPBase.OTPBase):
         self.wantDynamicShadows = 0
         self.exitErrorCode = 0
         camera.setPosHpr(0, 0, 0, 0, 0, 0)
-        self.camLens.setFov(ToontownGlobals.DefaultCameraFov)
+        self.camLens.setMinFov(ToontownGlobals.DefaultCameraMinFov)
         self.camLens.setNearFar(ToontownGlobals.DefaultCameraNear, ToontownGlobals.DefaultCameraFar)
         self.musicManager.setVolume(0.65)
         self.setBackgroundColor(ToontownGlobals.DefaultBackgroundColor)

@@ -1,12 +1,12 @@
 from .ToontownGlobals import *
 import math
 from . import TTLocalizer
-BattleCamFaceOffFov = 30.0
+BattleCamFaceOffMinFov = 22.5
 BattleCamFaceOffPos = Point3(0, -10, 4)
 BattleCamDefaultPos = Point3(0, -8.6, 16.5)
 BattleCamDefaultHpr = Vec3(0, -61, 0)
-BattleCamDefaultFov = 80.0
-BattleCamMenuFov = 65.0
+BattleCamDefaultMinFov = 60.0
+BattleCamMenuMinFov = 48.75
 BattleCamJoinPos = Point3(0, -12, 13)
 BattleCamJoinHpr = Vec3(0, -45, 0)
 SkipMovie = 0

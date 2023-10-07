@@ -11,7 +11,6 @@ class SellbotHQ(CogHood.CogHood):
         self.storageDNAFile = None
         self.skyFile = 'phase_9/models/cogHQ/cog_sky'
         self.titleColor = (0.5, 0.5, 0.5, 1.0)
-        return
 
     def load(self):
         CogHood.CogHood.load(self)
@@ -25,10 +24,10 @@ class SellbotHQ(CogHood.CogHood):
 
     def enter(self, *args):
         CogHood.CogHood.enter(self, *args)
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         base.camLens.setNearFar(ToontownGlobals.CogHQCameraNear, ToontownGlobals.CogHQCameraFar)
 
     def exit(self):
-        localAvatar.setCameraFov(ToontownGlobals.DefaultCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.DefaultCameraMinFov)
         base.camLens.setNearFar(ToontownGlobals.DefaultCameraNear, ToontownGlobals.DefaultCameraFar)
         CogHood.CogHood.exit(self)

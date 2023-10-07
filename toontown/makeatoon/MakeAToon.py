@@ -84,7 +84,6 @@ class MakeAToon(StateData.StateData):
         self.focusOutIval = None
         self.focusInIval = None
         self.toon = None
-        return
 
     def getToon(self):
         return self.toon
@@ -94,7 +93,7 @@ class MakeAToon(StateData.StateData):
         if base.config.GetBool('want-qa-regression', 0):
             self.notify.info('QA-REGRESSION: MAKEATOON: Starting Make A Toon')
         base.cr.centralLogger.writeClientEvent('MAT - startingMakeAToon')
-        base.camLens.setFov(ToontownGlobals.MakeAToonCameraFov)
+        base.camLens.setMinFov(ToontownGlobals.MakeAToonCameraMinFov)
         base.playMusic(self.music, looping=1, volume=self.musicVolume)
         camera.setPosHpr(-5.7, -12.3501, 2.15, -24.8499, 2.73, 0)
         if self.warp:
@@ -116,7 +115,7 @@ class MakeAToon(StateData.StateData):
             self.fsm.request('GenderShop')
 
     def exit(self):
-        base.camLens.setFov(ToontownGlobals.DefaultCameraFov)
+        base.camLens.setMinFov(ToontownGlobals.DefaultCameraMinFov)
         self.guiTopBar.hide()
         self.guiBottomBar.hide()
         self.music.stop()
@@ -261,7 +260,6 @@ class MakeAToon(StateData.StateData):
         self.crashSounds.append(base.loader.loadSfx('phase_3/audio/sfx/tt_s_ara_mat_crash_wood.ogg'))
         self.crashSounds.append(base.loader.loadSfx('phase_3/audio/sfx/tt_s_ara_mat_crash_woodBoing.ogg'))
         self.crashSounds.append(base.loader.loadSfx('phase_3/audio/sfx/tt_s_ara_mat_crash_woodGlass.ogg'))
-        return
 
     def unload(self):
         self.exit()

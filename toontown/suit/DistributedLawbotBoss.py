@@ -952,7 +952,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.accept('begin-pie', self.__foundPieButton)
         self.accept('enterDefenseCol', self.__enterDefenseCol)
         self.accept('enterProsecutionCol', self.__enterProsecutionCol)
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         taskMgr.doMethodLater(30, self.__howToGetPies, self.uniqueName('PieAdvice'))
         self.stickBossToFloor()
         self.setPosHpr(*ToontownGlobals.LawbotBossBattleThreePosHpr)
@@ -985,7 +985,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.ignore('enterProsecutionCol')
         self.__clearOnscreenMessage()
         taskMgr.remove(self.uniqueName('PieAdvice'))
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         if self.bossDamageMovie:
             self.bossDamageMovie.finish()
         self.bossDamageMovie = None
@@ -1006,7 +1006,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.accept('pieSplat', self.__finalPieSplat)
         self.accept('localPieSplat', self.__localPieSplat)
         self.accept('outOfPies', self.__outOfPies)
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.happy = 0
         self.raised = 0
         self.forward = 1
@@ -1021,7 +1021,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.ignore('outOfPies')
         self.__clearOnscreenMessage()
         taskMgr.remove(self.uniqueName('PieAdvice'))
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.setDizzy(0)
         self.battleThreeMusicTime = self.battleThreeMusic.getTime()
         self.battleThreeMusic.stop()
@@ -1032,7 +1032,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.reparentTo(render)
         self.setPosHpr(*ToontownGlobals.LawbotBossBattleThreePosHpr)
         self.loop('neutral')
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.clearChat()
         self.witnessToon.clearChat()
         self.controlToons()
@@ -1055,14 +1055,14 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.notify.debug('----- exitVictory')
         self.stopAnimate()
         self.unstash()
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.battleThreeMusicTime = self.battleThreeMusic.getTime()
         self.battleThreeMusic.stop()
 
     def enterDefeat(self):
         self.notify.debug('----- enterDefeat')
         self.cleanupIntervals()
-        localAvatar.setCameraFov(ToontownGlobals.BossBattleCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.BossBattleCameraMinFov)
         self.reparentTo(render)
         self.clearChat()
         self.releaseToons(finalBattle=1)
@@ -1084,7 +1084,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.notify.debug('----- exitDefeat')
         self.stopAnimate()
         self.unstash()
-        localAvatar.setCameraFov(ToontownGlobals.CogHQCameraFov)
+        base.localAvatar.setCameraMinFov(ToontownGlobals.CogHQCameraMinFov)
         self.battleThreeMusicTime = self.battleThreeMusic.getTime()
         self.battleThreeMusic.stop()
 
