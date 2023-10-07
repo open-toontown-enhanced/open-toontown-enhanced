@@ -1,5 +1,6 @@
 # Open Toontown Enhanced
 This repository contains the code for Open Toontown Enhanced, based on the latest version of Disney's Toontown Online (sv1.0.47.38).
+
 Based on [Open Toontown](https://github.com/open-toontown/open-toontown)
 
 # Setup
