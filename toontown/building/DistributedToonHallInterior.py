@@ -1,22 +1,17 @@
+from panda3d.core import BitMask32, CollisionEntry, CollisionHandlerEvent, CollisionNode, CollisionSphere, Point3
 from panda3d.toontown import *
 from toontown.toonbase.ToonBaseGlobal import *
 from direct.interval.IntervalGlobal import *
 from direct.distributed.ClockDelta import *
 from direct.showbase import Audio3DManager
 from toontown.toonbase import ToontownGlobals
-import pickle
 from .DistributedToonInterior import DistributedToonInterior
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import ClassicFSM, State
-from direct.distributed import DistributedObject
-from direct.fsm import State
 from direct.actor import Actor
 import random
-import time
 from . import ToonInteriorColors
 from toontown.hood import ZoneUtil
-from toontown.toon import ToonDNA
-from toontown.toon import ToonHead
 
 class DistributedToonHallInterior(DistributedToonInterior):
 
@@ -89,13 +84,13 @@ class DistributedToonHallInterior(DistributedToonInterior):
         self.interior.flattenMedium()
         self.sillyFSM.enterInitialState()
 
-    def sillyMeterIsRunning(self, isRunning):
+    def sillyMeterIsRunning(self, isRunning: bool):
         if isRunning:
             self.sillyFSM.request('Phase0')
         else:
             self.sillyFSM.request('Flat')
 
-    def selectPhase(self, newPhase):
+    def selectPhase(self, newPhase: int):
         try:
             gotoPhase = 'Phase' + str(newPhase)
             if self.sillyFSM.hasStateNamed(gotoPhase) and not self.sillyFSM.getCurrentState() == self.sillyFSM.getStateNamed(gotoPhase):
@@ -113,7 +108,7 @@ class DistributedToonHallInterior(DistributedToonInterior):
         except:
             pass
 
-    def getPhaseToRun(self):
+    def getPhaseToRun(self) -> int:
         result = -1
         enoughInfoToRun = False
         if base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_HOLIDAY) or base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_EXT_HOLIDAY):
@@ -129,49 +124,6 @@ class DistributedToonHallInterior(DistributedToonInterior):
         if enoughInfoToRun and base.cr.SillyMeterMgr.getIsRunning():
             result = base.cr.SillyMeterMgr.getCurPhase()
         return result
-
-    def calculatePhaseDuration(self):
-        result = -1
-        valid = False
-        if base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_HOLIDAY) or base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_EXT_HOLIDAY):
-            if hasattr(base.cr, 'SillyMeterMgr') and not base.cr.SillyMeterMgr.isDisabled():
-                valid = True
-            elif hasattr(base.cr, 'SillyMeterMgr'):
-                self.notify.debug('isDisabled = %s' % base.cr.SillyMeterMgr.isDisabled())
-            else:
-                self.notify.debug('base.cr does not have SillyMeterMgr')
-        else:
-            self.notify.debug('holiday is not running')
-        self.notify.debug('valid = %s' % valid)
-        if valid and base.cr.SillyMeterMgr.getIsRunning():
-            result = base.cr.SillyMeterMgr.getCurPhaseDuration()
-        return result
-
-    def calculateFrameOffset(self, phaseDuration, numFrames):
-        result = -1
-        valid = False
-        if base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_HOLIDAY) or base.cr.newsManager.isHolidayRunning(ToontownGlobals.SILLYMETER_EXT_HOLIDAY):
-            if hasattr(base.cr, 'SillyMeterMgr') and not base.cr.SillyMeterMgr.isDisabled():
-                valid = True
-            elif hasattr(base.cr, 'SillyMeterMgr'):
-                self.notify.debug('isDisabled = %s' % base.cr.SillyMeterMgr.isDisabled())
-            else:
-                self.notify.debug('base.cr does not have SillyMeterMgr')
-        else:
-            self.notify.debug('holiday is not running')
-        self.notify.debug('valid = %s' % valid)
-        if valid and base.cr.SillyMeterMgr.getIsRunning():
-            startTime = time.mktime(base.cr.SillyMeterMgr.getCurPhaseStartDate().timetuple())
-            serverTime = time.mktime(base.cr.toontownTimeManager.getCurServerDateTime().timetuple())
-            offset = (serverTime - startTime) / phaseDuration
-            if offset < 0:
-                result = -1
-            else:
-                result = offset * numFrames
-        return result
-
-    def calculateFrameRange(self, frameNo):
-        pass
 
     def enterSetup(self):
         ropes = loader.loadModel('phase_4/models/modules/tt_m_ara_int_ropes')
@@ -614,7 +566,7 @@ class DistributedToonHallInterior(DistributedToonInterior):
     def exitToon(self):
         pass
 
-    def handleCloseToWall(self, collEntry):
+    def handleCloseToWall(self, collEntry: CollisionEntry):
         if self.firstEnter == 0:
             return
         interiorRopes = self.interior.find('**/*interior_ropes')
@@ -623,7 +575,7 @@ class DistributedToonHallInterior(DistributedToonInterior):
         self.restoreCam()
         self.accept('CamChangeColl' + '-exit', self.handleAwayFromWall)
 
-    def handleAwayFromWall(self, collEntry):
+    def handleAwayFromWall(self, collEntry: CollisionEntry):
         if self.firstEnter == 1:
             self.cleanUpCollisions()
             self.setupCollisions(0.75)
@@ -636,7 +588,7 @@ class DistributedToonHallInterior(DistributedToonInterior):
         if flippy == collEntry.getIntoNodePath():
             self.setUpToonHallCam()
 
-    def setupCollisions(self, radius):
+    def setupCollisions(self, radius: float):
         r = base.localAvatar.getClampedAvatarHeight() * radius
         cs = CollisionSphere(0, 0, 0, r)
         cn = CollisionNode('CamChangeColl')
@@ -709,6 +661,3 @@ class DistributedToonHallInterior(DistributedToonInterior):
             self.sillyFSM.requestFinalState()
             del self.sillyFSM
         DistributedToonInterior.disable(self)
-
-    def delete(self):
-        DistributedToonInterior.delete(self)
