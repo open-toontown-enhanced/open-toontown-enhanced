@@ -3228,8 +3228,8 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
          self.zoneId))
         return ['success', suitIndex, building.doId]
 
-    def doCogInvasion(self, suitIndex):
-        invMgr = self.air.suitInvasionManager
+    def doCogInvasion(self, suitIndex: int) -> tuple[str, int, int]:
+        invMgr = self.air.cogInvasionManager
         if invMgr.getInvading():
             returnCode = 'busy'
         else:

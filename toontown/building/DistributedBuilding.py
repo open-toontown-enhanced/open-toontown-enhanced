@@ -703,9 +703,17 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             self.transitionTrack.start(timeStamp)
         return
 
-    def walkOutCameraTrack(self):
-        track = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 9.4, 0, 348, 0), Func(base.camLens.setMinFov, ToontownGlobals.DefaultCameraMinFov), Wait(VICTORY_RUN_TIME), Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 17, 0, 347, 0), Func(base.camLens.setFov, 75.0), Wait(TO_TOON_BLDG_TIME), Func(base.camLens.setFov, 52.0))
-        return track
+    def walkOutCameraTrack(self) -> Sequence:
+        return Sequence(
+                   Func(camera.reparentTo, render),
+                   Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 9.4, 0, 348, 0),
+                   Func(base.camLens.setMinFov, ToontownGlobals.DefaultCameraMinFov),
+                   Wait(VICTORY_RUN_TIME),
+                   Func(camera.setPosHpr, self.elevatorNodePath, 0, -32.5, 17, 0, 347, 0),
+                   Func(base.camLens.setMinFov, 56.25),
+                   Wait(TO_TOON_BLDG_TIME),
+                   Func(base.camLens.setMinFov, ToontownGlobals.DefaultCameraMinFov)
+               )
 
     def plantVictorsOutsideBldg(self):
         retVal = 0

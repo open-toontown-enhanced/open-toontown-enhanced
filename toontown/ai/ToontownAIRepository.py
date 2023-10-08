@@ -47,7 +47,7 @@ from toontown.uberdog.DistributedPartyManagerAI import DistributedPartyManagerAI
 from toontown.safezone.SafeZoneManagerAI import SafeZoneManagerAI
 from toontown.shtiker.CogPageManagerAI import CogPageManagerAI
 from toontown.spellbook.ToontownMagicWordManagerAI import ToontownMagicWordManagerAI
-from toontown.suit.SuitInvasionManagerAI import SuitInvasionManagerAI
+from toontown.suit.CogInvasionManagerAI import CogInvasionManagerAI
 from toontown.toon import NPCToons
 from toontown.toonbase import ToontownGlobals
 from toontown.tutorial.TutorialManagerAI import TutorialManagerAI
@@ -73,7 +73,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.holidayManager = None
         self.zoneDataStore = None
         self.petMgr = None
-        self.suitInvasionManager = None
+        self.cogInvasionManager: CogInvasionManagerAI | None = None
         self.zoneAllocator = None
         self.zoneId2owner = {}
         self.questManager = None
@@ -148,8 +148,8 @@ class ToontownAIRepository(ToontownInternalRepository):
         # Create our pet manager...
         self.petMgr = PetManagerAI(self)
 
-        # Create our suit invasion manager...
-        self.suitInvasionManager = SuitInvasionManagerAI(self)
+        # Create our cog invasion manager...
+        self.cogInvasionManager = CogInvasionManagerAI(self)
 
         # Create our zone allocator...
         self.zoneAllocator = UniqueIdAllocator(ToontownGlobals.DynamicZonesBegin, ToontownGlobals.DynamicZonesEnd)

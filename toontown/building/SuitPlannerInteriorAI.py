@@ -1,32 +1,32 @@
+from typing import Union
 from otp.ai.AIBaseGlobal import *
-import random, functools
 from toontown.suit import SuitDNA
 from direct.directnotify import DirectNotifyGlobal
-from toontown.suit import DistributedSuitAI
+from toontown.suit.DistributedSuitAI import DistributedSuitAI
 from toontown.building import SuitBuildingGlobals
+import random, functools
 
 class SuitPlannerInteriorAI:
     notify = DirectNotifyGlobal.directNotify.newCategory('SuitPlannerInteriorAI')
 
-    def __init__(self, numFloors, bldgLevel, bldgTrack, zone, respectInvasions=1):
-        self.dbg_nSuits1stRound = config.GetBool('n-suits-1st-round', 0)
-        self.dbg_4SuitsPerFloor = config.GetBool('4-suits-per-floor', 0)
-        self.dbg_1SuitPerFloor = config.GetBool('1-suit-per-floor', 0)
-        self.zoneId = zone
-        self.numFloors = numFloors
-        self.respectInvasions = respectInvasions
+    def __init__(self, numFloors: int, bldgLevel: int, bldgTrack: str, zone: int, respectInvasions: bool = True):
+        self.dbg_nSuits1stRound: bool = config.GetBool('n-suits-1st-round', 0)
+        self.dbg_4SuitsPerFloor: bool = config.GetBool('4-suits-per-floor', 0)
+        self.dbg_1SuitPerFloor: bool = config.GetBool('1-suit-per-floor', 0)
+        self.zoneId: int = zone
+        self.numFloors: int = numFloors
+        self.respectInvasions: bool = respectInvasions
         dbg_defaultSuitName = simbase.config.GetString('suit-type', 'random')
         if dbg_defaultSuitName == 'random':
-            self.dbg_defaultSuitType = None
+            self.dbg_defaultSuitType: str | None = None
         else:
-            self.dbg_defaultSuitType = SuitDNA.getSuitType(dbg_defaultSuitName)
+            self.dbg_defaultSuitType: str | None = SuitDNA.getSuitType(dbg_defaultSuitName)
         if isinstance(bldgLevel, str):
             self.notify.warning('bldgLevel is a string!')
             bldgLevel = int(bldgLevel)
         self._genSuitInfos(numFloors, bldgLevel, bldgTrack)
-        return
 
-    def __genJoinChances(self, num):
+    def __genJoinChances(self, num) -> list[int]:
         joinChances = []
         for currChance in range(num):
             joinChances.append(random.randint(1, 100))
@@ -34,7 +34,7 @@ class SuitPlannerInteriorAI:
         joinChances.sort(key=functools.cmp_to_key(cmp))
         return joinChances
 
-    def _genSuitInfos(self, numFloors, bldgLevel, bldgTrack):
+    def _genSuitInfos(self, numFloors: int, bldgLevel: int, bldgTrack: str):
         self.suitInfos = []
         self.notify.debug('\n\ngenerating suitsInfos with numFloors (' + str(numFloors) + ') bldgLevel (' + str(bldgLevel) + '+1) and bldgTrack (' + str(bldgTrack) + ')')
         for currFloor in range(numFloors):
@@ -88,12 +88,12 @@ class SuitPlannerInteriorAI:
             infoDict['reserveSuits'] = reserveDicts
             self.suitInfos.append(infoDict)
 
-    def __genNormalSuitType(self, lvl):
+    def __genNormalSuitType(self, lvl: int) -> int:
         if self.dbg_defaultSuitType != None:
             return self.dbg_defaultSuitType
         return SuitDNA.getRandomSuitType(lvl)
 
-    def __genLevelList(self, bldgLevel, currFloor, numFloors):
+    def __genLevelList(self, bldgLevel: int, currFloor: int, numFloors: int) -> list[int]:
         bldgInfo = SuitBuildingGlobals.SuitBuildingInfo[bldgLevel]
         if self.dbg_1SuitPerFloor:
             return [1]
@@ -124,8 +124,8 @@ class SuitPlannerInteriorAI:
         self.notify.debug('LevelList: ' + repr(lvlList))
         return lvlList
 
-    def __setupSuitInfo(self, suit, bldgTrack, suitLevel, suitType):
-        suitName, skeleton = simbase.air.suitInvasionManager.getInvadingCog()
+    def __setupSuitInfo(self, suit: DistributedSuitAI, bldgTrack: str, suitLevel: int, suitType: int) -> bool:
+        suitName, skeleton = simbase.air.cogInvasionManager.getInvadingCog()
         if suitName and self.respectInvasions:
             suitType = SuitDNA.getSuitType(suitName)
             bldgTrack = SuitDNA.getSuitDept(suitName)
@@ -137,8 +137,8 @@ class SuitPlannerInteriorAI:
         suit.setLevel(suitLevel)
         return skeleton
 
-    def __genSuitObject(self, suitZone, suitType, bldgTrack, suitLevel, revives=0):
-        newSuit = DistributedSuitAI.DistributedSuitAI(simbase.air, None)
+    def __genSuitObject(self, suitZone: int, suitType: int, bldgTrack: str, suitLevel: int, revives: int = 0) -> DistributedSuitAI:
+        newSuit = DistributedSuitAI(simbase.air, None)
         skel = self.__setupSuitInfo(newSuit, bldgTrack, suitLevel, suitType)
         if skel:
             newSuit.setSkelecog(1)
@@ -159,7 +159,7 @@ class SuitPlannerInteriorAI:
             for currReserve in range(len(currInfo[1])):
                 self.notify.debug('  Reserve suit ' + str(currReserve + 1) + ' is of type ' + str(currInfo[1][currReserve][0]) + ' and of track ' + str(currInfo[1][currReserve][1]) + ' and of lvel ' + str(currInfo[1][currReserve][2]) + ' and has ' + str(currInfo[1][currReserve][3]) + '% join restriction.')
 
-    def genFloorSuits(self, floor):
+    def genFloorSuits(self, floor: int) -> dict[str, Union[DistributedSuitAI, tuple[DistributedSuitAI, int]]]:
         suitHandles = {}
         floorInfo = self.suitInfos[floor]
         activeSuits = []
@@ -174,9 +174,12 @@ class SuitPlannerInteriorAI:
             reserveSuits.append((suit, reserveSuitInfo['joinChance']))
 
         suitHandles['reserveSuits'] = reserveSuits
+
+        simbase.air.cogInvasionManager.subtractNumCogsRemaining(len(activeSuits) + len(reserveSuits))
+
         return suitHandles
 
-    def genSuits(self):
+    def genSuits(self) -> list[dict[str, Union[DistributedSuitAI, tuple[DistributedSuitAI, int]]]]:
         suitHandles = []
         for floor in range(len(self.suitInfos)):
             floorSuitHandles = self.genFloorSuits(floor)
