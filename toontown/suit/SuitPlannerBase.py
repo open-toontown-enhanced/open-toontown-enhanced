@@ -1,7 +1,5 @@
 from panda3d.core import *
 from panda3d.toontown import *
-import random
-import string
 from direct.directnotify import DirectNotifyGlobal
 from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
@@ -483,9 +481,8 @@ class SuitPlannerBase:
 
     def __init__(self):
         self.suitWalkSpeed = ToontownGlobals.SuitWalkSpeed
-        self.dnaStore = None
-        self.pointIndexes = {}
-        return
+        self.dnaStore: DNAStorage | None = None
+        self.pointIndexes: dict[int, DNASuitPoint] = {}
 
     def setupDNA(self):
         if self.dnaStore:
@@ -498,9 +495,8 @@ class SuitPlannerBase:
             loader.loadDNAFileAI(self.dnaStore, dnaFileName)
 
         self.initDNAInfo()
-        return None
 
-    def genDNAFileName(self):
+    def genDNAFileName(self) -> str:
         try:
             return simbase.air.genDNAFileName(self.getZoneId())
         except:
@@ -512,15 +508,15 @@ class SuitPlannerBase:
                 zoneId = 'sz'
             return 'phase_%s/dna/%s_%s.dna' % (phase, hood, zoneId)
 
-    def getZoneId(self):
+    def getZoneId(self) -> int:
         return self.zoneId
 
-    def setZoneId(self, zoneId):
+    def setZoneId(self, zoneId: int):
         self.notify.debug('setting zone id for suit planner')
         self.zoneId = zoneId
         self.setupDNA()
 
-    def extractGroupName(self, groupFullName):
+    def extractGroupName(self, groupFullName: str) -> str:
         return str(groupFullName).split(':', 1)[0]
 
     def initDNAInfo(self):
@@ -576,8 +572,6 @@ class SuitPlannerBase:
                 self.streetPointList.append(point)
             self.pointIndexes[point.getIndex()] = point
 
-        return None
-
     def performPathTest(self):
         if not self.notify.getDebug():
             return None
@@ -593,10 +587,8 @@ class SuitPlannerBase:
             travelTime = self.dnaStore.getSuitEdgeTravelTime(path.getPointIndex(i), path.getPointIndex(i + 1), self.suitWalkSpeed)
             self.notify.debug('edge from point ' + repr(i) + ' to point ' + repr((i + 1)) + ' is in zone: ' + repr(zone) + ' and will take ' + repr(travelTime) + ' seconds to walk.')
 
-        return None
-
-    def genPath(self, startPoint, endPoint, minPathLen, maxPathLen):
+    def genPath(self, startPoint: DNASuitPoint, endPoint: DNASuitPoint, minPathLen: int, maxPathLen: int) -> DNASuitPath:
         return self.dnaStore.getSuitPath(startPoint, endPoint, minPathLen, maxPathLen)
 
-    def getDnaStore(self):
+    def getDnaStore(self) -> DNAStorage:
         return self.dnaStore
