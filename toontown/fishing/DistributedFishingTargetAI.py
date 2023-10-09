@@ -15,8 +15,6 @@ class DistributedFishingTargetAI(DistributedNodeAI):
         self.angle: float = 0.0
         self.radius: float = 0.0
         self.time: float = 0.0
-        self.hunger: float = FishingTargetGlobals.MinimumHunger + \
-            (random.random() * (1 - FishingTargetGlobals.MinimumHunger))
 
         self.targetCenter: tuple[float, float, float] = FishingTargetGlobals.getTargetCenter(pond.getArea())
         self.targetRadius: float = FishingTargetGlobals.getTargetRadius(pond.getArea())
@@ -34,9 +32,6 @@ class DistributedFishingTargetAI(DistributedNodeAI):
 
     def getState(self) -> list[float, float, float, int]:
         return [self.angle, self.radius, self.time, globalClockDelta.getRealNetworkTime()]
-
-    def getHunger(self) -> float:
-        return self.hunger
 
     def moveFishingTarget(self, task: Union[Task, None] = None):
         # Send the current position.

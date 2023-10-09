@@ -1,6 +1,4 @@
 from toontown.toonbase import ToontownGlobals
-StepTime = 5.0
-MinimumHunger = 1.0
 NUM_TARGETS_INDEX = 0
 POS_START_INDEX = 1
 POS_END_INDEX = 4
