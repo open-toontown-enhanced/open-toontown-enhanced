@@ -1,50 +1,44 @@
-from direct.distributed import DistributedObject
-from direct.directnotify import DirectNotifyGlobal
-from toontown.toonbase import ToontownGlobals
-from toontown.toonbase import TTLocalizer
-from . import FishGlobals
-from toontown.fishing import DistributedPondBingoManager
+from typing import Union
 from panda3d.core import Vec3
+from direct.distributed.DistributedObject import DistributedObject
+from direct.directnotify import DirectNotifyGlobal
 from direct.task import Task
 
-class DistributedFishingPond(DistributedObject.DistributedObject):
+class DistributedFishingPond(DistributedObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFishingPond')
     pollInterval = 0.5
 
     def __init__(self, cr):
-        DistributedObject.DistributedObject.__init__(self, cr)
+        DistributedObject.__init__(self, cr)
         self.notify.debug('init')
-        self.targets = {}
-        self.area = None
-        self.localToonBobPos = None
-        self.localToonSpot = None
-        self.pondBingoMgr = None
-        self.visitedSpots = {}
-        return
+        self.targets: dict[int, DistributedObject] = {}
+        self.area: int | None = None
+        self.localToonBobPos: Vec3 | None = None
+        self.localToonSpot: DistributedObject | None = None
+        self.pondBingoMgr: DistributedObject | None = None
+        self.visitedSpots: dict[int, DistributedObject] = {}
 
     def disable(self):
         self.visitedSpots.clear()
         self.stopCheckingTargets()
-        DistributedObject.DistributedObject.disable(self)
+        DistributedObject.disable(self)
 
-    def setArea(self, area):
+    def setArea(self, area: int):
         self.area = area
 
-    def getArea(self):
+    def getArea(self) -> int:
         return self.area
 
-    def addTarget(self, target):
+    def addTarget(self, target: DistributedObject):
         self.notify.debug('addTarget: %s' % target)
         self.targets[target.getDoId()] = target
 
-    def removeTarget(self, target):
+    def removeTarget(self, target: DistributedObject):
         self.notify.debug('removeTarget: %s' % target)
         del self.targets[target.getDoId()]
 
-    def startCheckingTargets(self, spot, bobPos):
+    def startCheckingTargets(self, spot: DistributedObject, bobPos: Vec3):
         self.notify.debug('startCheckingTargets')
-        if base.wantBingo:
-            pass
         self.localToonSpot = spot
         self.localToonBobPos = bobPos
         taskMgr.doMethodLater(self.pollInterval * 2, self.checkTargets, self.taskName('checkTargets'))
@@ -55,9 +49,8 @@ class DistributedFishingPond(DistributedObject.DistributedObject):
         if not base.wantBingo:
             self.localToonSpot = None
         self.localToonBobPos = None
-        return
 
-    def checkTargets(self, task = None):
+    def checkTargets(self, task: Union[Task.Task, None] = None) -> Task.done:
         self.notify.debug('checkTargets')
         if self.localToonSpot != None:
             for target in list(self.targets.values()):
@@ -74,25 +67,24 @@ class DistributedFishingPond(DistributedObject.DistributedObject):
             self.notify.warning('localToonSpot became None while checking targets')
         return Task.done
 
-    def d_hitTarget(self, target):
+    def d_hitTarget(self, target: DistributedObject):
         self.localToonSpot.hitTarget()
         self.sendUpdate('hitTarget', [target.getDoId()])
 
-    def setPondBingoManager(self, pondBingoMgr):
+    def setPondBingoManager(self, pondBingoMgr: DistributedObject):
         self.pondBingoMgr = pondBingoMgr
 
     def removePondBingoManager(self):
         del self.pondBingoMgr
         self.pondBingoMgr = None
-        return
 
-    def getPondBingoManager(self):
+    def getPondBingoManager(self) -> DistributedObject:
         return self.pondBingoMgr
 
-    def hasPondBingoManager(self):
+    def hasPondBingoManager(self) -> bool:
         return (self.pondBingoMgr and [1] or [0])[0]
 
-    def handleBingoCatch(self, catch):
+    def handleBingoCatch(self, catch: tuple[int, int]):
         if self.pondBingoMgr:
             self.pondBingoMgr.setLastCatch(catch)
 
@@ -104,17 +96,16 @@ class DistributedFishingPond(DistributedObject.DistributedObject):
         if self.pondBingoMgr:
             self.pondBingoMgr.cleanup()
 
-    def setLocalToonSpot(self, spot = None):
+    def setLocalToonSpot(self, spot: Union[DistributedObject, None] = None):
         self.localToonSpot = spot
         if spot is not None and spot.getDoId() not in self.visitedSpots:
             self.visitedSpots[spot.getDoId()] = spot
-        return
 
     def showBingoGui(self):
         if self.pondBingoMgr:
             self.pondBingoMgr.showCard()
 
-    def getLocalToonSpot(self):
+    def getLocalToonSpot(self) -> DistributedObject:
         return self.localToonSpot
 
     def resetSpotGui(self):

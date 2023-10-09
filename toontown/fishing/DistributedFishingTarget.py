@@ -2,29 +2,24 @@ from panda3d.core import *
 from direct.distributed.ClockDelta import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal
-from direct.distributed import DistributedNode
-from direct.fsm import ClassicFSM
-from direct.fsm import State
-from direct.directutil import Mopath
-from toontown.toonbase import ToontownGlobals
+from direct.distributed.DistributedNode import DistributedNode
+from direct.distributed.DistributedObject import DistributedObject
 from direct.actor import Actor
 from . import FishingTargetGlobals
-import random
 import math
 from toontown.effects import Bubbles
 
-class DistributedFishingTarget(DistributedNode.DistributedNode):
+class DistributedFishingTarget(DistributedNode):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFishingTarget')
     radius = 2.5
 
     def __init__(self, cr):
-        DistributedNode.DistributedNode.__init__(self, cr)
+        DistributedNode.__init__(self, cr)
         NodePath.__init__(self)
-        self.pond = None
-        self.centerPoint = (0, 0, 0)
-        self.maxRadius = 1.0
-        self.track = None
-        return
+        self.pond: DistributedObject | None = None
+        self.centerPoint: tuple[float, float, float] = (0.0, 0.0, 0.0)
+        self.maxRadius: float = 1.0
+        self.track: Sequence = None
 
     def generate(self):
         self.assign(render.attachNewNode('DistributedFishingTarget'))
@@ -36,7 +31,7 @@ class DistributedFishingTarget(DistributedNode.DistributedNode):
         self.bubbles = Bubbles.Bubbles(self, render)
         self.bubbles.renderParent.setDepthWrite(0)
         self.bubbles.start()
-        DistributedNode.DistributedNode.generate(self)
+        DistributedNode.generate(self)
 
     def disable(self):
         if self.track:
@@ -46,26 +41,25 @@ class DistributedFishingTarget(DistributedNode.DistributedNode):
         del self.bubbles
         self.pond.removeTarget(self)
         self.pond = None
-        DistributedNode.DistributedNode.disable(self)
-        return
+        DistributedNode.disable(self)
 
     def delete(self):
         del self.pond
-        DistributedNode.DistributedNode.delete(self)
+        DistributedNode.delete(self)
 
-    def setPondDoId(self, pondDoId):
+    def setPondDoId(self, pondDoId: int):
         self.pond = base.cr.doId2do[pondDoId]
         self.pond.addTarget(self)
         self.centerPoint = FishingTargetGlobals.getTargetCenter(self.pond.getArea())
         self.maxRadius = FishingTargetGlobals.getTargetRadius(self.pond.getArea())
 
-    def getDestPos(self, angle, radius):
+    def getDestPos(self, angle: float, radius: float) -> tuple[float, float, float]:
         x = radius * math.cos(angle) + self.centerPoint[0]
         y = radius * math.sin(angle) + self.centerPoint[1]
         z = self.centerPoint[2]
         return (x, y, z)
 
-    def setState(self, stateIndex, angle, radius, time, timeStamp):
+    def setState(self, angle: float, radius: float, time: float, timeStamp: int):
         ts = globalClockDelta.localElapsedTime(timeStamp)
         pos = self.getDestPos(angle, radius)
         if self.track and self.track.isPlaying():
@@ -73,5 +67,5 @@ class DistributedFishingTarget(DistributedNode.DistributedNode):
         self.track = Sequence(LerpPosInterval(self, time - ts, Point3(*pos), blendType='easeInOut'))
         self.track.start()
 
-    def getRadius(self):
+    def getRadius(self) -> float:
         return self.radius

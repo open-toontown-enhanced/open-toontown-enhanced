@@ -962,7 +962,7 @@ dclass DistributedFishingPond : DistributedObject {
 
 dclass DistributedFishingTarget : DistributedNode {
   setPondDoId(uint32) required broadcast ram;
-  setState(uint8, int16/10, uint16/100, uint16/10, int16) required broadcast ram;
+  setState(int16/10, uint16/100, uint16/10, int16) required broadcast ram;
 };
 
 dclass DistributedFishingSpot : DistributedObject {
