@@ -47,15 +47,12 @@ with open('config/spellbook.json') as data:
 # Make changes to all the Magic Words based on the data in spellbook.json
 for word in spellbook['words']:
     name = word['name']
-    accessLevel = word['access']
-
-    if accessLevel not in list(OTPGlobals.AccessLevelName2Int.keys()):
-        break
+    permissionLevel = word['permissionLevel']
 
     try:
         wordInfo = MagicWordIndex[str(name.lower())]
         for alias in wordInfo['aliases']:
-            MagicWordIndex[alias]['access'] = accessLevel
+            MagicWordIndex[alias]['permissionLevel'] = permissionLevel
     except:
         pass
 
@@ -102,7 +99,7 @@ class ToontownMagicWordManagerAI(DistributedObjectAI.DistributedObjectAI):
                 self.generateResponse(avId=avId, responseType="NoTarget")
                 return
 
-        # The affectType is ZONE (zone the invoker is in), SERVER (the entire server), or RANK (specified access level)
+        # The affectType is ZONE (zone the invoker is in), SERVER (the entire server), or RANK (specified permission level)
         # Gather all of the Toons using whichever method this Magic Word requests
         if affectType in (AFFECT_ZONE, AFFECT_SERVER, AFFECT_RANK):
             toonIds = []
@@ -117,8 +114,8 @@ class ToontownMagicWordManagerAI(DistributedObjectAI.DistributedObjectAI):
                     # Add every Toon regardless of zone
                     elif affectType == AFFECT_SERVER:
                         toonIds.append(doId)
-                    # Only add the Toons that have the Access Level specified when the Magic Word was used
-                    elif affectType == AFFECT_RANK and do.getAccessLevel() == affectExtra:
+                    # Only add the Toons that have the Permission Level specified when the Magic Word was used
+                    elif affectType == AFFECT_RANK and do.getPermissionLevel() == affectExtra:
                         toonIds.append(doId)
 
             # There were no Toons we could perform this Magic Word on, so let the invoker know that
@@ -135,12 +132,12 @@ class ToontownMagicWordManagerAI(DistributedObjectAI.DistributedObjectAI):
             return
 
         # Access level of the invoker
-        invokerAccess = int(round(toon.getAccessLevel(), -2))
+        invokerAccess = int(round(toon.getPermissionLevel(), -2))
 
         # Access level of the selected target, if we have one
         targetAccess = 0
         if lastClickedAvId and lastClickedToon:
-            targetAccess = lastClickedToon.getAccessLevel()
+            targetAccess = lastClickedToon.getPermissionLevel()
 
         # Now that we have all the avIds of who we want to target with this Magic Word, let's run some sanity checks
         # First things first, let's make sure the invoker is allowed to target who they want to target
@@ -152,29 +149,22 @@ class ToontownMagicWordManagerAI(DistributedObjectAI.DistributedObjectAI):
             targetToon = self.air.doId2do.get(targetId)
             if not targetToon:
                 continue
-            # Get the Access Level of the target and round it to the nearest 100th
+            # Get the Permission Level of the target and round it to the nearest 100th
             # This kind of thing is useful for roles like BUILDER, that are technically higher than USER
             # They should have more perms than USERS, but shouldn't be allowed to target them
-            targetAccess = int(round(targetToon.getAccessLevel(), -2))
-            # If the Access Level of the target is greater than or equal to than that of the invoker, remove them
+            targetAccess = int(round(targetToon.getPermissionLevel(), -2))
+            # If the Permission Level of the target is greater than or equal to than that of the invoker, remove them
             if targetAccess >= invokerAccess:
                 targetIds.remove(targetId)
                 continue
 
-        # Function that returns a readable name in place of the Toon's Access Level
-        def getAccessName(accessLevel):
-            return OTPGlobals.AccessLevelDebug2Name.get(OTPGlobals.AccessLevelInt2Name.get(accessLevel))
-
         # If, after the previous check, we don't have any more targets, let's inform the invoker about it
         if len(targetIds) == 0:
-            # If affectType is NORMAL, let the invoker know what their Access Level is compared to their target
+            # If affectType is NORMAL, let the invoker know what their Permission Level is compared to their target
             if (affectRange in (AFFECT_OTHER, AFFECT_BOTH)) and affectType == AFFECT_NORMAL:
-                # Parse the Access Level of the invoker and target
-                parsedTargetAccess = getAccessName(targetAccess)
-                parsedInvokerAccess = getAccessName(invokerAccess)
-                # Create a nice little message to tell the invoker the difference between the Access Levels
+                # Create a nice little message to tell the invoker the difference between the Permission Levels
                 returnValue = MAGIC_WORD_RESPONSES.get("NoAccessSingleTarget")
-                returnValue = returnValue.format(lastClickedToon.getName(), parsedTargetAccess, parsedInvokerAccess)
+                returnValue = returnValue.format(lastClickedToon.getName(), targetAccess, invokerAccess)
                 self.generateResponse(avId=avId, responseType="Success", returnValue=returnValue)
             # Otherwise, just let the invoker know that everyone who was targeted was not allowed to be
             else:
@@ -191,9 +181,9 @@ class ToontownMagicWordManagerAI(DistributedObjectAI.DistributedObjectAI):
         # Lookup the info for this word
         magicWordInfo = MagicWordIndex[magicWord]
 
-        # Make sure the invoker has a high enough Access Level to use this Magic Word in the first place
+        # Make sure the invoker has a high enough Permission Level to use this Magic Word in the first place
         # If they don't, them let them know about it
-        if toon.getAccessLevel() < OTPGlobals.AccessLevelName2Int.get(magicWordInfo['access']):
+        if toon.getPermissionLevel() < magicWordInfo['permissionLevel']:
             self.generateResponse(avId=avId, responseType="NoAccess")
             return
 

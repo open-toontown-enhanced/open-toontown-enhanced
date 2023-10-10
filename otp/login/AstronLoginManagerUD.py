@@ -60,16 +60,16 @@ class DeveloperAccountDB(AccountDB):
         # Check if this play token exists in the accountsToId:
         if playToken not in self.accountToId:
             # It is not, so we'll associate them with a brand new account object.
-            # Get the default access level from config.
-            accessLevel = config.GetString('default-access-level', "SYSTEM_ADMIN")
-            if accessLevel not in OTPGlobals.AccessLevelName2Int:
-                self.loginManager.notify.warning(f'Access Level "{accessLevel}" isn\'t defined.  Reverting back to SYSTEM_ADMIN')
-                accessLevel = "SYSTEM_ADMIN"
+            # Get the default permission level from config.
+            permissionLevel = config.GetInt('default-permission-level', OTPGlobals.PermissionLevel.OWNER.value)
+            if not OTPGlobals.PermissionLevel.USER.value <= permissionLevel <= OTPGlobals.PermissionLevel.OWNER.value:
+                self.loginManager.notify.warning(f'Permission Level "{permissionLevel}" isn\'t defined.  Reverting back to OWNER')
+                permissionLevel = OTPGlobals.PermissionLevel.OWNER.value
 
             callback({'success': True,
                       'accountId': 0,
                       'databaseId': playToken,
-                      'accessLevel': accessLevel})
+                      'permissionLevel': permissionLevel})
         else:
             def handleAccount(dclass, fields):
                 if dclass != self.loginManager.air.dclassesByName['AstronAccountUD']:
@@ -80,17 +80,17 @@ class DeveloperAccountDB(AccountDB):
                     result = {'success': True,
                               'accountId': self.accountToId[playToken],
                               'databaseId': playToken,
-                              'accessLevel': fields.get('ACCESS_LEVEL', 'NO_ACCESS')}
+                              'permissionLevel': fields.get('PERMISSION_LEVEL', 'NO_ACCESS')}
 
                 callback(result)
 
             # Query the account from Astron to verify its existance. We need to get
-            # the ACCESS_LEVEL field anyways.
+            # the PERMISSION_LEVEL field anyways.
             # TODO: Add a timeout timer?
             self.loginManager.air.dbInterface.queryObject(self.loginManager.air.dbId,
                                                           self.accountToId[playToken], handleAccount,
                                                           self.loginManager.air.dclassesByName['AstronAccountUD'],
-                                                          ('ACCESS_LEVEL',))
+                                                          ('PERMISSION_LEVEL',))
 
     def storeAccountId(self, databaseId, accountId, callback):
         if databaseId not in self.accountToId:
@@ -155,9 +155,9 @@ class LoginOperation(GameOperation):
             self._handleCloseConnection(result.get('reason', 'The accounts database rejected your play token.'))
             return
 
-        # Grab the databaseId, accessLevel, and the accountId from the result.
+        # Grab the databaseId, permissionLevel, and the accountId from the result.
         self.databaseId = result.get('databaseId', 0)
-        self.accessLevel = result.get('accessLevel', 0)
+        self.permissionLevel = result.get('permissionLevel', 0)
         accountId = result.get('accountId', 0)
         if accountId:
             # There is an account ID, so let's retrieve the associated account.
@@ -190,7 +190,7 @@ class LoginOperation(GameOperation):
                         'CREATED': time.ctime(),
                         'LAST_LOGIN': time.ctime(),
                         'ACCOUNT_ID': str(self.databaseId),
-                        'ACCESS_LEVEL': self.accessLevel}
+                        'PERMISSION_LEVEL': self.permissionLevel}
 
         self.loginManager.air.dbInterface.createObject(self.loginManager.air.dbId,
                                                        self.loginManager.air.dclassesByName['AstronAccountUD'],
@@ -254,7 +254,7 @@ class LoginOperation(GameOperation):
                                                        self.loginManager.air.dclassesByName['AstronAccountUD'],
                                                        {'LAST_LOGIN': time.ctime(),
                                                         'ACCOUNT_ID': str(self.databaseId),
-                                                        'ACCESS_LEVEL': self.accessLevel})
+                                                        'PERMISSION_LEVEL': self.permissionLevel})
 
         responseData = {
             'returnCode': 0,
@@ -773,11 +773,10 @@ class LoadAvatarOperation(AvatarOperation):
         self.loginManager.air.send(datagram)
 
         # Get the avatar's "true" access (that is, the integer value that corresponds to the assigned string value).
-        accessLevel = self.account.get('ACCESS_LEVEL', 'NO_ACCESS')
-        accessLevel = OTPGlobals.AccessLevelName2Int.get(accessLevel, 0)
+        permissionLevel = self.account.get('PERMISSION_LEVEL', OTPGlobals.PermissionLevel.USER.value)
 
         self.loginManager.air.sendActivate(self.avId, 0, 0, self.loginManager.air.dclassesByName['DistributedToonUD'],
-                                           {'setAccessLevel': (accessLevel,)})
+                                           {'setPermissionLevel': (permissionLevel,)})
 
         datagram = PyDatagram()
         datagram.addServerHeader(channel, self.loginManager.air.ourChannel, CLIENTAGENT_OPEN_CHANNEL)

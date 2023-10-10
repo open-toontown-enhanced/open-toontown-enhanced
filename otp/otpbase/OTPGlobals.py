@@ -1,5 +1,16 @@
 from panda3d.core import *
 from panda3d.otp import *
+
+# temp
+# TODO: move PermissionLevel to the appropriate spot
+from enum import IntEnum
+
+class PermissionLevel(IntEnum):
+    USER = 0
+    MODERATOR = 1
+    ADMIN = 2
+    OWNER = 3
+
 QuietZone = 1
 UberZone = 2
 WallBitmask = BitMask32(1)
@@ -357,22 +368,3 @@ AvatarPendingCreate = -1
 AvatarSlotUnavailable = -2
 AvatarSlotAvailable = -3
 
-AccessLevelName2Int = {
- 'RESTRICTED': -100,
- 'NO_ACCESS': 0,
- 'MODERATOR': 100,
- 'DEVELOPER': 200,
- 'ADMIN': 300,
- 'SYSTEM_ADMIN': 400,
-}
-
-AccessLevelInt2Name = {v: k for k, v in AccessLevelName2Int.items()}
-
-AccessLevelDebug2Name = {
-    'RESTRICTED': 'Banned',
-    'NO_ACCESS': 'Player',
-    'MODERATOR': 'Mod',
-    'DEVELOPER': 'Developer',
-    'ADMIN': 'Admin',
-    'SYSTEM_ADMIN': 'Sysadmin',
-}

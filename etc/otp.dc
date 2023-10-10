@@ -60,7 +60,7 @@ dclass AstronAccount {
   string CREATED db;
   string LAST_LOGIN db;
   string ACCOUNT_ID db;
-  string ACCESS_LEVEL db;
+  int8 PERMISSION_LEVEL db;
 };
 
 struct BarrierData {
@@ -250,7 +250,7 @@ dclass DistributedPlayer : DistributedAvatar {
   WishNameState(string = "LOCKED") db ram;
   setPreviousAccess(uint8 = 0) required db airecv;
   setAccess(uint8 = 2) broadcast ownrecv required ram airecv;
-  setAccessLevel(uint16 accessLevel = 0) ownrecv required airecv;
+  setPermissionLevel(uint8 permissionLevel = 0) ownrecv required airecv;
   setAsGM(bool = 0) required ram broadcast ownrecv airecv;
 };
 

@@ -38,11 +38,9 @@ class DistributedPlayer(DistributedAvatar.DistributedAvatar, PlayerBase.PlayerBa
             self._districtWeAreGeneratedOn = None
             self.DISLname = ''
             self.DISLid = 0
-            self.accessLevel = 0
+            self.permissionLevel: int = 0
             self.autoRun = 0
             self.whiteListEnabled = ConfigVariableBool('whitelist-chat-enabled', 1).value
-
-        return
 
     @staticmethod
     def GetPlayerGenerateEvent():
@@ -451,10 +449,10 @@ class DistributedPlayer(DistributedAvatar.DistributedAvatar, PlayerBase.PlayerBa
     def getAutoRun(self):
         return self.autoRun
 
-    def setAccessLevel(self, accessLevel):
-        self.accessLevel = accessLevel
+    def setPermissionLevel(self, permissionLevel: int):
+        self.permissionLevel = permissionLevel
         if self.isLocal():
-            self.cr.wantMagicWords = self.accessLevel > OTPGlobals.AccessLevelName2Int.get('NO_ACCESS')
+            self.cr.wantMagicWords = self.permissionLevel > OTPGlobals.PermissionLevel.USER.value
 
-    def getAccessLevel(self):
-        return self.accessLevel
+    def getPermissionLevel(self) -> int:
+        return self.permissionLevel

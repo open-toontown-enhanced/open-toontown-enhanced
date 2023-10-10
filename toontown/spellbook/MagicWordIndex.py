@@ -55,8 +55,8 @@ class MagicWord(DirectObject):
     # If your Toontown source has a page for Magic Words in the Sthickerbook, this will be useful for that
     example = ""
 
-    # The minimum access level required to use this Magic Word
-    accessLevel = 'MODERATOR'
+    # The minimum permission level required to use this Magic Word
+    permissionLevel = OTPGlobals.PermissionLevel.MODERATOR.value
 
     # A restriction on the Magic Word which sets what kind or set of Distributed Objects it can be used on
     # By default, a Magic Word can affect everyone
@@ -98,7 +98,7 @@ class MagicWord(DirectObject):
                                         'advancedDesc': self.advancedDesc,
                                         'example': self.example,
                                         'execLocation': self.execLocation,
-                                        'access': self.accessLevel,
+                                        'permissionLevel': self.permissionLevel,
                                         'affectRange': self.affectRange,
                                         'args': self.arguments}
 
@@ -139,13 +139,11 @@ class MagicWord(DirectObject):
             #         continue
             #     return "{} is currently locked. You can only use administrative commands on them.".format(name)
 
-            if invoker.getAccessLevel() <= toon.getAccessLevel() and toon != invoker:
+            if invoker.getPermissionLevel() <= toon.getPermissionLevel() and toon != invoker:
                 if len(self.targets) > 1:
                     validTargets -= 1
                     continue
-                targetAccess = OTPGlobals.AccessLevelDebug2Name.get(OTPGlobals.AccessLevelInt2Name.get(toon.getAccessLevel()))
-                invokerAccess = OTPGlobals.AccessLevelDebug2Name.get(OTPGlobals.AccessLevelInt2Name.get(invoker.getAccessLevel()))
-                return "You don't have a high enough Access Level to target {0}! Their Access Level: {1}. Your Access Level: {2}.".format(name, targetAccess, invokerAccess)
+                return "You don't have a high enough Permission Level to target {0}! Their Permission Level: {1}. Your Permission Level: {2}.".format(name, target.getPermissionLevel(), invoker.getPermissionLevel())
 
             if self.execLocation == MagicWordConfig.EXEC_LOC_CLIENT:
                 self.args = json.loads(self.args)
@@ -249,7 +247,7 @@ class MaxToon(MagicWord):
     aliases = ["max", "idkfa"]
     desc = "Maxes your target toon."
     execLocation = MagicWordConfig.EXEC_LOC_SERVER
-    accessLevel = 'ADMIN'
+    permissionLevel = OTPGlobals.PermissionLevel.ADMIN.value
 
     def handleWord(self, invoker, avId, toon, *args):
         from toontown.toonbase import ToontownGlobals

@@ -30,8 +30,8 @@ MAGIC_WORD_RESPONSES = {
     "CloseWord": 'This Magic Word doesn\'t exist! Did you mean {}?',
     "NoEffect": "This word doesn't affect anybody!",
     "BadTarget": 'Invalid target specified!',
-    "NoAccessToTarget": "You don't have a high enough Access Level to target them!",
-    "NoAccessSingleTarget": "You don't have a high enough Access Level to target {}! Their Access Level: {}. Your Access Level: {}.",
+    "NoAccessToTarget": "You don't have a high enough Permission Level to target them!",
+    "NoAccessSingleTarget": "You don't have a high enough Permission Level to target {}! Their Permission Level: {}. Your Permission Level: {}.",
     "NoTarget": 'Unable to find a target!',
     "NoAccess": 'Your Toon does not have enough power to use this Magic Word!',
     "NotEnoughArgs": 'This command takes at least {}!',
@@ -50,7 +50,7 @@ MAGIC_WORD_DEFAULT_DESC = 'A simple Magic Word.'
 MAGIC_WORD_DEFAULT_ADV_DESC = 'This Magic Word does a lot of things, because reasons.'
 
 AFFECT_TYPES = ['singular', 'zone', 'server', 'rank']
-AFFECT_TYPES_NAMES = ['Everyone in this zone', 'The entire server', 'Everyone with an Access Level of']
+AFFECT_TYPES_NAMES = ['Everyone in this zone', 'The entire server', 'Everyone with an Permission Level of']
 AFFECT_NONE = -1
 AFFECT_SELF = 0
 AFFECT_OTHER = 1

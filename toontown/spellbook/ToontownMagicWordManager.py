@@ -89,7 +89,7 @@ class ToontownMagicWordManager(DistributedObject.DistributedObject):
             return
 
         # We don't even have access to be using Magic Words in the first place
-        if base.localAvatar.getAccessLevel() < OTPGlobals.AccessLevelName2Int.get('MODERATOR'):
+        if base.localAvatar.getPermissionLevel() < OTPGlobals.PermissionLevel.MODERATOR.value:
             self.generateResponse(responseType="NoAccess")
             return
 
@@ -137,10 +137,10 @@ class ToontownMagicWordManager(DistributedObject.DistributedObject):
         # By default, our Magic Word affects nobody- not even ourself!
         affectRange = AFFECT_NONE
 
-        # A normal affect type-  we aren't trying to target all Toons in the zone, server, or a specific Access Level
+        # A normal affect type-  we aren't trying to target all Toons in the zone, server, or a specific Permission Level
         affectType = AFFECT_NORMAL
 
-        # Only used for determining what Access Level will be targeted, if we decide to target a specific one
+        # Only used for determining what Permission Level will be targeted, if we decide to target a specific one
         affectExtra = -1
 
         # Used for determining what the affectRange is- it counts the amount of activators uses (ranges 1-3)
@@ -178,10 +178,12 @@ class ToontownMagicWordManager(DistributedObject.DistributedObject):
                 affectType = AFFECT_TYPES.index(type)
                 break
 
-        # Calculate the Access Level to affect if affectType is RANK
+        # Calculate the Permission Level to affect if affectType is RANK
+        # note: rewriting all this anyway, so doesn't matter if this is commented out or not
+        '''
         if affectType == AFFECT_RANK:
-            # Iterate over all the possible Access Level integers and see if any match with the one provided
-            for level in list(OTPGlobals.AccessLevelName2Int.values()):
+            # Iterate over all the possible Permission Level integers and see if any match with the one provided
+            for level in list(OTPGlobals.PermissionLevelName2Int.values()):
                 # It matches, woohoo!
                 if magicWordNoPrefix.startswith(str(level)):
                     # Sorry, I'm commenting this way after the fact, so not even I know why there is a try/except here
@@ -194,17 +196,18 @@ class ToontownMagicWordManager(DistributedObject.DistributedObject):
                     except:
                         pass
 
-                    # Strip the Access Level integer from the Magic Word string
+                    # Strip the Permission Level integer from the Magic Word string
                     magicWordNoPrefix = magicWordNoPrefix[len(str(level)):]
 
-                    # Store the Access Level integer here instead
+                    # Store the Permission Level integer here instead
                     affectExtra = level
                     break
 
-            # The invoker wanted to target an Access Level but provided an invalid integer, so let them know
+            # The invoker wanted to target an Permission Level but provided an invalid integer, so let them know
             if affectExtra == -1:
                 self.generateResponse(responseType="BadTarget")
                 return
+        '''
 
         # Finally, we can get the name of the Magic Word used
         word = magicWordNoPrefix.split(' ', 1)[0].lower()
