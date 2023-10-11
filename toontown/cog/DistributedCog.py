@@ -219,7 +219,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.legList = None
         if self.maxPathLen == 0:
             return
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         self.startPoint = self.sp.pointIndexes[self.pathEndpointStart]
         self.endPoint = self.sp.pointIndexes[self.pathEndpointEnd]
@@ -228,7 +228,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.makeLegList()
         return
 
-    def verifySuitPlanner(self):
+    def verifyCogPlanner(self):
         if self.sp == None and self.spDoId != 0:
             self.notify.warning('Suit %d does not have a cog planner!  Expected SP doId %s.' % (self.doId, self.spDoId))
             self.sp = self.cr.doId2do.get(self.spDoId, None)
@@ -237,7 +237,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         return 1
 
     def setPathPosition(self, index, timestamp):
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         if self.path == None:
             self.setPathEndpoints(self.pathEndpointStart, self.pathEndpointEnd, self.minPathLen, self.maxPathLen)
@@ -251,7 +251,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.pathState = state
         self.resumePath(state)
 
-    def debugSuitPosition(self, elapsed, currentLeg, x, y, timestamp):
+    def debugCogPosition(self, elapsed, currentLeg, x, y, timestamp):
         now = globalClock.getFrameTime()
         chug = globalClock.getRealTime() - now
         messageAge = now - globalClockDelta.networkToLocalTime(timestamp, now)
@@ -420,7 +420,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
     def enterFromSky(self, leg, time):
         self.enableBattleDetect('fromSky', self.__handleToonCollision)
         self.loop('neutral', 0)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         a = leg.getPosA()
         b = leg.getPosB()
@@ -495,7 +495,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def enterToSky(self, leg, time):
         self.enableBattleDetect('toSky', self.__handleToonCollision)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         a = leg.getPosA()
         b = leg.getPosB()
@@ -513,7 +513,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
     def enterFromCogBuilding(self, leg, time):
         self.enableBattleDetect('fromCogBuilding', self.__handleToonCollision)
         self.loop('walk', 0)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         a = leg.getPosA()
         b = leg.getPosB()
@@ -542,7 +542,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def enterToCogBuilding(self, leg, time):
         self.loop('walk', 0)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         a = leg.getPosA()
         b = leg.getPosB()
@@ -593,7 +593,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def enterFlyAway(self):
         self.enableBattleDetect('flyAway', self.__handleToonCollision)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         b = Point3(self.getPos())
         self.mtrack = self.beginSupaFlyMove(b, 0, 'flyAway')
@@ -607,7 +607,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def enterDanceThenFlyAway(self):
         self.enableBattleDetect('danceThenFlyAway', self.__handleToonCollision)
-        if not self.verifySuitPlanner():
+        if not self.verifyCogPlanner():
             return
         danceTrack = self.actorInterval('victory')
         b = Point3(self.getPos())

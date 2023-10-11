@@ -10,7 +10,7 @@ from toontown.ai.NewsManagerAI import NewsManagerAI
 from toontown.ai.WelcomeValleyManagerAI import WelcomeValleyManagerAI
 from toontown.building.DistributedTrophyMgrAI import DistributedTrophyMgrAI
 from toontown.catalog.CatalogManagerAI import CatalogManagerAI
-from toontown.coghq.CogSuitManagerAI import CogSuitManagerAI
+from toontown.coghq.CogDisguiseManagerAI import CogDisguiseManagerAI
 from toontown.coghq.CountryClubManagerAI import CountryClubManagerAI
 from toontown.coghq.FactoryManagerAI import FactoryManagerAI
 from toontown.coghq.LawOfficeManagerAI import LawOfficeManagerAI
@@ -84,7 +84,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.factoryMgr = None
         self.mintMgr = None
         self.lawMgr = None
-        self.cogSuitMgr = None
+        self.cogDisguiseMgr = None
         self.timeManager = None
         self.newsManager = None
         self.welcomeValleyManager = None
@@ -179,7 +179,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.lawMgr = LawOfficeManagerAI(self)
 
         # Create our Cog suit manager...
-        self.cogSuitMgr = CogSuitManagerAI(self)
+        self.cogDisguiseMgr = CogDisguiseManagerAI(self)
 
     def createGlobals(self):
         """

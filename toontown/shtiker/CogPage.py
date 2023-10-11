@@ -304,13 +304,13 @@ class CogPage(ShtikerPage.ShtikerPage):
         deptSize = CogDNA.cogsPerDept
         panels = self.panels[deptSize * deptNum:CogDNA.cogsPerDept * (deptNum + 1)]
         if self.radarOn[deptNum]:
-            if hasattr(base.cr, 'currSuitPlanner'):
-                if base.cr.currSuitPlanner != None:
-                    base.cr.currSuitPlanner.d_cogListQuery()
+            if hasattr(base.cr, 'currCogPlanner'):
+                if base.cr.currCogPlanner != None:
+                    base.cr.currCogPlanner.d_cogListQuery()
                     self.acceptOnce('cogListResponse', self.updateCogRadar, extraArgs=[deptNum, panels])
                     taskMgr.doMethodLater(1.0, self.cogListResponseTimeout, 'cogListResponseTimeout-later', extraArgs=(deptNum, panels))
                     if self.radarButtons[deptNum].building:
-                        base.cr.currSuitPlanner.d_buildingListQuery()
+                        base.cr.currCogPlanner.d_buildingListQuery()
                         self.acceptOnce('buildingListResponse', self.updateBuildingRadar, extraArgs=[deptNum])
                         taskMgr.doMethodLater(1.0, self.buildingListResponseTimeout, 'buildingListResponseTimeout-later', extraArgs=(deptNum,))
                 else:
@@ -522,8 +522,8 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def updateCogRadar(self, deptNum, panels, timeout = 0):
         taskMgr.remove('cogListResponseTimeout-later')
-        if not timeout and hasattr(base.cr, 'currSuitPlanner') and base.cr.currSuitPlanner != None:
-            cogList = base.cr.currSuitPlanner.cogList
+        if not timeout and hasattr(base.cr, 'currCogPlanner') and base.cr.currCogPlanner != None:
+            cogList = base.cr.currCogPlanner.cogList
         else:
             cogList = []
         for panel in panels:
@@ -561,8 +561,8 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def updateBuildingRadar(self, deptNum, timeout = 0):
         taskMgr.remove('buildingListResponseTimeout-later')
-        if not timeout and hasattr(base.cr, 'currSuitPlanner') and base.cr.currSuitPlanner != None:
-            buildingList = base.cr.currSuitPlanner.buildingList
+        if not timeout and hasattr(base.cr, 'currCogPlanner') and base.cr.currCogPlanner != None:
+            buildingList = base.cr.currCogPlanner.buildingList
         else:
             buildingList = [0,
              0,

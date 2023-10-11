@@ -162,7 +162,7 @@ class RoguesGallery(StateData.StateData):
         for rowWidth, cogRow in self.cogs:
             rowWidth *= scale
             extraSpace = self.xRowSpace - rowWidth
-            extraSpacePerSuit = extraSpace / (self.numSuitTypes * 2 - 1)
+            extraSpacePerCog = extraSpace / (self.numSuitTypes * 2 - 1)
             x = self.left + self.sideMargins
             y -= self.ySuitInc
             for type, width, cog, depth, profile in cogRow:
@@ -170,13 +170,13 @@ class RoguesGallery(StateData.StateData):
                 width *= scale
                 cog.setScale(scale)
                 cog.setPos(x + width / 2.0, 0.0, y)
-                x += width + self.xSpaceBetweenSameCogs + extraSpacePerSuit
+                x += width + self.xSpaceBetweenSameCogs + extraSpacePerCog
                 depth *= scale
                 profile.setScale(scale)
                 profile.setPos(x + depth / 2.0, 0.0, y)
                 x += depth
                 right = x
-                x += self.xSpaceBetweenDifferentCogs + extraSpacePerSuit
+                x += self.xSpaceBetweenDifferentCogs + extraSpacePerCog
                 self.text.setText(cog.getName())
                 name = self.gallery.attachNewNode(self.text.generate())
                 name.setPos((right + left) / 2.0, 0.0, y + (cog.height + self.labelScale * 0.5) * scale)

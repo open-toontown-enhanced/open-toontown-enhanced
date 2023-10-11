@@ -393,7 +393,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         newNP.stash()
         sideBldgNodes.append(newNP)
         soundPlayed = 0
-        tracks = Parallel(name=self.taskName('toSuitTrack'))
+        tracks = Parallel(name=self.taskName('toCogTrack'))
         for i in sideBldgNodes:
             name = i.getName()
             timeForDrop = TO_COG_BLDG_TIME * 0.85

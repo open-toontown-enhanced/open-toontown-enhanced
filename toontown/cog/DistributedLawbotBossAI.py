@@ -277,9 +277,9 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
             if simbase.config.GetBool('lawbot-boss-cheat', 0):
                 listVersion[13] = weakenedValue
                 CogBuildingGlobals.CogBuildingInfo = tuple(listVersion)
-            return self.invokeSuitPlanner(13, 0)
+            return self.invokeCogPlanner(13, 0)
         else:
-            return self.invokeSuitPlanner(13, 1)
+            return self.invokeCogPlanner(13, 1)
 
     def removeToon(self, avId):
         toon = simbase.air.doId2do.get(avId)
@@ -508,22 +508,22 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
         self.numToonsAtStart = len(self.involvedToons)
 
     def getToonDifficulty(self):
-        highestCogSuitLevel = 0
-        totalCogSuitLevels = 0.0
+        highestCogDisguiseLevel = 0
+        totalCogDisguiseLevels = 0.0
         totalNumToons = 0.0
         for toonId in self.involvedToons:
             toon = simbase.air.doId2do.get(toonId)
             if toon:
                 toonLevel = toon.getNumPromotions(self.dept)
-                totalCogSuitLevels += toonLevel
+                totalCogDisguiseLevels += toonLevel
                 totalNumToons += 1
-                if toonLevel > highestCogSuitLevel:
-                    highestCogSuitLevel = toonLevel
+                if toonLevel > highestCogDisguiseLevel:
+                    highestCogDisguiseLevel = toonLevel
 
         if not totalNumToons:
             totalNumToons = 1.0
-        averageLevel = totalCogSuitLevels / totalNumToons
-        self.notify.debug('toons average level = %f, highest level = %d' % (averageLevel, highestCogSuitLevel))
+        averageLevel = totalCogDisguiseLevels / totalNumToons
+        self.notify.debug('toons average level = %f, highest level = %d' % (averageLevel, highestCogDisguiseLevel))
         retval = min(averageLevel, self.maxToonLevels)
         return retval
 

@@ -433,8 +433,8 @@ QuestsClothingTicketRewardPoster = 'Reward: Clothing Ticket'
 TIPQuestsClothingTicketReward = 'You can change your shirt for a TIP shirt'
 TIPQuestsClothingTicketRewardPoster = 'Reward: TIP Clothing Ticket'
 QuestsCheesyEffectRewardPoster = 'Reward: %s'
-QuestsCogSuitPartReward = 'You now have a %(cogTrack)s %(part)s Cog Suit Part.'
-QuestsCogSuitPartRewardPoster = 'Reward: %(cogTrack)s %(part)s Part'
+QuestsCogDisguisePartReward = 'You now have a %(cogTrack)s %(part)s Cog Suit Part.'
+QuestsCogDisguisePartRewardPoster = 'Reward: %(cogTrack)s %(part)s Part'
 QuestsStreetLocationThisPlayground = 'in this playground'
 QuestsStreetLocationThisStreet = 'on this street'
 QuestsStreetLocationNamedPlayground = 'in the %s playground'
@@ -2393,8 +2393,8 @@ SuitSpinDoctorP = 'Spin Doctors'
 SuitLegalEagleP = 'Legal Eagles'
 SuitBigWigP = 'Big Wigs'
 SuitFaceoffDefaultTaunts = ['Boo!']
-SuitAttackDefaultTaunts = ['Take that!', 'Take a memo on this!']
-SuitAttackNames = {'Audit': 'Audit!',
+CogAttackDefaultTaunts = ['Take that!', 'Take a memo on this!']
+CogAttackNames = {'Audit': 'Audit!',
  'Bite': 'Bite!',
  'BounceCheck': 'Bounce Check!',
  'BrainStorm': 'Brain Storm!',
@@ -2461,7 +2461,7 @@ SuitAttackNames = {'Audit': 'Audit!',
  'Watercooler': 'Watercooler!',
  'Withdrawal': 'Withdrawal!',
  'WriteOff': 'Write Off!'}
-SuitAttackTaunts = {'Audit': ["I believe your books don't balance.",
+CogAttackTaunts = {'Audit': ["I believe your books don't balance.",
            "Looks like you're in the red.",
            'Let me help you with your books.',
            'Your debit column is much too high.',
@@ -5547,14 +5547,14 @@ STOREOWNER_CONFIRM_LOSS = 'Your closet is full.  You will lose the clothes you w
 STOREOWNER_OK = lOK
 STOREOWNER_CANCEL = lCancel
 STOREOWNER_TROPHY = 'Wow! You collected %s of %s fish. That deserves a trophy and a Laff boost!'
-SuitInvasionBegin1 = lToonHQ + ': A Cog Invasion has begun!!!'
-SuitInvasionBegin2 = lToonHQ + ': %s have taken over Toontown!!!'
-SuitInvasionEnd1 = lToonHQ + ': The %s Invasion has ended!!!'
-SuitInvasionEnd2 = lToonHQ + ': The Toons have saved the day once again!!!'
-SuitInvasionUpdate1 = lToonHQ + ': The Cog Invasion is now at %s Cogs!!!'
-SuitInvasionUpdate2 = lToonHQ + ': We must defeat those %s!!!'
-SuitInvasionBulletin1 = lToonHQ + ': There is a Cog Invasion in progress!!!'
-SuitInvasionBulletin2 = lToonHQ + ': %s have taken over Toontown!!!'
+CogInvasionBegin1 = lToonHQ + ': A Cog Invasion has begun!!!'
+CogInvasionBegin2 = lToonHQ + ': %s have taken over Toontown!!!'
+CogInvasionEnd1 = lToonHQ + ': The %s Invasion has ended!!!'
+CogInvasionEnd2 = lToonHQ + ': The Toons have saved the day once again!!!'
+CogInvasionUpdate1 = lToonHQ + ': The Cog Invasion is now at %s Cogs!!!'
+CogInvasionUpdate2 = lToonHQ + ': We must defeat those %s!!!'
+CogInvasionBulletin1 = lToonHQ + ': There is a Cog Invasion in progress!!!'
+CogInvasionBulletin2 = lToonHQ + ': %s have taken over Toontown!!!'
 LeaderboardTitle = 'Toon Platoon'
 QuestScriptTutorialMickey_1 = 'Toontown has a new citizen! Do you have some extra gags?'
 QuestScriptTutorialMickey_2 = 'Sure, %s!'
@@ -5695,8 +5695,8 @@ MintElevatorRejectMessage = 'You cannot enter the Mints until you have completed
 BossElevatorRejectMessage = 'You cannot board this elevator until you have earned a promotion.'
 NotYetAvailable = 'This elevator is not yet available.'
 SellbotRentalSuitMessage = "Wear this Rental Suit so you can get close enough to the VP to attack.\n\nYou won't earn merits or promotions, but you can rescue a Toon for an SOS reward!"
-SellbotCogSuitNoMeritsMessage = "Your Sellbot Disguise will get you in, but since you don't have enough merits, you won't earn a promotion.\n\nIf you rescue the trapped Toon, you will earn an SOS Toon reward!"
-SellbotCogSuitHasMeritsMessage = "It's Operation: Storm Sellbot!\n\nBring 5 or more Rental Suit Toons with you to defeat the VP and earn credit towards a reward!"
+SellbotCogDisguiseNoMeritsMessage = "Your Sellbot Disguise will get you in, but since you don't have enough merits, you won't earn a promotion.\n\nIf you rescue the trapped Toon, you will earn an SOS Toon reward!"
+SellbotCogDisguiseHasMeritsMessage = "It's Operation: Storm Sellbot!\n\nBring 5 or more Rental Suit Toons with you to defeat the VP and earn credit towards a reward!"
 FurnitureTypeName = 'Furniture'
 PaintingTypeName = 'Painting'
 ClothingTypeName = 'Clothing'

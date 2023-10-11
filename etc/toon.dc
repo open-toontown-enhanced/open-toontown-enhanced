@@ -736,7 +736,7 @@ dclass DistributedCog : DistributedCogBase {
   setPathEndpoints(uint16, uint16, uint16, uint16) required broadcast ram;
   setPathPosition(uint16, int16) required broadcast ram;
   setPathState(int8) required broadcast ram;
-  debugSuitPosition(int16/10, int16, int16/10, int16/10, int16) broadcast;
+  debugCogPosition(int16/10, int16, int16/10, int16/10, int16) broadcast;
 };
 
 dclass DistributedTutorialCog : DistributedCogBase {
@@ -882,7 +882,7 @@ dclass DistributedBattleBase : DistributedObject {
   setInteractivePropTrackBonus(int8) required broadcast ram;
   setPosition(int16/10, int16/10, int16/10) required broadcast ram;
   setZoneId(uint32) required broadcast ram;
-  setInitialSuitPos(int16/10, int16/10, int16/10) required broadcast ram;
+  setInitialCogPos(int16/10, int16/10, int16/10) required broadcast ram;
   setMembers(uint32[], string, string, string, string, string, uint32[], string, string, string, string, int16) required broadcast ram;
   adjust(int16) broadcast;
   setMovie(int8, uint32[], uint32[], int8, int8, int8, int32, int16[], int16, int16, int16[], int8, int8, int8, int8, int8, int32, int16[], int16, int16, int16[], int8, int8, int8, int8, int8, int32, int16[], int16, int16, int16[], int8, int8, int8, int8, int8, int32, int16[], int16, int16, int16[], int8, int8, int8, int8, int8, int16[], int8, int8, int8, int8, int8, int8, int16[], int8, int8, int8, int8, int8, int8, int16[], int8, int8, int8, int8, int8, int8, int16[], int8, int8, int8) required broadcast ram;
@@ -1100,7 +1100,7 @@ dclass DistributedTugOfWarGame : DistributedMinigame {
   sendNewAvIdList(uint32[]) airecv clsend;
   reportCurrentKeyRate(uint32, int16/100) airecv clsend;
   sendCurrentPosition(uint32[], int16/1000[]) broadcast;
-  sendSuitPosition(int32/1000) broadcast;
+  sendCogPosition(int32/1000) broadcast;
   remoteKeyRateUpdate(uint32, uint32) broadcast;
 };
 

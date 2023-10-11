@@ -279,9 +279,9 @@ class MaxToon(MagicWord):
         toon.b_setQuestCarryLimit(ToontownGlobals.MaxQuestCarryLimit)
         toon.b_setRewardHistory(Quests.LOOPING_FINAL_TIER, [])
 
-        toon.b_setCogParts([*CogDisguiseGlobals.PartsPerSuitBitmasks])
+        toon.b_setCogParts([*CogDisguiseGlobals.PartsPerCogBitmasks])
         toon.b_setCogTypes([CogDNA.cogsPerDept - 1] * 4)
-        toon.b_setCogLevels([ToontownGlobals.MaxCogSuitLevel] * 4)
+        toon.b_setCogLevels([ToontownGlobals.MaxCogDisguiseLevel] * 4)
 
         return f"Successfully maxed {toon.getName()}!"
     

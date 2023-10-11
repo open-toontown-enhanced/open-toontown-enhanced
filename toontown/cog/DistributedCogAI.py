@@ -185,9 +185,9 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
     def getPathState(self):
         return self.pathState
 
-    def d_debugSuitPosition(self, elapsed, currentLeg, x, y, timestamp):
+    def d_debugCogPosition(self, elapsed, currentLeg, x, y, timestamp):
         timestamp = globalClockDelta.localToNetworkTime(timestamp)
-        self.sendUpdate('debugSuitPosition', [
+        self.sendUpdate('debugCogPosition', [
          elapsed, currentLeg, x, y, timestamp])
 
     def initializePath(self):
@@ -225,7 +225,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             if self.DEBUG_COG_POSITIONS:
                 leg = self.legList.getLeg(nextLeg)
                 pos = leg.getPosAtTime(elapsed - leg.getStartTime())
-                self.d_debugSuitPosition(elapsed, nextLeg, pos[0], pos[1], now)
+                self.d_debugCogPosition(elapsed, nextLeg, pos[0], pos[1], now)
         if now - self.pathPositionTimestamp > self.UPDATE_TIMESTAMP_INTERVAL:
             self.resync()
         if self.pathState != 1:
@@ -301,7 +301,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                 return
             building.door.setDoorLock(FADoorCodes.COG_APPROACHING)
         else:
-            if not building.isSuitBlock():
+            if not building.isCogBlock():
                 self.flyAwayNow()
         return
 
@@ -319,7 +319,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
     def openSuitDoor(self):
         blockNumber = self.buildingDestination
         building = self.sp.buildingMgr.getBuilding(blockNumber)
-        if not building.isSuitBlock():
+        if not building.isCogBlock():
             self.flyAwayNow()
             return
 
@@ -340,7 +340,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         if not self.COG_BUILDINGS:
             return
         blockNumber = self.buildingDestination
-        if not self.sp.buildingMgr.isSuitBlock(blockNumber):
+        if not self.sp.buildingMgr.isCogBlock(blockNumber):
             self.notify.debug('Suit %d taking over building %d in %d' % (self.getDoId(), blockNumber, self.zoneId))
             difficulty = self.getActualLevel() - 1
             dept = CogDNA.getCogDept(self.dna.name)

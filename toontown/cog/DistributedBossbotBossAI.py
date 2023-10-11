@@ -97,14 +97,14 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             if simbase.config.GetBool('bossbot-boss-cheat', 0):
                 listVersion[14] = weakenedValue
                 CogBuildingGlobals.CogBuildingInfo = tuple(listVersion)
-            retval = self.invokeSuitPlanner(14, 0)
+            retval = self.invokeCogPlanner(14, 0)
             return retval
         else:
             cogs = self.generateDinerCogs()
             return cogs
 
-    def invokeSuitPlanner(self, buildingCode, skelecog):
-        cogs = DistributedBossCogAI.DistributedBossCogAI.invokeSuitPlanner(self, buildingCode, skelecog)
+    def invokeCogPlanner(self, buildingCode, skelecog):
+        cogs = DistributedBossCogAI.DistributedBossCogAI.invokeCogPlanner(self, buildingCode, skelecog)
         activeCogs = cogs['activeCogs'][:]
         reserveCogs = cogs['reserveCogs'][:]
         if len(activeCogs) + len(reserveCogs) >= 4:
@@ -708,22 +708,22 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         return returnedToonId
 
     def getToonDifficulty(self):
-        highestCogSuitLevel = 0
-        totalCogSuitLevels = 0.0
+        highestCogDisguiseLevel = 0
+        totalCogDisguiseLevels = 0.0
         totalNumToons = 0.0
         for toonId in self.involvedToons:
             toon = simbase.air.doId2do.get(toonId)
             if toon:
                 toonLevel = toon.getNumPromotions(self.dept)
-                totalCogSuitLevels += toonLevel
+                totalCogDisguiseLevels += toonLevel
                 totalNumToons += 1
-                if toonLevel > highestCogSuitLevel:
-                    highestCogSuitLevel = toonLevel
+                if toonLevel > highestCogDisguiseLevel:
+                    highestCogDisguiseLevel = toonLevel
 
         if not totalNumToons:
             totalNumToons = 1.0
-        averageLevel = totalCogSuitLevels / totalNumToons
-        self.notify.debug('toons average level = %f, highest level = %d' % (averageLevel, highestCogSuitLevel))
+        averageLevel = totalCogDisguiseLevels / totalNumToons
+        self.notify.debug('toons average level = %f, highest level = %d' % (averageLevel, highestCogDisguiseLevel))
         retval = min(averageLevel, self.maxToonLevels)
         return retval
 

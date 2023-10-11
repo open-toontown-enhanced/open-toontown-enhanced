@@ -1,4 +1,4 @@
-""" SuitPlannerTutorial module: contains the SuitPlannerTutorial class
+""" CogPlannerTutorial module: contains the CogPlannerTutorial class
     which handles management of the cog you will fight during the
     tutorial."""
 
@@ -8,14 +8,14 @@ from direct.directnotify import DirectNotifyGlobal
 from toontown.cog import DistributedTutorialCogAI
 from . import TutorialBattleManagerAI
 
-class SuitPlannerTutorialAI:
+class CogPlannerTutorialAI:
     """
-    SuitPlannerTutorialAI: manages the single cog that you fight during
+    CogPlannerTutorialAI: manages the single cog that you fight during
     the tutorial.
     """
 
     notify = DirectNotifyGlobal.directNotify.newCategory(
-        'SuitPlannerTutorialAI')
+        'CogPlannerTutorialAI')
 
     def __init__(self, air, zoneId, battleOverCallback):
         # Store these things
@@ -68,7 +68,7 @@ class SuitPlannerTutorialAI:
             finishCallback=self.battleOverCallback)
         return 1
 
-    def removeSuit(self, cog):
+    def removeCog(self, cog):
         # Get rid of the cog.
         cog.requestDelete()
         self.cog = None

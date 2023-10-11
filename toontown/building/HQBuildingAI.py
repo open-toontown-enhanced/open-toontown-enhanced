@@ -57,7 +57,7 @@ class HQBuildingAI:
         self.insideDoor0 = insideDoor0
         self.insideDoor1 = insideDoor1
 
-    def isSuitBlock(self):
+    def isCogBlock(self):
         return 0
 
     def isCogBuilding(self):

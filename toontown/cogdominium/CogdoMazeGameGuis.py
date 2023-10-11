@@ -82,7 +82,7 @@ class CogdoMazeMapGui(MazeMapGui):
         marker.reparentTo(self)
         self._cog2marker[cog] = marker
 
-    def removeSuit(self, cog):
+    def removeCog(self, cog):
         self._cog2marker[cog].removeNode()
         del self._cog2marker[cog]
 

@@ -1,6 +1,6 @@
 from otp.level import DistributedLevelAI
 from direct.directnotify import DirectNotifyGlobal
-from toontown.coghq import LevelSuitPlannerAI, LawOfficeBase
+from toontown.coghq import LevelCogPlannerAI, LawOfficeBase
 from direct.task import Task
 from toontown.coghq import FactoryEntityCreatorAI, FactorySpecs
 from otp.level import LevelSpec
@@ -49,7 +49,7 @@ class DistributedLawOfficeFloorAI(DistributedLevelAI.DistributedLevelAI, LawOffi
         DistributedLevelAI.DistributedLevelAI.generate(self, self.factorySpec)
         self.notify.info('creating cogs')
         cogSpecModule = FactorySpecs.getCogSpecModule(self.lawOfficeId)
-        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedFactoryCogAI.DistributedFactoryCogAI, DistributedBattleFactoryAI.DistributedBattleFactoryAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells)
+        self.planner = LevelCogPlannerAI.LevelCogPlannerAI(self.air, self, DistributedFactoryCogAI.DistributedFactoryCogAI, DistributedBattleFactoryAI.DistributedBattleFactoryAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells)
         cogHandles = self.planner.genCogs()
         messenger.send('plannerCreated-' + str(self.doId))
         self.cogs = cogHandles['activeCogs']

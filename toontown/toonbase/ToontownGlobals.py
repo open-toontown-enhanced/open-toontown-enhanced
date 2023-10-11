@@ -100,8 +100,8 @@ CEVirtual = 14
 MaxHpLimit = 137
 MaxCarryLimit = 80
 MaxQuestCarryLimit = 4
-MaxCogSuitLevel = 50 - 1
-CogSuitHPLevels = (15 - 1,
+MaxCogDisguiseLevel = 50 - 1
+CogDisguiseHPLevels = (15 - 1,
  20 - 1,
  30 - 1,
  40 - 1,
@@ -289,13 +289,13 @@ StageNumRooms = {LawbotStageIntA: 2 * (6,) + 5 * (7,) + 5 * (8,) + 5 * (9,) + 3 
  LawbotStageIntB: 3 * (8,) + 6 * (9,) + 6 * (10,) + 5 * (11,),
  LawbotStageIntC: 4 * (10,) + 10 * (11,) + 6 * (12,),
  LawbotStageIntD: 4 * (10,) + 10 * (11,) + 6 * (12,)}
-FT_FullSuit = 'fullSuit'
+FT_FullDisguise = 'fullDisguise'
 FT_Leg = 'leg'
 FT_Arm = 'arm'
 FT_Torso = 'torso'
-factoryId2factoryType = {MockupFactoryId: FT_FullSuit,
- SellbotFactoryInt: FT_FullSuit,
- LawbotOfficeInt: FT_FullSuit}
+factoryId2factoryType = {MockupFactoryId: FT_FullDisguise,
+ SellbotFactoryInt: FT_FullDisguise,
+ LawbotOfficeInt: FT_FullDisguise}
 StreetNames = TTLocalizer.GlobalStreetNames
 StreetBranchZones = list(StreetNames.keys())
 Hoods = (DonaldsDock,
@@ -847,10 +847,10 @@ WakeWalkDelta = 0.2
 NoItems = 0
 NewItems = 1
 OldItems = 2
-SuitInvasionBegin = 0
-SuitInvasionUpdate = 1
-SuitInvasionEnd = 2
-SuitInvasionBulletin = 3
+CogInvasionBegin = 0
+CogInvasionUpdate = 1
+CogInvasionEnd = 2
+CogInvasionBulletin = 3
 NO_HOLIDAY = 0
 JULY4_FIREWORKS = 1
 NEWYEARS_FIREWORKS = 2

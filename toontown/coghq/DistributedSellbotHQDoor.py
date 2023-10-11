@@ -11,12 +11,12 @@ class DistributedSellbotHQDoor(DistributedCogHQDoor.DistributedCogHQDoor):
 
     def informPlayer(self, cogType):
         self.notify.debugStateCall(self)
-        if cogType == CogDisguiseGlobals.cogTypes.NoSuit:
+        if cogType == CogDisguiseGlobals.cogTypes.NoDisguise:
             popupMsg = TTLocalizer.SellbotRentalSuitMessage
         elif cogType == CogDisguiseGlobals.cogTypes.NoMerits:
-            popupMsg = TTLocalizer.SellbotCogSuitNoMeritsMessage
-        elif cogType == CogDisguiseGlobals.cogTypes.FullSuit:
-            popupMsg = TTLocalizer.SellbotCogSuitHasMeritsMessage
+            popupMsg = TTLocalizer.SellbotCogDisguiseNoMeritsMessage
+        elif cogType == CogDisguiseGlobals.cogTypes.FullDisguise:
+            popupMsg = TTLocalizer.SellbotCogDisguiseHasMeritsMessage
         else:
             popupMsg = TTLocalizer.FADoorCodes_SB_DISGUISE_INCOMPLETE
         localAvatar.elevatorNotifier.showMeWithoutStopping(popupMsg, pos=(0, 0, 0.26), ttDialog=True)

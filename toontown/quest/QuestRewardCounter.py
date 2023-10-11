@@ -73,7 +73,7 @@ class QuestRewardCounter:
             level = levels[dept]
             type = cogTypes[dept]
             if type >= CogDNA.cogsPerDept - 1:
-                for milestoneLevel in ToontownGlobals.CogSuitHPLevels:
+                for milestoneLevel in ToontownGlobals.CogDisguiseHPLevels:
                     if level >= milestoneLevel:
                         cogHp += 1
                     else:

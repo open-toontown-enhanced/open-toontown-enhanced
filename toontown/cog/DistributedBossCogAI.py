@@ -5,7 +5,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toon import InventoryBase
 from toontown.battle import DistributedBattleFinalAI
-from toontown.building import SuitPlannerInteriorAI
+from toontown.building import CogPlannerInteriorAI
 from toontown.battle import BattleBase
 from toontown.coghq import CogDisguiseGlobals
 from panda3d.core import *
@@ -157,7 +157,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             if hasattr(toon, 'forceRentalDisguise') and toon.forceRentalDisguise:
                 return True
             else:
-                return not CogDisguiseGlobals.isPaidSuitComplete(toon, toon.getCogParts(), self.dept)
+                return not CogDisguiseGlobals.isPaidDisguiseComplete(toon, toon.getCogParts(), self.dept)
         else:
             self.notify.warning('isToonWearingRentalSuit: toonId %s does not exist' % toonId)
             return False
@@ -510,7 +510,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         cogNode = battleNode.attachNewNode('cogNode')
         cogNode.setPos(0, 1, 0)
         battle.pos = battleNode.getPos(NodePath())
-        battle.initialSuitPos = cogNode.getPos(NodePath())
+        battle.initialCogPos = cogNode.getPos(NodePath())
 
     def moveCogs(self, active):
         for cog in active:
@@ -552,8 +552,8 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             self.b_setState(self.postBattleState)
         return
 
-    def invokeSuitPlanner(self, buildingCode, skelecog):
-        planner = SuitPlannerInteriorAI.SuitPlannerInteriorAI(1, buildingCode, self.dna.dept, self.zoneId)
+    def invokeCogPlanner(self, buildingCode, skelecog):
+        planner = CogPlannerInteriorAI.CogPlannerInteriorAI(1, buildingCode, self.dna.dept, self.zoneId)
         planner.respectInvasions = 0
         cogs = planner.genFloorCogs(0)
         if skelecog:

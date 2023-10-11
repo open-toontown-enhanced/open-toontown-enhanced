@@ -6,7 +6,7 @@ from . import MovieCamera
 from direct.directnotify import DirectNotifyGlobal
 from . import MovieUtil
 from . import MovieNPCSOS
-from .MovieUtil import calcAvgSuitPos
+from .MovieUtil import calcAvgCogPos
 from direct.showutil import Effects
 import functools
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieDrop')
@@ -160,7 +160,7 @@ def __doGroupDrops(groupDrops):
     for drop in groupDrops:
         battle = drop['battle']
         level = drop['level']
-        centerPos = calcAvgSuitPos(drop)
+        centerPos = calcAvgCogPos(drop)
         targets = drop['target']
         numTargets = len(targets)
         closestTarget = -1
@@ -199,7 +199,7 @@ def __dropGroupObject(drop, delay, closestTarget, alreadyDodged, alreadyTeased):
     returnedParallel = __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops)
     for i in range(len(drop['target'])):
         target = drop['target'][i]
-        cogTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
+        cogTrack = __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
         if cogTrack:
             returnedParallel.append(cogTrack)
 
@@ -208,7 +208,7 @@ def __dropGroupObject(drop, delay, closestTarget, alreadyDodged, alreadyTeased):
 
 def __dropObjectForSingle(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops):
     singleDropParallel = __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops)
-    cogTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
+    cogTrack = __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
     if cogTrack:
         singleDropParallel.append(cogTrack)
     return singleDropParallel
@@ -277,7 +277,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
 
     def posObject(object, cog, level, majorObject, miss, battle = battle):
         object.reparentTo(battle)
-        if battle.isSuitLured(cog):
+        if battle.isCogLured(cog):
             cogPos, cogHpr = battle.getActorPosHpr(cog)
             object.setPos(cogPos)
             object.setHpr(cogHpr)
@@ -361,7 +361,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
 
     def posShadow(dropShadow = dropShadow, cog = cog, battle = battle, hp = hp, level = level):
         dropShadow.reparentTo(battle)
-        if battle.isSuitLured(cog):
+        if battle.isCogLured(cog):
             cogPos, cogHpr = battle.getActorPosHpr(cog)
             dropShadow.setPos(cogPos)
             dropShadow.setHpr(cogHpr)
@@ -378,7 +378,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
     return Parallel(toonTrack, soundTrack, buttonTrack, objectTrack, shadowTrack)
 
 
-def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs):
+def __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs):
     toon = drop['toon']
     if 'npc' in drop:
         toon = drop['npc']

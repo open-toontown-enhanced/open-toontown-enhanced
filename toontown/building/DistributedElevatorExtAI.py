@@ -145,7 +145,7 @@ class DistributedElevatorExtAI(DistributedElevatorAI.DistributedElevatorAI):
         return Task.done
 
     def _createInterior(self):
-        self.bldg.createSuitInterior()
+        self.bldg.createCogInterior()
 
     def elevatorClosed(self):
         numPlayers = self.countFullSeats()

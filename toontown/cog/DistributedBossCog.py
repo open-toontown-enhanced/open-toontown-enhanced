@@ -64,7 +64,7 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
 
     def announceGenerate(self):
         DistributedAvatar.DistributedAvatar.announceGenerate(self)
-        self.prevCogSuitLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
+        self.prevCogDisguiseLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
         nearBubble = CollisionSphere(0, 0, 0, 50)
         nearBubble.setTangible(0)
         nearBubbleNode = CollisionNode('NearBoss')
@@ -561,14 +561,14 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
         self.closeDoors.start()
         self.closeDoors.finish()
 
-    def putToonInCogSuit(self, toon):
+    def putToonInCogDisguise(self, toon):
         if not toon.isDisguised:
             deptIndex = CogDNA.cogDepts.index(self.style.dept)
             toon.setCogIndex(deptIndex)
         toon.getGeomNode().hide()
 
     def placeToonInElevator(self, toon):
-        self.putToonInCogSuit(toon)
+        self.putToonInCogDisguise(toon)
         toonIndex = self.involvedToons.index(toon.doId)
         toon.reparentTo(self.elevatorModel)
         toon.setPos(*ElevatorConstants.BigElevatorPoints[toonIndex])
@@ -1125,7 +1125,7 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
             makeWaiter = Sequence()
             if waiter:
                 makeWaiter = Func(toon.makeWaiter)
-            cogsOff.append(Sequence(Func(dustCloud.reparentTo, toon), Parallel(dustCloud.track, Sequence(Wait(0.3), Func(self.putToonInCogSuit, toon), makeWaiter, Wait(0.7))), Func(dustCloud.detachNode)))
+            cogsOff.append(Sequence(Func(dustCloud.reparentTo, toon), Parallel(dustCloud.track, Sequence(Wait(0.3), Func(self.putToonInCogDisguise, toon), makeWaiter, Wait(0.7))), Func(dustCloud.detachNode)))
 
         seq.append(cogsOff)
         return seq

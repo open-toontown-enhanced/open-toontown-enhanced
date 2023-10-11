@@ -59,7 +59,7 @@ if simbase.wantKarts:
 class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoothNodeAI.DistributedSmoothNodeAI, PetLookerAI.PetLookerAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedToonAI')
     maxCallsPerNPC = 100
-    partTypeIds = {ToontownGlobals.FT_FullSuit: (CogDisguiseGlobals.leftLegIndex,
+    partTypeIds = {ToontownGlobals.FT_FullDisguise: (CogDisguiseGlobals.leftLegIndex,
                                    CogDisguiseGlobals.rightLegIndex,
                                    CogDisguiseGlobals.torsoIndex,
                                    CogDisguiseGlobals.leftArmIndex,
@@ -340,10 +340,10 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         if self.cogIndex != -1 and not ToontownAccessAI.canWearSuit(self.doId, newZoneId):
             if simbase.config.GetBool('cogsuit-hack-prevent', False):
                 self.b_setCogIndex(-1)
-            if not simbase.air.cogSuitMessageSent:
+            if not simbase.air.cogDisguiseMessageSent:
                 self.notify.warning('%s handleLogicalZoneChange as a cog: %s' % (self.doId, self.cogIndex))
                 self.air.writeServerEvent('suspicious', self.doId, 'Toon wearing a cog suit with index: %s in a zone they are not allowed to in. Zone: %s' % (self.cogIndex, newZoneId))
-                simbase.air.cogSuitMessageSent = True
+                simbase.air.cogDisguiseMessageSent = True
                 if simbase.config.GetBool('want-ban-wrong-suit-place', False):
                     commentStr = 'Toon %s wearing a suit in a zone they are not allowed to in. Zone: %s' % (self.doId, newZoneId)
                     dislId = self.DISLid
@@ -1280,7 +1280,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         if not lastCog:
             maxLevel = CogBattleGlobals.CogAttributes[cogTypeStr]['level'] + 4
         else:
-            maxLevel = ToontownGlobals.MaxCogSuitLevel
+            maxLevel = ToontownGlobals.MaxCogDisguiseLevel
         if newLevel > maxLevel:
             if not lastCog:
                 self.cogTypes[dept] += 1
@@ -1292,12 +1292,12 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             self.cogLevels[dept] += 1
             self.d_setCogLevels(self.cogLevels)
             if lastCog:
-                if self.cogLevels[dept] in ToontownGlobals.CogSuitHPLevels:
+                if self.cogLevels[dept] in ToontownGlobals.CogDisguiseHPLevels:
                     maxHp = self.getMaxHp()
                     maxHp = min(ToontownGlobals.MaxHpLimit, maxHp + 1)
                     self.b_setMaxHp(maxHp)
                     self.toonUp(maxHp)
-        self.air.writeServerEvent('cogSuit', self.doId, '%s|%s|%s' % (dept, self.cogTypes[dept], self.cogLevels[dept]))
+        self.air.writeServerEvent('cogDisguise', self.doId, '%s|%s|%s' % (dept, self.cogTypes[dept], self.cogLevels[dept]))
 
     def getNumPromotions(self, dept):
         if dept not in CogDNA.cogDepts:
@@ -1406,13 +1406,13 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         self.d_promote(dept)
 
     def promote(self, dept):
-        if self.cogLevels[dept] < ToontownGlobals.MaxCogSuitLevel:
+        if self.cogLevels[dept] < ToontownGlobals.MaxCogDisguiseLevel:
             self.cogMerits[dept] = 0
         self.incCogLevel(dept)
 
     def d_promote(self, dept):
         merits = self.getCogMerits()
-        if self.cogLevels[dept] < ToontownGlobals.MaxCogSuitLevel:
+        if self.cogLevels[dept] < ToontownGlobals.MaxCogDisguiseLevel:
             merits[dept] = 0
         self.d_setCogMerits(merits)
 
@@ -1433,7 +1433,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
 
     def setCogIndex(self, index):
         if index != -1 and not ToontownAccessAI.canWearSuit(self.doId, self.zoneId):
-            if not simbase.air.cogSuitMessageSent:
+            if not simbase.air.cogDisguiseMessageSent:
                 self.notify.warning('%s setCogIndex invalid: %s' % (self.doId, index))
                 if simbase.config.GetBool('want-ban-wrong-cog-place', False):
                     commentStr = 'Toon %s trying to set cog index to %s in Zone: %s' % (self.doId, index, self.zoneId)

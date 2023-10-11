@@ -33,7 +33,7 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
 
     def requestRemoval(self):
         if self.sp != None:
-            self.sp.removeSuit(self)
+            self.sp.removeCog(self)
         else:
             self.requestDelete()
         return

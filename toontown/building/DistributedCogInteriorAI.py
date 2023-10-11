@@ -94,7 +94,7 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
             if self.fsm.getCurrentState().getName() == 'Resting':
                 pass
             elif self.battle == None:
-                self.bldg.deleteSuitInterior()
+                self.bldg.deleteCogInterior()
         return
 
     def __addToon(self, toonId):
@@ -355,7 +355,7 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
                 self.b_setState('Resting')
 
     def __doDeleteInterior(self, task):
-        self.bldg.deleteSuitInterior()
+        self.bldg.deleteCogInterior()
 
     def enterBattle(self):
         if self.battle == None:
@@ -397,7 +397,7 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
         self.d_setToons()
         if len(self.toons) == 0:
-            self.bldg.deleteSuitInterior()
+            self.bldg.deleteCogInterior()
         else:
             if self.currentFloor == self.topFloor:
                 self.battle.resume(self.currentFloor, topFloor=1)
@@ -431,7 +431,7 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
                 return
         numOfEmptySeats = seats.count(None)
         if numOfEmptySeats == 4:
-            self.bldg.deleteSuitInterior()
+            self.bldg.deleteCogInterior()
             return
         else:
             if numOfEmptySeats >= 0 and numOfEmptySeats <= 3:

@@ -46,7 +46,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.elevatorName = self.__uniqueName('elevator')
         self.floorModel = None
         self.elevatorOutOpen = 0
-        self.BottomFloor_SuitPositions = [Point3(0, 15, 0),
+        self.BottomFloor_CogPositions = [Point3(0, 15, 0),
          Point3(10, 20, 0),
          Point3(-7, 24, 0),
          Point3(-10, 0, 0)]
@@ -54,7 +54,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
          170,
          -91,
          -44]
-        self.Cubicle_SuitPositions = [Point3(0, 18, 0),
+        self.Cubicle_CogPositions = [Point3(0, 18, 0),
          Point3(10, 12, 0),
          Point3(-9, 11, 0),
          Point3(-3, 13, 0)]
@@ -62,7 +62,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
          56,
          -52,
          10]
-        self.BossOffice_SuitPositions = [Point3(0, 15, 0),
+        self.BossOffice_CogPositions = [Point3(0, 15, 0),
          Point3(10, 20, 0),
          Point3(-10, 6, 0),
          Point3(-17, 30, 0)]
@@ -401,7 +401,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
 
     def __playElevator(self, ts, name, callback):
         SuitHs = []
-        SuitPositions = []
+        CogPositions = []
         if self.floorModel:
             self.floorModel.removeNode()
             self.floorModel = None
@@ -409,7 +409,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
             self.cage = None
         if self.currentFloor == 0:
             SuitHs = self.BottomFloor_SuitHs
-            SuitPositions = self.BottomFloor_SuitPositions
+            CogPositions = self.BottomFloor_CogPositions
         if self.isBossFloor(self.currentFloor):
             self.barrelRoom.unload()
             self.floorModel = loader.loadModel('phase_5/models/cogdominium/tt_m_ara_crg_penthouse')
@@ -429,14 +429,14 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
                     paintingModel.reparentTo(loc)
 
             SuitHs = self.BossOffice_SuitHs
-            SuitPositions = self.BossOffice_SuitPositions
+            CogPositions = self.BossOffice_CogPositions
             self.__makeShopOwnerNpc()
         else:
             if self._wantBarrelRoom:
                 self.barrelRoom.load()
                 self.barrelRoom.hide()
             SuitHs = self.Cubicle_SuitHs
-            SuitPositions = self.Cubicle_SuitPositions
+            CogPositions = self.Cubicle_CogPositions
         if self.floorModel:
             self.floorModel.reparentTo(render)
             if self.isBossFloor(self.currentFloor):
@@ -468,7 +468,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.elevOut = elevOut
         self._haveEntranceElevator.set(True)
         for index in range(len(self.cogs)):
-            self.cogs[index].setPos(SuitPositions[index])
+            self.cogs[index].setPos(CogPositions[index])
             if len(self.cogs) > 2:
                 self.cogs[index].setH(SuitHs[index])
             else:

@@ -10,7 +10,7 @@ import random
 import functools
 from . import MovieCamera
 from . import MovieUtil
-from .MovieUtil import calcAvgSuitPos
+from .MovieUtil import calcAvgCogPos
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieThrow')
 hitSoundFiles = ('AA_tart_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_wholepie_only.ogg', 'AA_wholepie_only.ogg')
 tPieLeavesHand = 2.7
@@ -483,10 +483,10 @@ def __throwGroupPie(throw, delay, groupHitDict):
     sidestep = throw['sidestep']
     hpbonus = throw['hpbonus']
     numTargets = len(throw['target'])
-    avgSuitPos = calcAvgSuitPos(throw)
+    avgCogPos = calcAvgCogPos(throw)
     origHpr = toon.getHpr(battle)
     toonTrack = Sequence()
-    toonFace = Func(toon.headsUp, battle, avgSuitPos)
+    toonFace = Func(toon.headsUp, battle, avgCogPos)
     toonTrack.append(Wait(delay))
     toonTrack.append(toonFace)
     toonTrack.append(ActorInterval(toon, 'throw'))

@@ -15,7 +15,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxCogs=maxCogs, tutorialFlag=tutorialFlag, interactivePropTrackBonus=interactivePropTrackBonus)
         self.battleMgr = battleMgr
         self.pos = pos
-        self.initialSuitPos = cog.getConfrontPosHpr()[0]
+        self.initialCogPos = cog.getConfrontPosHpr()[0]
         self.initialToonPos = cog.getConfrontPosHpr()[0]
         self.addCog(cog)
         self.avId = toonId
@@ -56,7 +56,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.joinableFsm.request('Joinable')
         self.runableFsm.request('Unrunable')
         self.cogs[0].releaseControl()
-        timeForFaceoff = self.calcFaceoffTime(self.pos, self.initialSuitPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME
+        timeForFaceoff = self.calcFaceoffTime(self.pos, self.initialCogPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME
         if self.interactivePropTrackBonus >= 0:
             timeForFaceoff += FACEOFF_LOOK_AT_PROP_T
         self.timer.startCallback(timeForFaceoff, self.__serverFaceOffDone)

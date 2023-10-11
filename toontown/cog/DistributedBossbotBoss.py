@@ -417,7 +417,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         for toonId in self.involvedToons:
             toon = self.cr.doId2do.get(toonId)
             if toon:
-                self.putToonInCogSuit(toon)
+                self.putToonInCogDisguise(toon)
 
         self.servingTimer = ToontownTimer.ToontownTimer()
         self.servingTimer.posInTopRightCorner()
@@ -532,7 +532,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         for toonId in self.involvedToons:
             toon = self.cr.doId2do.get(toonId)
             if toon:
-                self.putToonInCogSuit(toon)
+                self.putToonInCogDisguise(toon)
 
         intervalName = 'PrepareBattleThreeMovie'
         seq = Sequence(self.makePrepareBattleThreeMovie(), Func(self.__onToBattleThree), name=intervalName)
@@ -838,14 +838,14 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         return bossTrack
 
     def __talkAboutPromotion(self, speech):
-        if self.prevCogSuitLevel < ToontownGlobals.MaxCogSuitLevel:
-            newCogSuitLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
-            if newCogSuitLevel == ToontownGlobals.MaxCogSuitLevel:
-                speech += TTLocalizer.BossbotRTLastPromotion % (ToontownGlobals.MaxCogSuitLevel + 1)
-            if newCogSuitLevel in ToontownGlobals.CogSuitHPLevels:
+        if self.prevCogDisguiseLevel < ToontownGlobals.MaxCogDisguiseLevel:
+            newCogDisguiseLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
+            if newCogDisguiseLevel == ToontownGlobals.MaxCogDisguiseLevel:
+                speech += TTLocalizer.BossbotRTLastPromotion % (ToontownGlobals.MaxCogDisguiseLevel + 1)
+            if newCogDisguiseLevel in ToontownGlobals.CogDisguiseHPLevels:
                 speech += TTLocalizer.BossbotRTHPBoost
         else:
-            speech += TTLocalizer.BossbotRTMaxed % (ToontownGlobals.MaxCogSuitLevel + 1)
+            speech += TTLocalizer.BossbotRTMaxed % (ToontownGlobals.MaxCogDisguiseLevel + 1)
         return speech
 
     def __arrangeToonsAroundResistanceToonForReward(self):

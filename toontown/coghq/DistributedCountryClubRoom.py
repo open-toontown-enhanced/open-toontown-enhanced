@@ -182,10 +182,10 @@ class DistributedCountryClubRoom(DistributedLevel.DistributedLevel, CountryClubR
         bboard.remove(self.getReadyPostName())
         DistributedLevel.DistributedLevel.disable(self)
 
-    def setCogs(self, cogIds, reserveSuitIds):
-        oldSuitIds = list(self.cogIds)
+    def setCogs(self, cogIds, reserveCogIds):
+        oldCogIds = list(self.cogIds)
         self.cogIds = cogIds
-        self.reserveSuitIds = reserveSuitIds
+        self.reserveCogIds = reserveCogIds
 
     def reservesJoining(self):
         pass

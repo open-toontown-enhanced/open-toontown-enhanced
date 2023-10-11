@@ -278,7 +278,7 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
     return Parallel(propTrack, throwTrack, toonTrack)
 
 
-def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr = None, explode = 0, visibleOnlyForThisSuitId = None):
+def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr = None, explode = 0, visibleOnlyForThisCogId = None):
     toon = trap['toon']
     if 'npc' in trap:
         toon = trap['npc']
@@ -302,7 +302,7 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
         targetPos = cogPos
         trapProp = MovieUtil.copyProp(prop)
         showThisTrap = True
-        if visibleOnlyForThisSuitId and visibleOnlyForThisSuitId != cog.doId:
+        if visibleOnlyForThisCogId and visibleOnlyForThisCogId != cog.doId:
             showThisTrap = False
         trapTrack = Sequence()
         trapTrack.append(Wait(trapDelay))
@@ -412,7 +412,7 @@ def __trapTrain(trap, trapProps, explode):
         toon = trap['npc']
     targets = trap['target']
     battle = trap['battle']
-    visibleOnlyForThisSuitId = 0
+    visibleOnlyForThisCogId = 0
     centerSuit = None
     closestXDistance = 10000
     for target in targets:
@@ -420,7 +420,7 @@ def __trapTrain(trap, trapProps, explode):
         cogPoint, cogHpr = battle.getActorPosHpr(cog)
         xDistance = abs(cogPoint.getX())
         if xDistance < closestXDistance:
-            visibleOnlyForThisSuitId = cog.doId
+            visibleOnlyForThisCogId = cog.doId
             closestXDistance = xDistance
             centerSuit = cog
         notify.debug('toon: %s doing traintrack in front of cog: %d' % (toon.getName(), cog.doId))

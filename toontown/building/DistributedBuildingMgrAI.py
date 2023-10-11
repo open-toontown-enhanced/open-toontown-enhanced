@@ -40,13 +40,13 @@ class DistributedBuildingMgrAI:
         self.doLaterTask = None
         return Task.done
 
-    def isSuitBlock(self, blockNumber):
-        return self.__buildings[blockNumber].isSuitBlock()
+    def isCogBlock(self, blockNumber):
+        return self.__buildings[blockNumber].isCogBlock()
 
     def getCogBlocks(self):
         blocks = []
         for i in list(self.__buildings.values()):
-            if i.isSuitBlock():
+            if i.isCogBlock():
                 blocks.append(i.getBlock()[0])
 
         return blocks
@@ -75,7 +75,7 @@ class DistributedBuildingMgrAI:
         for i in list(self.__buildings.values()):
             if isinstance(i, HQBuildingAI.HQBuildingAI):
                 continue
-            if not i.isSuitBlock():
+            if not i.isCogBlock():
                 blocks.append(i.getBlock()[0])
 
         return blocks

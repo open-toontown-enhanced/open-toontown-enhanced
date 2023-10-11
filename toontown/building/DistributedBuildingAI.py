@@ -7,11 +7,11 @@ from direct.distributed import DistributedObjectAI
 from direct.fsm import State
 from direct.fsm import ClassicFSM, State
 from toontown.toonbase.ToontownGlobals import ToonHall
-from . import DistributedToonInteriorAI, DistributedToonHallInteriorAI, DistributedCogInteriorAI, DistributedDoorAI, DoorTypes, DistributedElevatorExtAI, DistributedKnockKnockDoorAI, SuitPlannerInteriorAI, CogBuildingGlobals, FADoorCodes
+from . import DistributedToonInteriorAI, DistributedToonHallInteriorAI, DistributedCogInteriorAI, DistributedDoorAI, DoorTypes, DistributedElevatorExtAI, DistributedKnockKnockDoorAI, CogPlannerInteriorAI, CogBuildingGlobals, FADoorCodes
 from toontown.hood import ZoneUtil
 import random, time
 from toontown.cogdominium.DistributedCogdoInteriorAI import DistributedCogdoInteriorAI
-from toontown.cogdominium.SuitPlannerCogdoInteriorAI import SuitPlannerCogdoInteriorAI
+from toontown.cogdominium.CogPlannerCogdoInteriorAI import CogPlannerCogdoInteriorAI
 from toontown.cogdominium.CogdoLayout import CogdoLayout
 from toontown.cogdominium.DistributedCogdoElevatorExtAI import DistributedCogdoElevatorExtAI
 
@@ -182,7 +182,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         state = self.fsm.getCurrentState().getName()
         return state == 'cogdo' or state == 'becomingCogdo' or state == 'becomingCogdoFromCogdo' or state == 'clearOutToonInteriorForCogdo'
 
-    def isSuitBlock(self):
+    def isCogBlock(self):
         state = self.fsm.getCurrentState().getName()
         return self.isCogBuilding() or self.isCogdo()
 
@@ -483,7 +483,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.sendUpdate('setCogData', [
          ord(self.track), self.difficulty, self.numFloors])
         zoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
-        self.planner = SuitPlannerInteriorAI.SuitPlannerInteriorAI(self.numFloors, self.difficulty, self.track, interiorZoneId)
+        self.planner = CogPlannerInteriorAI.CogPlannerInteriorAI(self.numFloors, self.difficulty, self.track, interiorZoneId)
         self.d_setState('cog')
         exteriorZoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self.elevator = DistributedElevatorExtAI.DistributedElevatorExtAI(self.air, self)
@@ -551,7 +551,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
          ord(self.track), self.difficulty, self.numFloors])
         zoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self._cogdoLayout = CogdoLayout(self.numFloors)
-        self.planner = SuitPlannerCogdoInteriorAI(self._cogdoLayout, self.difficulty, self.track, interiorZoneId)
+        self.planner = CogPlannerCogdoInteriorAI(self._cogdoLayout, self.difficulty, self.track, interiorZoneId)
         self.d_setState('cogdo')
         exteriorZoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self.elevator = DistributedCogdoElevatorExtAI(self.air, self, fSkipOpening=self.fSkipElevatorOpening)
@@ -568,14 +568,14 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
     def setCogPlannerExt(self, planner):
         self.cogPlannerExt = planner
 
-    def _createSuitInterior(self):
+    def _createCogInterior(self):
         return DistributedCogInteriorAI.DistributedCogInteriorAI(self.air, self.elevator)
 
     def _createCogdoInterior(self):
         return DistributedCogdoInteriorAI(self.air, self.elevator)
 
-    def createSuitInterior(self):
-        self.interior = self._createSuitInterior()
+    def createCogInterior(self):
+        self.interior = self._createCogInterior()
         dummy, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self.interior.fsm.request('WaitForAllToonsInside')
         self.interior.generateWithRequired(interiorZoneId)
@@ -586,7 +586,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.interior.fsm.request('WaitForAllToonsInside')
         self.interior.generateWithRequired(interiorZoneId)
 
-    def deleteSuitInterior(self):
+    def deleteCogInterior(self):
         if hasattr(self, 'interior'):
             self.interior.requestDelete()
             del self.interior
@@ -595,4 +595,4 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
             self.elevator.open()
 
     def deleteCogdoInterior(self):
-        self.deleteSuitInterior()
+        self.deleteCogInterior()

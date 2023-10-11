@@ -11,7 +11,7 @@ DeptColors = (Vec4(0.647, 0.608, 0.596, 1.0),
  Vec4(0.588, 0.635, 0.671, 1.0),
  Vec4(0.596, 0.714, 0.659, 1.0),
  Vec4(0.761, 0.678, 0.69, 1.0))
-NumParts = max(CogDisguiseGlobals.PartsPerSuit)
+NumParts = max(CogDisguiseGlobals.PartsPerCog)
 PartNames = ('lUpleg', 'lLowleg', 'lShoe', 'rUpleg', 'rLowleg', 'rShoe', 'lShoulder', 'rShoulder', 'chest', 'waist', 'hip', 'lUparm', 'lLowarm', 'lHand', 'rUparm', 'rLowarm', 'rHand')
 
 class DisguisePage(ShtikerPage.ShtikerPage):
@@ -105,7 +105,7 @@ class DisguisePage(ShtikerPage.ShtikerPage):
 
     def updatePartsDisplay(self, index, numParts, numPartsRequired):
         partBitmask = 1
-        groupingBitmask = CogDisguiseGlobals.PartsPerSuitBitmasks[index]
+        groupingBitmask = CogDisguiseGlobals.PartsPerCogBitmasks[index]
         previousPart = 0
         for part in self.parts:
             groupingBit = groupingBitmask & partBitmask
@@ -190,7 +190,7 @@ class DisguisePage(ShtikerPage.ShtikerPage):
         cogLevel = base.localAvatar.cogLevels[index]
         self.cogLevel['text'] = TTLocalizer.DisguisePageCogLevel % str(cogLevel + 1)
         numParts = base.localAvatar.cogParts[index]
-        numPartsRequired = CogDisguiseGlobals.PartsPerSuit[index]
+        numPartsRequired = CogDisguiseGlobals.PartsPerCog[index]
         self.updatePartsDisplay(index, numParts, numPartsRequired)
         self.updateMeritBar(index)
         self.cogPartRatio['text'] = '%d/%d' % (CogDisguiseGlobals.getTotalParts(numParts), numPartsRequired)

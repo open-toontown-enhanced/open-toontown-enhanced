@@ -506,7 +506,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         zoneId = int(self.extractGroupName(zoneName))
         return self.battleMgr.cellHasBattle(zoneId)
 
-    def removeSuit(self, cog: DistributedCogAI):
+    def removeCog(self, cog: DistributedCogAI):
         self.zoneChange(cog, cog.zoneId)
         if self.cogList.count(cog) > 0:
             self.cogList.remove(cog)
@@ -998,7 +998,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         return True
 
     def __battleFinished(self, zoneId: int):
-        self.notify.debug('DistSuitPlannerAI:  battle in zone ' + str(zoneId) + ' finished')
+        self.notify.debug('DistCogPlannerAI:  battle in zone ' + str(zoneId) + ' finished')
 
     def __cogCanJoinBattle(self, zoneId: int) -> bool:
         battle = self.battleMgr.getBattle(zoneId)

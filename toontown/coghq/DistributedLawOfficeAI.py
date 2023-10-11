@@ -1,6 +1,6 @@
 from otp.level import DistributedLevelAI
 from direct.directnotify import DirectNotifyGlobal
-from toontown.coghq import LevelSuitPlannerAI, LawOfficeBase
+from toontown.coghq import LevelCogPlannerAI, LawOfficeBase
 from direct.task import Task
 from toontown.coghq import FactoryEntityCreatorAI, FactorySpecs
 from otp.level import LevelSpec

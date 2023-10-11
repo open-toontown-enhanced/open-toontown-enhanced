@@ -29,7 +29,7 @@ class HoodDataAI:
         self.createFishingPonds()
         self.createPartyPeople()
         self.createBuildingManagers()
-        self.createSuitPlanners()
+        self.createCogPlanners()
 
     def shutdown(self):
         self.setRedirect(None)
@@ -112,7 +112,7 @@ class HoodDataAI:
                 self.buildingManagers.append(mgr)
                 self.air.buildingManagers[zoneId] = mgr
 
-    def createSuitPlanners(self):
+    def createCogPlanners(self):
         for zone in self.air.zoneTable[self.canonicalHoodId]:
             if zone[2]:
                 zoneId = ZoneUtil.getTrueZoneId(zone[0], self.zoneId)

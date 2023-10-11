@@ -112,13 +112,13 @@ class CogdoMazeGame(DirectObject):
             self.shakers.append(cog)
         self.cogsById[id] = cog
 
-    def removeSuit(self, cog):
+    def removeCog(self, cog):
         id = cog.serialNum
         del self.cogsById[id]
         if cog.type == Globals.SuitTypes.Boss:
             self.shakers.remove(cog)
             self.guiMgr.showBossCode(id)
-            self.guiMgr.mazeMapGui.removeSuit(cog.cog)
+            self.guiMgr.mazeMapGui.removeCog(cog.cog)
         self.cogs.remove(cog)
         cog.destroy()
 
@@ -345,7 +345,7 @@ class CogdoMazeGame(DirectObject):
     def handleSuitDeath(self, cogType, cogNum):
         cog = self.cogsById[cogNum]
         self.dropMemos(cog)
-        self.removeSuit(cog)
+        self.removeCog(cog)
 
     def dropMemos(self, cog):
         numDrops = cog.memos

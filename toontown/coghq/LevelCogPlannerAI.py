@@ -6,8 +6,8 @@ from toontown.coghq import LevelBattleManagerAI
 import random
 import functools
 
-class LevelSuitPlannerAI(DirectObject.DirectObject):
-    notify = DirectNotifyGlobal.directNotify.newCategory('LevelSuitPlannerAI')
+class LevelCogPlannerAI(DirectObject.DirectObject):
+    notify = DirectNotifyGlobal.directNotify.newCategory('LevelCogPlannerAI')
 
     def __init__(self, air, level, cogCtor, battleCtor, cogSpecs, reserveCogSpecs, battleCellSpecs, battleExpAggreg=None):
         self.air = air
@@ -189,7 +189,7 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
     def getDoId(self):
         return 0
 
-    def removeSuit(self, cog):
+    def removeCog(self, cog):
         cog.requestDelete()
 
     def cogBattleCellChange(self, cog, oldCell, newCell):
@@ -200,7 +200,7 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
                 self.notify.warning('FIXME crash bandaid cogBattleCellChange cog.doId =%s, oldCell=%s not in battleCellId2Cogs.keys %s' % (cog.doId, oldCell, list(self.battleCellId2cogs.keys())))
             blocker = self.battleMgr.battleBlockers.get(oldCell)
             if blocker:
-                blocker.removeSuit(cog)
+                blocker.removeCog(cog)
         if newCell is not None:
             self.battleCellId2cogs[newCell].append(cog)
 

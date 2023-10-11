@@ -85,7 +85,7 @@ def getToonAttack(id, track = NO_ATTACK, level = -1, target = -1):
      0]
 
 
-def getDefaultSuitAttacks():
+def getDefaultCogAttacks():
     cogAttacks = [[NO_ID,
       NO_ATTACK,
       -1,
@@ -117,7 +117,7 @@ def getDefaultSuitAttacks():
     return cogAttacks
 
 
-def getDefaultSuitAttack():
+def getDefaultCogAttack():
     return [NO_ID,
      NO_ATTACK,
      -1,
@@ -230,7 +230,7 @@ class BattleBase:
 
     def __init__(self):
         self.pos = Point3(0, 0, 0)
-        self.initialSuitPos = Point3(0, 1, 0)
+        self.initialCogPos = Point3(0, 1, 0)
         self.timer = Timer()
         self.resetLists()
 

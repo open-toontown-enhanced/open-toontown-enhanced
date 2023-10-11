@@ -58,8 +58,8 @@ class DistributedCashbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         self.initializeBattles(1, ToontownGlobals.CashbotBossBattleOnePosHpr)
 
     def generateCogs(self, battleNumber):
-        cogs = self.invokeSuitPlanner(11, 0)
-        skelecogs = self.invokeSuitPlanner(12, 1)
+        cogs = self.invokeCogPlanner(11, 0)
+        skelecogs = self.invokeCogPlanner(12, 1)
         activeCogs = cogs['activeCogs'] + skelecogs['activeCogs']
         reserveCogs = cogs['reserveCogs'] + skelecogs['reserveCogs']
         random.shuffle(activeCogs)

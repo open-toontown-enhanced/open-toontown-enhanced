@@ -14,7 +14,7 @@ from direct.particles import ParticleEffect
 from . import BattleParticles
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-notify = DirectNotifyGlobal.directNotify.newCategory('MovieSuitAttacks')
+notify = DirectNotifyGlobal.directNotify.newCategory('MovieCogAttacks')
 
 def __doDamage(toon, dmg, died):
     if dmg > 0 and toon.hp != None:
@@ -111,8 +111,8 @@ def __throwBouncePoint(startPoint, endPoint):
     return Point3(midPoint)
 
 
-def doSuitAttack(attack):
-    notify.debug('building cog attack in doSuitAttack: %s' % attack['name'])
+def doCogAttack(attack):
+    notify.debug('building cog attack in doCogAttack: %s' % attack['name'])
     name = attack['id']
     if name == AUDIT:
         cogTrack = doAudit(attack)
@@ -269,7 +269,7 @@ def doSuitAttack(attack):
     cogTrack = Sequence(cogTrack, neutralIval, toonHprTrack)
     cogPos = cog.getPos(battle)
     resetPos, resetHpr = battle.getActorPosHpr(cog)
-    if battle.isSuitLured(cog):
+    if battle.isCogLured(cog):
         resetTrack = getResetTrack(cog, battle)
         resetCogTrack = Sequence(resetTrack, cogTrack)
         waitTrack = Sequence(Wait(resetTrack.getDuration()), Func(battle.unlureSuit, cog))

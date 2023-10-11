@@ -1024,7 +1024,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         if avId != self.localAvId:
             self.setAnimState(avId, keyRate)
 
-    def sendSuitPosition(self, cogOffset):
+    def sendCogPosition(self, cogOffset):
         if not self.hasLocalToon:
             return
 
@@ -1050,14 +1050,14 @@ class DistributedTugOfWarGame(DistributedMinigame):
     def createCogs(self):
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
             self.cog = Suit()
-            self.origSuitPosHpr = [VBase3(6.0, 18, 0.1), VBase3(120, 0, 0)]
+            self.origCogPosHpr = [VBase3(6.0, 18, 0.1), VBase3(120, 0, 0)]
             self.cogOffset = 0
             d = CogDNA()
             d.newSuit(self.cogType)
             self.cog.setDNA(d)
             self.cog.reparentTo(base.render)
-            self.cog.setPos(self.origSuitPosHpr[0])
-            self.cog.setHpr(self.origSuitPosHpr[1])
+            self.cog.setPos(self.origCogPosHpr[0])
+            self.cog.setHpr(self.origCogPosHpr[1])
             for anim in self.cogAnimNames:
                 self.cog.pose(anim, 0)
 
@@ -1120,7 +1120,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         if self.gameType != TugOfWarGameGlobals.TOON_VS_COG:
             return
 
-        origPos = self.origSuitPosHpr[0]
+        origPos = self.origCogPosHpr[0]
         curPos = self.cog.getPos()
         newPos = VBase3(origPos[0] + self.cogOffset, curPos[1], curPos[2])
         if self.animTracks[self.cogId] != None:

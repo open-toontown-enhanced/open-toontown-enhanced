@@ -10,7 +10,7 @@ import random
 import functools
 from . import MovieCamera
 from . import MovieUtil
-from .MovieUtil import calcAvgSuitPos
+from .MovieUtil import calcAvgCogPos
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieThrow')
 hitSoundFiles = ('AA_tart_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_wholepie_only.ogg', 'AA_wholepie_only.ogg')
 tPieLeavesHand = 2.7

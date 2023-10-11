@@ -76,7 +76,7 @@ PHONE_QUEST_ID = 175
 NEWBIE_HP = 25
 SELLBOT_HQ_NEWBIE_HP = 50
 CASHBOT_HQ_NEWBIE_HP = 85
-from toontown.toonbase.ToontownGlobals import FT_FullSuit, FT_Leg, FT_Arm, FT_Torso
+from toontown.toonbase.ToontownGlobals import FT_FullDisguise, FT_Leg, FT_Arm, FT_Torso
 QuestRandGen = random.Random()
 
 def seedRandomGen(npcId, avId, tier, rewardHistory):
@@ -185,7 +185,7 @@ class Quest:
      'm',
      's']
     _factoryTypes = [Any,
-     FT_FullSuit,
+     FT_FullDisguise,
      FT_Leg,
      FT_Arm,
      FT_Torso]
@@ -1120,7 +1120,7 @@ class BuildingNewbieQuest(BuildingQuest, NewbieQuest):
 
 
 class FactoryQuest(LocationBasedQuest):
-    factoryTypeNames = {FT_FullSuit: TTLocalizer.Cog,
+    factoryTypeNames = {FT_FullDisguise: TTLocalizer.Cog,
      FT_Leg: TTLocalizer.FactoryTypeLeg,
      FT_Arm: TTLocalizer.FactoryTypeArm,
      FT_Torso: TTLocalizer.FactoryTypeTorso}
@@ -18548,7 +18548,7 @@ class CheesyEffectReward(Reward):
         return TTLocalizer.QuestsCheesyEffectRewardPoster % desc
 
 
-class CogSuitPartReward(Reward):
+class CogDisguisePartReward(Reward):
     trackNames = [TTLocalizer.Bossbot,
      TTLocalizer.Lawbot,
      TTLocalizer.Cashbot,
@@ -18573,18 +18573,18 @@ class CogSuitPartReward(Reward):
 
     def getCogTrackName(self):
         index = ToontownGlobals.cogDept2index[self.getCogTrack()]
-        return CogSuitPartReward.trackNames[index]
+        return CogDisguisePartReward.trackNames[index]
 
     def getCogPartName(self):
         index = ToontownGlobals.cogDept2index[self.getCogTrack()]
         return CogDisguiseGlobals.PartsQueryNames[index][self.getCogPart()]
 
     def getString(self):
-        return TTLocalizer.QuestsCogSuitPartReward % {'cogTrack': self.getCogTrackName(),
+        return TTLocalizer.QuestsCogDisguisePartReward % {'cogTrack': self.getCogTrackName(),
          'part': self.getCogPartName()}
 
     def getPosterString(self):
-        return TTLocalizer.QuestsCogSuitPartRewardPoster % {'cogTrack': self.getCogTrackName(),
+        return TTLocalizer.QuestsCogDisguisePartRewardPoster % {'cogTrack': self.getCogTrackName(),
          'part': self.getCogPartName()}
 
 
@@ -18625,7 +18625,7 @@ def getNextRewards(numChoices, tier, av):
         notify.debug('getNextRewards: rewardTier: %s' % rewardTier)
         notify.debug('getNextRewards: numChoices: %s' % numChoices)
     for rewardId in getRewardsInTier(tier):
-        if getRewardClass(rewardId) == CogSuitPartReward:
+        if getRewardClass(rewardId) == CogDisguisePartReward:
             deptStr = RewardDict.get(rewardId)[1]
             cogPart = RewardDict.get(rewardId)[2]
             dept = ToontownGlobals.cogDept2index[deptStr]
@@ -19174,49 +19174,49 @@ RewardDict = {100: (MaxHpReward, 1),
         ToontownGlobals.CEInvisible,
         1,
         43200),
- 4000: (CogSuitPartReward, 'm', CogDisguiseGlobals.leftLegUpper),
- 4001: (CogSuitPartReward, 'm', CogDisguiseGlobals.leftLegLower),
- 4002: (CogSuitPartReward, 'm', CogDisguiseGlobals.leftLegFoot),
- 4003: (CogSuitPartReward, 'm', CogDisguiseGlobals.rightLegUpper),
- 4004: (CogSuitPartReward, 'm', CogDisguiseGlobals.rightLegLower),
- 4005: (CogSuitPartReward, 'm', CogDisguiseGlobals.rightLegFoot),
- 4006: (CogSuitPartReward, 'm', CogDisguiseGlobals.upperTorso),
- 4007: (CogSuitPartReward, 'm', CogDisguiseGlobals.torsoPelvis),
- 4008: (CogSuitPartReward, 'm', CogDisguiseGlobals.leftArmUpper),
- 4009: (CogSuitPartReward, 'm', CogDisguiseGlobals.leftArmLower),
- 4010: (CogSuitPartReward, 'm', CogDisguiseGlobals.rightArmUpper),
- 4011: (CogSuitPartReward, 'm', CogDisguiseGlobals.rightArmLower),
- 4100: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftLegUpper),
- 4101: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftLegLower),
- 4102: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftLegFoot),
- 4103: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightLegUpper),
- 4104: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightLegLower),
- 4105: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightLegFoot),
- 4106: (CogSuitPartReward, 'l', CogDisguiseGlobals.upperTorso),
- 4107: (CogSuitPartReward, 'l', CogDisguiseGlobals.torsoPelvis),
- 4108: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftArmUpper),
- 4109: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftArmLower),
- 4110: (CogSuitPartReward, 'l', CogDisguiseGlobals.leftArmHand),
- 4111: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightArmUpper),
- 4112: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightArmLower),
- 4113: (CogSuitPartReward, 'l', CogDisguiseGlobals.rightArmHand),
- 4200: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftLegUpper),
- 4201: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftLegLower),
- 4202: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftLegFoot),
- 4203: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightLegUpper),
- 4204: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightLegLower),
- 4205: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightLegFoot),
- 4206: (CogSuitPartReward, 'c', CogDisguiseGlobals.torsoLeftShoulder),
- 4207: (CogSuitPartReward, 'c', CogDisguiseGlobals.torsoRightShoulder),
- 4208: (CogSuitPartReward, 'c', CogDisguiseGlobals.torsoChest),
- 4209: (CogSuitPartReward, 'c', CogDisguiseGlobals.torsoHealthMeter),
- 4210: (CogSuitPartReward, 'c', CogDisguiseGlobals.torsoPelvis),
- 4211: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftArmUpper),
- 4212: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftArmLower),
- 4213: (CogSuitPartReward, 'c', CogDisguiseGlobals.leftArmHand),
- 4214: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightArmUpper),
- 4215: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightArmLower),
- 4216: (CogSuitPartReward, 'c', CogDisguiseGlobals.rightArmHand)}
+ 4000: (CogDisguisePartReward, 'm', CogDisguiseGlobals.leftLegUpper),
+ 4001: (CogDisguisePartReward, 'm', CogDisguiseGlobals.leftLegLower),
+ 4002: (CogDisguisePartReward, 'm', CogDisguiseGlobals.leftLegFoot),
+ 4003: (CogDisguisePartReward, 'm', CogDisguiseGlobals.rightLegUpper),
+ 4004: (CogDisguisePartReward, 'm', CogDisguiseGlobals.rightLegLower),
+ 4005: (CogDisguisePartReward, 'm', CogDisguiseGlobals.rightLegFoot),
+ 4006: (CogDisguisePartReward, 'm', CogDisguiseGlobals.upperTorso),
+ 4007: (CogDisguisePartReward, 'm', CogDisguiseGlobals.torsoPelvis),
+ 4008: (CogDisguisePartReward, 'm', CogDisguiseGlobals.leftArmUpper),
+ 4009: (CogDisguisePartReward, 'm', CogDisguiseGlobals.leftArmLower),
+ 4010: (CogDisguisePartReward, 'm', CogDisguiseGlobals.rightArmUpper),
+ 4011: (CogDisguisePartReward, 'm', CogDisguiseGlobals.rightArmLower),
+ 4100: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftLegUpper),
+ 4101: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftLegLower),
+ 4102: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftLegFoot),
+ 4103: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightLegUpper),
+ 4104: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightLegLower),
+ 4105: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightLegFoot),
+ 4106: (CogDisguisePartReward, 'l', CogDisguiseGlobals.upperTorso),
+ 4107: (CogDisguisePartReward, 'l', CogDisguiseGlobals.torsoPelvis),
+ 4108: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftArmUpper),
+ 4109: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftArmLower),
+ 4110: (CogDisguisePartReward, 'l', CogDisguiseGlobals.leftArmHand),
+ 4111: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightArmUpper),
+ 4112: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightArmLower),
+ 4113: (CogDisguisePartReward, 'l', CogDisguiseGlobals.rightArmHand),
+ 4200: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftLegUpper),
+ 4201: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftLegLower),
+ 4202: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftLegFoot),
+ 4203: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightLegUpper),
+ 4204: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightLegLower),
+ 4205: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightLegFoot),
+ 4206: (CogDisguisePartReward, 'c', CogDisguiseGlobals.torsoLeftShoulder),
+ 4207: (CogDisguisePartReward, 'c', CogDisguiseGlobals.torsoRightShoulder),
+ 4208: (CogDisguisePartReward, 'c', CogDisguiseGlobals.torsoChest),
+ 4209: (CogDisguisePartReward, 'c', CogDisguiseGlobals.torsoHealthMeter),
+ 4210: (CogDisguisePartReward, 'c', CogDisguiseGlobals.torsoPelvis),
+ 4211: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftArmUpper),
+ 4212: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftArmLower),
+ 4213: (CogDisguisePartReward, 'c', CogDisguiseGlobals.leftArmHand),
+ 4214: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightArmUpper),
+ 4215: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightArmLower),
+ 4216: (CogDisguisePartReward, 'c', CogDisguiseGlobals.rightArmHand)}
 
 def getNumTiers():
     return len(RequiredRewardTrackDict) - 1
@@ -19786,7 +19786,7 @@ def avatarHasAllRequiredRewards(av, tier):
             actualRewardId = transformReward(rewardId, av)
             if actualRewardId in rewardHistory:
                 rewardHistory.remove(actualRewardId)
-            elif getRewardClass(rewardId) == CogSuitPartReward:
+            elif getRewardClass(rewardId) == CogDisguisePartReward:
                 deptStr = RewardDict.get(rewardId)[1]
                 cogPart = RewardDict.get(rewardId)[2]
                 dept = ToontownGlobals.cogDept2index[deptStr]
@@ -19795,7 +19795,7 @@ def avatarHasAllRequiredRewards(av, tier):
                         notify.debug('avatarHasAllRequiredRewards: rewardId: %s counts, avatar has cog part: %s dept: %s' % (actualRewardId, cogPart, dept))
                 else:
                     if notify.getDebug():
-                        notify.debug('avatarHasAllRequiredRewards: CogSuitPartReward: %s not found' % actualRewardId)
+                        notify.debug('avatarHasAllRequiredRewards: CogDisguisePartReward: %s not found' % actualRewardId)
                     return 0
             else:
                 if notify.getDebug():

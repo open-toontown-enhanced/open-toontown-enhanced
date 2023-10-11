@@ -5,7 +5,7 @@ from direct.distributed import DistributedObjectAI
 from direct.directnotify import DirectNotifyGlobal
 from toontown.building import TutorialBuildingAI
 from toontown.building import TutorialHQBuildingAI
-from . import SuitPlannerTutorialAI
+from . import CogPlannerTutorialAI
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toon import NPCToons
 from toontown.ai import BlackCatHolidayMgrAI
@@ -145,7 +145,7 @@ class TutorialManagerAI(DistributedObjectAI.DistributedObjectAI):
             building.battleOverCallback()
         
         # Create a cog planner
-        cogPlanner = SuitPlannerTutorialAI.SuitPlannerTutorialAI(
+        cogPlanner = CogPlannerTutorialAI.CogPlannerTutorialAI(
             self.air,
             streetZone,
             battleOverCallback)

@@ -124,23 +124,23 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
             del self.relatedObjectMgrRequest
         DistributedLevel.DistributedLevel.disable(self)
 
-    def setCogs(self, cogIds, reserveSuitIds):
-        oldSuitIds = list(self.cogIds)
+    def setCogs(self, cogIds, reserveCogIds):
+        oldCogIds = list(self.cogIds)
         self.cogIds = cogIds
-        self.reserveSuitIds = reserveSuitIds
-        newSuitIds = []
+        self.reserveCogIds = reserveCogIds
+        newCogIds = []
         for cogId in self.cogIds:
-            if cogId not in oldSuitIds:
-                newSuitIds.append(cogId)
+            if cogId not in oldCogIds:
+                newCogIds.append(cogId)
 
-        if len(newSuitIds):
+        if len(newCogIds):
 
             def bringOutOfReserve(cogs):
                 for cog in cogs:
                     if cog:
                         cog.comeOutOfReserve()
 
-            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newSuitIds, bringOutOfReserve)
+            self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newCogIds, bringOutOfReserve)
 
     def reservesJoining(self):
         pass

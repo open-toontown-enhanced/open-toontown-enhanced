@@ -19,13 +19,13 @@ class DistributedCogPlanner(DistributedObject.DistributedObject, CogPlannerBase.
     def generate(self):
         self.notify.info('DistributedCogPlanner %d: generating' % self.getDoId())
         DistributedObject.DistributedObject.generate(self)
-        base.cr.currSuitPlanner = self
+        base.cr.currCogPlanner = self
 
     def disable(self):
         self.notify.info('DistributedCogPlanner %d: disabling' % self.getDoId())
         self.hidePaths()
         DistributedObject.DistributedObject.disable(self)
-        base.cr.currSuitPlanner = None
+        base.cr.currCogPlanner = None
         return
 
     def d_cogListQuery(self):

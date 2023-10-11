@@ -4,7 +4,7 @@ from direct.task import Task
 from otp.level import LevelSpec
 from toontown.toonbase import ToontownGlobals, ToontownBattleGlobals
 from toontown.coghq import FactoryEntityCreatorAI, MintRoomSpecs
-from toontown.coghq import MintRoomBase, LevelSuitPlannerAI
+from toontown.coghq import MintRoomBase, LevelCogPlannerAI
 from toontown.coghq import DistributedMintBattleAI
 from toontown.cog import DistributedMintCogAI
 
@@ -39,7 +39,7 @@ class DistributedMintRoomAI(DistributedLevelAI.DistributedLevelAI, MintRoomBase.
         DistributedLevelAI.DistributedLevelAI.generate(self, roomSpec)
         self.notify.debug('creating cogs')
         cogSpecModule = MintRoomSpecs.getCogSpecModule(self.roomId)
-        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedMintCogAI.DistributedMintCogAI, DistributedMintBattleAI.DistributedMintBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
+        self.planner = LevelCogPlannerAI.LevelCogPlannerAI(self.air, self, DistributedMintCogAI.DistributedMintCogAI, DistributedMintBattleAI.DistributedMintBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
         cogHandles = self.planner.genCogs()
         messenger.send('plannerCreated-' + str(self.doId))
         self.cogs = cogHandles['activeCogs']

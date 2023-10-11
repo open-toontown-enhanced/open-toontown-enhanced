@@ -33,7 +33,7 @@ class DistributedBattleFactoryAI(DistributedLevelBattleAI.DistributedLevelBattle
             else:
                 self.notify.debug('toon %d not helpful, skipping merits' % toon.doId)
             if self.bossBattle:
-                self.toonParts[toon.doId] = self.air.cogSuitMgr.recoverPart(toon, self.level.factoryType, self.cogTrack, self.getTaskZoneId(), toons)
+                self.toonParts[toon.doId] = self.air.cogDisguiseMgr.recoverPart(toon, self.level.factoryType, self.cogTrack, self.getTaskZoneId(), toons)
                 self.notify.debug('toonParts = %s' % self.toonParts)
 
     def enterFactoryReward(self):

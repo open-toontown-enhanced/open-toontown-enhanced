@@ -6,8 +6,8 @@ from toontown.cog.DistributedCogAI import DistributedCogAI
 from toontown.building import CogBuildingGlobals
 import random, functools
 
-class SuitPlannerInteriorAI:
-    notify = DirectNotifyGlobal.directNotify.newCategory('SuitPlannerInteriorAI')
+class CogPlannerInteriorAI:
+    notify = DirectNotifyGlobal.directNotify.newCategory('CogPlannerInteriorAI')
 
     def __init__(self, numFloors: int, bldgLevel: int, bldgTrack: str, zone: int, respectInvasions: bool = True):
         self.dbg_nCogs1stRound: bool = config.GetBool('n-cogs-1st-round', 0)

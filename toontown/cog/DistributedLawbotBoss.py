@@ -1654,14 +1654,14 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
                 toon.show()
 
     def __talkAboutPromotion(self, speech):
-        if self.prevCogSuitLevel < ToontownGlobals.MaxCogSuitLevel:
-            newCogSuitLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
-            if newCogSuitLevel == ToontownGlobals.MaxCogSuitLevel:
-                speech += TTLocalizer.WitnessToonLastPromotion % (ToontownGlobals.MaxCogSuitLevel + 1)
-            if newCogSuitLevel in ToontownGlobals.CogSuitHPLevels:
+        if self.prevCogDisguiseLevel < ToontownGlobals.MaxCogDisguiseLevel:
+            newCogDisguiseLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
+            if newCogDisguiseLevel == ToontownGlobals.MaxCogDisguiseLevel:
+                speech += TTLocalizer.WitnessToonLastPromotion % (ToontownGlobals.MaxCogDisguiseLevel + 1)
+            if newCogDisguiseLevel in ToontownGlobals.CogDisguiseHPLevels:
                 speech += TTLocalizer.WitnessToonHPBoost
         else:
-            speech += TTLocalizer.WitnessToonMaxed % (ToontownGlobals.MaxCogSuitLevel + 1)
+            speech += TTLocalizer.WitnessToonMaxed % (ToontownGlobals.MaxCogDisguiseLevel + 1)
         return speech
 
     def __positionToonsInFrontOfCannons(self):

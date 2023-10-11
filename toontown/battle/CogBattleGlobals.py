@@ -43,21 +43,21 @@ def getCogVitals(name, level = -1):
         adict = {}
         name = a[0]
         adict['name'] = name
-        adict['animName'] = SuitAttacks[name][0]
+        adict['animName'] = CogAttacks[name][0]
         adict['hp'] = a[1][level]
         adict['acc'] = a[2][level]
         adict['freq'] = a[3][level]
-        adict['group'] = SuitAttacks[name][1]
+        adict['group'] = CogAttacks[name][1]
         alist.append(adict)
 
     dict['attacks'] = alist
     return dict
 
 
-def pickSuitAttack(attacks, cogLevel):
+def pickCogAttack(attacks, cogLevel):
     attackNum = None
     randNum = random.randint(0, 99)
-    notify.debug('pickSuitAttack: rolled %d' % randNum)
+    notify.debug('pickCogAttack: rolled %d' % randNum)
     count = 0
     index = 0
     total = 0
@@ -95,18 +95,18 @@ def getCogAttack(cogName, cogLevel, attackNum = -1):
     attackChoices = CogAttributes[cogName]['attacks']
     if attackNum == -1:
         notify.debug('getCogAttack: picking attacking for %s' % cogName)
-        attackNum = pickSuitAttack(attackChoices, cogLevel)
+        attackNum = pickCogAttack(attackChoices, cogLevel)
     attack = attackChoices[attackNum]
     adict = {}
     adict['cogName'] = cogName
     name = attack[0]
     adict['name'] = name
-    adict['id'] = list(SuitAttacks.keys()).index(name)
-    adict['animName'] = SuitAttacks[name][0]
+    adict['id'] = list(CogAttacks.keys()).index(name)
+    adict['animName'] = CogAttacks[name][0]
     adict['hp'] = attack[1][cogLevel]
     adict['acc'] = attack[2][cogLevel]
     adict['freq'] = attack[3][cogLevel]
-    adict['group'] = SuitAttacks[name][1]
+    adict['group'] = CogAttacks[name][1]
     return adict
 
 
@@ -2886,7 +2886,7 @@ CogAttributes = {'flunky': {'name': TTLocalizer.SuitFlunky,
 ATK_TGT_UNKNOWN = 1
 ATK_TGT_SINGLE = 2
 ATK_TGT_GROUP = 3
-SuitAttacks = {'Audit': ('phone', ATK_TGT_SINGLE),
+CogAttacks = {'Audit': ('phone', ATK_TGT_SINGLE),
  'Bite': ('throw-paper', ATK_TGT_SINGLE),
  'BounceCheck': ('throw-paper', ATK_TGT_SINGLE),
  'BrainStorm': ('effort', ATK_TGT_SINGLE),
@@ -2953,73 +2953,73 @@ SuitAttacks = {'Audit': ('phone', ATK_TGT_SINGLE),
  'Watercooler': ('watercooler', ATK_TGT_SINGLE),
  'Withdrawal': ('magic1', ATK_TGT_SINGLE),
  'WriteOff': ('hold-pencil', ATK_TGT_SINGLE)}
-AUDIT = list(SuitAttacks.keys()).index('Audit')
-BITE = list(SuitAttacks.keys()).index('Bite')
-BOUNCE_CHECK = list(SuitAttacks.keys()).index('BounceCheck')
-BRAIN_STORM = list(SuitAttacks.keys()).index('BrainStorm')
-BUZZ_WORD = list(SuitAttacks.keys()).index('BuzzWord')
-CALCULATE = list(SuitAttacks.keys()).index('Calculate')
-CANNED = list(SuitAttacks.keys()).index('Canned')
-CHOMP = list(SuitAttacks.keys()).index('Chomp')
-CIGAR_SMOKE = list(SuitAttacks.keys()).index('CigarSmoke')
-CLIPON_TIE = list(SuitAttacks.keys()).index('ClipOnTie')
-CRUNCH = list(SuitAttacks.keys()).index('Crunch')
-DEMOTION = list(SuitAttacks.keys()).index('Demotion')
-DOWNSIZE = list(SuitAttacks.keys()).index('Downsize')
-DOUBLE_TALK = list(SuitAttacks.keys()).index('DoubleTalk')
-EVICTION_NOTICE = list(SuitAttacks.keys()).index('EvictionNotice')
-EVIL_EYE = list(SuitAttacks.keys()).index('EvilEye')
-FILIBUSTER = list(SuitAttacks.keys()).index('Filibuster')
-FILL_WITH_LEAD = list(SuitAttacks.keys()).index('FillWithLead')
-FINGER_WAG = list(SuitAttacks.keys()).index('FingerWag')
-FIRED = list(SuitAttacks.keys()).index('Fired')
-FIVE_O_CLOCK_SHADOW = list(SuitAttacks.keys()).index('FiveOClockShadow')
-FLOOD_THE_MARKET = list(SuitAttacks.keys()).index('FloodTheMarket')
-FOUNTAIN_PEN = list(SuitAttacks.keys()).index('FountainPen')
-FREEZE_ASSETS = list(SuitAttacks.keys()).index('FreezeAssets')
-GAVEL = list(SuitAttacks.keys()).index('Gavel')
-GLOWER_POWER = list(SuitAttacks.keys()).index('GlowerPower')
-GUILT_TRIP = list(SuitAttacks.keys()).index('GuiltTrip')
-HALF_WINDSOR = list(SuitAttacks.keys()).index('HalfWindsor')
-HANG_UP = list(SuitAttacks.keys()).index('HangUp')
-HEAD_SHRINK = list(SuitAttacks.keys()).index('HeadShrink')
-HOT_AIR = list(SuitAttacks.keys()).index('HotAir')
-JARGON = list(SuitAttacks.keys()).index('Jargon')
-LEGALESE = list(SuitAttacks.keys()).index('Legalese')
-LIQUIDATE = list(SuitAttacks.keys()).index('Liquidate')
-MARKET_CRASH = list(SuitAttacks.keys()).index('MarketCrash')
-MUMBO_JUMBO = list(SuitAttacks.keys()).index('MumboJumbo')
-PARADIGM_SHIFT = list(SuitAttacks.keys()).index('ParadigmShift')
-PECKING_ORDER = list(SuitAttacks.keys()).index('PeckingOrder')
-PICK_POCKET = list(SuitAttacks.keys()).index('PickPocket')
-PINK_SLIP = list(SuitAttacks.keys()).index('PinkSlip')
-PLAY_HARDBALL = list(SuitAttacks.keys()).index('PlayHardball')
-POUND_KEY = list(SuitAttacks.keys()).index('PoundKey')
-POWER_TIE = list(SuitAttacks.keys()).index('PowerTie')
-POWER_TRIP = list(SuitAttacks.keys()).index('PowerTrip')
-QUAKE = list(SuitAttacks.keys()).index('Quake')
-RAZZLE_DAZZLE = list(SuitAttacks.keys()).index('RazzleDazzle')
-RED_TAPE = list(SuitAttacks.keys()).index('RedTape')
-RE_ORG = list(SuitAttacks.keys()).index('ReOrg')
-RESTRAINING_ORDER = list(SuitAttacks.keys()).index('RestrainingOrder')
-ROLODEX = list(SuitAttacks.keys()).index('Rolodex')
-RUBBER_STAMP = list(SuitAttacks.keys()).index('RubberStamp')
-RUB_OUT = list(SuitAttacks.keys()).index('RubOut')
-SACKED = list(SuitAttacks.keys()).index('Sacked')
-SANDTRAP = list(SuitAttacks.keys()).index('SandTrap')
-SCHMOOZE = list(SuitAttacks.keys()).index('Schmooze')
-SHAKE = list(SuitAttacks.keys()).index('Shake')
-SHRED = list(SuitAttacks.keys()).index('Shred')
-SONG_AND_DANCE = list(SuitAttacks.keys()).index('SongAndDance')
-SPIN = list(SuitAttacks.keys()).index('Spin')
-SYNERGY = list(SuitAttacks.keys()).index('Synergy')
-TABULATE = list(SuitAttacks.keys()).index('Tabulate')
-TEE_OFF = list(SuitAttacks.keys()).index('TeeOff')
-THROW_BOOK = list(SuitAttacks.keys()).index('ThrowBook')
-TREMOR = list(SuitAttacks.keys()).index('Tremor')
-WATERCOOLER = list(SuitAttacks.keys()).index('Watercooler')
-WITHDRAWAL = list(SuitAttacks.keys()).index('Withdrawal')
-WRITE_OFF = list(SuitAttacks.keys()).index('WriteOff')
+AUDIT = list(CogAttacks.keys()).index('Audit')
+BITE = list(CogAttacks.keys()).index('Bite')
+BOUNCE_CHECK = list(CogAttacks.keys()).index('BounceCheck')
+BRAIN_STORM = list(CogAttacks.keys()).index('BrainStorm')
+BUZZ_WORD = list(CogAttacks.keys()).index('BuzzWord')
+CALCULATE = list(CogAttacks.keys()).index('Calculate')
+CANNED = list(CogAttacks.keys()).index('Canned')
+CHOMP = list(CogAttacks.keys()).index('Chomp')
+CIGAR_SMOKE = list(CogAttacks.keys()).index('CigarSmoke')
+CLIPON_TIE = list(CogAttacks.keys()).index('ClipOnTie')
+CRUNCH = list(CogAttacks.keys()).index('Crunch')
+DEMOTION = list(CogAttacks.keys()).index('Demotion')
+DOWNSIZE = list(CogAttacks.keys()).index('Downsize')
+DOUBLE_TALK = list(CogAttacks.keys()).index('DoubleTalk')
+EVICTION_NOTICE = list(CogAttacks.keys()).index('EvictionNotice')
+EVIL_EYE = list(CogAttacks.keys()).index('EvilEye')
+FILIBUSTER = list(CogAttacks.keys()).index('Filibuster')
+FILL_WITH_LEAD = list(CogAttacks.keys()).index('FillWithLead')
+FINGER_WAG = list(CogAttacks.keys()).index('FingerWag')
+FIRED = list(CogAttacks.keys()).index('Fired')
+FIVE_O_CLOCK_SHADOW = list(CogAttacks.keys()).index('FiveOClockShadow')
+FLOOD_THE_MARKET = list(CogAttacks.keys()).index('FloodTheMarket')
+FOUNTAIN_PEN = list(CogAttacks.keys()).index('FountainPen')
+FREEZE_ASSETS = list(CogAttacks.keys()).index('FreezeAssets')
+GAVEL = list(CogAttacks.keys()).index('Gavel')
+GLOWER_POWER = list(CogAttacks.keys()).index('GlowerPower')
+GUILT_TRIP = list(CogAttacks.keys()).index('GuiltTrip')
+HALF_WINDSOR = list(CogAttacks.keys()).index('HalfWindsor')
+HANG_UP = list(CogAttacks.keys()).index('HangUp')
+HEAD_SHRINK = list(CogAttacks.keys()).index('HeadShrink')
+HOT_AIR = list(CogAttacks.keys()).index('HotAir')
+JARGON = list(CogAttacks.keys()).index('Jargon')
+LEGALESE = list(CogAttacks.keys()).index('Legalese')
+LIQUIDATE = list(CogAttacks.keys()).index('Liquidate')
+MARKET_CRASH = list(CogAttacks.keys()).index('MarketCrash')
+MUMBO_JUMBO = list(CogAttacks.keys()).index('MumboJumbo')
+PARADIGM_SHIFT = list(CogAttacks.keys()).index('ParadigmShift')
+PECKING_ORDER = list(CogAttacks.keys()).index('PeckingOrder')
+PICK_POCKET = list(CogAttacks.keys()).index('PickPocket')
+PINK_SLIP = list(CogAttacks.keys()).index('PinkSlip')
+PLAY_HARDBALL = list(CogAttacks.keys()).index('PlayHardball')
+POUND_KEY = list(CogAttacks.keys()).index('PoundKey')
+POWER_TIE = list(CogAttacks.keys()).index('PowerTie')
+POWER_TRIP = list(CogAttacks.keys()).index('PowerTrip')
+QUAKE = list(CogAttacks.keys()).index('Quake')
+RAZZLE_DAZZLE = list(CogAttacks.keys()).index('RazzleDazzle')
+RED_TAPE = list(CogAttacks.keys()).index('RedTape')
+RE_ORG = list(CogAttacks.keys()).index('ReOrg')
+RESTRAINING_ORDER = list(CogAttacks.keys()).index('RestrainingOrder')
+ROLODEX = list(CogAttacks.keys()).index('Rolodex')
+RUBBER_STAMP = list(CogAttacks.keys()).index('RubberStamp')
+RUB_OUT = list(CogAttacks.keys()).index('RubOut')
+SACKED = list(CogAttacks.keys()).index('Sacked')
+SANDTRAP = list(CogAttacks.keys()).index('SandTrap')
+SCHMOOZE = list(CogAttacks.keys()).index('Schmooze')
+SHAKE = list(CogAttacks.keys()).index('Shake')
+SHRED = list(CogAttacks.keys()).index('Shred')
+SONG_AND_DANCE = list(CogAttacks.keys()).index('SongAndDance')
+SPIN = list(CogAttacks.keys()).index('Spin')
+SYNERGY = list(CogAttacks.keys()).index('Synergy')
+TABULATE = list(CogAttacks.keys()).index('Tabulate')
+TEE_OFF = list(CogAttacks.keys()).index('TeeOff')
+THROW_BOOK = list(CogAttacks.keys()).index('ThrowBook')
+TREMOR = list(CogAttacks.keys()).index('Tremor')
+WATERCOOLER = list(CogAttacks.keys()).index('Watercooler')
+WITHDRAWAL = list(CogAttacks.keys()).index('Withdrawal')
+WRITE_OFF = list(CogAttacks.keys()).index('WriteOff')
 
 def getFaceoffTaunt(cogName, doId):
     if cogName in SuitFaceoffTaunts:
@@ -3037,26 +3037,26 @@ def getAttackTauntIndexFromIndex(cog, attackIndex):
 
 
 def getAttackTauntIndex(attackName):
-    if attackName in SuitAttackTaunts:
-        taunts = SuitAttackTaunts[attackName]
+    if attackName in CogAttackTaunts:
+        taunts = CogAttackTaunts[attackName]
         return random.randint(0, len(taunts) - 1)
     else:
         return 1
 
 
 def getAttackTaunt(attackName, index = None):
-    if attackName in SuitAttackTaunts:
-        taunts = SuitAttackTaunts[attackName]
+    if attackName in CogAttackTaunts:
+        taunts = CogAttackTaunts[attackName]
     else:
-        taunts = TTLocalizer.SuitAttackDefaultTaunts
+        taunts = TTLocalizer.CogAttackDefaultTaunts
     if index != None:
         if index >= len(taunts):
             notify.warning('index exceeds length of taunts list in getAttackTaunt')
-            return TTLocalizer.SuitAttackDefaultTaunts[0]
+            return TTLocalizer.CogAttackDefaultTaunts[0]
         return taunts[index]
     else:
         return random.choice(taunts)
     return
 
 
-SuitAttackTaunts = TTLocalizer.SuitAttackTaunts
+CogAttackTaunts = TTLocalizer.CogAttackTaunts

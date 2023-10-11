@@ -24,7 +24,7 @@ class PromotionManagerAI:
         if self.air.cogInvasionManager.getInvading():
             multiplier *= getInvasionMultiplier()
         for i in range(len(extraMerits)):
-            if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), i):
+            if CogDisguiseGlobals.isCogComplete(av.getCogParts(), i):
                 meritsRecovered[i] += extraMerits[i]
                 self.notify.debug(f'recoverMerits: extra merits = {extraMerits[i]}')
 
@@ -32,7 +32,7 @@ class PromotionManagerAI:
         for cogDict in cogList:
             dept = CogDNA.cogDepts.index(cogDict['track'])
             if avId in cogDict['activeToons']:
-                if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), CogDNA.cogDepts.index(cogDict['track'])):
+                if CogDisguiseGlobals.isCogComplete(av.getCogParts(), CogDNA.cogDepts.index(cogDict['track'])):
                     self.notify.debug(f'recoverMerits: checking against cogDict: {cogDict}')
                     rand = random.random() * 100
                     if rand <= self.getPercentChance() and not cogDict['isVirtual']:

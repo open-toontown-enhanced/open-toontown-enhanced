@@ -2,11 +2,11 @@ from toontown.cog import CogDNA
 from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPGlobals
 from enum import IntEnum
-PartsPerSuit = (17,
+PartsPerCog = (17,
  14,
  12,
  10)
-PartsPerSuitBitmasks = (131071,
+PartsPerCogBitmasks = (131071,
  130175,
  56447,
  56411)
@@ -428,11 +428,11 @@ PartsQueryNames = ({1: PartNameStrings[0],
   16384: PartNameStrings[14],
   32768: PartNameStrings[15],
   65536: PartNameStrings[15]})
-cogTypes = IntEnum('cogTypes', ('NoSuit', 'NoMerits', 'FullSuit'), start=0)
+cogTypes = IntEnum('cogTypes', ('NoDisguise', 'NoMerits', 'FullDisguise'), start=0)
 
 def getNextPart(parts, partIndex, dept):
     dept = dept2deptIndex(dept)
-    needMask = PartsPerSuitBitmasks[dept] & PartsQueryMasks[partIndex]
+    needMask = PartsPerCogBitmasks[dept] & PartsQueryMasks[partIndex]
     haveMask = parts[dept] & PartsQueryMasks[partIndex]
     nextPart = ~needMask | haveMask
     nextPart = nextPart ^ nextPart + 1
@@ -448,7 +448,7 @@ def getPartName(partArray):
         index += 1
 
 
-def isSuitComplete(parts, dept):
+def isCogComplete(parts, dept):
     dept = dept2deptIndex(dept)
     for p in range(len(PartsQueryMasks)):
         if getNextPart(parts, p, dept):
@@ -457,13 +457,13 @@ def isSuitComplete(parts, dept):
     return 1
 
 
-def isPaidSuitComplete(av, parts, dept):
+def isPaidDisguiseComplete(av, parts, dept):
     isPaid = 0
     base = getBase()
     if av and av.getGameAccess() == OTPGlobals.AccessFull:
         isPaid = 1
     if isPaid:
-        if isSuitComplete(parts, dept):
+        if isCogComplete(parts, dept):
             return 1
     return 0
 

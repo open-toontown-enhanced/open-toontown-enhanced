@@ -197,7 +197,7 @@ class RewardPanel(DirectFrame):
             totalMerits = CogDisguiseGlobals.getTotalMerits(toon, i)
             merits = meritList[i]
             self.meritIncLabels[i].hide()
-            if CogDisguiseGlobals.isSuitComplete(toon.cogParts, i):
+            if CogDisguiseGlobals.isCogComplete(toon.cogParts, i):
                 if not self.trackBarsOffset:
                     trackBarOffset = 0.47
                     self.trackBarsOffset = 1
@@ -516,7 +516,7 @@ class RewardPanel(DirectFrame):
 
         intervalList.append(Func(self.resetMeritBarColor, dept))
         intervalList.append(Wait(0.1))
-        if toon.cogLevels[dept] < ToontownGlobals.MaxCogSuitLevel:
+        if toon.cogLevels[dept] < ToontownGlobals.MaxCogDisguiseLevel:
             if neededMerits and toon.readyForPromotion(dept):
                 intervalList.append(Wait(0.4))
                 intervalList += self.getPromotionIntervalList(toon, dept)

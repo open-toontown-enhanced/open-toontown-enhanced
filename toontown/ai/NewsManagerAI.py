@@ -34,12 +34,12 @@ class NewsManagerAI(DistributedObjectAI):
             cogType, isSkelecog = self.air.cogInvasionManager.getCogType()
             numCogsRemaining = self.air.cogInvasionManager.getNumCogsRemaining()
             self.sendUpdateToAvatarId(av.doId, 'setInvasionStatus',
-                                      [ToontownGlobals.SuitInvasionBulletin, cogType, numCogsRemaining, isSkelecog])
+                                      [ToontownGlobals.CogInvasionBulletin, cogType, numCogsRemaining, isSkelecog])
 
     def invasionBegin(self, cogType: str, numCogsRemaining: int, isSkelecog: bool):
         self.sendUpdate('setInvasionStatus',
-                        [ToontownGlobals.SuitInvasionBegin, cogType, numCogsRemaining, isSkelecog])
+                        [ToontownGlobals.CogInvasionBegin, cogType, numCogsRemaining, isSkelecog])
 
     def invasionEnd(self, cogType: str, numCogsRemaining: int, isSkelecog: bool):
         self.sendUpdate('setInvasionStatus',
-                        [ToontownGlobals.SuitInvasionEnd, cogType, numCogsRemaining, isSkelecog])
+                        [ToontownGlobals.CogInvasionEnd, cogType, numCogsRemaining, isSkelecog])

@@ -534,7 +534,7 @@ class QuestManagerAI:
     def toonDefeatedStage(self, av, location, avList):
         self.notify.debug("toonDefeatedStage: av made NO progress")
 
-    def toonRecoveredCogSuitPart(self, av, location, avList):
+    def toonRecoveredCogDisguisePart(self, av, location, avList):
         avQuests = av.quests
         avId = av.getDoId()
         changed = 0
@@ -548,10 +548,10 @@ class QuestManagerAI:
 
         # Now send the quests back to the avatar if the status changed
         if changed:
-            self.notify.debug("toonRecoveredCogSuitPart: av made progress")
+            self.notify.debug("toonRecoveredCogDisguisePart: av made progress")
             av.b_setQuests(avQuests)
         else:
-            self.notify.debug("toonRecoveredCogSuitPart: av made NO progress")
+            self.notify.debug("toonRecoveredCogDisguisePart: av made NO progress")
 
     def toonDefeatedMint(self, av, mintId, avList):
         # mint is telling us that this avatar just defeated it.

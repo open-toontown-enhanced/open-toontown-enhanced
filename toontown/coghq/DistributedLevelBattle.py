@@ -50,8 +50,8 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
     def setPosition(self, *args):
         pass
 
-    def setInitialSuitPos(self, x, y, z):
-        self.initialSuitPos = Point3(x, y, z)
+    def setInitialCogPos(self, x, y, z):
+        self.initialCogPos = Point3(x, y, z)
 
     def disable(self):
         if self.hasLocalToon():
@@ -123,9 +123,9 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         for cog in self.cogs:
             cog.setState('Battle')
             cogIsLeader = 0
-            oneSuitTrack = Sequence()
-            oneSuitTrack.append(Func(cog.loop, 'neutral'))
-            oneSuitTrack.append(Func(cog.headsUp, toonPos))
+            oneCogTrack = Sequence()
+            oneCogTrack.append(Func(cog.loop, 'neutral'))
+            oneCogTrack.append(Func(cog.headsUp, toonPos))
             if self.cogs.index(cog) == leaderIndex:
                 cogLeader = cog
                 cogIsLeader = 1
@@ -137,13 +137,13 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
                         taunt = level.getBossBattleTaunt()
                 else:
                     taunt = CogBattleGlobals.getFaceoffTaunt(cog.getStyleName(), cog.doId)
-                oneSuitTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+                oneCogTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
             destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
-            oneSuitTrack.append(Wait(delay))
+            oneCogTrack.append(Wait(delay))
             if cogIsLeader == 1:
-                oneSuitTrack.append(Func(cog.clearChat))
-            oneSuitTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
-            cogTrack.append(oneSuitTrack)
+                oneCogTrack.append(Func(cog.clearChat))
+            oneCogTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
+            cogTrack.append(oneCogTrack)
 
         cogHeight = cogLeader.getHeight()
         cogOffsetPnt = Point3(0, 0, cogHeight)

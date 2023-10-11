@@ -68,21 +68,21 @@ class NewsManager(DistributedObject.DistributedObject):
         if skeleton:
             cogName = TTLocalizer.Skeleton
             cogNameP = TTLocalizer.SkeletonP
-        if msgType == ToontownGlobals.SuitInvasionBegin:
-            msg1 = TTLocalizer.SuitInvasionBegin1
-            msg2 = TTLocalizer.SuitInvasionBegin2 % cogNameP
+        if msgType == ToontownGlobals.CogInvasionBegin:
+            msg1 = TTLocalizer.CogInvasionBegin1
+            msg2 = TTLocalizer.CogInvasionBegin2 % cogNameP
             self.invading = 1
-        elif msgType == ToontownGlobals.SuitInvasionUpdate:
-            msg1 = TTLocalizer.SuitInvasionUpdate1 % numRemaining
-            msg2 = TTLocalizer.SuitInvasionUpdate2 % cogNameP
+        elif msgType == ToontownGlobals.CogInvasionUpdate:
+            msg1 = TTLocalizer.CogInvasionUpdate1 % numRemaining
+            msg2 = TTLocalizer.CogInvasionUpdate2 % cogNameP
             self.invading = 1
-        elif msgType == ToontownGlobals.SuitInvasionEnd:
-            msg1 = TTLocalizer.SuitInvasionEnd1 % cogName
-            msg2 = TTLocalizer.SuitInvasionEnd2
+        elif msgType == ToontownGlobals.CogInvasionEnd:
+            msg1 = TTLocalizer.CogInvasionEnd1 % cogName
+            msg2 = TTLocalizer.CogInvasionEnd2
             self.invading = 0
-        elif msgType == ToontownGlobals.SuitInvasionBulletin:
-            msg1 = TTLocalizer.SuitInvasionBulletin1
-            msg2 = TTLocalizer.SuitInvasionBulletin2 % cogNameP
+        elif msgType == ToontownGlobals.CogInvasionBulletin:
+            msg1 = TTLocalizer.CogInvasionBulletin1
+            msg2 = TTLocalizer.CogInvasionBulletin2 % cogNameP
             self.invading = 1
         else:
             self.notify.warning('setInvasionStatus: invalid msgType: %s' % msgType)

@@ -14,12 +14,12 @@ from otp.distributed.TelemetryLimiter import RotationLimitToH, TLGatherAllAvs
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 
-class SuitInterior(Place.Place):
-    notify = DirectNotifyGlobal.directNotify.newCategory('SuitInterior')
+class CogInterior(Place.Place):
+    notify = DirectNotifyGlobal.directNotify.newCategory('CogInterior')
 
     def __init__(self, loader, parentFSM, doneEvent):
         Place.Place.__init__(self, loader, doneEvent)
-        self.fsm = ClassicFSM.ClassicFSM('SuitInterior', [State.State('entrance', self.enterEntrance, self.exitEntrance, ['battle', 'walk']),
+        self.fsm = ClassicFSM.ClassicFSM('CogInterior', [State.State('entrance', self.enterEntrance, self.exitEntrance, ['battle', 'walk']),
          State.State('Elevator', self.enterElevator, self.exitElevator, ['battle', 'walk']),
          State.State('battle', self.enterBattle, self.exitBattle, ['walk', 'died']),
          State.State('walk', self.enterWalk, self.exitWalk, ['stickerBook',
@@ -54,7 +54,7 @@ class SuitInterior(Place.Place):
 
     def enter(self, requestStatus):
         self.fsm.enterInitialState()
-        self._telemLimiter = TLGatherAllAvs('SuitInterior', RotationLimitToH)
+        self._telemLimiter = TLGatherAllAvs('CogInterior', RotationLimitToH)
         self.zoneId = requestStatus['zoneId']
         self.accept('DSIDoneEvent', self.handleDSIDoneEvent)
 

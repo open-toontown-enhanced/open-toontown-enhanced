@@ -223,7 +223,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
             self.calculateOffsets()
             self.sendUpdate('sendCurrentPosition', [list(self.offsetDict.keys()), list(self.offsetDict.values())])
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-                self.sendUpdate('sendSuitPosition', [self.cogOffset])
+                self.sendUpdate('sendCogPosition', [self.cogOffset])
 
     def reportEndOfContest(self, index):
         if index not in [0, 1]:

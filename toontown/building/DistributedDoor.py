@@ -289,8 +289,8 @@ class DistributedDoor(DistributedObject, DelayDeletable):
         return track
 
     def getAnimStateInterval(self, avatar, animName):
-        isSuit = isinstance(avatar, Suit)
-        if isSuit:
+        isCog = isinstance(avatar, Suit)
+        if isCog:
             return Func(avatar.loop, animName, 0)
         else:
             return Func(avatar.setAnimState, animName)

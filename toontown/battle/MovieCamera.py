@@ -481,7 +481,7 @@ def chooseSuitShot(attack, attackDuration):
         notify.warning('unknown attack id in chooseSuitShot: %d using default cam' % name)
         camTrack.append(defaultCamera())
     pbpText = attack['playByPlayText']
-    displayName = TTLocalizer.SuitAttackNames[attack['name']]
+    displayName = TTLocalizer.CogAttackNames[attack['name']]
     pbpTrack = pbpText.getShowInterval(displayName, 3.5)
     return Parallel(camTrack, pbpTrack)
 

@@ -25,7 +25,7 @@ class DistributedCogHQDoorAI(DistributedDoorAI.DistributedDoorAI):
         if av:
             if self.doorType == DoorTypes.EXT_COGHQ and self.isLockedDoor():
                 parts = av.getCogParts()
-                if CogDisguiseGlobals.isSuitComplete(parts, dept):
+                if CogDisguiseGlobals.isCogComplete(parts, dept):
                     allowed = 1
                 else:
                     allowed = 0

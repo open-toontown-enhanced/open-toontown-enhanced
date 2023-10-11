@@ -35,7 +35,7 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
         self.cogIds.append(cog.doId)
         self.d_setCogs()
 
-    def removeSuit(self, cog):
+    def removeCog(self, cog):
         try:
             self.cogIds.remove(cog.doId)
             self.d_setCogs()

@@ -591,13 +591,13 @@ def createSuitStunInterval(cog, before, after):
     return Sequence(Wait(before), Func(stars.reparentTo, head), Func(stars.setZ, max(0.0, p2[2] - 1.0)), Func(stars.loop, 'stun'), Wait(after), Func(stars.cleanup), Func(stars.removeNode))
 
 
-def calcAvgSuitPos(throw):
+def calcAvgCogPos(throw):
     battle = throw['battle']
-    avgSuitPos = Point3(0, 0, 0)
+    avgCogPos = Point3(0, 0, 0)
     numTargets = len(throw['target'])
     for i in range(numTargets):
         cog = throw['target'][i]['cog']
-        avgSuitPos += cog.getPos(battle)
+        avgCogPos += cog.getPos(battle)
 
-    avgSuitPos /= numTargets
-    return avgSuitPos
+    avgCogPos /= numTargets
+    return avgCogPos

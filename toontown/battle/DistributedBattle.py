@@ -99,7 +99,7 @@ class DistributedBattle(DistributedBattleBase.DistributedBattleBase):
         toonTrack.append(Func(toon.headsUp, cog))
         cogHeight = cog.getHeight()
         cogOffsetPnt = Point3(0, 0, cogHeight)
-        faceoffTime = self.calcFaceoffTime(self.getPos(), self.initialSuitPos)
+        faceoffTime = self.calcFaceoffTime(self.getPos(), self.initialCogPos)
         faceoffTime = max(faceoffTime, BATTLE_SMALL_VALUE)
         delay = FACEOFF_TAUNT_T
         if self.hasLocalToon():

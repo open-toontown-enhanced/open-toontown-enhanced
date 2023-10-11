@@ -8,7 +8,7 @@ from direct.fsm import State
 from toontown.minigame import Purchase
 from otp.avatar import DistributedAvatar
 from . import Hood
-from toontown.building import SuitInterior
+from toontown.building import CogInterior
 from toontown.cogdominium import CogdoInterior
 from toontown.toon.Toon import teleportDebug
 
@@ -32,7 +32,7 @@ class ToonHood(Hood.Hood):
           'townLoader',
           'minigame']),
          State.State('purchase', self.enterPurchase, self.exitPurchase, ['quietZone', 'minigame', 'safeZoneLoader']),
-         State.State('cogInterior', self.enterSuitInterior, self.exitSuitInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
+         State.State('cogInterior', self.enterCogInterior, self.exitCogInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
          State.State('cogdoInterior', self.enterCogdoInterior, self.exitCogdoInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
          State.State('minigame', self.enterMinigame, self.exitMinigame, ['purchase']),
          State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['safeZoneLoader',
@@ -121,15 +121,15 @@ class ToonHood(Hood.Hood):
             self.notify.error('handlePurchaseDone: unknown mode')
         return
 
-    def enterSuitInterior(self, requestStatus = None):
+    def enterCogInterior(self, requestStatus = None):
         self.placeDoneEvent = 'cog-interior-done'
-        self.acceptOnce(self.placeDoneEvent, self.handleSuitInteriorDone)
-        self.place = SuitInterior.SuitInterior(self, self.fsm, self.placeDoneEvent)
+        self.acceptOnce(self.placeDoneEvent, self.handleCogInteriorDone)
+        self.place = CogInterior.CogInterior(self, self.fsm, self.placeDoneEvent)
         self.place.load()
         self.place.enter(requestStatus)
         base.cr.playGame.setPlace(self.place)
 
-    def exitSuitInterior(self):
+    def exitCogInterior(self):
         self.ignore(self.placeDoneEvent)
         del self.placeDoneEvent
         self.place.exit()
@@ -138,7 +138,7 @@ class ToonHood(Hood.Hood):
         base.cr.playGame.setPlace(self.place)
         return
 
-    def handleSuitInteriorDone(self):
+    def handleCogInteriorDone(self):
         doneStatus = self.place.getDoneStatus()
         if self.isSameHood(doneStatus):
             self.fsm.request('quietZone', [doneStatus])

@@ -296,7 +296,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             if t == toon:
                 return t
 
-    def isSuitLured(self, cog):
+    def isCogLured(self, cog):
         if self.luredCogs.count(cog) != 0:
             return 1
 
@@ -355,9 +355,9 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         pos = Point3(x, y, z)
         self.setPos(pos)
 
-    def setInitialSuitPos(self, x, y, z):
-        self.initialSuitPos = Point3(x, y, z)
-        self.headsUp(self.initialSuitPos)
+    def setInitialCogPos(self, x, y, z):
+        self.initialCogPos = Point3(x, y, z)
+        self.headsUp(self.initialCogPos)
 
     def setZoneId(self, zoneId):
         self.zoneId = zoneId
@@ -412,7 +412,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         numCogsThatDied = 0
         for s in oldcogs:
             if self.cogs.count(s) == 0:
-                self.__removeSuit(s)
+                self.__removeCog(s)
                 numCogsThatDied += 1
                 self.notify.debug('cog %d dies, numCogsThatDied=%d' % (s.doId, numCogsThatDied))
 
@@ -708,8 +708,8 @@ class DistributedBattleBase(DistributedNode, BattleBase):
 
         self.membersKeep = None
 
-    def __removeSuit(self, cog):
-        self.notify.debug('__removeSuit(%d)' % cog.doId)
+    def __removeCog(self, cog):
+        self.notify.debug('__removeCog(%d)' % cog.doId)
         if self.cogs.count(cog) != 0:
             self.cogs.remove(cog)
 
@@ -963,7 +963,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         if len(self.activeCogs) >= 1:
             for cog in self.activeCogs:
                 cogPos, cogHpr = self.getActorPosHpr(cog)
-                if self.isSuitLured(cog) == 0:
+                if self.isCogLured(cog) == 0:
                     cog.setPosHpr(self, cogPos, cogHpr)
                 else:
                     spos = Point3(cogPos[0], cogPos[1] - MovieUtil.COG_LURE_DISTANCE, cogPos[2])
@@ -1386,7 +1386,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
                 point = self.cogPoints[numCogs][index]
                 pos = cog.getPos(self)
                 destPos = point[0]
-                if self.isSuitLured(cog) == 1:
+                if self.isCogLured(cog) == 1:
                     destPos = Point3(destPos[0], destPos[1] - MovieUtil.COG_LURE_DISTANCE, destPos[2])
 
                 if pos != destPos:

@@ -82,9 +82,9 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         for cog in self.cogs:
             cog.setState('Battle')
             cogIsLeader = 0
-            oneSuitTrack = Sequence()
-            oneSuitTrack.append(Func(cog.loop, 'neutral'))
-            oneSuitTrack.append(Func(cog.headsUp, elevatorPos))
+            oneCogTrack = Sequence()
+            oneCogTrack.append(Func(cog.loop, 'neutral'))
+            oneCogTrack.append(Func(cog.headsUp, elevatorPos))
             if self.cogs.index(cog) == leaderIndex:
                 cogLeader = cog
                 cogIsLeader = 1
@@ -92,13 +92,13 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
                     taunt = self.getBossBattleTaunt()
                 else:
                     taunt = CogBattleGlobals.getFaceoffTaunt(cog.getStyleName(), cog.doId)
-                oneSuitTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+                oneCogTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
             destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
-            oneSuitTrack.append(Wait(delay))
+            oneCogTrack.append(Wait(delay))
             if cogIsLeader == 1:
-                oneSuitTrack.append(Func(cog.clearChat))
-            oneSuitTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
-            cogTrack.append(oneSuitTrack)
+                oneCogTrack.append(Func(cog.clearChat))
+            oneCogTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
+            cogTrack.append(oneCogTrack)
 
         toonTrack = Parallel()
         for toon in self.toons:

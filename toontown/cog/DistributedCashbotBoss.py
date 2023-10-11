@@ -653,14 +653,14 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
                 toon.show()
 
     def __talkAboutPromotion(self, speech):
-        if self.prevCogSuitLevel < ToontownGlobals.MaxCogSuitLevel:
-            newCogSuitLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
-            if newCogSuitLevel == ToontownGlobals.MaxCogSuitLevel:
-                speech += TTLocalizer.ResistanceToonLastPromotion % (ToontownGlobals.MaxCogSuitLevel + 1)
-            if newCogSuitLevel in ToontownGlobals.CogSuitHPLevels:
+        if self.prevCogDisguiseLevel < ToontownGlobals.MaxCogDisguiseLevel:
+            newCogDisguiseLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
+            if newCogDisguiseLevel == ToontownGlobals.MaxCogDisguiseLevel:
+                speech += TTLocalizer.ResistanceToonLastPromotion % (ToontownGlobals.MaxCogDisguiseLevel + 1)
+            if newCogDisguiseLevel in ToontownGlobals.CogDisguiseHPLevels:
                 speech += TTLocalizer.ResistanceToonHPBoost
         else:
-            speech += TTLocalizer.ResistanceToonMaxed % (ToontownGlobals.MaxCogSuitLevel + 1)
+            speech += TTLocalizer.ResistanceToonMaxed % (ToontownGlobals.MaxCogDisguiseLevel + 1)
         return speech
 
     def enterOff(self):

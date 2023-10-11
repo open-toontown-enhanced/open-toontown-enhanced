@@ -35,14 +35,14 @@ class DistributedSellbotHQDoorAI(DistributedCogHQDoorAI.DistributedCogHQDoorAI):
             if self.doorType == DoorTypes.EXT_COGHQ and self.isLockedDoor():
                 parts = av.getCogParts()
                 dept = ToontownGlobals.cogHQZoneId2deptIndex(self.destinationZone)
-                if CogDisguiseGlobals.isPaidSuitComplete(av, parts, dept):
+                if CogDisguiseGlobals.isPaidDisguiseComplete(av, parts, dept):
                     if av.getCogMerits()[dept] >= CogDisguiseGlobals.getTotalMerits(av, dept):
-                        cogType = CogDisguiseGlobals.cogTypes.FullSuit
+                        cogType = CogDisguiseGlobals.cogTypes.FullDisguise
                     else:
                         cogType = CogDisguiseGlobals.cogTypes.NoMerits
                     allowed = 1
                 else:
-                    cogType = CogDisguiseGlobals.cogTypes.NoSuit
+                    cogType = CogDisguiseGlobals.cogTypes.NoDisguise
                 if ToontownGlobals.SELLBOT_NERF_HOLIDAY in self.air.holidayManager.currentHolidays:
                     allowed = 1
 

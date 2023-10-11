@@ -447,15 +447,15 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
     def __talkAboutPromotion(self, speech):
         if not self.localToonPromoted:
             pass
-        elif self.prevCogSuitLevel < ToontownGlobals.MaxCogSuitLevel:
+        elif self.prevCogDisguiseLevel < ToontownGlobals.MaxCogDisguiseLevel:
             speech += TTLocalizer.CagedToonPromotion
-            newCogSuitLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
-            if newCogSuitLevel == ToontownGlobals.MaxCogSuitLevel:
-                speech += TTLocalizer.CagedToonLastPromotion % (ToontownGlobals.MaxCogSuitLevel + 1)
-            if newCogSuitLevel in ToontownGlobals.CogSuitHPLevels:
+            newCogDisguiseLevel = localAvatar.getCogLevels()[CogDisguiseGlobals.dept2deptIndex(self.style.dept)]
+            if newCogDisguiseLevel == ToontownGlobals.MaxCogDisguiseLevel:
+                speech += TTLocalizer.CagedToonLastPromotion % (ToontownGlobals.MaxCogDisguiseLevel + 1)
+            if newCogDisguiseLevel in ToontownGlobals.CogDisguiseHPLevels:
                 speech += TTLocalizer.CagedToonHPBoost
         else:
-            speech += TTLocalizer.CagedToonMaxed % (ToontownGlobals.MaxCogSuitLevel + 1)
+            speech += TTLocalizer.CagedToonMaxed % (ToontownGlobals.MaxCogDisguiseLevel + 1)
         return speech
 
     def __makeCageOpenMovie(self):

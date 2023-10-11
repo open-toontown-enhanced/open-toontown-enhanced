@@ -40,7 +40,7 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
         BattleBase.__init__(self)
         self.streetBattle = 1
         self.pos = Point3(0, 0, 0)
-        self.initialSuitPos = Point3(0, 0, 0)
+        self.initialCogPos = Point3(0, 0, 0)
         self.toonExp = {}
         self.toonOrigQuests = {}
         self.toonItems = {}
@@ -116,7 +116,7 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
 
     def clearAttacks(self):
         self.toonAttacks = {}
-        self.cogAttacks = getDefaultSuitAttacks()
+        self.cogAttacks = getDefaultCogAttacks()
 
     def requestDelete(self):
         if hasattr(self, 'fsm'):
@@ -208,11 +208,11 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
         return [
          self.pos[0], self.pos[1], self.pos[2]]
 
-    def getInitialSuitPos(self):
+    def getInitialCogPos(self):
         p = []
-        p.append(self.initialSuitPos[0])
-        p.append(self.initialSuitPos[1])
-        p.append(self.initialSuitPos[2])
+        p.append(self.initialCogPos[0])
+        p.append(self.initialCogPos[1])
+        p.append(self.initialCogPos[2])
         return p
 
     def setBossBattle(self, bossBattle):
@@ -628,8 +628,8 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
             self.needAdjust = 1
             self.__requestAdjust()
 
-    def __removeSuit(self, cog):
-        self.notify.debug('__removeSuit(%d)' % cog.doId)
+    def __removeCog(self, cog):
+        self.notify.debug('__removeCog(%d)' % cog.doId)
         if self.cogs.count(cog) != 0:
             self.cogs.remove(cog)
         else:
@@ -1550,7 +1550,7 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
                  'activeToons': self.activeToons[:]}
                 self.cogsKilled.append(encounter)
                 self.cogsKilledThisBattle.append(encounter)
-            self.__removeSuit(cog)
+            self.__removeCog(cog)
             needUpdate = 1
             cog.resume()
 

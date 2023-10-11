@@ -102,7 +102,7 @@ class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
         self.joinableFsm.request('Joinable')
         self.runableFsm.request('Unrunable')
         self.cogs[0].releaseControl()
-        faceOffTime = self.calcToonMoveTime(self.pos, self.initialSuitPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME
+        faceOffTime = self.calcToonMoveTime(self.pos, self.initialCogPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME
         self.notify.debug('faceOffTime = %s' % faceOffTime)
         self.timer.startCallback(faceOffTime, self.__serverFaceOffDone)
         return None
