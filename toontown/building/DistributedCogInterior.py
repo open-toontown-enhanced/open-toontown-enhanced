@@ -252,7 +252,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
         if self.floorModel:
             self.floorModel.removeNode()
         if self.currentFloor == 0:
-            self.floorModel = loader.loadModel('phase_7/models/modules/cog_interior')
+            self.floorModel = loader.loadModel('phase_7/models/modules/suit_interior')
             CogHs = self.BottomFloor_CogHs
             CogPositions = self.BottomFloor_CogPositions
         elif self.currentFloor == self.numFloors - 1:
