@@ -67,7 +67,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.gameType = TugOfWarGameGlobals.TOON_VS_TOON
         self.suit = None
         self.suitId = 666
-        self.suitType = 'f'
+        self.suitType = 'flunky'
         self.suitLevel = 1
         self.sides = {}
         self.avList = [[], []]
@@ -373,13 +373,13 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.gameType = index
         self.suitLevel = suit
         if suit == 1:
-            self.suitType = 'pp'
+            self.suitType = 'penny_pincher'
         elif suit == 2:
-            self.suitType = 'dt'
+            self.suitType = 'double_talker'
         elif suit == 3:
-            self.suitType = 'gh'
+            self.suitType = 'glad_hander'
         elif suit == 4:
-            self.suitType = 'cr'
+            self.suitType = 'corporate_raider'
 
     def setGameReady(self):
         if not self.hasLocalToon:

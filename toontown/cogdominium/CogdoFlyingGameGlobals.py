@@ -122,7 +122,7 @@ Gameplay.BackpackState2TextureName = {Gameplay.BackpackStates.Normal: 'tt_t_ara_
  Gameplay.BackpackStates.Targeted: 'tt_t_ara_cfg_propellerPack_eagleTarget',
  Gameplay.BackpackStates.Attacked: 'tt_t_ara_cfg_propellerPack_eagleAttack',
  Gameplay.BackpackStates.Refuel: 'tt_t_ara_cfg_propellerPack_flash'}
-Gameplay.MinionDnaName = 'bf'
+Gameplay.MinionDnaName = 'bottom_feeder'
 Gameplay.MinionScale = 0.8
 Gui = VariableContainer()
 Gui.FuelNumBladesPos2D = (-0.005, -0.017)

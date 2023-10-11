@@ -41,107 +41,107 @@ SuitsCEOBattle = (('sit', 'sit'),
  ('tray-walk', 'tray-walk'),
  ('tray-neutral', 'tray-neutral'),
  ('sit-lose', 'sit-lose'))
-f = (('throw-paper', 'throw-paper', 3.5), ('phone', 'phone', 3.5), ('shredder', 'shredder', 3.5))
-p = (('pencil-sharpener', 'pencil-sharpener', 5),
+flunky = (('throw-paper', 'throw-paper', 3.5), ('phone', 'phone', 3.5), ('shredder', 'shredder', 3.5))
+pencil_pusher = (('pencil-sharpener', 'pencil-sharpener', 5),
  ('pen-squirt', 'pen-squirt', 5),
  ('hold-eraser', 'hold-eraser', 5),
  ('finger-wag', 'finger-wag', 5),
  ('hold-pencil', 'hold-pencil', 5))
-ym = (('throw-paper', 'throw-paper', 5),
+yesman = (('throw-paper', 'throw-paper', 5),
  ('golf-club-swing', 'golf-club-swing', 5),
  ('magic3', 'magic3', 5),
  ('rubber-stamp', 'rubber-stamp', 5),
  ('smile', 'smile', 5))
-mm = (('speak', 'speak', 5),
+micromanager = (('speak', 'speak', 5),
  ('effort', 'effort', 5),
  ('magic1', 'magic1', 5),
  ('pen-squirt', 'fountain-pen', 5),
  ('finger-wag', 'finger-wag', 5))
-ds = (('magic1', 'magic1', 5),
+downsizer = (('magic1', 'magic1', 5),
  ('magic2', 'magic2', 5),
  ('throw-paper', 'throw-paper', 5),
  ('magic3', 'magic3', 5))
-hh = (('pen-squirt', 'fountain-pen', 7),
+head_hunter = (('pen-squirt', 'fountain-pen', 7),
  ('glower', 'glower', 5),
  ('throw-paper', 'throw-paper', 5),
  ('magic1', 'magic1', 5),
  ('roll-o-dex', 'roll-o-dex', 5))
-cr = (('pickpocket', 'pickpocket', 5), ('throw-paper', 'throw-paper', 3.5), ('glower', 'glower', 5))
-tbc = (('cigar-smoke', 'cigar-smoke', 8),
+corporate_raider = (('pickpocket', 'pickpocket', 5), ('throw-paper', 'throw-paper', 3.5), ('glower', 'glower', 5))
+the_big_cheese = (('cigar-smoke', 'cigar-smoke', 8),
  ('glower', 'glower', 5),
  ('song-and-dance', 'song-and-dance', 8),
  ('golf-club-swing', 'golf-club-swing', 5))
-cc = (('speak', 'speak', 5),
+cold_caller = (('speak', 'speak', 5),
  ('glower', 'glower', 5),
  ('phone', 'phone', 3.5),
  ('finger-wag', 'finger-wag', 5))
-tm = (('speak', 'speak', 5),
+telemarketer = (('speak', 'speak', 5),
  ('throw-paper', 'throw-paper', 5),
  ('pickpocket', 'pickpocket', 5),
  ('roll-o-dex', 'roll-o-dex', 5),
  ('finger-wag', 'finger-wag', 5))
-nd = (('pickpocket', 'pickpocket', 5),
+name_dropper = (('pickpocket', 'pickpocket', 5),
  ('roll-o-dex', 'roll-o-dex', 5),
  ('magic3', 'magic3', 5),
  ('smile', 'smile', 5))
-gh = (('speak', 'speak', 5), ('pen-squirt', 'fountain-pen', 5), ('rubber-stamp', 'rubber-stamp', 5))
-ms = (('effort', 'effort', 5),
+glad_hander = (('speak', 'speak', 5), ('pen-squirt', 'fountain-pen', 5), ('rubber-stamp', 'rubber-stamp', 5))
+mover_and_shaker = (('effort', 'effort', 5),
  ('throw-paper', 'throw-paper', 5),
  ('stomp', 'stomp', 5),
  ('quick-jump', 'jump', 6))
-tf = (('phone', 'phone', 5),
+two_face = (('phone', 'phone', 5),
  ('smile', 'smile', 5),
  ('throw-object', 'throw-object', 5),
  ('glower', 'glower', 5))
-m = (('speak', 'speak', 5),
+mingler = (('speak', 'speak', 5),
  ('magic2', 'magic2', 5),
  ('magic1', 'magic1', 5),
  ('golf-club-swing', 'golf-club-swing', 5))
-mh = (('magic1', 'magic1', 5),
+mr_hollywood = (('magic1', 'magic1', 5),
  ('smile', 'smile', 5),
  ('golf-club-swing', 'golf-club-swing', 5),
  ('song-and-dance', 'song-and-dance', 5))
-sc = (('throw-paper', 'throw-paper', 3.5), ('watercooler', 'watercooler', 5), ('pickpocket', 'pickpocket', 5))
-pp = (('throw-paper', 'throw-paper', 5), ('glower', 'glower', 5), ('finger-wag', 'fingerwag', 5))
-tw = (('throw-paper', 'throw-paper', 3.5),
+short_change = (('throw-paper', 'throw-paper', 3.5), ('watercooler', 'watercooler', 5), ('pickpocket', 'pickpocket', 5))
+penny_pincher = (('throw-paper', 'throw-paper', 5), ('glower', 'glower', 5), ('finger-wag', 'fingerwag', 5))
+tightwad = (('throw-paper', 'throw-paper', 3.5),
  ('glower', 'glower', 5),
  ('magic2', 'magic2', 5),
  ('finger-wag', 'finger-wag', 5))
-bc = (('phone', 'phone', 5), ('hold-pencil', 'hold-pencil', 5))
-nc = (('phone', 'phone', 5), ('throw-object', 'throw-object', 5))
-mb = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 3.5))
-ls = (('throw-paper', 'throw-paper', 5), ('throw-object', 'throw-object', 5), ('hold-pencil', 'hold-pencil', 5))
-rb = (('glower', 'glower', 5), ('magic1', 'magic1', 5), ('golf-club-swing', 'golf-club-swing', 5))
-bf = (('pickpocket', 'pickpocket', 5),
+bean_counter = (('phone', 'phone', 5), ('hold-pencil', 'hold-pencil', 5))
+number_cruncher = (('phone', 'phone', 5), ('throw-object', 'throw-object', 5))
+money_bags = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 3.5))
+loan_shark = (('throw-paper', 'throw-paper', 5), ('throw-object', 'throw-object', 5), ('hold-pencil', 'hold-pencil', 5))
+robber_baron = (('glower', 'glower', 5), ('magic1', 'magic1', 5), ('golf-club-swing', 'golf-club-swing', 5))
+bottom_feeder = (('pickpocket', 'pickpocket', 5),
  ('rubber-stamp', 'rubber-stamp', 5),
  ('shredder', 'shredder', 3.5),
  ('watercooler', 'watercooler', 5))
-b = (('effort', 'effort', 5),
+bloodsucker = (('effort', 'effort', 5),
  ('throw-paper', 'throw-paper', 5),
  ('throw-object', 'throw-object', 5),
  ('magic1', 'magic1', 5))
-dt = (('rubber-stamp', 'rubber-stamp', 5),
+double_talker = (('rubber-stamp', 'rubber-stamp', 5),
  ('throw-paper', 'throw-paper', 5),
  ('speak', 'speak', 5),
  ('finger-wag', 'fingerwag', 5),
  ('throw-paper', 'throw-paper', 5))
-ac = (('throw-object', 'throw-object', 5),
+ambulance_chaser = (('throw-object', 'throw-object', 5),
  ('roll-o-dex', 'roll-o-dex', 5),
  ('stomp', 'stomp', 5),
  ('phone', 'phone', 5),
  ('throw-paper', 'throw-paper', 5))
-bs = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 5), ('finger-wag', 'fingerwag', 5))
-sd = (('magic2', 'magic2', 5),
+back_stabber = (('magic1', 'magic1', 5), ('throw-paper', 'throw-paper', 5), ('finger-wag', 'fingerwag', 5))
+spin_doctor = (('magic2', 'magic2', 5),
  ('quick-jump', 'jump', 6),
  ('stomp', 'stomp', 5),
  ('magic3', 'magic3', 5),
  ('hold-pencil', 'hold-pencil', 5),
  ('throw-paper', 'throw-paper', 5))
-le = (('speak', 'speak', 5),
+legal_eagle = (('speak', 'speak', 5),
  ('throw-object', 'throw-object', 5),
  ('glower', 'glower', 5),
  ('throw-paper', 'throw-paper', 5))
-bw = (('finger-wag', 'fingerwag', 5),
+big_wig = (('finger-wag', 'fingerwag', 5),
  ('cigar-smoke', 'cigar-smoke', 8),
  ('gavel', 'gavel', 8),
  ('magic1', 'magic1', 5),
@@ -401,203 +401,203 @@ class Suit(Avatar.Avatar):
         self.headTexture = None
         self.loseActor = None
         self.isSkeleton = 0
-        if dna.name == 'f':
+        if dna.name == 'flunky':
             self.scale = 4.0 / cSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('flunky')
             self.generateHead('glasses')
             self.setHeight(4.88)
-        elif dna.name == 'p':
+        elif dna.name == 'pencil_pusher':
             self.scale = 3.35 / bSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('pencilpusher')
             self.setHeight(5.0)
-        elif dna.name == 'ym':
+        elif dna.name == 'yesman':
             self.scale = 4.125 / aSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('yesman')
             self.setHeight(5.28)
-        elif dna.name == 'mm':
+        elif dna.name == 'micromanager':
             self.scale = 2.5 / cSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('micromanager')
             self.setHeight(3.25)
-        elif dna.name == 'ds':
+        elif dna.name == 'downsizer':
             self.scale = 4.5 / bSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('beancounter')
             self.setHeight(6.08)
-        elif dna.name == 'hh':
+        elif dna.name == 'head_hunter':
             self.scale = 6.5 / aSize
             self.handColor = SuitDNA.corpPolyColor
             self.generateBody()
             self.generateHead('headhunter')
             self.setHeight(7.45)
-        elif dna.name == 'cr':
+        elif dna.name == 'corporate_raider':
             self.scale = 6.75 / cSize
             self.handColor = VBase4(0.85, 0.55, 0.55, 1.0)
             self.generateBody()
             self.headTexture = 'corporate-raider.png'
             self.generateHead('flunky')
             self.setHeight(8.23)
-        elif dna.name == 'tbc':
+        elif dna.name == 'the_big_cheese':
             self.scale = 7.0 / aSize
             self.handColor = VBase4(0.75, 0.95, 0.75, 1.0)
             self.generateBody()
             self.generateHead('bigcheese')
             self.setHeight(9.34)
-        elif dna.name == 'bf':
+        elif dna.name == 'bottom_feeder':
             self.scale = 4.0 / cSize
             self.handColor = SuitDNA.legalPolyColor
             self.generateBody()
             self.headTexture = 'bottom-feeder.png'
             self.generateHead('tightwad')
             self.setHeight(4.81)
-        elif dna.name == 'b':
+        elif dna.name == 'bloodsucker':
             self.scale = 4.375 / bSize
             self.handColor = VBase4(0.95, 0.95, 1.0, 1.0)
             self.generateBody()
             self.headTexture = 'blood-sucker.png'
             self.generateHead('movershaker')
             self.setHeight(6.17)
-        elif dna.name == 'dt':
+        elif dna.name == 'double_talker':
             self.scale = 4.25 / aSize
             self.handColor = SuitDNA.legalPolyColor
             self.generateBody()
             self.headTexture = 'double-talker.png'
             self.generateHead('twoface')
             self.setHeight(5.63)
-        elif dna.name == 'ac':
+        elif dna.name == 'ambulance_chaser':
             self.scale = 4.35 / bSize
             self.handColor = SuitDNA.legalPolyColor
             self.generateBody()
             self.generateHead('ambulancechaser')
             self.setHeight(6.39)
-        elif dna.name == 'bs':
+        elif dna.name == 'back_stabber':
             self.scale = 4.5 / aSize
             self.handColor = SuitDNA.legalPolyColor
             self.generateBody()
             self.generateHead('backstabber')
             self.setHeight(6.71)
-        elif dna.name == 'sd':
+        elif dna.name == 'spin_doctor':
             self.scale = 5.65 / bSize
             self.handColor = VBase4(0.5, 0.8, 0.75, 1.0)
             self.generateBody()
             self.headTexture = 'spin-doctor.png'
             self.generateHead('telemarketer')
             self.setHeight(7.9)
-        elif dna.name == 'le':
+        elif dna.name == 'legal_eagle':
             self.scale = 7.125 / aSize
             self.handColor = VBase4(0.25, 0.25, 0.5, 1.0)
             self.generateBody()
             self.generateHead('legaleagle')
             self.setHeight(8.27)
-        elif dna.name == 'bw':
+        elif dna.name == 'big_wig':
             self.scale = 7.0 / aSize
             self.handColor = SuitDNA.legalPolyColor
             self.generateBody()
             self.generateHead('bigwig')
             self.setHeight(8.69)
-        elif dna.name == 'sc':
+        elif dna.name == 'short_change':
             self.scale = 3.6 / cSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.generateHead('coldcaller')
             self.setHeight(4.77)
-        elif dna.name == 'pp':
+        elif dna.name == 'penny_pincher':
             self.scale = 3.55 / aSize
             self.handColor = VBase4(1.0, 0.5, 0.6, 1.0)
             self.generateBody()
             self.generateHead('pennypincher')
             self.setHeight(5.26)
-        elif dna.name == 'tw':
+        elif dna.name == 'tightwad':
             self.scale = 4.5 / cSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.generateHead('tightwad')
             self.setHeight(5.41)
-        elif dna.name == 'bc':
+        elif dna.name == 'bean_counter':
             self.scale = 4.4 / bSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.generateHead('beancounter')
             self.setHeight(5.95)
-        elif dna.name == 'nc':
+        elif dna.name == 'number_cruncher':
             self.scale = 5.25 / aSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.generateHead('numbercruncher')
             self.setHeight(7.22)
-        elif dna.name == 'mb':
+        elif dna.name == 'money_bags':
             self.scale = 5.3 / cSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.generateHead('moneybags')
             self.setHeight(6.97)
-        elif dna.name == 'ls':
+        elif dna.name == 'loan_shark':
             self.scale = 6.5 / bSize
             self.handColor = VBase4(0.5, 0.85, 0.75, 1.0)
             self.generateBody()
             self.generateHead('loanshark')
             self.setHeight(8.58)
-        elif dna.name == 'rb':
+        elif dna.name == 'robber_baron':
             self.scale = 7.0 / aSize
             self.handColor = SuitDNA.moneyPolyColor
             self.generateBody()
             self.headTexture = 'robber-baron.png'
             self.generateHead('yesman')
             self.setHeight(8.95)
-        elif dna.name == 'cc':
+        elif dna.name == 'cold_caller':
             self.scale = 3.5 / cSize
             self.handColor = VBase4(0.55, 0.65, 1.0, 1.0)
             self.headColor = VBase4(0.25, 0.35, 1.0, 1.0)
             self.generateBody()
             self.generateHead('coldcaller')
             self.setHeight(4.63)
-        elif dna.name == 'tm':
+        elif dna.name == 'telemarketer':
             self.scale = 3.75 / bSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.generateHead('telemarketer')
             self.setHeight(5.24)
-        elif dna.name == 'nd':
+        elif dna.name == 'name_dropper':
             self.scale = 4.35 / aSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.headTexture = 'name-dropper.png'
             self.generateHead('numbercruncher')
             self.setHeight(5.98)
-        elif dna.name == 'gh':
+        elif dna.name == 'glad_hander':
             self.scale = 4.75 / cSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.generateHead('gladhander')
             self.setHeight(6.4)
-        elif dna.name == 'ms':
+        elif dna.name == 'mover_and_shaker':
             self.scale = 4.75 / bSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.generateHead('movershaker')
             self.setHeight(6.7)
-        elif dna.name == 'tf':
+        elif dna.name == 'two_face':
             self.scale = 5.25 / aSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.generateHead('twoface')
             self.setHeight(6.95)
-        elif dna.name == 'm':
+        elif dna.name == 'the_mingler':
             self.scale = 5.75 / aSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()
             self.headTexture = 'mingler.png'
             self.generateHead('twoface')
             self.setHeight(7.61)
-        elif dna.name == 'mh':
+        elif dna.name == 'mr_hollywood':
             self.scale = 7.0 / aSize
             self.handColor = SuitDNA.salesPolyColor
             self.generateBody()

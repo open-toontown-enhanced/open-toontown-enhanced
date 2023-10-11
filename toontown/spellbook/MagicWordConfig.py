@@ -75,11 +75,11 @@ CUSTOM_SPELLBOOK_DEFAULT = '''{
     [
         {
             "name": "SetPos",
-            "access": "MODERATOR"
+            "permissionLevel": 1
         },
         {
             "name": "GetPos",
-            "access": "MODERATOR"
+            "permissionLevel": 1
         }
     ]
 }

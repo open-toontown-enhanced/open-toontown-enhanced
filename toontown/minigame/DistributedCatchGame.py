@@ -107,10 +107,10 @@ class DistributedCatchGame(DistributedMinigame):
         self.toonSDs[avId] = toonSD
         toonSD.load()
         if self.WantSuits:
-            suitTypes = ['f',
-             'tm',
-             'pp',
-             'dt']
+            suitTypes = ['flunky',
+             'telemarketer',
+             'penny_pincher',
+             'double_talker']
             self.suits = []
             for type in suitTypes:
                 suit = Suit.Suit()

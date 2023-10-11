@@ -16,18 +16,18 @@ class CogInvasionManagerAI(DirectObject):
     INVASION_MAX_DELAY = ConfigVariableInt('invasion-max-delay', 604800).getValue()
     INVADING_COG_TYPES = (
         # Bossbots
-        'f',  # Flunky
-        'hh', # Head Hunter
-        'cr', # Corporate Raider
+        'flunky',
+        'head_hunter',
+        'corporate_raider',
         # Sellbots
-        'tf', # Two Face
-        'm',  # The Mingler
+        'two_face',
+        'the_mingler',
         # Cashbots
-        'mb', # Money Bags
-        'ls', # Loan Shark
+        'money_bags',
+        'loan_shark',
         # Lawbots
-        'sd', # Spin Doctor
-        'le'  # Legal Eagle
+        'spin_doctor',
+        'legal_eagle'
     )
 
     def __init__(self, air):

@@ -307,162 +307,162 @@ def __makeCancelledNodePath():
 def doDefault(attack):
     notify.debug('building suit attack in doDefault')
     suitName = attack['suitName']
-    if suitName == 'f':
+    if suitName == 'flunky':
         attack['id'] = POUND_KEY
         attack['name'] = 'PoundKey'
         attack['animName'] = 'phone'
         return doPoundKey(attack)
-    elif suitName == 'p':
+    elif suitName == 'pencil_pusher':
         attack['id'] = FOUNTAIN_PEN
         attack['name'] = 'FountainPen'
         attack['animName'] = 'pen-squirt'
         return doFountainPen(attack)
-    elif suitName == 'ym':
+    elif suitName == 'yesman':
         attack['id'] = RUBBER_STAMP
         attack['name'] = 'RubberStamp'
         attack['animName'] = 'rubber-stamp'
         return doRubberStamp(attack)
-    elif suitName == 'mm':
+    elif suitName == 'micromanager':
         attack['id'] = FINGER_WAG
         attack['name'] = 'FingerWag'
         attack['animName'] = 'finger-wag'
         return doFingerWag(attack)
-    elif suitName == 'ds':
+    elif suitName == 'downsizer':
         attack['id'] = DEMOTION
         attack['name'] = 'Demotion'
         attack['animName'] = 'magic1'
         return doDemotion(attack)
-    elif suitName == 'hh':
+    elif suitName == 'head_hunter':
         attack['id'] = GLOWER_POWER
         attack['name'] = 'GlowerPower'
         attack['animName'] = 'glower'
         return doGlowerPower(attack)
-    elif suitName == 'cr':
+    elif suitName == 'corporate_raider':
         attack['id'] = PICK_POCKET
         attack['name'] = 'PickPocket'
         attack['animName'] = 'pickpocket'
         return doPickPocket(attack)
-    elif suitName == 'tbc':
+    elif suitName == 'the_big_cheese':
         attack['id'] = GLOWER_POWER
         attack['name'] = 'GlowerPower'
         attack['animName'] = 'glower'
         return doGlowerPower(attack)
-    elif suitName == 'cc':
+    elif suitName == 'cold_caller':
         attack['id'] = POUND_KEY
         attack['name'] = 'PoundKey'
         attack['animName'] = 'phone'
         return doPoundKey(attack)
-    elif suitName == 'tm':
+    elif suitName == 'telemarketer':
         attack['id'] = CLIPON_TIE
         attack['name'] = 'ClipOnTie'
         attack['animName'] = 'throw-paper'
         return doClipOnTie(attack)
-    elif suitName == 'nd':
+    elif suitName == 'name_dropper':
         attack['id'] = PICK_POCKET
         attack['name'] = 'PickPocket'
         attack['animName'] = 'pickpocket'
         return doPickPocket(attack)
-    elif suitName == 'gh':
+    elif suitName == 'glad_hander':
         attack['id'] = FOUNTAIN_PEN
         attack['name'] = 'FountainPen'
         attack['animName'] = 'pen-squirt'
         return doFountainPen(attack)
-    elif suitName == 'ms':
+    elif suitName == 'mover_and_shaker':
         attack['id'] = BRAIN_STORM
         attack['name'] = 'BrainStorm'
         attack['animName'] = 'effort'
         return doBrainStorm(attack)
-    elif suitName == 'tf':
+    elif suitName == 'two_face':
         attack['id'] = RED_TAPE
         attack['name'] = 'RedTape'
         attack['animName'] = 'throw-object'
         return doRedTape(attack)
-    elif suitName == 'm':
+    elif suitName == 'the_mingler':
         attack['id'] = BUZZ_WORD
         attack['name'] = 'BuzzWord'
         attack['animName'] = 'speak'
         return doBuzzWord(attack)
-    elif suitName == 'mh':
+    elif suitName == 'mr_hollywood':
         attack['id'] = RAZZLE_DAZZLE
         attack['name'] = 'RazzleDazzle'
         attack['animName'] = 'smile'
         return doRazzleDazzle(attack)
-    elif suitName == 'sc':
+    elif suitName == 'short_change':
         attack['id'] = WATERCOOLER
         attack['name'] = 'Watercooler'
         attack['animName'] = 'water-cooler'
         return doWatercooler(attack)
-    elif suitName == 'pp':
+    elif suitName == 'penny_pincher':
         attack['id'] = BOUNCE_CHECK
         attack['name'] = 'BounceCheck'
         attack['animName'] = 'throw-paper'
         return doBounceCheck(attack)
-    elif suitName == 'tw':
+    elif suitName == 'tightwad':
         attack['id'] = GLOWER_POWER
         attack['name'] = 'GlowerPower'
         attack['animName'] = 'glower'
         return doGlowerPower(attack)
-    elif suitName == 'bc':
+    elif suitName == 'bean_counter':
         attack['id'] = AUDIT
         attack['name'] = 'Audit'
         attack['animName'] = 'phone'
         return doAudit(attack)
-    elif suitName == 'nc':
+    elif suitName == 'number_cruncher':
         attack['id'] = RED_TAPE
         attack['name'] = 'RedTape'
         attack['animName'] = 'throw-object'
         return doRedTape(attack)
-    elif suitName == 'mb':
+    elif suitName == 'money_bags':
         attack['id'] = LIQUIDATE
         attack['name'] = 'Liquidate'
         attack['animName'] = 'magic1'
         return doLiquidate(attack)
-    elif suitName == 'ls':
+    elif suitName == 'loan_shark':
         attack['id'] = WRITE_OFF
         attack['name'] = 'WriteOff'
         attack['animName'] = 'hold-pencil'
         return doWriteOff(attack)
-    elif suitName == 'rb':
+    elif suitName == 'robber_baron':
         attack['id'] = TEE_OFF
         attack['name'] = 'TeeOff'
         attack['animName'] = 'golf-club-swing'
         return doTeeOff(attack)
-    elif suitName == 'bf':
+    elif suitName == 'bottom_feeder':
         attack['id'] = RUBBER_STAMP
         attack['name'] = 'RubberStamp'
         attack['animName'] = 'rubber-stamp'
         return doRubberStamp(attack)
-    elif suitName == 'b':
+    elif suitName == 'bloodsucker':
         attack['id'] = EVICTION_NOTICE
         attack['name'] = 'EvictionNotice'
         attack['animName'] = 'throw-paper'
         return doEvictionNotice(attack)
-    elif suitName == 'dt':
+    elif suitName == 'double_talker':
         attack['id'] = RUBBER_STAMP
         attack['name'] = 'RubberStamp'
         attack['animName'] = 'rubber-stamp'
         return doRubberStamp(attack)
-    elif suitName == 'ac':
+    elif suitName == 'ambulance_chaser':
         attack['id'] = RED_TAPE
         attack['name'] = 'RedTape'
         attack['animName'] = 'throw-object'
         return doRedTape(attack)
-    elif suitName == 'bs':
+    elif suitName == 'back_stabber':
         attack['id'] = FINGER_WAG
         attack['name'] = 'FingerWag'
         attack['animName'] = 'finger-wag'
         return doFingerWag(attack)
-    elif suitName == 'sd':
+    elif suitName == 'spin_doctor':
         attack['id'] = WRITE_OFF
         attack['name'] = 'WriteOff'
         attack['animName'] = 'hold-pencil'
         return doWriteOff(attack)
-    elif suitName == 'le':
+    elif suitName == 'legal_eagle':
         attack['id'] = JARGON
         attack['name'] = 'Jargon'
         attack['animName'] = 'speak'
         return doJargon(attack)
-    elif suitName == 'bw':
+    elif suitName == 'big_wig':
         attack['id'] = FINGER_WAG
         attack['name'] = 'FingerWag'
         attack['animName'] = 'finger-wag'
@@ -790,7 +790,7 @@ def doClipOnTie(attack):
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
@@ -1084,7 +1084,7 @@ def doFingerWag(attack):
         partDelay = 1.3
         damageDelay = 2.7
         dodgeDelay = 1.7
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 1.3
         damageDelay = 2.7
         dodgeDelay = 1.8
@@ -1095,16 +1095,16 @@ def doFingerWag(attack):
     suitTrack = getSuitTrack(attack)
     partTrack = getPartTrack(particleEffect, partDelay, 2, [particleEffect, suit, 0])
     suitName = attack['suitName']
-    if suitName == 'mm':
+    if suitName == 'micromanager':
         particleEffect.setPos(0.167, 1.5, 2.731)
-    elif suitName == 'tw':
+    elif suitName == 'tightwad':
         particleEffect.setPos(0.167, 1.8, 5)
         particleEffect.setHpr(-90.0, -60.0, 180.0)
-    elif suitName == 'pp':
+    elif suitName == 'penny_pincher':
         particleEffect.setPos(0.167, 1, 4.1)
-    elif suitName == 'bs':
+    elif suitName == 'back_stabber':
         particleEffect.setPos(0.167, 1, 5.1)
-    elif suitName == 'bw':
+    elif suitName == 'big_wig':
         particleEffect.setPos(0.167, 1.9, suit.getHeight() - 1.8)
         particleEffect.setP(-110)
     toonTrack = getToonTrack(attack, damageDelay, ['slip-backward'], dodgeDelay, ['sidestep'])
@@ -1240,13 +1240,13 @@ def doTeeOff(attack):
     clubPosPoints = [MovieUtil.PNT3_ZERO, VBase3(63.097, 43.988, -18.435)]
     clubPropTrack = getPropTrack(club, suit.getLeftHand(), clubPosPoints, 0.5, 5.2, Point3(1.1, 1.1, 1.1))
     suitName = attack['suitName']
-    if suitName == 'ym':
+    if suitName == 'yesman':
         ballPosPoints = [Point3(2.1, 0, 0.1)]
-    elif suitName == 'tbc':
+    elif suitName == 'the_big_cheese':
         ballPosPoints = [Point3(4.1, 0, 0.1)]
-    elif suitName == 'm':
+    elif suitName == 'the_mingler':
         ballPosPoints = [Point3(3.2, 0, 0.1)]
-    elif suitName == 'rb':
+    elif suitName == 'robber_baron':
         ballPosPoints = [Point3(4.2, 0, 0.1)]
     else:
         ballPosPoints = [Point3(2.1, 0, 0.1)]
@@ -1279,7 +1279,7 @@ def doBrainStorm(attack):
         partDelay = 1.2
         damageDelay = 4.5
         dodgeDelay = 3.3
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 1.2
         damageDelay = 4.5
         dodgeDelay = 3.3
@@ -1340,7 +1340,7 @@ def doBuzzWord(attack):
         partDuration = 2.2
         damageDelay = 4.5
         dodgeDelay = 3.8
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 1.3
         partDuration = 2
         damageDelay = 2.5
@@ -1351,12 +1351,12 @@ def doBuzzWord(attack):
         damageDelay = 4.5
         dodgeDelay = 3.8
     suitName = suit.getStyleName()
-    if suitName == 'm':
+    if suitName == 'the_mingler':
         for effect in particleEffects:
             effect.setPos(0, 2.8, suit.getHeight() - 2.5)
             effect.setHpr(0, -20, 0)
 
-    elif suitName == 'mm':
+    elif suitName == 'micromanager':
         for effect in particleEffects:
             effect.setPos(0, 2.1, suit.getHeight() - 0.8)
 
@@ -1708,10 +1708,10 @@ def doGlowerPower(attack):
 
     suitTrack = getSuitTrack(attack)
     suitName = suit.getStyleName()
-    if suitName == 'hh':
+    if suitName == 'head_hunter':
         leftPosPoints = [Point3(0.3, 4.3, 5.3), MovieUtil.PNT3_ZERO]
         rightPosPoints = [Point3(-0.3, 4.3, 5.3), MovieUtil.PNT3_ZERO]
-    elif suitName == 'tbc':
+    elif suitName == 'the_big_cheese':
         leftPosPoints = [Point3(0.6, 4.5, 6), MovieUtil.PNT3_ZERO]
         rightPosPoints = [Point3(-0.6, 4.5, 6), MovieUtil.PNT3_ZERO]
     else:
@@ -1891,7 +1891,7 @@ def doRolodex(attack):
         part3Duration = 1
         damageDelay = 3.8
         dodgeDelay = 2.5
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         propPosPoints = [Point3(0.12, 0.24, 0.01), VBase3(99.032, 5.973, -179.839)]
         propScale = Point3(0.91, 0.91, 0.91)
         partDelay = 2.9
@@ -1933,11 +1933,11 @@ def doEvilEye(attack):
     damageDelay = 2.44
     dodgeDelay = 1.64
     suitName = suit.getStyleName()
-    if suitName == 'cr':
+    if suitName == 'corporate_raider':
         posPoints = [Point3(-0.46, 4.85, 5.28), VBase3(-155.0, -20.0, 0.0)]
-    elif suitName == 'tf':
+    elif suitName == 'two_face':
         posPoints = [Point3(-0.4, 3.65, 5.01), VBase3(-155.0, -20.0, 0.0)]
-    elif suitName == 'le':
+    elif suitName == 'legal_eagle':
         posPoints = [Point3(-0.64, 4.45, 5.91), VBase3(-155.0, -20.0, 0.0)]
     else:
         posPoints = [Point3(-0.4, 3.65, 5.01), VBase3(-155.0, -20.0, 0.0)]
@@ -1985,7 +1985,7 @@ def doPlayHardball(attack):
         suitDelay = 1.09
         damageDelay = 2.76
         dodgeDelay = 1.86
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         suitDelay = 1.79
         damageDelay = 3.46
         dodgeDelay = 2.56
@@ -2048,7 +2048,7 @@ def doPowerTie(attack):
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
@@ -2084,7 +2084,7 @@ def doDoubleTalk(attack):
         partDelay = 3.3
         damageDelay = 3.5
         dodgeDelay = 3.3
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 3.3
         damageDelay = 3.5
         dodgeDelay = 3.3
@@ -2118,7 +2118,7 @@ def doFreezeAssets(attack):
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.3
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.3
@@ -2309,7 +2309,7 @@ def doSchmooze(attack):
         partDelay = 1.3
         damageDelay = 1.8
         dodgeDelay = 1.1
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 1.3
         damageDelay = 2.5
         dodgeDelay = 1.8
@@ -2381,7 +2381,7 @@ def doHangUp(attack):
     receiver = globalPropPool.getProp('receiver')
     suitTrack = getSuitTrack(attack)
     suitName = suit.getStyleName()
-    if suitName == 'tf':
+    if suitName == 'two_face':
         phonePosPoints = [Point3(-0.23, 0.01, -0.26), VBase3(5.939, 2.763, -177.591)]
         receiverPosPoints = [Point3(-0.13, -0.07, -0.06), VBase3(-1.854, 2.434, -177.579)]
         receiverAdjustScale = Point3(0.8, 0.8, 0.8)
@@ -2416,7 +2416,7 @@ def doRedTape(attack):
 
     suitTrack = getSuitTrack(attack)
     suitName = suit.getStyleName()
-    if suitName == 'tf' or suitName == 'nc':
+    if suitName == 'two_face' or suitName == 'number_cruncher':
         tapePosPoints = [Point3(-0.24, 0.09, -0.38), VBase3(-1.152, 86.581, -76.784)]
     else:
         tapePosPoints = [Point3(0.24, 0.09, -0.38), VBase3(-1.152, 86.581, -76.784)]
@@ -2471,9 +2471,9 @@ def doParadigmShift(attack):
     dodgeDelay = 0.95
     sprayEffect = BattleParticles.createParticleEffect('ShiftSpray')
     suitName = suit.getStyleName()
-    if suitName == 'm':
+    if suitName == 'the_mingler':
         sprayEffect.setPos(Point3(-5.2, 4.6, 2.7))
-    elif suitName == 'sd':
+    elif suitName == 'spin_doctor':
         sprayEffect.setPos(Point3(-5.2, 4.6, 2.7))
     else:
         sprayEffect.setPos(Point3(0.1, 4.6, 2.7))
@@ -2567,7 +2567,7 @@ def doPowerTrip(attack):
     waterfallParticles.renderer.setCenterColor(centerColor)
     waterfallParticles.renderer.setEdgeColor(edgeColor)
     suitName = suit.getStyleName()
-    if suitName == 'mh':
+    if suitName == 'mr_hollywood':
         waterfallEffect.setPos(0, 4, 3.6)
     suitTrack = getSuitAnimTrack(attack)
 
@@ -2617,7 +2617,7 @@ def doBounceCheck(attack):
         throwDelay = 2.5
         dodgeDelay = 4.3
         damageDelay = 5.1
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         throwDelay = 1.8
         dodgeDelay = 3.6
         damageDelay = 4.4
@@ -2790,7 +2790,7 @@ def doAudit(attack):
     partTrack4 = getPartTrack(particleEffect4, 2.4, 2.2, [particleEffect4, suit, 0])
     partTrack5 = getPartTrack(particleEffect5, 2.5, 2.3, [particleEffect5, suit, 0])
     suitName = attack['suitName']
-    if suitName == 'nc':
+    if suitName == 'number_cruncher':
         calcPosPoints = [Point3(-0.15, 0.37, 0.03), VBase3(1.352, -6.518, -6.045)]
         calcDuration = 0.76
         scaleUpPoint = Point3(1.1, 1.85, 1.81)
@@ -2828,7 +2828,7 @@ def doCalculate(attack):
     partTrack4 = getPartTrack(particleEffect4, 2.4, 2.2, [particleEffect4, suit, 0])
     partTrack5 = getPartTrack(particleEffect5, 2.5, 2.3, [particleEffect5, suit, 0])
     suitName = attack['suitName']
-    if suitName == 'nc':
+    if suitName == 'number_cruncher':
         calcPosPoints = [Point3(-0.15, 0.37, 0.03), VBase3(1.352, -6.518, -6.045)]
         calcDuration = 0.76
         scaleUpPoint = Point3(1.1, 1.85, 1.81)
@@ -2865,7 +2865,7 @@ def doTabulate(attack):
     partTrack4 = getPartTrack(particleEffect4, 2.4, 2.2, [particleEffect4, suit, 0])
     partTrack5 = getPartTrack(particleEffect5, 2.5, 2.3, [particleEffect5, suit, 0])
     suitName = attack['suitName']
-    if suitName == 'nc':
+    if suitName == 'number_cruncher':
         calcPosPoints = [Point3(-0.15, 0.37, 0.03), VBase3(1.352, -6.518, -6.045)]
         calcDuration = 0.76
         scaleUpPoint = Point3(1.1, 1.85, 1.81)
@@ -2957,7 +2957,7 @@ def doLiquidate(attack):
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.45
-    elif suitType == 'b':
+    elif suitType == 'bloodsucker':
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.45

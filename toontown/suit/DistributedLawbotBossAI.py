@@ -752,7 +752,7 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
     def __makeLawyers(self):
         self.__resetLawyers()
         lawCogChoices = [
-         'b', 'dt', 'ac', 'bs', 'sd', 'le', 'bw']
+         'bloodsucker', 'double_talker', 'ambulance_chaser', 'back_stabber', 'spin_doctor', 'legal_eagle', 'big_wig']
         for i in range(self.numLawyers):
             suit = DistributedLawbotBossSuitAI.DistributedLawbotBossSuitAI(self.air, None)
             suit.dna = SuitDNA.SuitDNA()

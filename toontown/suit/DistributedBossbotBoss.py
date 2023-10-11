@@ -100,7 +100,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.treads = self.find('**/treads')
         demotedCeo = Suit.Suit()
         demotedCeo.dna = SuitDNA.SuitDNA()
-        demotedCeo.dna.newSuit('f')
+        demotedCeo.dna.newSuit('flunky')
         demotedCeo.setDNA(demotedCeo.dna)
         demotedCeo.reparentTo(self.geom)
         demotedCeo.loop('neutral')

@@ -20,28 +20,28 @@ SUIT_TRAP_TNT_DISTANCE = 5.1
 PNT3_NEARZERO = Point3(0.01, 0.01, 0.01)
 PNT3_ZERO = Point3(0.0, 0.0, 0.0)
 PNT3_ONE = Point3(1.0, 1.0, 1.0)
-largeSuits = ['f',
- 'cc',
- 'gh',
- 'tw',
- 'bf',
- 'sc',
- 'ds',
- 'hh',
- 'cr',
- 'tbc',
- 'bs',
- 'sd',
- 'le',
- 'bw',
- 'nc',
- 'mb',
- 'ls',
- 'rb',
- 'ms',
- 'tf',
- 'm',
- 'mh']
+largeSuits = ['flunky',
+ 'cold_caller',
+ 'glad_hander',
+ 'tightwad',
+ 'bottom_feeder',
+ 'short_change',
+ 'downsizer',
+ 'head_hunter',
+ 'corporate_raider',
+ 'the_big_cheese',
+ 'back_stabber',
+ 'spin_doctor',
+ 'legal_eagle',
+ 'big_wig',
+ 'number_cruncher',
+ 'money_bags',
+ 'loan_shark',
+ 'robber_baron',
+ 'mover_and_shaker',
+ 'two_face',
+ 'the_mingler',
+ 'mr_hollywood']
 shotDirection = 'left'
 
 def avatarDodge(leftAvatars, rightAvatars, leftData, rightData):
@@ -488,67 +488,67 @@ def getToonTeleportInInterval(toon):
 
 def getSuitRakeOffset(suit):
     suitName = suit.getStyleName()
-    if suitName == 'gh':
+    if suitName == 'glad_hander':
         return 1.4
-    elif suitName == 'f':
+    elif suitName == 'flunky':
         return 1.0
-    elif suitName == 'cc':
+    elif suitName == 'cold_caller':
         return 0.7
-    elif suitName == 'tw':
+    elif suitName == 'tightwad':
         return 1.3
-    elif suitName == 'bf':
+    elif suitName == 'bottom_feeder':
         return 1.0
-    elif suitName == 'sc':
+    elif suitName == 'short_change':
         return 0.8
-    elif suitName == 'ym':
+    elif suitName == 'yesman':
         return 0.1
-    elif suitName == 'mm':
+    elif suitName == 'micromanager':
         return 0.05
-    elif suitName == 'tm':
+    elif suitName == 'telemarketer':
         return 0.07
-    elif suitName == 'nd':
+    elif suitName == 'name_dropper':
         return 0.07
-    elif suitName == 'pp':
+    elif suitName == 'penny_pincher':
         return 0.04
-    elif suitName == 'bc':
+    elif suitName == 'bean_counter':
         return 0.36
-    elif suitName == 'b':
+    elif suitName == 'bloodsucker':
         return 0.41
-    elif suitName == 'dt':
+    elif suitName == 'double_talker':
         return 0.31
-    elif suitName == 'ac':
+    elif suitName == 'ambulance_chaser':
         return 0.39
-    elif suitName == 'ds':
+    elif suitName == 'downsizer':
         return 0.41
-    elif suitName == 'hh':
+    elif suitName == 'head_hunter':
         return 0.8
-    elif suitName == 'cr':
+    elif suitName == 'corporate_raider':
         return 2.1
-    elif suitName == 'tbc':
+    elif suitName == 'the_big_cheese':
         return 1.4
-    elif suitName == 'bs':
+    elif suitName == 'back_stabber':
         return 0.4
-    elif suitName == 'sd':
+    elif suitName == 'spin_doctor':
         return 1.02
-    elif suitName == 'le':
+    elif suitName == 'legal_eagle':
         return 1.3
-    elif suitName == 'bw':
+    elif suitName == 'big_wig':
         return 1.4
-    elif suitName == 'nc':
+    elif suitName == 'number_cruncher':
         return 0.6
-    elif suitName == 'mb':
+    elif suitName == 'money_bags':
         return 1.85
-    elif suitName == 'ls':
+    elif suitName == 'loan_shark':
         return 1.4
-    elif suitName == 'rb':
+    elif suitName == 'robber_baron':
         return 1.6
-    elif suitName == 'ms':
+    elif suitName == 'mover_and_shaker':
         return 0.7
-    elif suitName == 'tf':
+    elif suitName == 'two_face':
         return 0.75
-    elif suitName == 'm':
+    elif suitName == 'the_mingler':
         return 0.9
-    elif suitName == 'mh':
+    elif suitName == 'mr_hollywood':
         return 1.3
     else:
         notify.warning('getSuitRakeOffset(suit) - Unknown suit name: %s' % suitName)

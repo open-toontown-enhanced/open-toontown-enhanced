@@ -7,70 +7,70 @@ from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
 from otp.avatar import AvatarDNA
 notify = directNotify.newCategory('SuitDNA')
-suitHeadTypes = ['f',
- 'p',
- 'ym',
- 'mm',
- 'ds',
- 'hh',
- 'cr',
- 'tbc',
- 'bf',
- 'b',
- 'dt',
- 'ac',
- 'bs',
- 'sd',
- 'le',
- 'bw',
- 'sc',
- 'pp',
- 'tw',
- 'bc',
- 'nc',
- 'mb',
- 'ls',
- 'rb',
- 'cc',
- 'tm',
- 'nd',
- 'gh',
- 'ms',
- 'tf',
- 'm',
- 'mh']
-suitATypes = ['ym',
- 'hh',
- 'tbc',
- 'dt',
- 'bs',
- 'le',
- 'bw',
- 'pp',
- 'nc',
- 'rb',
- 'nd',
- 'tf',
- 'm',
- 'mh']
-suitBTypes = ['p',
- 'ds',
- 'b',
- 'ac',
- 'sd',
- 'bc',
- 'ls',
- 'tm',
- 'ms']
-suitCTypes = ['f',
- 'mm',
- 'cr',
- 'bf',
- 'sc',
- 'tw',
- 'mb',
- 'cc',
- 'gh']
+suitHeadTypes = ['flunky',
+ 'pencil_pusher',
+ 'yesman',
+ 'micromanager',
+ 'downsizer',
+ 'head_hunter',
+ 'corporate_raider',
+ 'the_big_cheese',
+ 'bottom_feeder',
+ 'bloodsucker',
+ 'double_talker',
+ 'ambulance_chaser',
+ 'back_stabber',
+ 'spin_doctor',
+ 'legal_eagle',
+ 'big_wig',
+ 'short_change',
+ 'penny_pincher',
+ 'tightwad',
+ 'bean_counter',
+ 'number_cruncher',
+ 'money_bags',
+ 'loan_shark',
+ 'robber_baron',
+ 'cold_caller',
+ 'telemarketer',
+ 'name_dropper',
+ 'glad_hander',
+ 'mover_and_shaker',
+ 'two_face',
+ 'the_mingler',
+ 'mr_hollywood']
+suitATypes = ['yesman',
+ 'head_hunter',
+ 'the_big_cheese',
+ 'double_talker',
+ 'back_stabber',
+ 'legal_eagle',
+ 'big_wig',
+ 'penny_pincher',
+ 'number_cruncher',
+ 'robber_baron',
+ 'name_dropper',
+ 'two_face',
+ 'the_mingler',
+ 'mr_hollywood']
+suitBTypes = ['pencil_pusher',
+ 'downsizer',
+ 'bloodsucker',
+ 'ambulance_chaser',
+ 'spin_doctor',
+ 'bean_counter',
+ 'loan_shark',
+ 'telemarketer',
+ 'mover_and_shaker']
+suitCTypes = ['flunky',
+ 'micromanager',
+ 'corporate_raider',
+ 'bottom_feeder',
+ 'short_change',
+ 'tightwad',
+ 'money_bags',
+ 'cold_caller',
+ 'glad_hander']
 suitDepts = ['c',
  'l',
  'm',
@@ -178,7 +178,7 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         dg = PyDatagram()
         dg.addFixedString(self.type, 1)
         if self.type == 's':
-            dg.addFixedString(self.name, 3)
+            dg.addString(self.name)
             dg.addFixedString(self.dept, 1)
         elif self.type == 'b':
             dg.addFixedString(self.dept, 1)
@@ -193,7 +193,7 @@ class SuitDNA(AvatarDNA.AvatarDNA):
         dgi = PyDatagramIterator(dg)
         self.type = dgi.getFixedString(1)
         if self.type == 's':
-            self.name = dgi.getFixedString(3)
+            self.name = dgi.getString()
             self.dept = dgi.getFixedString(1)
             self.body = getSuitBodyType(self.name)
         elif self.type == 'b':
@@ -208,7 +208,7 @@ class SuitDNA(AvatarDNA.AvatarDNA):
 
     def __defaultSuit(self):
         self.type = 's'
-        self.name = 'ds'
+        self.name = 'downsizer'
         self.dept = getSuitDept(self.name)
         self.body = getSuitBodyType(self.name)
 

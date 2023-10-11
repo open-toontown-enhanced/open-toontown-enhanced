@@ -2718,16 +2718,16 @@ class Toon(Avatar.Avatar, ToonHead):
         dna = SuitDNA.SuitDNA()
         if rental == True:
             if SuitDNA.suitDepts[deptIndex] == 's':
-                suitType = 'cc'
+                suitType = 'cold_caller'
             elif SuitDNA.suitDepts[deptIndex] == 'm':
-                suitType = 'sc'
+                suitType = 'short_change'
             elif SuitDNA.suitDepts[deptIndex] == 'l':
-                suitType = 'bf'
+                suitType = 'bottom_feeder'
             elif SuitDNA.suitDepts[deptIndex] == 'c':
-                suitType = 'f'
+                suitType = 'flunky'
             else:
                 self.notify.warning('Suspicious: Incorrect rental suit department requested')
-                suitType = 'cc'
+                suitType = 'cold_caller'
         dna.newSuit(suitType)
         suit.setStyle(dna)
         suit.isDisguised = 1
