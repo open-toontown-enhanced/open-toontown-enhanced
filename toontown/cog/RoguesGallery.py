@@ -27,7 +27,7 @@ class RoguesGallery(StateData.StateData):
             self.height = self.top - self.bottom - self.topMargins * 2.0
             if self.rognamestr == None:
                 self.numSuitTypes = CogDNA.cogsPerDept
-                self.numSuitDepts = len(CogDNA.suitDepts)
+                self.numSuitDepts = len(CogDNA.cogDepts)
             else:
                 self.numSuitTypes = 1
                 self.numSuitDepts = 1
@@ -67,14 +67,14 @@ class RoguesGallery(StateData.StateData):
 
     def animate(self):
         self.load()
-        for suit in self.actors:
-            suit.pose('neutral', random.randint(0, suit.getNumFrames('neutral') - 1))
-            suit.loop('neutral', 0)
+        for cog in self.actors:
+            cog.pose('neutral', random.randint(0, cog.getNumFrames('neutral') - 1))
+            cog.loop('neutral', 0)
 
     def stop(self):
         self.load()
-        for suit in self.actors:
-            suit.pose('neutral', 30)
+        for cog in self.actors:
+            cog.pose('neutral', 30)
 
     def autoExit(self):
         self.acceptOnce('mouse1', self.exit)
@@ -93,21 +93,21 @@ class RoguesGallery(StateData.StateData):
         self.minXScale = None
         print("rognamestr='", self.rognamestr, "'\n")
         if self.rognamestr == None or len(self.rognamestr) == 0:
-            for dept in CogDNA.suitDepts:
+            for dept in CogDNA.cogDepts:
                 self.__makeDept(dept)
 
         else:
-            self.suitRow = []
+            self.cogRow = []
             self.rowWidth = 0.0
             self.__makeSuit(None, None, self.rognamestr)
             self.minXScale = self.xRowSpace / self.rowWidth
-            self.cogs.append((self.rowWidth, self.suitRow))
-            del self.suitRow
+            self.cogs.append((self.rowWidth, self.cogRow))
+            del self.cogRow
         self.__rescaleCogs()
         return
 
     def __makeDept(self, dept):
-        self.suitRow = []
+        self.cogRow = []
         self.rowWidth = 0.0
         for type in range(self.numSuitTypes):
             self.__makeSuit(dept, type)
@@ -115,8 +115,8 @@ class RoguesGallery(StateData.StateData):
         xScale = self.xRowSpace / self.rowWidth
         if self.minXScale == None or self.minXScale > xScale:
             self.minXScale = xScale
-        self.cogs.append((self.rowWidth, self.suitRow))
-        del self.suitRow
+        self.cogs.append((self.rowWidth, self.cogRow))
+        del self.cogRow
         return
 
     def __makeSuit(self, dept, type, name = None):
@@ -125,33 +125,33 @@ class RoguesGallery(StateData.StateData):
             dna.newSuit(name)
         else:
             dna.newSuitRandom(type + 1, dept)
-        suit = Suit.Suit()
-        suit.setStyle(dna)
-        suit.generateSuit()
-        suit.pose('neutral', 30)
+        cog = Suit.Suit()
+        cog.setStyle(dna)
+        cog.generateSuit()
+        cog.pose('neutral', 30)
         ll = Point3()
         ur = Point3()
-        suit.update()
-        suit.calcTightBounds(ll, ur)
-        suitWidth = ur[0] - ll[0]
-        suitDepth = ur[1] - ll[1]
-        suitHeight = ur[2] - ll[2]
-        self.rowWidth += suitWidth + suitDepth
-        self.rowHeight = max(self.rowHeight, suitHeight)
-        suit.reparentTo(self.gallery)
-        suit.setHpr(180.0, 0.0, 0.0)
+        cog.update()
+        cog.calcTightBounds(ll, ur)
+        cogWidth = ur[0] - ll[0]
+        cogDepth = ur[1] - ll[1]
+        cogHeight = ur[2] - ll[2]
+        self.rowWidth += cogWidth + cogDepth
+        self.rowHeight = max(self.rowHeight, cogHeight)
+        cog.reparentTo(self.gallery)
+        cog.setHpr(180.0, 0.0, 0.0)
         profile = Suit.Suit()
         profile.setStyle(dna)
         profile.generateSuit()
         profile.pose('neutral', 30)
         profile.reparentTo(self.gallery)
         profile.setHpr(90.0, 0.0, 0.0)
-        self.suitRow.append((type,
-         suitWidth,
-         suit,
-         suitDepth,
+        self.cogRow.append((type,
+         cogWidth,
+         cog,
+         cogDepth,
          profile))
-        self.actors.append(suit)
+        self.actors.append(cog)
         self.actors.append(profile)
         return
 
@@ -159,17 +159,17 @@ class RoguesGallery(StateData.StateData):
         yScale = self.ySuitMaxAllowed / self.rowHeight
         scale = min(self.minXScale, yScale)
         y = self.top - self.topMargins + self.ySpaceBetweenCogs
-        for rowWidth, suitRow in self.cogs:
+        for rowWidth, cogRow in self.cogs:
             rowWidth *= scale
             extraSpace = self.xRowSpace - rowWidth
             extraSpacePerSuit = extraSpace / (self.numSuitTypes * 2 - 1)
             x = self.left + self.sideMargins
             y -= self.ySuitInc
-            for type, width, suit, depth, profile in suitRow:
+            for type, width, cog, depth, profile in cogRow:
                 left = x
                 width *= scale
-                suit.setScale(scale)
-                suit.setPos(x + width / 2.0, 0.0, y)
+                cog.setScale(scale)
+                cog.setPos(x + width / 2.0, 0.0, y)
                 x += width + self.xSpaceBetweenSameCogs + extraSpacePerSuit
                 depth *= scale
                 profile.setScale(scale)
@@ -177,7 +177,7 @@ class RoguesGallery(StateData.StateData):
                 x += depth
                 right = x
                 x += self.xSpaceBetweenDifferentCogs + extraSpacePerSuit
-                self.text.setText(suit.getName())
+                self.text.setText(cog.getName())
                 name = self.gallery.attachNewNode(self.text.generate())
-                name.setPos((right + left) / 2.0, 0.0, y + (suit.height + self.labelScale * 0.5) * scale)
+                name.setPos((right + left) / 2.0, 0.0, y + (cog.height + self.labelScale * 0.5) * scale)
                 name.setScale(self.labelScale * scale)

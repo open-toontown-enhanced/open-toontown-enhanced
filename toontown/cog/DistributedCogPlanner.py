@@ -8,7 +8,7 @@ class DistributedCogPlanner(DistributedObject.DistributedObject, CogPlannerBase.
     def __init__(self, cr):
         DistributedObject.DistributedObject.__init__(self, cr)
         CogPlannerBase.CogPlannerBase.__init__(self)
-        self.suitList = []
+        self.cogList = []
         self.buildingList = [0,
          0,
          0,
@@ -28,12 +28,12 @@ class DistributedCogPlanner(DistributedObject.DistributedObject, CogPlannerBase.
         base.cr.currSuitPlanner = None
         return
 
-    def d_suitListQuery(self):
-        self.sendUpdate('suitListQuery')
+    def d_cogListQuery(self):
+        self.sendUpdate('cogListQuery')
 
-    def suitListResponse(self, suitList):
-        self.suitList = suitList
-        messenger.send('suitListResponse')
+    def cogListResponse(self, cogList):
+        self.cogList = cogList
+        messenger.send('cogListResponse')
 
     def d_buildingListQuery(self):
         self.sendUpdate('buildingListQuery')

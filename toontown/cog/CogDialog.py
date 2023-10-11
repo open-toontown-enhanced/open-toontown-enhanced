@@ -4,9 +4,9 @@ from otp.otpbase import OTPLocalizer
 from toontown.toonbase import TTLocalizer
 notify = DirectNotifyGlobal.directNotify.newCategory('CogDialog')
 
-def getBrushOffIndex(suitName):
-    if suitName in SuitBrushOffs:
-        brushoffs = SuitBrushOffs[suitName]
+def getBrushOffIndex(cogName):
+    if cogName in SuitBrushOffs:
+        brushoffs = SuitBrushOffs[cogName]
     else:
         brushoffs = SuitBrushOffs[None]
     num = len(brushoffs)
@@ -22,9 +22,9 @@ def getBrushOffIndex(suitName):
     return
 
 
-def getBrushOffText(suitName, index):
-    if suitName in SuitBrushOffs:
-        brushoffs = SuitBrushOffs[suitName]
+def getBrushOffText(cogName, index):
+    if cogName in SuitBrushOffs:
+        brushoffs = SuitBrushOffs[cogName]
     else:
         brushoffs = SuitBrushOffs[None]
     return brushoffs[index]

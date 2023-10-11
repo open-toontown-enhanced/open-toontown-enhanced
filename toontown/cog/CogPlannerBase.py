@@ -480,7 +480,7 @@ class CogPlannerBase:
         TOTAL_BWEIGHT_PER_HEIGHT[4] += weight * heights[4]
 
     def __init__(self):
-        self.suitWalkSpeed = ToontownGlobals.SuitWalkSpeed
+        self.cogWalkSpeed = ToontownGlobals.SuitWalkSpeed
         self.dnaStore: DNAStorage | None = None
         self.pointIndexes: dict[int, DNASuitPoint] = {}
 
@@ -512,7 +512,7 @@ class CogPlannerBase:
         return self.zoneId
 
     def setZoneId(self, zoneId: int):
-        self.notify.debug('setting zone id for suit planner')
+        self.notify.debug('setting zone id for cog planner')
         self.zoneId = zoneId
         self.setupDNA()
 
@@ -522,7 +522,7 @@ class CogPlannerBase:
     def initDNAInfo(self):
         numGraphs = self.dnaStore.discoverContinuity()
         if numGraphs != 1:
-            self.notify.info('zone %s has %s disconnected suit paths.' % (self.zoneId, numGraphs))
+            self.notify.info('zone %s has %s disconnected cog paths.' % (self.zoneId, numGraphs))
         self.battlePosDict = {}
         self.cellToGagBonusDict = {}
         for i in range(self.dnaStore.getNumDNAVisGroupsAI()):
@@ -584,7 +584,7 @@ class CogPlannerBase:
         numPathPoints = path.getNumPoints()
         for i in range(numPathPoints - 1):
             zone = self.dnaStore.getSuitEdgeZone(path.getPointIndex(i), path.getPointIndex(i + 1))
-            travelTime = self.dnaStore.getSuitEdgeTravelTime(path.getPointIndex(i), path.getPointIndex(i + 1), self.suitWalkSpeed)
+            travelTime = self.dnaStore.getSuitEdgeTravelTime(path.getPointIndex(i), path.getPointIndex(i + 1), self.cogWalkSpeed)
             self.notify.debug('edge from point ' + repr(i) + ' to point ' + repr((i + 1)) + ' is in zone: ' + repr(zone) + ' and will take ' + repr(travelTime) + ' seconds to walk.')
 
     def genPath(self, startPoint: DNASuitPoint, endPoint: DNASuitPoint, minPathLen: int, maxPathLen: int) -> DNASuitPath:

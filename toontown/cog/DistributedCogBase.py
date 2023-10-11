@@ -149,7 +149,7 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
 
     def setLevelDist(self, level):
         if self.notify.getDebug():
-            self.notify.debug('Got level %d from server for suit %d' % (level, self.getDoId()))
+            self.notify.debug('Got level %d from server for cog %d' % (level, self.getDoId()))
         self.setLevel(level)
 
     def attachPropeller(self):

@@ -69,7 +69,7 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
         if self.dna:
             return self.dna.makeNetString()
         else:
-            self.notify.debug('No dna has been created for suit %d!' % self.getDoId())
+            self.notify.debug('No dna has been created for cog %d!' % self.getDoId())
             return ''
 
     def b_setBrushOff(self, index):

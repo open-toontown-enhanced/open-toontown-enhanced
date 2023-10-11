@@ -11,13 +11,13 @@ import random
 class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, finishCallback=None, maxCogs=4, tutorialFlag=0, levelFlag=0, interactivePropTrackBonus=-1):
+    def __init__(self, air, battleMgr, pos, cog, toonId, zoneId, finishCallback=None, maxCogs=4, tutorialFlag=0, levelFlag=0, interactivePropTrackBonus=-1):
         DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxCogs=maxCogs, tutorialFlag=tutorialFlag, interactivePropTrackBonus=interactivePropTrackBonus)
         self.battleMgr = battleMgr
         self.pos = pos
-        self.initialSuitPos = suit.getConfrontPosHpr()[0]
-        self.initialToonPos = suit.getConfrontPosHpr()[0]
-        self.addCog(suit)
+        self.initialSuitPos = cog.getConfrontPosHpr()[0]
+        self.initialToonPos = cog.getConfrontPosHpr()[0]
+        self.addCog(cog)
         self.avId = toonId
         if levelFlag == 0:
             self.addToon(toonId)

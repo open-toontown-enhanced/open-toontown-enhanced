@@ -125,8 +125,8 @@ class DistributedCogKart(DistributedElevatorExt.DistributedElevatorExt):
     def kartDoorsClosed(self, zoneId):
         if self.localToonOnBoard:
             hoodId = ZoneUtil.getHoodId(zoneId)
-            doneStatus = {'loader': 'suitInterior',
-             'where': 'suitInterior',
+            doneStatus = {'loader': 'cogInterior',
+             'where': 'cogInterior',
              'hoodId': hoodId,
              'zoneId': zoneId,
              'shardId': None}

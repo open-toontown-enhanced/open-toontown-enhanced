@@ -14,8 +14,8 @@ from toontown.hood import ZoneUtil
 import random
 
 class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
-    COG_BUILDINGS = simbase.config.GetBool('want-suit-buildings', 1)
-    DEBUG_COG_POSITIONS = simbase.config.GetBool('debug-suit-positions', 0)
+    COG_BUILDINGS = simbase.config.GetBool('want-cog-buildings', 1)
+    DEBUG_COG_POSITIONS = simbase.config.GetBool('debug-cog-positions', 0)
     UPDATE_TIMESTAMP_INTERVAL = 180.0
     myId = 0
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCogAI')
@@ -66,7 +66,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         else:
             if self.pathState != 1:
                 if self.notify.getDebug():
-                    self.notify.debug('requestBattle() - suit %d not on path' % self.getDoId())
+                    self.notify.debug('requestBattle() - cog %d not on path' % self.getDoId())
                 if self.pathState == 2 or self.pathState == 4:
                     self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
                 self.d_denyBattle(toonId)
@@ -74,7 +74,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             else:
                 if self.legType != SuitLeg.TWalk:
                     if self.notify.getDebug():
-                        self.notify.debug('requestBattle() - suit %d not in Bellicose' % self.getDoId())
+                        self.notify.debug('requestBattle() - cog %d not in Bellicose' % self.getDoId())
                     self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
                     self.d_denyBattle(toonId)
                     return
@@ -85,7 +85,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                 self.notify.debug('Suit %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
         else:
             if self.notify.getDebug():
-                self.notify.debug('requestBattle from suit %d - denied by battle manager' % self.getDoId())
+                self.notify.debug('requestBattle from cog %d - denied by battle manager' % self.getDoId())
             self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
             self.d_denyBattle(toonId)
         return
@@ -205,7 +205,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         self.zoneId = ZoneUtil.getTrueZoneId(self.legList.getZoneId(0), self.branchId)
         self.legType = self.legList.getType(0)
         if self.notify.getDebug():
-            self.notify.debug('creating suit in zone %d' % self.zoneId)
+            self.notify.debug('creating cog in zone %d' % self.zoneId)
 
     def resync(self):
         self.b_setPathPosition(self.currentLeg, self.pathStartTime + self.legList.getStartTime(self.currentLeg))
@@ -347,4 +347,4 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             if self.buildingDestinationIsCogdo:
                 self.sp.cogdoTakeOver(blockNumber, dept, difficulty, self.buildingHeight)
             else:
-                self.sp.suitTakeOver(blockNumber, dept, difficulty, self.buildingHeight)
+                self.sp.cogTakeOver(blockNumber, dept, difficulty, self.buildingHeight)

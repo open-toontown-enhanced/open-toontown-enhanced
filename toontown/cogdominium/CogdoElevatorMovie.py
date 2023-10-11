@@ -30,18 +30,18 @@ class CogdoElevatorMovie(CogdoGameMovie):
         self._toonDialogueSfx.play()
         self.toonHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, suitType):
+    def makeSuit(self, cogType):
         self.notify.debug('makeSuit()')
-        suit = Suit.Suit()
+        cog = Suit.Suit()
         dna = CogDNA.CogDNA()
-        dna.newSuit(suitType)
-        suit.setStyle(dna)
-        suit.isDisguised = 1
-        suit.generateSuit()
-        suit.setScale(1, 1, 2)
-        suit.setPos(0, 0, -4.4)
-        suit.reparentTo(self.toonHead)
-        for part in suit.getHeadParts():
+        dna.newSuit(cogType)
+        cog.setStyle(dna)
+        cog.isDisguised = 1
+        cog.generateSuit()
+        cog.setScale(1, 1, 2)
+        cog.setPos(0, 0, -4.4)
+        cog.reparentTo(self.toonHead)
+        for part in cog.getHeadParts():
             part.hide()
 
     def load(self):

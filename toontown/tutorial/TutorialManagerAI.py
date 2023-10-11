@@ -144,7 +144,7 @@ class TutorialManagerAI(DistributedObjectAI.DistributedObjectAI):
             hqBuilding.battleOverCallback()
             building.battleOverCallback()
         
-        # Create a suit planner
+        # Create a cog planner
         cogPlanner = SuitPlannerTutorialAI.SuitPlannerTutorialAI(
             self.air,
             streetZone,

@@ -15,7 +15,7 @@ class DistributedSellbotHQDoorAI(DistributedCogHQDoorAI.DistributedCogHQDoorAI):
 
     def requestEnter(self):
         avatarID = self.air.getAvatarIdFromSender()
-        (allowed, suitType) = self.__getAccessLevel(avatarID)
+        (allowed, cogType) = self.__getAccessLevel(avatarID)
         if not allowed:
             self.sendReject(avatarID, self.isLockedDoor())
         else:
@@ -25,24 +25,24 @@ class DistributedSellbotHQDoorAI(DistributedCogHQDoorAI.DistributedCogHQDoorAI):
                 self.otherDoor.getDoId()])
             if ToontownGlobals.SELLBOT_NERF_HOLIDAY in self.air.holidayManager.currentHolidays:
                 self.sendUpdateToAvatarId(avatarID, 'informPlayer', [
-                    suitType])
+                    cogType])
 
     def __getAccessLevel(self, avatarID):
         av = self.air.doId2do.get(avatarID)
         allowed = 0
-        suitType = -1
+        cogType = -1
         if av:
             if self.doorType == DoorTypes.EXT_COGHQ and self.isLockedDoor():
                 parts = av.getCogParts()
                 dept = ToontownGlobals.cogHQZoneId2deptIndex(self.destinationZone)
                 if CogDisguiseGlobals.isPaidSuitComplete(av, parts, dept):
                     if av.getCogMerits()[dept] >= CogDisguiseGlobals.getTotalMerits(av, dept):
-                        suitType = CogDisguiseGlobals.suitTypes.FullSuit
+                        cogType = CogDisguiseGlobals.cogTypes.FullSuit
                     else:
-                        suitType = CogDisguiseGlobals.suitTypes.NoMerits
+                        cogType = CogDisguiseGlobals.cogTypes.NoMerits
                     allowed = 1
                 else:
-                    suitType = CogDisguiseGlobals.suitTypes.NoSuit
+                    cogType = CogDisguiseGlobals.cogTypes.NoSuit
                 if ToontownGlobals.SELLBOT_NERF_HOLIDAY in self.air.holidayManager.currentHolidays:
                     allowed = 1
 
@@ -52,4 +52,4 @@ class DistributedSellbotHQDoorAI(DistributedCogHQDoorAI.DistributedCogHQDoorAI):
         if not ToontownAccessAI.canAccess(avatarID, self.zoneId, 'DistributedSellbotHQDoorAI.__getAccessLevel'):
             allowed = 0
 
-        return (allowed, suitType)
+        return (allowed, cogType)

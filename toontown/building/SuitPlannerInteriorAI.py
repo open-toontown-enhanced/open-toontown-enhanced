@@ -12,11 +12,11 @@ class SuitPlannerInteriorAI:
     def __init__(self, numFloors: int, bldgLevel: int, bldgTrack: str, zone: int, respectInvasions: bool = True):
         self.dbg_nCogs1stRound: bool = config.GetBool('n-cogs-1st-round', 0)
         self.dbg_4CogsPerFloor: bool = config.GetBool('4-cogs-per-floor', 0)
-        self.dbg_1SuitPerFloor: bool = config.GetBool('1-suit-per-floor', 0)
+        self.dbg_1SuitPerFloor: bool = config.GetBool('1-cog-per-floor', 0)
         self.zoneId: int = zone
         self.numFloors: int = numFloors
         self.respectInvasions: bool = respectInvasions
-        dbg_defaultSuitName = simbase.config.GetString('suit-type', 'random')
+        dbg_defaultSuitName = simbase.config.GetString('cog-type', 'random')
         if dbg_defaultSuitName == 'random':
             self.dbg_defaultSuitType: str | None = None
         else:
@@ -35,7 +35,7 @@ class SuitPlannerInteriorAI:
         return joinChances
 
     def _genSuitInfos(self, numFloors: int, bldgLevel: int, bldgTrack: str):
-        self.suitInfos = []
+        self.cogInfos = []
         self.notify.debug('\n\ngenerating cogsInfos with numFloors (' + str(numFloors) + ') bldgLevel (' + str(bldgLevel) + '+1) and bldgTrack (' + str(bldgTrack) + ')')
         for currFloor in range(numFloors):
             infoDict = {}
@@ -86,7 +86,7 @@ class SuitPlannerInteriorAI:
                 reserveDicts.append(reserveDict)
 
             infoDict['reserveCogs'] = reserveDicts
-            self.suitInfos.append(infoDict)
+            self.cogInfos.append(infoDict)
 
     def __genNormalSuitType(self, lvl: int) -> int:
         if self.dbg_defaultSuitType != None:
@@ -124,65 +124,65 @@ class SuitPlannerInteriorAI:
         self.notify.debug('LevelList: ' + repr(lvlList))
         return lvlList
 
-    def __setupSuitInfo(self, suit: DistributedCogAI, bldgTrack: str, suitLevel: int, suitType: int) -> bool:
-        suitName, skeleton = simbase.air.cogInvasionManager.getInvadingCog()
-        if suitName and self.respectInvasions:
-            suitType = CogDNA.getCogType(suitName)
-            bldgTrack = CogDNA.getCogDept(suitName)
-            suitLevel = min(max(suitLevel, suitType), suitType + 4)
+    def __setupSuitInfo(self, cog: DistributedCogAI, bldgTrack: str, cogLevel: int, cogType: int) -> bool:
+        cogName, skeleton = simbase.air.cogInvasionManager.getInvadingCog()
+        if cogName and self.respectInvasions:
+            cogType = CogDNA.getCogType(cogName)
+            bldgTrack = CogDNA.getCogDept(cogName)
+            cogLevel = min(max(cogLevel, cogType), cogType + 4)
         dna = CogDNA.CogDNA()
-        dna.newSuitRandom(suitType, bldgTrack)
-        suit.dna = dna
-        self.notify.debug('Creating suit type ' + suit.dna.name + ' of level ' + str(suitLevel) + ' from type ' + str(suitType) + ' and track ' + str(bldgTrack))
-        suit.setLevel(suitLevel)
+        dna.newSuitRandom(cogType, bldgTrack)
+        cog.dna = dna
+        self.notify.debug('Creating cog type ' + cog.dna.name + ' of level ' + str(cogLevel) + ' from type ' + str(cogType) + ' and track ' + str(bldgTrack))
+        cog.setLevel(cogLevel)
         return skeleton
 
-    def __genSuitObject(self, suitZone: int, suitType: int, bldgTrack: str, suitLevel: int, revives: int = 0) -> DistributedCogAI:
+    def __genSuitObject(self, cogZone: int, cogType: int, bldgTrack: str, cogLevel: int, revives: int = 0) -> DistributedCogAI:
         newSuit = DistributedCogAI(simbase.air, None)
-        skel = self.__setupSuitInfo(newSuit, bldgTrack, suitLevel, suitType)
+        skel = self.__setupSuitInfo(newSuit, bldgTrack, cogLevel, cogType)
         if skel:
             newSuit.setSkelecog(1)
         newSuit.setSkeleRevives(revives)
-        newSuit.generateWithRequired(suitZone)
-        newSuit.node().setName('suit-%s' % newSuit.doId)
+        newSuit.generateWithRequired(cogZone)
+        newSuit.node().setName('cog-%s' % newSuit.doId)
         return newSuit
 
     def myPrint(self):
         self.notify.info('Generated cogs for building: ')
-        for currInfo in suitInfos:
-            whichSuitInfo = suitInfos.index(currInfo) + 1
+        for currInfo in cogInfos:
+            whichSuitInfo = cogInfos.index(currInfo) + 1
             self.notify.debug(' Floor ' + str(whichSuitInfo) + ' has ' + str(len(currInfo[0])) + ' active cogs.')
             for currActive in range(len(currInfo[0])):
-                self.notify.debug('  Active suit ' + str(currActive + 1) + ' is of type ' + str(currInfo[0][currActive][0]) + ' and of track ' + str(currInfo[0][currActive][1]) + ' and of level ' + str(currInfo[0][currActive][2]))
+                self.notify.debug('  Active cog ' + str(currActive + 1) + ' is of type ' + str(currInfo[0][currActive][0]) + ' and of track ' + str(currInfo[0][currActive][1]) + ' and of level ' + str(currInfo[0][currActive][2]))
 
             self.notify.debug(' Floor ' + str(whichSuitInfo) + ' has ' + str(len(currInfo[1])) + ' reserve cogs.')
             for currReserve in range(len(currInfo[1])):
-                self.notify.debug('  Reserve suit ' + str(currReserve + 1) + ' is of type ' + str(currInfo[1][currReserve][0]) + ' and of track ' + str(currInfo[1][currReserve][1]) + ' and of lvel ' + str(currInfo[1][currReserve][2]) + ' and has ' + str(currInfo[1][currReserve][3]) + '% join restriction.')
+                self.notify.debug('  Reserve cog ' + str(currReserve + 1) + ' is of type ' + str(currInfo[1][currReserve][0]) + ' and of track ' + str(currInfo[1][currReserve][1]) + ' and of lvel ' + str(currInfo[1][currReserve][2]) + ' and has ' + str(currInfo[1][currReserve][3]) + '% join restriction.')
 
     def genFloorCogs(self, floor: int) -> dict[str, Union[DistributedCogAI, tuple[DistributedCogAI, int]]]:
-        suitHandles = {}
-        floorInfo = self.suitInfos[floor]
+        cogHandles = {}
+        floorInfo = self.cogInfos[floor]
         activeCogs = []
         for activeSuitInfo in floorInfo['activeCogs']:
-            suit = self.__genSuitObject(self.zoneId, activeSuitInfo['type'], activeSuitInfo['track'], activeSuitInfo['level'], activeSuitInfo['revives'])
-            activeCogs.append(suit)
+            cog = self.__genSuitObject(self.zoneId, activeSuitInfo['type'], activeSuitInfo['track'], activeSuitInfo['level'], activeSuitInfo['revives'])
+            activeCogs.append(cog)
 
-        suitHandles['activeCogs'] = activeCogs
+        cogHandles['activeCogs'] = activeCogs
         reserveCogs = []
         for reserveSuitInfo in floorInfo['reserveCogs']:
-            suit = self.__genSuitObject(self.zoneId, reserveSuitInfo['type'], reserveSuitInfo['track'], reserveSuitInfo['level'], reserveSuitInfo['revives'])
-            reserveCogs.append((suit, reserveSuitInfo['joinChance']))
+            cog = self.__genSuitObject(self.zoneId, reserveSuitInfo['type'], reserveSuitInfo['track'], reserveSuitInfo['level'], reserveSuitInfo['revives'])
+            reserveCogs.append((cog, reserveSuitInfo['joinChance']))
 
-        suitHandles['reserveCogs'] = reserveCogs
+        cogHandles['reserveCogs'] = reserveCogs
 
         simbase.air.cogInvasionManager.subtractNumCogsRemaining(len(activeCogs) + len(reserveCogs))
 
-        return suitHandles
+        return cogHandles
 
     def genCogs(self) -> list[dict[str, Union[DistributedCogAI, tuple[DistributedCogAI, int]]]]:
-        suitHandles = []
-        for floor in range(len(self.suitInfos)):
+        cogHandles = []
+        for floor in range(len(self.cogInfos)):
             floorSuitHandles = self.genFloorCogs(floor)
-            suitHandles.append(floorSuitHandles)
+            cogHandles.append(floorSuitHandles)
 
-        return suitHandles
+        return cogHandles

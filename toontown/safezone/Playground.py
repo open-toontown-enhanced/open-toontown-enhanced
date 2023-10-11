@@ -654,7 +654,7 @@ class Playground(Place):
         self.loader.dnaStore.resetDNAVisGroupsAI()
 
     def removeLandmarkBlockNodes(self):
-        npc = self.geom.findAllMatches('**/suit_building_origin')
+        npc = self.geom.findAllMatches('**/cog_building_origin')
         for i in range(npc.getNumPaths()):
             npc.getPath(i).removeNode()
 

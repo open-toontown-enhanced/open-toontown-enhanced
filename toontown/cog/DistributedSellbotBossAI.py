@@ -203,8 +203,8 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
 
     def __sendDooberIds(self):
         dooberIds = []
-        for suit in self.doobers:
-            dooberIds.append(suit.doId)
+        for cog in self.doobers:
+            dooberIds.append(cog.doId)
 
         self.sendUpdate('setDooberIds', [dooberIds])
 
@@ -403,21 +403,21 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         self.b_setBossDamage(0, 0, 0)
 
     def __resetDoobers(self):
-        for suit in self.doobers:
-            suit.requestDelete()
+        for cog in self.doobers:
+            cog.requestDelete()
 
         self.doobers = []
 
     def __makeDoobers(self):
         self.__resetDoobers()
         for i in range(8):
-            suit = DistributedCogAI.DistributedCogAI(self.air, None)
+            cog = DistributedCogAI.DistributedCogAI(self.air, None)
             level = random.randrange(len(CogDNA.cogsPerLevel))
-            suit.dna = CogDNA.CogDNA()
-            suit.dna.newSuitRandom(level=level, dept=self.dna.dept)
-            suit.setLevel(level)
-            suit.generateWithRequired(self.zoneId)
-            self.doobers.append(suit)
+            cog.dna = CogDNA.CogDNA()
+            cog.dna.newSuitRandom(level=level, dept=self.dna.dept)
+            cog.setLevel(level)
+            cog.generateWithRequired(self.zoneId)
+            self.doobers.append(cog)
 
         self.__sendDooberIds()
         return

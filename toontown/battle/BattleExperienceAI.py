@@ -61,9 +61,9 @@ def getBattleExperience(numToons, activeToons, toonExp, toonSkillPtsGained, toon
         type = deathRecord['type']
         if deathRecord['isVP'] or deathRecord['isCFO']:
             level = 0
-            typeNum = CogDNA.suitDepts.index(deathRecord['track'])
+            typeNum = CogDNA.cogDepts.index(deathRecord['track'])
         else:
-            typeNum = CogDNA.suitHeadTypes.index(type)
+            typeNum = CogDNA.cogHeadTypes.index(type)
         involvedToonIds = deathRecord['activeToons']
         toonBits = 0
         for toonId in involvedToonIds:

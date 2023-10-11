@@ -428,7 +428,7 @@ PartsQueryNames = ({1: PartNameStrings[0],
   16384: PartNameStrings[14],
   32768: PartNameStrings[15],
   65536: PartNameStrings[15]})
-suitTypes = IntEnum('suitTypes', ('NoSuit', 'NoMerits', 'FullSuit'), start=0)
+cogTypes = IntEnum('cogTypes', ('NoSuit', 'NoMerits', 'FullSuit'), start=0)
 
 def getNextPart(parts, partIndex, dept):
     dept = dept2deptIndex(dept)
@@ -471,7 +471,7 @@ def isPaidSuitComplete(av, parts, dept):
 def getTotalMerits(toon, index):
     from toontown.battle import CogBattleGlobals
     cogIndex = toon.cogTypes[index] + CogDNA.cogsPerDept * index
-    cogTypeStr = CogDNA.suitHeadTypes[cogIndex]
+    cogTypeStr = CogDNA.cogHeadTypes[cogIndex]
     cogBaseLevel = CogBattleGlobals.CogAttributes[cogTypeStr]['level']
     cogLevel = toon.cogLevels[index] - cogBaseLevel
     cogLevel = max(min(cogLevel, len(MeritsPerLevel[cogIndex]) - 1), 0)
@@ -516,5 +516,5 @@ def asNumber(bitstring):
 
 def dept2deptIndex(dept):
     if type(dept) == str:
-        dept = CogDNA.suitDepts.index(dept)
+        dept = CogDNA.cogDepts.index(dept)
     return dept

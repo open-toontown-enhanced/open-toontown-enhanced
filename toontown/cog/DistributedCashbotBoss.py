@@ -111,7 +111,7 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.resistanceToon.setPosHpr(*ToontownGlobals.CashbotRTBattleOneStartPosHpr)
         state = random.getstate()
         random.seed(self.doId)
-        self.resistanceToon.suitType = CogDNA.getRandomSuitByDept('m')
+        self.resistanceToon.cogType = CogDNA.getRandomSuitByDept('m')
         random.setstate(state)
         self.fakeGoons = []
         for i in range(self.numFakeGoons):
@@ -143,8 +143,8 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             self.resistanceToon.reparentTo(self.geom)
             self.resistanceToonOnstage = 1
         if withSuit:
-            suit = self.resistanceToon.suitType
-            self.resistanceToon.putOnSuit(suit, False)
+            cog = self.resistanceToon.cogType
+            self.resistanceToon.putOnSuit(cog, False)
         else:
             self.resistanceToon.takeOffSuit()
 
@@ -321,15 +321,15 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             Parallel(
                 camera.posHprInterval(4, Point3(108, -244, 4), VBase3(211.5, 0, 0)),
                 Sequence(
-                    Func(rToon.suit.setPlayRate, 1.4, 'walk'),
-                    Func(rToon.suit.loop, 'walk'),
+                    Func(rToon.cog.setPlayRate, 1.4, 'walk'),
+                    Func(rToon.cog.loop, 'walk'),
                     Parallel(
                         rToon.hprInterval(1, VBase3(180, 0, 0)),
                         rToon.posInterval(3, VBase3(120, -255, 0)),
                         Sequence(
                             Wait(2),
                             Func(rToon.clearChat))),
-                        Func(rToon.suit.loop, 'neutral'),
+                        Func(rToon.cog.loop, 'neutral'),
                         self.door2.posInterval(3, VBase3(0, 0, 30)))),
                         Func(rToon.setHpr, 0, 0, 0),
                         Func(rToon.setChatAbsolute, TTL.ResistanceToonTooLate, CFSpeech),

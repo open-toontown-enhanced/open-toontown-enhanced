@@ -204,7 +204,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.resistanceToon.setPosHpr(*ToontownGlobals.BossbotRTIntroStartPosHpr)
         state = random.getstate()
         random.seed(self.doId)
-        self.resistanceToon.suitType = CogDNA.getRandomSuitByDept('c')
+        self.resistanceToon.cogType = CogDNA.getRandomSuitByDept('c')
         random.setstate(state)
 
     def __cleanupResistanceToon(self):
@@ -222,8 +222,8 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             self.resistanceToon.reparentTo(self.geom)
             self.resistanceToonOnstage = 1
         if withSuit:
-            suit = self.resistanceToon.suitType
-            self.resistanceToon.putOnSuit(suit, False)
+            cog = self.resistanceToon.cogType
+            self.resistanceToon.putOnSuit(cog, False)
         else:
             self.resistanceToon.takeOffSuit()
 
@@ -237,7 +237,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         DistributedBossCog.DistributedBossCog.enterElevator(self)
         self.resistanceToon.removeActive()
         self.__showResistanceToon(True)
-        self.resistanceToon.suit.loop('neutral')
+        self.resistanceToon.cog.loop('neutral')
         base.camera.setPos(0, 21, 7)
         self.reparentTo(render)
         self.setPosHpr(*ToontownGlobals.BossbotBossBattleOnePosHpr)
@@ -275,7 +275,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
          loseSuitCamPos[2],
          loseSuitCamHpr[0],
          loseSuitCamHpr[1],
-         loseSuitCamHpr[2])), self.toonNormalEyes(self.involvedToons), Wait(2), Func(camera.setPosHpr, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTFightWaiter, CFSpeech), Wait(1), LerpHprInterval(camera, 2, Point3(-15, 5, 0)), Sequence(Func(rToon.suit.loop, 'walk'), rToon.hprInterval(1, VBase3(270, 0, 0)), rToon.posInterval(2.5, rToonEndPos), Func(rToon.suit.loop, 'neutral')), Wait(3), Func(rToon.clearChat), Func(self.__hideResistanceToon))
+         loseSuitCamHpr[2])), self.toonNormalEyes(self.involvedToons), Wait(2), Func(camera.setPosHpr, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTFightWaiter, CFSpeech), Wait(1), LerpHprInterval(camera, 2, Point3(-15, 5, 0)), Sequence(Func(rToon.cog.loop, 'walk'), rToon.hprInterval(1, VBase3(270, 0, 0)), rToon.posInterval(2.5, rToonEndPos), Func(rToon.cog.loop, 'neutral')), Wait(3), Func(rToon.clearChat), Func(self.__hideResistanceToon))
         return track
 
     def enterFrolic(self):
@@ -352,10 +352,10 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             Wait(1.0),
             LerpHprInterval(self.banquetDoor, 2, Point3(120, 0, 0)),
             Sequence(
-                Func(rToon.suit.loop, 'walk'),
+                Func(rToon.cog.loop, 'walk'),
                 rToon.hprInterval(1, VBase3(90, 0, 0)),
                 rToon.posInterval(2.5, rToonEndPos),
-                Func(rToon.suit.loop, 'neutral')),
+                Func(rToon.cog.loop, 'neutral')),
             self.createWalkInInterval(),
             Func(self.banquetDoor.setH, 0),
             Func(rToon.clearChat),
@@ -373,12 +373,12 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             destPos = Point3(-14 + index * 4, 25, 0)
 
             def toWalk(toon):
-                if hasattr(toon, 'suit') and toon.suit:
-                    toon.suit.loop('walk')
+                if hasattr(toon, 'cog') and toon.cog:
+                    toon.cog.loop('walk')
 
             def toNeutral(toon):
-                if hasattr(toon, 'suit') and toon.suit:
-                    toon.suit.loop('neutral')
+                if hasattr(toon, 'cog') and toon.cog:
+                    toon.cog.loop('neutral')
 
             retval.append(Sequence(Wait(delay), Func(toon.wrtReparentTo, render), Func(toWalk, toon), Func(toon.headsUp, 0, 0, 0), LerpPosInterval(toon, 3, Point3(0, 0, 0)), Func(toon.headsUp, destPos), LerpPosInterval(toon, 3, destPos), LerpHprInterval(toon, 1, Point3(0, 0, 0)), Func(toNeutral, toon)))
             if toon == base.localAvatar:
@@ -468,15 +468,15 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             foodModel = loader.loadModel('phase_12/models/bossbotHQ/canoffood')
             foodModel.setName('cogFood')
             foodModel.setScale(ToontownGlobals.BossbotFoodModelScale)
-            foodModel.reparentTo(av.suit.getRightHand())
+            foodModel.reparentTo(av.cog.getRightHand())
             foodModel.setHpr(52.1961, 180.4983, -4.2882)
-            curAnim = av.suit.getCurrentAnim()
+            curAnim = av.cog.getCurrentAnim()
             self.notify.debug('curAnim=%s' % curAnim)
             if curAnim in ('walk', 'run'):
-                av.suit.loop('tray-walk')
+                av.cog.loop('tray-walk')
             elif curAnim == 'neutral':
                 self.notify.debug('looping tray-netural')
-                av.suit.loop('tray-neutral')
+                av.cog.loop('tray-neutral')
             else:
                 self.notify.warning("don't know what to do with anim=%s" % curAnim)
 
@@ -498,12 +498,12 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             if not cogFood.isEmpty():
                 retval = cogFood
                 cogFood.wrtReparentTo(render)
-            curAnim = av.suit.getCurrentAnim()
+            curAnim = av.cog.getCurrentAnim()
             self.notify.debug('curAnim=%s' % curAnim)
             if curAnim == 'tray-walk':
-                av.suit.loop('run')
+                av.cog.loop('run')
             elif curAnim == 'tray-neutral':
-                av.suit.loop('neutral')
+                av.cog.loop('neutral')
             else:
                 self.notify.warning("don't know what to do with anim=%s" % curAnim)
         return cogFood
@@ -624,7 +624,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
 
     def makePrepareBattleFourMovie(self):
         rToon = self.resistanceToon
-        offsetZ = rToon.suit.getHeight() / 2.0
+        offsetZ = rToon.cog.getHeight() / 2.0
         track = Sequence(
             Func(self.__showResistanceToon, True),
             Func(rToon.setPos, Point3(0, -5, 0)),

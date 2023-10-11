@@ -165,8 +165,8 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
     def getCogs(self):
         cogIds = []
-        for suit in self.activeCogs:
-            cogIds.append(suit.doId)
+        for cog in self.activeCogs:
+            cogIds.append(cog.doId)
 
         reserveIds = []
         values = []
@@ -253,13 +253,13 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
         return None
 
     def enterElevator(self):
-        suitHandles = self.bldg.planner.genFloorCogs(self.currentFloor)
-        self.cogs = suitHandles['activeCogs']
+        cogHandles = self.bldg.planner.genFloorCogs(self.currentFloor)
+        self.cogs = cogHandles['activeCogs']
         self.activeCogs = []
-        for suit in self.cogs:
-            self.activeCogs.append(suit)
+        for cog in self.cogs:
+            self.activeCogs.append(cog)
 
-        self.reserveCogs = suitHandles['reserveCogs']
+        self.reserveCogs = cogHandles['reserveCogs']
         self.d_setToons()
         self.d_setCogs()
         self.__resetResponses()
@@ -300,12 +300,12 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
         self.battle.battleCalc.setSkillCreditMultiplier(mult)
 
     def __cleanupFloorBattle(self):
-        for suit in self.cogs:
-            self.notify.debug('cleaning up floor suit: %d' % suit.doId)
-            if suit.isDeleted():
-                self.notify.debug('whoops, suit %d is deleted.' % suit.doId)
+        for cog in self.cogs:
+            self.notify.debug('cleaning up floor cog: %d' % cog.doId)
+            if cog.isDeleted():
+                self.notify.debug('whoops, cog %d is deleted.' % cog.doId)
             else:
-                suit.requestDelete()
+                cog.requestDelete()
 
         self.cogs = []
         self.reserveCogs = []
@@ -317,11 +317,11 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
     def __handleRoundDone(self, toonIds, totalHp, deadCogs):
         totalMaxHp = 0
-        for suit in self.cogs:
-            totalMaxHp += suit.maxHP
+        for cog in self.cogs:
+            totalMaxHp += cog.maxHP
 
-        for suit in deadCogs:
-            self.activeCogs.remove(suit)
+        for cog in deadCogs:
+            self.activeCogs.remove(cog)
 
         if len(self.reserveCogs) > 0 and len(self.activeCogs) < 4:
             self.joinedReserves = []
@@ -379,7 +379,7 @@ class DistributedCogInteriorAI(DistributedObjectAI.DistributedObjectAI):
         self.timer.stop()
         self.__resetResponses()
         for info in self.joinedReserves:
-            self.battle.suitRequestJoin(info[0])
+            self.battle.cogRequestJoin(info[0])
 
         self.battle.resume()
         self.joinedReserves = []

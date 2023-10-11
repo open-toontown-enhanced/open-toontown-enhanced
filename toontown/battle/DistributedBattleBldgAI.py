@@ -28,8 +28,8 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.resumeNeedUpdate = 0
 
     def setInitialMembers(self, toonIds, cogs):
-        for suit in cogs:
-            self.addCog(suit)
+        for cog in cogs:
+            self.addCog(cog)
 
         for toonId in toonIds:
             self.addToon(toonId)
@@ -80,8 +80,8 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         return None
 
     def handleFaceOffDone(self):
-        for suit in self.cogs:
-            self.activeCogs.append(suit)
+        for cog in self.cogs:
+            self.activeCogs.append(cog)
 
         for toon in self.toons:
             self.activeToons.append(toon)
@@ -101,9 +101,9 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             self.b_setState('Resume')
         else:
             totalHp = 0
-            for suit in self.cogs:
-                if suit.currHP > 0:
-                    totalHp += suit.currHP
+            for cog in self.cogs:
+                if cog.currHP > 0:
+                    totalHp += cog.currHP
 
             self.roundCallback(self.activeToons, totalHp, deadCogs)
 

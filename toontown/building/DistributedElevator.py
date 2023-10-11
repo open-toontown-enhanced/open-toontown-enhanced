@@ -221,8 +221,8 @@ class DistributedElevator(DistributedObject.DistributedObject):
                 toon.setZ(self.getElevatorModel(), self.elevatorPoints[index][2])
                 toon.setShadowHeight(0)
             if toon.isDisguised:
-                animInFunc = Sequence(Func(toon.suit.loop, 'walk'))
-                animFunc = Sequence(Func(toon.setAnimState, 'neutral', 1.0), Func(toon.suit.loop, 'neutral'))
+                animInFunc = Sequence(Func(toon.cog.loop, 'walk'))
+                animFunc = Sequence(Func(toon.setAnimState, 'neutral', 1.0), Func(toon.cog.loop, 'neutral'))
             else:
                 animInFunc = Sequence(Func(toon.setAnimState, 'run', 1.0))
                 animFunc = Func(toon.setAnimState, 'neutral', 1.0)
@@ -310,8 +310,8 @@ class DistributedElevator(DistributedObject.DistributedObject):
                 toon = self.cr.doId2do[avId]
                 toon.stopSmooth()
                 if toon.isDisguised:
-                    toon.suit.loop('walk')
-                    animFunc = Func(toon.suit.loop, 'neutral')
+                    toon.cog.loop('walk')
+                    animFunc = Func(toon.cog.loop, 'neutral')
                 else:
                     toon.setAnimState('run', 1.0)
                     animFunc = Func(toon.setAnimState, 'neutral', 1.0)
@@ -476,7 +476,7 @@ class DistributedElevator(DistributedObject.DistributedObject):
             self.countdown(countdownTime - ts)
 
     def _getDoorsClosedInfo(self):
-        return ('suitInterior', 'suitInterior')
+        return ('cogInterior', 'cogInterior')
 
     def __doorsClosed(self, zoneId):
         if self.localToonOnBoard:

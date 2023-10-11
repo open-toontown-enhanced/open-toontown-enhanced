@@ -65,7 +65,7 @@ class SuitInterior(Place.Place):
 
     def load(self):
         Place.Place.load(self)
-        self.parentFSM.getStateNamed('suitInterior').addChild(self.fsm)
+        self.parentFSM.getStateNamed('cogInterior').addChild(self.fsm)
         self.townBattle = TownBattle.TownBattle('town-battle-done')
         self.townBattle.load()
         for i in range(1, 3):
@@ -73,7 +73,7 @@ class SuitInterior(Place.Place):
 
     def unload(self):
         Place.Place.unload(self)
-        self.parentFSM.getStateNamed('suitInterior').removeChild(self.fsm)
+        self.parentFSM.getStateNamed('cogInterior').removeChild(self.fsm)
         del self.parentFSM
         del self.fsm
         self.ignoreAll()
@@ -142,7 +142,7 @@ class SuitInterior(Place.Place):
                 self.fsm.request('walk')
         elif where == 'exit':
             self.fsm.request('walk')
-        elif where == 'suitInterior':
+        elif where == 'cogInterior':
             pass
         else:
             self.notify.error('Unknown mode: ' + +' in handleElevatorDone')

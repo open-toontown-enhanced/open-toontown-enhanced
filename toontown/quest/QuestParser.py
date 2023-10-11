@@ -539,12 +539,12 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         return track
 
     def parseLoadSuit(self, line):
-        token, name, suitType = line
-        suit = Suit.Suit()
+        token, name, cogType = line
+        cog = Suit.Suit()
         dna = CogDNA.CogDNA()
-        dna.newSuit(suitType)
-        suit.setDNA(dna)
-        self.setVar(name, suit)
+        dna.newSuit(cogType)
+        cog.setDNA(dna)
+        self.setVar(name, cog)
 
     def parseSet(self, line):
         token, varName, value = line

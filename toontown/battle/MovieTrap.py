@@ -19,33 +19,33 @@ def doTraps(traps):
         return (None, None)
     npcArrivals, npcDepartures, npcs = MovieNPCSOS.doNPCTeleports(traps)
     hasUberTrapConflict = False
-    suitTrapsDict = {}
+    cogTrapsDict = {}
     for trap in traps:
         targets = trap['target']
         if len(targets) == 1:
-            cogId = targets[0]['suit'].doId
-            if cogId in suitTrapsDict:
-                suitTrapsDict[cogId].append(trap)
+            cogId = targets[0]['cog'].doId
+            if cogId in cogTrapsDict:
+                cogTrapsDict[cogId].append(trap)
             else:
-                suitTrapsDict[cogId] = [trap]
+                cogTrapsDict[cogId] = [trap]
         else:
             for target in targets:
-                cogId = target['suit'].doId
-                if cogId not in suitTrapsDict:
-                    suitTrapsDict[cogId] = [trap]
+                cogId = target['cog'].doId
+                if cogId not in cogTrapsDict:
+                    cogTrapsDict[cogId] = [trap]
                     break
 
             if trap['level'] == UBER_GAG_LEVEL_INDEX:
                 if len(traps) > 1:
                     hasUberTrapConflict = True
                 for oneTarget in trap['target']:
-                    suit = oneTarget['suit']
-                    if suit.battleTrap != NO_TRAP:
+                    cog = oneTarget['cog']
+                    if cog.battleTrap != NO_TRAP:
                         hasUberTrapConflict = True
 
-    suitTrapLists = list(suitTrapsDict.values())
+    cogTrapLists = list(cogTrapsDict.values())
     mtrack = Parallel()
-    for trapList in suitTrapLists:
+    for trapList in cogTrapLists:
         trapPropList = []
         for i in range(len(trapList)):
             trap = trapList[i]
@@ -134,8 +134,8 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
     level = trap['level']
     battle = trap['battle']
     target = trap['target']
-    suit = target[0]['suit']
-    targetPos = suit.getPos(battle)
+    cog = target[0]['cog']
+    targetPos = cog.getPos(battle)
     thrownProp = propList[0]
     unthrownProp = propList[1]
     torso = toon.style.torso
@@ -168,18 +168,18 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
     throwTrack.append(Wait(throwDelay))
     throwTrack.append(Func(unthrownProp.reparentTo, hidden))
     throwTrack.append(Func(toon.update))
-    if suit.battleTrap != NO_TRAP:
-        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, suit.battleTrap))
-        battle.removeTrap(suit)
+    if cog.battleTrap != NO_TRAP:
+        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+        battle.removeTrap(cog)
     if trapName == 'rake':
         trapProp = globalPropPool.getProp('rake-react')
     else:
         trapProp = MovieUtil.copyProp(thrownProp)
-    suit.battleTrapProp = trapProp
-    suit.battleTrap = level
-    suit.battleTrapIsFresh = 1
+    cog.battleTrapProp = trapProp
+    cog.battleTrap = level
+    cog.battleTrapIsFresh = 1
     if trapName == 'banana':
-        trapPoint, trapHpr = battle.getActorPosHpr(suit)
+        trapPoint, trapHpr = battle.getActorPosHpr(cog)
         trapPoint.setY(MovieUtil.COG_TRAP_DISTANCE)
         slidePoint = Vec3(trapPoint.getX(), trapPoint.getY() - 2, trapPoint.getZ())
         throwingTrack = createThrowingTrack(thrownProp, slidePoint, duration=0.9, parent=battle)
@@ -191,55 +191,55 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
         soundTrack = getSoundTrack('TL_banana.ogg', node=toon)
         scaleTrack = LerpScaleInterval(thrownProp, 1.7, scale=MovieUtil.PNT3_ONE)
         throwTrack.append(Wait(0.25))
-        throwTrack.append(Func(thrownProp.wrtReparentTo, suit))
+        throwTrack.append(Func(thrownProp.wrtReparentTo, cog))
         throwTrack.append(Parallel(motionTrack, hprTrack, scaleTrack, soundTrack))
     elif trapName == 'tnt':
-        trapPoint, trapHpr = battle.getActorPosHpr(suit)
+        trapPoint, trapHpr = battle.getActorPosHpr(cog)
         trapPoint.setY(MovieUtil.COG_TRAP_TNT_DISTANCE - 3.9)
         trapPoint.setZ(trapPoint.getZ() + 0.4)
         throwingTrack = createThrowingTrack(thrownProp, trapPoint, duration=throwDuration, parent=battle)
         hprTrack = LerpHprInterval(thrownProp, 0.9, hpr=Point3(0, 90, 0))
         scaleTrack = LerpScaleInterval(thrownProp, 0.9, scale=MovieUtil.PNT3_ONE)
-        soundTrack = getSoundTrack('TL_dynamite.ogg', delay=0.8, duration=0.7, node=suit)
+        soundTrack = getSoundTrack('TL_dynamite.ogg', delay=0.8, duration=0.7, node=cog)
         throwTrack.append(Wait(0.2))
         throwTrack.append(Parallel(throwingTrack, hprTrack, scaleTrack, soundTrack))
     elif trapName == 'marbles':
-        trapPoint, trapHpr = battle.getActorPosHpr(suit)
+        trapPoint, trapHpr = battle.getActorPosHpr(cog)
         trapPoint.setY(MovieUtil.COG_TRAP_MARBLES_DISTANCE)
         flingDuration = 0.2
         rollDuration = 1.0
         throwDuration = flingDuration + rollDuration
         landPoint = Point3(0, trapPoint.getY() + 2, trapPoint.getZ())
         throwPoint = Point3(0, trapPoint.getY(), trapPoint.getZ())
-        moveTrack = Sequence(Func(thrownProp.wrtReparentTo, suit), Func(thrownProp.setHpr, Point3(94, 0, 0)), LerpPosInterval(thrownProp, flingDuration, pos=landPoint, other=suit), LerpPosInterval(thrownProp, rollDuration, pos=throwPoint, other=suit))
+        moveTrack = Sequence(Func(thrownProp.wrtReparentTo, cog), Func(thrownProp.setHpr, Point3(94, 0, 0)), LerpPosInterval(thrownProp, flingDuration, pos=landPoint, other=cog), LerpPosInterval(thrownProp, rollDuration, pos=throwPoint, other=cog))
         animTrack = ActorInterval(thrownProp, propName, startTime=throwDelay + 0.9)
         scaleTrack = LerpScaleInterval(thrownProp, throwDuration, scale=MovieUtil.PNT3_ONE)
         soundTrack = getSoundTrack('TL_marbles.ogg', delay=0.1, node=toon)
         throwTrack.append(Wait(0.2))
         throwTrack.append(Parallel(moveTrack, animTrack, scaleTrack, soundTrack))
     elif trapName == 'rake':
-        trapPoint, trapHpr = battle.getActorPosHpr(suit)
+        trapPoint, trapHpr = battle.getActorPosHpr(cog)
         trapPoint.setY(MovieUtil.COG_TRAP_RAKE_DISTANCE)
         throwDuration = 1.1
-        throwingTrack = createThrowingTrack(thrownProp, trapPoint, duration=throwDuration, parent=suit)
+        throwingTrack = createThrowingTrack(thrownProp, trapPoint, duration=throwDuration, parent=cog)
         hprTrack = LerpHprInterval(thrownProp, throwDuration, hpr=VBase3(63.43, -90.0, 63.43))
         scaleTrack = LerpScaleInterval(thrownProp, 0.9, scale=Point3(0.7, 0.7, 0.7))
-        soundTrack = SoundInterval(globalBattleSoundCache.getSound('TL_rake_throw_only.ogg'), duration=1.1, node=suit)
+        soundTrack = SoundInterval(globalBattleSoundCache.getSound('TL_rake_throw_only.ogg'), duration=1.1, node=cog)
         throwTrack.append(Wait(0.2))
         throwTrack.append(Parallel(throwingTrack, hprTrack, scaleTrack, soundTrack))
     else:
         notify.warning('__createThrownTrapMultiTrack() - Incorrect trap:                          %s thrown from toon' % trapName)
 
-    def placeTrap(trapProp, suit, battle = battle, trapName = trapName):
+    def placeTrap(trapProp, cog, battle = battle, trapName = trapName):
         if not trapProp or trapProp.isEmpty():
             return
-        trapProp.wrtReparentTo(suit)
+        trapProp.wrtReparentTo(cog)
         trapProp.show()
         if trapName == 'rake':
             trapProp.setPos(0, MovieUtil.COG_TRAP_RAKE_DISTANCE, 0)
             trapProp.setHpr(Point3(0, 270, 0))
             trapProp.setScale(Point3(0.7, 0.7, 0.7))
-            rakeOffset = MovieUtil.getCogRakeOffset(suit)
+            rakeOffset = MovieUtil.getCogRakeOffset(cog)
             trapProp.setY(trapProp.getY() + rakeOffset)
         elif trapName == 'banana':
             trapProp.setHpr(0, 0, 0)
@@ -253,7 +253,7 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
             trapProp.setHpr(0, 90, 0)
             trapProp.setPos(0, MovieUtil.COG_TRAP_TNT_DISTANCE, 0.4)
         else:
-            notify.warning('placeTrap() - Incorrect trap: %s placed on a suit' % trapName)
+            notify.warning('placeTrap() - Incorrect trap: %s placed on a cog' % trapName)
 
     dustNode = hidden.attachNewNode('DustNode')
 
@@ -265,9 +265,9 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
         throwTrack.append(Func(thrownProp.wrtReparentTo, hidden))
         throwTrack.append(Func(placeDustExplosion))
         throwTrack.append(createCartoonExplosionTrack(dustNode, 'dust', explosionPoint=Point3(0, 0, 0)))
-        throwTrack.append(Func(battle.removeTrap, suit))
+        throwTrack.append(Func(battle.removeTrap, cog))
     else:
-        throwTrack.append(Func(placeTrap, trapProp, suit))
+        throwTrack.append(Func(placeTrap, trapProp, cog))
         if trapName == 'tnt':
             tip = trapProp.find('**/joint_attachEmitter')
             sparks = BattleParticles.createParticleEffect(file='tnt')
@@ -297,23 +297,23 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
     firstTime = 1
     targets = trap['target']
     for target in targets:
-        suit = target['suit']
-        suitPos = suit.getPos(battle)
-        targetPos = suitPos
+        cog = target['cog']
+        cogPos = cog.getPos(battle)
+        targetPos = cogPos
         trapProp = MovieUtil.copyProp(prop)
         showThisTrap = True
-        if visibleOnlyForThisSuitId and visibleOnlyForThisSuitId != suit.doId:
+        if visibleOnlyForThisSuitId and visibleOnlyForThisSuitId != cog.doId:
             showThisTrap = False
         trapTrack = Sequence()
         trapTrack.append(Wait(trapDelay))
         if showThisTrap:
-            notify.debug('showing trap %s for %d' % (trapProp.getName(), suit.doId))
+            notify.debug('showing trap %s for %d' % (trapProp.getName(), cog.doId))
             trapTrack.append(Func(trapProp.show))
         else:
-            notify.debug('hiding trap %s for %d' % (trapProp.getName(), suit.doId))
+            notify.debug('hiding trap %s for %d' % (trapProp.getName(), cog.doId))
             trapTrack.append(Func(trapProp.hide))
         trapTrack.append(Func(trapProp.setScale, Point3(0.1, 0.1, 0.1)))
-        trapTrack.append(Func(trapProp.reparentTo, suit))
+        trapTrack.append(Func(trapProp.reparentTo, cog))
         trapTrack.append(Func(trapProp.setPos, trapPoint))
         trapTrack.append(LerpScaleInterval(trapProp, 1.2, Point3(1.7, 1.7, 1.7)))
         if explode == 1:
@@ -322,14 +322,14 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
             trapTrack.append(Func(placeDustExplosion, dustNode, trapProp, battle))
             trapTrack.append(createCartoonExplosionTrack(dustNode, 'dust', explosionPoint=Point3(0, 0, 0)))
             trapTrack.append(Func(MovieUtil.removeProp, trapProp))
-            trapTrack.append(Func(battle.removeTrap, suit))
+            trapTrack.append(Func(battle.removeTrap, cog))
         else:
-            if suit.battleTrap != NO_TRAP:
-                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, suit.battleTrap))
-                battle.removeTrap(suit)
-            suit.battleTrapProp = trapProp
-            suit.battleTrap = level
-            suit.battleTrapIsFresh = 1
+            if cog.battleTrap != NO_TRAP:
+                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+                battle.removeTrap(cog)
+            cog.battleTrapProp = trapProp
+            cog.battleTrap = level
+            cog.battleTrapIsFresh = 1
         trapTracks.append(trapTrack)
 
     button = globalPropPool.getProp('button')
@@ -337,7 +337,7 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
     buttons = [button, button2]
     toonTrack = Sequence()
     toonTrack.append(Func(MovieUtil.showProps, buttons, hands))
-    toonTrack.append(Func(toon.headsUp, battle, suitPos))
+    toonTrack.append(Func(toon.headsUp, battle, cogPos))
     toonTrack.append(ActorInterval(toon, 'pushbutton'))
     toonTrack.append(Func(MovieUtil.removeProps, buttons))
     toonTrack.append(Func(toon.loop, 'neutral'))
@@ -353,24 +353,24 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
 
 def __trapBanana(trap, trapProps, explode):
     toon = trap['toon']
-    suit = trap['target'][0]['suit']
-    notify.debug('toon: %s lays banana peel in front of suit: %d' % (toon.getName(), suit.doId))
+    cog = trap['target'][0]['cog']
+    notify.debug('toon: %s lays banana peel in front of cog: %d' % (toon.getName(), cog.doId))
     bananas = trapProps
     return __createThrownTrapMultiTrack(trap, bananas, 'banana', anim=1, explode=explode)
 
 
 def __trapRake(trap, trapProps, explode):
     toon = trap['toon']
-    suit = trap['target'][0]['suit']
-    notify.debug('toon: %s lays rake in front of suit: %d' % (toon.getName(), suit.doId))
+    cog = trap['target'][0]['cog']
+    notify.debug('toon: %s lays rake in front of cog: %d' % (toon.getName(), cog.doId))
     rakes = trapProps
     return __createThrownTrapMultiTrack(trap, rakes, 'rake', anim=1, explode=explode)
 
 
 def __trapMarbles(trap, trapProps, explode):
     toon = trap['toon']
-    suit = trap['target'][0]['suit']
-    notify.debug('toon: %s lays marbles in front of suit: %d' % (toon.getName(), suit.doId))
+    cog = trap['target'][0]['cog']
+    notify.debug('toon: %s lays marbles in front of cog: %d' % (toon.getName(), cog.doId))
     bothMarbles = trapProps
     pos = Point3(0, 0, 0)
     hpr = Point3(0, 0, -30)
@@ -379,8 +379,8 @@ def __trapMarbles(trap, trapProps, explode):
 
 def __trapQuicksand(trap, trapProps, explode):
     toon = trap['toon']
-    suit = trap['target'][0]['suit']
-    notify.debug('toon: %s lays quicksand in front of suit: %d' % (toon.getName(), suit.doId))
+    cog = trap['target'][0]['cog']
+    notify.debug('toon: %s lays quicksand in front of cog: %d' % (toon.getName(), cog.doId))
     quicksand = trapProps[0]
     return __createPlacedTrapMultiTrack(trap, quicksand, 'quicksand', explode=explode)
 
@@ -391,8 +391,8 @@ def __trapTrapdoor(trap, trapProps, explode):
         toon = trap['npc']
     targets = trap['target']
     for target in targets:
-        suit = target['suit']
-        notify.debug('toon: %s lays trapdoor in front of suit: %d' % (toon.getName(), suit.doId))
+        cog = target['cog']
+        notify.debug('toon: %s lays trapdoor in front of cog: %d' % (toon.getName(), cog.doId))
 
     trapdoor = trapProps[0]
     return __createPlacedTrapMultiTrack(trap, trapdoor, 'trapdoor', explode=explode)
@@ -400,8 +400,8 @@ def __trapTrapdoor(trap, trapProps, explode):
 
 def __trapTNT(trap, trapProps, explode):
     toon = trap['toon']
-    suit = trap['target'][0]['suit']
-    notify.debug('toon: %s lays TNT in front of suit: %d' % (toon.getName(), suit.doId))
+    cog = trap['target'][0]['cog']
+    notify.debug('toon: %s lays TNT in front of cog: %d' % (toon.getName(), cog.doId))
     tnts = trapProps
     return __createThrownTrapMultiTrack(trap, tnts, 'tnt', anim=0, explode=explode)
 
@@ -416,14 +416,14 @@ def __trapTrain(trap, trapProps, explode):
     centerSuit = None
     closestXDistance = 10000
     for target in targets:
-        suit = target['suit']
-        suitPoint, suitHpr = battle.getActorPosHpr(suit)
-        xDistance = abs(suitPoint.getX())
+        cog = target['cog']
+        cogPoint, cogHpr = battle.getActorPosHpr(cog)
+        xDistance = abs(cogPoint.getX())
         if xDistance < closestXDistance:
-            visibleOnlyForThisSuitId = suit.doId
+            visibleOnlyForThisSuitId = cog.doId
             closestXDistance = xDistance
-            centerSuit = suit
-        notify.debug('toon: %s doing traintrack in front of suit: %d' % (toon.getName(), suit.doId))
+            centerSuit = cog
+        notify.debug('toon: %s doing traintrack in front of cog: %d' % (toon.getName(), cog.doId))
 
     traintrack = trapProps[0]
     return __createPlacedGroupTrapTrack(trap, traintrack, 'traintrack', centerSuit, explode=explode)
@@ -494,18 +494,18 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
     firstTime = 1
     targets = trap['target']
     if True:
-        suit = centerSuit
-        suitPos = suit.getPos(battle)
-        targetPos = suitPos
+        cog = centerSuit
+        cogPos = cog.getPos(battle)
+        targetPos = cogPos
         trapProp = MovieUtil.copyProp(prop)
         showThisTrap = True
         trapTrack = Sequence()
         trapTrack.append(Wait(trapDelay))
         if showThisTrap:
-            notify.debug('showing trap %s for %d' % (trapProp.getName(), suit.doId))
+            notify.debug('showing trap %s for %d' % (trapProp.getName(), cog.doId))
             trapTrack.append(Func(trapProp.show))
         else:
-            notify.debug('hiding trap %s for %d' % (trapProp.getName(), suit.doId))
+            notify.debug('hiding trap %s for %d' % (trapProp.getName(), cog.doId))
             trapTrack.append(Func(trapProp.hide))
         trapTrack.append(Func(trapProp.setScale, Point3(0.1, 0.1, 0.1)))
         trapTrack.append(Func(trapProp.reparentTo, battle))
@@ -522,7 +522,7 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
             oneTrapTrack.append(Func(MovieUtil.removeProp, trapProp))
             removeTrapsParallel.append(oneTrapTrack)
             for target in trap['target']:
-                otherSuit = target['suit']
+                otherSuit = target['cog']
                 if otherSuit.battleTrapProp:
                     otherDustNode = hidden.attachNewNode('DustNodeOtherSuit')
                     otherTrapTrack = Sequence()
@@ -534,17 +534,17 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
 
             trapTrack.append(removeTrapsParallel)
         else:
-            if suit.battleTrap != NO_TRAP:
-                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, suit.battleTrap))
-                battle.removeTrap(suit)
-            suit.battleTrapProp = trapProp
-            suit.battleTrap = level
-            suit.battleTrapIsFresh = 1
+            if cog.battleTrap != NO_TRAP:
+                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+                battle.removeTrap(cog)
+            cog.battleTrapProp = trapProp
+            cog.battleTrap = level
+            cog.battleTrapIsFresh = 1
             unlureCogs = Parallel()
             for target in targets:
                 kbbonus = target['kbbonus']
                 if kbbonus == 0:
-                    unluredSuit = target['suit']
+                    unluredSuit = target['cog']
                     cogTrack = Sequence()
                     cogTrack.append(createSuitResetPosTrack(unluredSuit, battle))
                     cogTrack.append(Func(battle.unlureSuit, unluredSuit))
@@ -552,9 +552,9 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
 
             trapTrack.append(unlureCogs)
             for otherSuit in battle.cogs:
-                if not otherSuit == suit:
+                if not otherSuit == cog:
                     if otherSuit.battleTrap != NO_TRAP:
-                        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, suit.battleTrap))
+                        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
                         battle.removeTrap(otherSuit)
                     otherSuit.battleTrapProp = trapProp
                     otherSuit.battleTrap = level
@@ -566,7 +566,7 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
     buttons = [button, button2]
     toonTrack = Sequence()
     toonTrack.append(Func(MovieUtil.showProps, buttons, hands))
-    toonTrack.append(Func(toon.headsUp, battle, suitPos))
+    toonTrack.append(Func(toon.headsUp, battle, cogPos))
     toonTrack.append(ActorInterval(toon, 'pushbutton'))
     toonTrack.append(Func(MovieUtil.removeProps, buttons))
     toonTrack.append(Func(toon.loop, 'neutral'))

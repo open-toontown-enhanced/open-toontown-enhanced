@@ -123,7 +123,7 @@ class DistributedLawbotBossCog(DistributedCogBase.DistributedCogBase):
 
     def __handleToonCollision(self, collEntry):
         toonId = base.localAvatar.getDoId()
-        self.notify.debug('Distributed suit: requesting a Battle with ' + 'toon: %d' % toonId)
+        self.notify.debug('Distributed cog: requesting a Battle with ' + 'toon: %d' % toonId)
         self.d_requestBattle(self.getPos(), self.getHpr())
         self.setState('WaitForBattle')
         return None

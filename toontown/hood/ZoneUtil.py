@@ -113,7 +113,7 @@ def getWhereName(zoneId, isToon):
             if isToon:
                 where = 'toonInterior'
             else:
-                where = 'suitInterior'
+                where = 'cogInterior'
         else:
             where = 'street'
     return where

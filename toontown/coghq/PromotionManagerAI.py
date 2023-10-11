@@ -30,9 +30,9 @@ class PromotionManagerAI:
 
         self.notify.debug(f'recoverMerits: multiplier = {multiplier}')
         for cogDict in cogList:
-            dept = CogDNA.suitDepts.index(cogDict['track'])
+            dept = CogDNA.cogDepts.index(cogDict['track'])
             if avId in cogDict['activeToons']:
-                if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), CogDNA.suitDepts.index(cogDict['track'])):
+                if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), CogDNA.cogDepts.index(cogDict['track'])):
                     self.notify.debug(f'recoverMerits: checking against cogDict: {cogDict}')
                     rand = random.random() * 100
                     if rand <= self.getPercentChance() and not cogDict['isVirtual']:

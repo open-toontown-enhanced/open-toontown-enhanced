@@ -7,7 +7,7 @@ from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
 from otp.avatar import AvatarDNA
 notify = directNotify.newCategory('CogDNA')
-suitHeadTypes = ['flunky',
+cogHeadTypes = ['flunky',
  'pencil_pusher',
  'yesman',
  'micromanager',
@@ -39,7 +39,7 @@ suitHeadTypes = ['flunky',
  'two_face',
  'the_mingler',
  'mr_hollywood']
-suitATypes = ['yesman',
+cogATypes = ['yesman',
  'head_hunter',
  'the_big_cheese',
  'double_talker',
@@ -53,7 +53,7 @@ suitATypes = ['yesman',
  'two_face',
  'the_mingler',
  'mr_hollywood']
-suitBTypes = ['pencil_pusher',
+cogBTypes = ['pencil_pusher',
  'downsizer',
  'bloodsucker',
  'ambulance_chaser',
@@ -62,7 +62,7 @@ suitBTypes = ['pencil_pusher',
  'loan_shark',
  'telemarketer',
  'mover_and_shaker']
-suitCTypes = ['flunky',
+cogCTypes = ['flunky',
  'micromanager',
  'corporate_raider',
  'bottom_feeder',
@@ -71,15 +71,15 @@ suitCTypes = ['flunky',
  'money_bags',
  'cold_caller',
  'glad_hander']
-suitDepts = ['c',
+cogDepts = ['c',
  'l',
  'm',
  's']
-suitDeptFullnames = {'c': TTLocalizer.Bossbot,
+cogDeptFullnames = {'c': TTLocalizer.Bossbot,
  'l': TTLocalizer.Lawbot,
  'm': TTLocalizer.Cashbot,
  's': TTLocalizer.Sellbot}
-suitDeptFullnamesP = {'c': TTLocalizer.BossbotP,
+cogDeptFullnamesP = {'c': TTLocalizer.BossbotP,
  'l': TTLocalizer.LawbotP,
  'm': TTLocalizer.CashbotP,
  's': TTLocalizer.SellbotP}
@@ -99,46 +99,46 @@ cogsPerDept = 8
 goonTypes = ['pg', 'sg']
 
 def getCogBodyType(name):
-    if name in suitATypes:
+    if name in cogATypes:
         return 'a'
-    elif name in suitBTypes:
+    elif name in cogBTypes:
         return 'b'
-    elif name in suitCTypes:
+    elif name in cogCTypes:
         return 'c'
     else:
-        print('Unknown body type for suit name: ', name)
+        print('Unknown body type for cog name: ', name)
 
 
 def getCogDept(name):
-    index = suitHeadTypes.index(name)
+    index = cogHeadTypes.index(name)
     if index < cogsPerDept:
-        return suitDepts[0]
+        return cogDepts[0]
     elif index < cogsPerDept * 2:
-        return suitDepts[1]
+        return cogDepts[1]
     elif index < cogsPerDept * 3:
-        return suitDepts[2]
+        return cogDepts[2]
     elif index < cogsPerDept * 4:
-        return suitDepts[3]
+        return cogDepts[3]
     else:
-        print('Unknown dept for suit name: ', name)
+        print('Unknown dept for cog name: ', name)
         return None
     return None
 
 
 def getDeptFullname(dept):
-    return suitDeptFullnames[dept]
+    return cogDeptFullnames[dept]
 
 
 def getDeptFullnameP(dept):
-    return suitDeptFullnamesP[dept]
+    return cogDeptFullnamesP[dept]
 
 
 def getCogDeptFullname(name):
-    return suitDeptFullnames[getCogDept(name)]
+    return cogDeptFullnames[getCogDept(name)]
 
 
 def getCogType(name):
-    index = suitHeadTypes.index(name)
+    index = cogHeadTypes.index(name)
     return index % cogsPerDept + 1
 
 
@@ -147,8 +147,8 @@ def getRandomSuitType(level, rng = random):
 
 
 def getRandomSuitByDept(dept):
-    deptNumber = suitDepts.index(dept)
-    return suitHeadTypes[cogsPerDept * deptNumber + random.randint(0, 7)]
+    deptNumber = cogDepts.index(dept)
+    return cogHeadTypes[cogsPerDept * deptNumber + random.randint(0, 7)]
 
 
 class CogDNA(AvatarDNA.AvatarDNA):
@@ -165,7 +165,7 @@ class CogDNA(AvatarDNA.AvatarDNA):
 
     def __str__(self):
         if self.type == 's':
-            return 'type = %s\nbody = %s, dept = %s, name = %s' % ('suit',
+            return 'type = %s\nbody = %s, dept = %s, name = %s' % ('cog',
              self.body,
              self.dept,
              self.name)
@@ -231,11 +231,11 @@ class CogDNA(AvatarDNA.AvatarDNA):
         if level == None:
             level = random.choice(list(range(1, len(cogsPerLevel))))
         elif level < 0 or level > len(cogsPerLevel):
-            notify.error('Invalid suit level: %d' % level)
+            notify.error('Invalid cog level: %d' % level)
         if dept == None:
-            dept = random.choice(suitDepts)
+            dept = random.choice(cogDepts)
         self.dept = dept
-        index = suitDepts.index(dept)
+        index = cogDepts.index(dept)
         base = index * cogsPerDept
         offset = 0
         if level > 1:
@@ -244,7 +244,7 @@ class CogDNA(AvatarDNA.AvatarDNA):
 
         bottom = base + offset
         top = bottom + cogsPerLevel[level - 1]
-        self.name = suitHeadTypes[random.choice(list(range(bottom, top)))]
+        self.name = cogHeadTypes[random.choice(list(range(bottom, top)))]
         self.body = getCogBodyType(self.name)
         return
 
@@ -261,7 +261,7 @@ class CogDNA(AvatarDNA.AvatarDNA):
 
     def getType(self):
         if self.type == 's':
-            type = 'suit'
+            type = 'cog'
         elif self.type == 'b':
             type = 'boss'
         else:

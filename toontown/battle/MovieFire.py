@@ -31,29 +31,29 @@ def doFires(fires):
     if len(fires) == 0:
         return (None, None)
 
-    suitFiresDict = {}
+    cogFiresDict = {}
     for fire in fires:
-        cogId = fire['target']['suit'].doId
-        if cogId in suitFiresDict:
-            suitFiresDict[cogId].append(fire)
+        cogId = fire['target']['cog'].doId
+        if cogId in cogFiresDict:
+            cogFiresDict[cogId].append(fire)
         else:
-            suitFiresDict[cogId] = [fire]
+            cogFiresDict[cogId] = [fire]
 
-    suitFires = list(suitFiresDict.values())
+    cogFires = list(cogFiresDict.values())
     def compFunc(a, b):
         if len(a) > len(b):
             return 1
         elif len(a) < len(b):
             return -1
         return 0
-    suitFires.sort(key=functools.cmp_to_key(compFunc))
+    cogFires.sort(key=functools.cmp_to_key(compFunc))
 
     totalHitDict = {}
     singleHitDict = {}
     groupHitDict = {}
 
     for fire in fires:
-        cogId = fire['target']['suit'].doId
+        cogId = fire['target']['cog'].doId
         if 1:
             if fire['target']['hp'] > 0:
                 addHit(singleHitDict, cogId, 1)
@@ -69,7 +69,7 @@ def doFires(fires):
     delay = 0.0
     mtrack = Parallel()
     firedTargets = []
-    for sf in suitFires:
+    for sf in cogFires:
         if len(sf) > 0:
             ival = __doSuitFires(sf)
             if ival:
@@ -79,7 +79,7 @@ def doFires(fires):
     retTrack = Sequence()
     retTrack.append(mtrack)
     camDuration = retTrack.getDuration()
-    camTrack = MovieCamera.chooseFireShot(fires, suitFiresDict, camDuration)
+    camTrack = MovieCamera.chooseFireShot(fires, cogFiresDict, camDuration)
     return (retTrack, camTrack)
 
 def __doSuitFires(fires):
@@ -92,17 +92,17 @@ def __doSuitFires(fires):
         else:
             break
 
-    suitList = []
+    cogList = []
     for fire in fires:
-        if fire['target']['suit'] not in suitList:
-            suitList.append(fire['target']['suit'])
+        if fire['target']['cog'] not in cogList:
+            cogList.append(fire['target']['cog'])
 
     for fire in fires:
         showSuitCannon = 1
-        if fire['target']['suit'] not in suitList:
+        if fire['target']['cog'] not in cogList:
             showSuitCannon = 0
         else:
-            suitList.remove(fire['target']['suit'])
+            cogList.remove(fire['target']['cog'])
         tracks = __throwPie(fire, delay, hitCount, showSuitCannon)
         if tracks:
             for track in tracks:
@@ -135,13 +135,13 @@ def __billboardProp(prop):
     prop.setScale(scale)
 
 
-def __suitMissPoint(suit, other = render):
-    pnt = suit.getPos(other)
-    pnt.setZ(pnt[2] + suit.getHeight() * 1.3)
+def __cogMissPoint(cog, other = render):
+    pnt = cog.getPos(other)
+    pnt.setZ(pnt[2] + cog.getHeight() * 1.3)
     return pnt
 
 
-def __propPreflight(props, suit, toon, battle):
+def __propPreflight(props, cog, toon, battle):
     prop = props[0]
     toon.update(0)
     prop.wrtReparentTo(battle)
@@ -149,7 +149,7 @@ def __propPreflight(props, suit, toon, battle):
     for ci in range(prop.getNumChildren()):
         prop.getChild(ci).setHpr(0, -90, 0)
 
-    targetPnt = MovieUtil.avatarFacePoint(suit, other=battle)
+    targetPnt = MovieUtil.avatarFacePoint(cog, other=battle)
     prop.lookAt(targetPnt)
 
 
@@ -162,18 +162,18 @@ def __propPreflightGroup(props, cogs, toon, battle):
         prop.getChild(ci).setHpr(0, -90, 0)
 
     avgTargetPt = Point3(0, 0, 0)
-    for suit in cogs:
-        avgTargetPt += MovieUtil.avatarFacePoint(suit, other=battle)
+    for cog in cogs:
+        avgTargetPt += MovieUtil.avatarFacePoint(cog, other=battle)
 
     avgTargetPt /= len(cogs)
     prop.lookAt(avgTargetPt)
 
 
-def __piePreMiss(missDict, pie, suitPoint, other = render):
+def __piePreMiss(missDict, pie, cogPoint, other = render):
     missDict['pie'] = pie
     missDict['startScale'] = pie.getScale()
     missDict['startPos'] = pie.getPos(other)
-    v = Vec3(suitPoint - missDict['startPos'])
+    v = Vec3(cogPoint - missDict['startPos'])
     endPos = missDict['startPos'] + v * ratioMissToHit
     missDict['endPos'] = endPos
 
@@ -190,11 +190,11 @@ def __pieMissLerpCallback(t, missDict):
     pie.setScale(newScale)
 
 
-def __piePreMissGroup(missDict, pies, suitPoint, other = render):
+def __piePreMissGroup(missDict, pies, cogPoint, other = render):
     missDict['pies'] = pies
     missDict['startScale'] = pies[0].getScale()
     missDict['startPos'] = pies[0].getPos(other)
-    v = Vec3(suitPoint - missDict['startPos'])
+    v = Vec3(cogPoint - missDict['startPos'])
     endPos = missDict['startPos'] + v * ratioMissToHit
     missDict['endPos'] = endPos
     notify.debug('startPos=%s' % missDict['startPos'])
@@ -225,7 +225,7 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     toon = throw['toon']
     hpbonus = throw['hpbonus']
     target = throw['target']
-    suit = target['suit']
+    cog = target['cog']
     hp = target['hp']
     kbbonus = target['kbbonus']
     sidestep = throw['sidestep']
@@ -235,10 +235,10 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     rightCogs = target['rightCogs']
     level = throw['level']
     battle = throw['battle']
-    suitPos = suit.getPos(battle)
+    cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    notify.debug('toon: %s throws tart at suit: %d for hp: %d died: %d' % (toon.getName(),
-     suit.doId,
+    notify.debug('toon: %s throws tart at cog: %d for hp: %d died: %d' % (toon.getName(),
+     cog.doId,
      hp,
      died))
     pieName = pieNames[0]
@@ -249,7 +249,7 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     buttons = [button, button2]
     hands = toon.getLeftHands()
     toonTrack = Sequence()
-    toonFace = Func(toon.headsUp, battle, suitPos)
+    toonFace = Func(toon.headsUp, battle, cogPos)
     toonTrack.append(Wait(delay))
     toonTrack.append(toonFace)
     toonTrack.append(ActorInterval(toon, 'pushbutton'))
@@ -269,19 +269,19 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     buttonTrack.append(buttonScaleDown)
     buttonTrack.append(buttonHide)
     soundTrack = __getSoundTrack(level, hitSuit, toon)
-    suitResponseTrack = Sequence()
+    cogResponseTrack = Sequence()
     reactIval = Sequence()
     if showCannon:
-        showDamage = Func(suit.showHpText, -hp, openEnded=0)
-        updateHealthBar = Func(suit.updateHealthBar, hp)
+        showDamage = Func(cog.showHpText, -hp, openEnded=0)
+        updateHealthBar = Func(cog.updateHealthBar, hp)
         cannon = loader.loadModel('phase_4/models/minigames/toon_cannon')
         barrel = cannon.find('**/cannon')
         barrel.setHpr(0, 90, 0)
         cannonHolder = render.attachNewNode('CannonHolder')
         cannon.reparentTo(cannonHolder)
         cannon.setPos(0, 0, -8.6)
-        cannonHolder.setPos(suit.getPos(render))
-        cannonHolder.setHpr(suit.getHpr(render))
+        cannonHolder.setPos(cog.getPos(render))
+        cannonHolder.setHpr(cog.getHpr(render))
         cannonAttachPoint = barrel.attachNewNode('CannonAttach')
         kapowAttachPoint = barrel.attachNewNode('kapowAttach')
         scaleFactor = 1.6
@@ -290,14 +290,14 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
         cannonAttachPoint.setScale(iScale, 1, iScale)
         cannonAttachPoint.setPos(0, 6.7, 0)
         kapowAttachPoint.setPos(0, -0.5, 1.9)
-        suit.reparentTo(cannonAttachPoint)
-        suit.setPos(0, 0, 0)
-        suit.setHpr(0, -90, 0)
-        suitLevel = suit.getActualLevel()
-        deep = 2.5 + suitLevel * 0.2
-        suitScale = 0.9
+        cog.reparentTo(cannonAttachPoint)
+        cog.setPos(0, 0, 0)
+        cog.setHpr(0, -90, 0)
+        cogLevel = cog.getActualLevel()
+        deep = 2.5 + cogLevel * 0.2
+        cogScale = 0.9
         import math
-        suitScale = 0.9 - math.sqrt(suitLevel) * 0.1
+        cogScale = 0.9 - math.sqrt(cogLevel) * 0.1
         sival = []
         posInit = cannonHolder.getPos()
         posFinal = Point3(posInit[0] + 0.0, posInit[1] + 0.0, posInit[2] + 7.0)
@@ -319,25 +319,25 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
         playSoundCannonAdjust = SoundInterval(soundCannonAdjust, duration=0.6, node=cannonHolder)
         soundCogPanic = base.loader.loadSfx('phase_5/audio/sfx/ENC_cogafssm.ogg')
         playSoundCogPanic = SoundInterval(soundCogPanic, node=cannonHolder)
-        reactIval = Parallel(ActorInterval(suit, 'pie-small-react'), Sequence(Wait(0.0), LerpPosInterval(cannonHolder, 2.0, posFinal, startPos=posInit, blendType='easeInOut'), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 45, 0), startHpr=Point3(0, 90, 0), blendType='easeIn'), playSoundCannonAdjust), Wait(2.0), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 90, 0), startHpr=Point3(0, 45, 0), blendType='easeIn'), playSoundCannonAdjust), LerpPosInterval(cannonHolder, 1.0, posInit, startPos=posFinal, blendType='easeInOut')), Sequence(Wait(0.0), Parallel(ActorInterval(suit, 'flail'), suit.scaleInterval(1.0, suitScale), LerpPosInterval(suit, 0.25, Point3(0, -1.0, 0.0)), Sequence(Wait(0.25), Parallel(playSoundCogPanic, LerpPosInterval(suit, 1.5, Point3(0, -deep, 0.0), blendType='easeIn')))), Wait(2.5), Parallel(playSoundBomb, playSoundFly, Sequence(Func(smoke.show), Parallel(LerpScaleInterval(smoke, 0.5, 3), LerpColorScaleInterval(smoke, 0.5, Vec4(2, 2, 2, 0))), Func(smoke.hide)), Sequence(Func(kapow.show), 
-ActorInterval(kapow, 'kapow'), Func(kapow.hide)), LerpPosInterval(suit, 3.0, Point3(0, 150.0, 0.0)), suit.scaleInterval(3.0, 0.01)), Func(suit.hide)))
+        reactIval = Parallel(ActorInterval(cog, 'pie-small-react'), Sequence(Wait(0.0), LerpPosInterval(cannonHolder, 2.0, posFinal, startPos=posInit, blendType='easeInOut'), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 45, 0), startHpr=Point3(0, 90, 0), blendType='easeIn'), playSoundCannonAdjust), Wait(2.0), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 90, 0), startHpr=Point3(0, 45, 0), blendType='easeIn'), playSoundCannonAdjust), LerpPosInterval(cannonHolder, 1.0, posInit, startPos=posFinal, blendType='easeInOut')), Sequence(Wait(0.0), Parallel(ActorInterval(cog, 'flail'), cog.scaleInterval(1.0, cogScale), LerpPosInterval(cog, 0.25, Point3(0, -1.0, 0.0)), Sequence(Wait(0.25), Parallel(playSoundCogPanic, LerpPosInterval(cog, 1.5, Point3(0, -deep, 0.0), blendType='easeIn')))), Wait(2.5), Parallel(playSoundBomb, playSoundFly, Sequence(Func(smoke.show), Parallel(LerpScaleInterval(smoke, 0.5, 3), LerpColorScaleInterval(smoke, 0.5, Vec4(2, 2, 2, 0))), Func(smoke.hide)), Sequence(Func(kapow.show),
+ActorInterval(kapow, 'kapow'), Func(kapow.hide)), LerpPosInterval(cog, 3.0, Point3(0, 150.0, 0.0)), cog.scaleInterval(3.0, 0.01)), Func(cog.hide)))
         if hitCount == 1:
-            sival = Sequence(Parallel(reactIval, MovieUtil.createSuitStunInterval(suit, 0.3, 1.3)), Wait(0.0), Func(cannonHolder.remove))
+            sival = Sequence(Parallel(reactIval, MovieUtil.createSuitStunInterval(cog, 0.3, 1.3)), Wait(0.0), Func(cannonHolder.remove))
         else:
             sival = reactIval
-        suitResponseTrack.append(Wait(delay + tPieHitsSuit))
-        suitResponseTrack.append(showDamage)
-        suitResponseTrack.append(updateHealthBar)
-        suitResponseTrack.append(sival)
+        cogResponseTrack.append(Wait(delay + tPieHitsSuit))
+        cogResponseTrack.append(showDamage)
+        cogResponseTrack.append(updateHealthBar)
+        cogResponseTrack.append(sival)
         bonusTrack = Sequence(Wait(delay + tPieHitsSuit))
         if kbbonus > 0:
             bonusTrack.append(Wait(0.75))
-            bonusTrack.append(Func(suit.showHpText, -kbbonus, 2, openEnded=0))
+            bonusTrack.append(Func(cog.showHpText, -kbbonus, 2, openEnded=0))
         if hpbonus > 0:
             bonusTrack.append(Wait(0.75))
-            bonusTrack.append(Func(suit.showHpText, -hpbonus, 1, openEnded=0))
-        suitResponseTrack = Parallel(suitResponseTrack, bonusTrack)
+            bonusTrack.append(Func(cog.showHpText, -hpbonus, 1, openEnded=0))
+        cogResponseTrack = Parallel(cogResponseTrack, bonusTrack)
     return [toonTrack,
      soundTrack,
      buttonTrack,
-     suitResponseTrack]
+     cogResponseTrack]

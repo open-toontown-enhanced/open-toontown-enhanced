@@ -714,8 +714,8 @@ dclass DistributedTrolley : DistributedObject {
 
 dclass DistributedCogPlanner : DistributedObject {
   setZoneId(uint32) required broadcast ram;
-  suitListQuery() airecv clsend;
-  suitListResponse(uint8[]);
+  cogListQuery() airecv clsend;
+  cogListResponse(uint8[]);
   buildingListQuery() airecv clsend;
   buildingListResponse(uint8[]);
 };
@@ -1686,7 +1686,7 @@ dclass DistCogdoMazeGame : DistCogdoGame {
   requestUseGag(int16/10, int16/10, int16/10, int16) clsend airecv;
   toonUsedGag(uint32, int16/10, int16/10, int16/10, int16) broadcast;
   requestSuitHitByGag(uint8, uint8) clsend airecv;
-  suitHitByGag(uint32, uint8, uint8) broadcast;
+  cogHitByGag(uint32, uint8, uint8) broadcast;
   requestHitBySuit(uint8, uint8, int16) clsend airecv;
   toonHitBySuit(uint32, uint8, uint8, int16) broadcast;
   requestHitByDrop() clsend airecv;

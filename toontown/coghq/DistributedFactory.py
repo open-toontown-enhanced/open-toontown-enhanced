@@ -136,9 +136,9 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
         if len(newSuitIds):
 
             def bringOutOfReserve(cogs):
-                for suit in cogs:
-                    if suit:
-                        suit.comeOutOfReserve()
+                for cog in cogs:
+                    if cog:
+                        cog.comeOutOfReserve()
 
             self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newSuitIds, bringOutOfReserve)
 

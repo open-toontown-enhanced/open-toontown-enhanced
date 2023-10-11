@@ -42,10 +42,10 @@ class QuestMap(DirectFrame):
         bg.removeNode()
         self.hoodId = None
         self.zoneId = None
-        self.suitPercentage = {}
+        self.cogPercentage = {}
         for currHoodInfo in CogPlannerBase.CogPlannerBase.SuitHoodInfo:
             tracks = currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_TRACK]
-            self.suitPercentage[currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_ZONE]] = tracks
+            self.cogPercentage[currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_ZONE]] = tracks
 
         return
 
@@ -98,7 +98,7 @@ class QuestMap(DirectFrame):
         return
 
     def updateCogInfo(self):
-        currPercentage = self.suitPercentage.get(self.zoneId)
+        currPercentage = self.cogPercentage.get(self.zoneId)
         if currPercentage is None:
             return
         self.cInfo['text'] = '%s%%' % currPercentage[0]

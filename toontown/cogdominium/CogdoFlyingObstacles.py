@@ -233,23 +233,23 @@ class CogdoFlyingMinion(CogdoFlyingObstacle):
 
     def __init__(self, index, collSolid, motionPath = None):
         self.prop = None
-        self.suit = Suit.Suit()
+        self.cog = Suit.Suit()
         d = CogDNA.CogDNA()
         d.newSuit(Globals.Gameplay.MinionDnaName)
-        self.suit.setDNA(d)
-        self.suit.setScale(Globals.Gameplay.MinionScale)
-        swapAvatarShadowPlacer(self.suit, 'minion-%sShadowPlacer' % index)
+        self.cog.setDNA(d)
+        self.cog.setScale(Globals.Gameplay.MinionScale)
+        swapAvatarShadowPlacer(self.cog, 'minion-%sShadowPlacer' % index)
         self.mopathNodePath = NodePath('mopathNodePath')
-        self.suit.reparentTo(self.mopathNodePath)
+        self.cog.reparentTo(self.mopathNodePath)
         CogdoFlyingObstacle.__init__(self, Globals.Level.ObstacleTypes.Minion, index, self.mopathNodePath, collSolid, motionPath=motionPath, motionPattern=CogdoFlyingObstacle.MotionTypes.Loop, blendMotion=False, instanceModel=False)
         self.lastPos = None
-        self.suit.loop('neutral')
+        self.cog.loop('neutral')
         return
 
     def attachPropeller(self):
         if self.prop is None:
             self.prop = BattleProps.globalPropPool.getProp('propeller')
-            head = self.suit.find('**/joint_head')
+            head = self.cog.find('**/joint_head')
             self.prop.reparentTo(head)
         return
 
@@ -279,9 +279,9 @@ class CogdoFlyingMinion(CogdoFlyingObstacle):
     def destroy(self):
         self.mopathNodePath.removeNode()
         del self.mopathNodePath
-        self.suit.cleanup()
-        self.suit.removeNode()
-        self.suit.delete()
+        self.cog.cleanup()
+        self.cog.removeNode()
+        self.cog.delete()
         CogdoFlyingObstacle.destroy(self)
 
 
@@ -296,16 +296,16 @@ class CogdoFlyingMinionFlying(CogdoFlyingMinion):
         self.propTrack = Sequence(ActorInterval(self.prop, 'propeller', startFrame=0, endFrame=14))
         dur = Globals.Gameplay.FlyingMinionFloatTime
         offset = Globals.Gameplay.FlyingMinionFloatOffset
-        suitPos = self.suit.getPos()
-        upperPos = suitPos + Point3(0.0, 0.0, offset / 2.0)
-        lowerPos = suitPos + Point3(0.0, 0.0, -offset / 2.0)
-        self.floatSequence = Sequence(LerpPosInterval(self.suit, dur / 4.0, startPos=suitPos, pos=upperPos, blendType='easeInOut'), LerpPosInterval(self.suit, dur / 2.0, startPos=upperPos, pos=lowerPos, blendType='easeInOut'), LerpPosInterval(self.suit, dur / 4.0, startPos=lowerPos, pos=suitPos, blendType='easeInOut'), name='%s.floatSequence%i' % (self.__class__.__name__, self.index))
+        cogPos = self.cog.getPos()
+        upperPos = cogPos + Point3(0.0, 0.0, offset / 2.0)
+        lowerPos = cogPos + Point3(0.0, 0.0, -offset / 2.0)
+        self.floatSequence = Sequence(LerpPosInterval(self.cog, dur / 4.0, startPos=cogPos, pos=upperPos, blendType='easeInOut'), LerpPosInterval(self.cog, dur / 2.0, startPos=upperPos, pos=lowerPos, blendType='easeInOut'), LerpPosInterval(self.cog, dur / 4.0, startPos=lowerPos, pos=cogPos, blendType='easeInOut'), name='%s.floatSequence%i' % (self.__class__.__name__, self.index))
 
     def startMoving(self, elapsedTime):
         CogdoFlyingMinion.startMoving(self, elapsedTime)
         self.floatSequence.loop(elapsedTime)
         self.propTrack.loop(elapsedTime)
-        self.suit.pose('landing', 0)
+        self.cog.pose('landing', 0)
 
     def stopMoving(self):
         CogdoFlyingMinion.stopMoving(self)
@@ -330,11 +330,11 @@ class CogdoFlyingMinionWalking(CogdoFlyingMinion):
 
     def startMoving(self, elapsedTime):
         CogdoFlyingMinion.startMoving(self, elapsedTime)
-        self.suit.loop('walk')
+        self.cog.loop('walk')
 
     def stopMoving(self):
         CogdoFlyingMinion.stopMoving(self)
-        self.suit.loop('neutral')
+        self.cog.loop('neutral')
 
 
 class CogdoFlyingFan(CogdoFlyingObstacle):

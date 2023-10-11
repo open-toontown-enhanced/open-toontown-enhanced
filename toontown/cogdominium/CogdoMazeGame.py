@@ -31,7 +31,7 @@ class CogdoMazeGame(DirectObject):
     def load(self, cogdoMazeFactory, numCogs, bossCode):
         self._initAudio()
         self.maze = cogdoMazeFactory.createCogdoMaze()
-        suitSpawnSpot = self.maze.createRandomSpotsList(numCogs, self.distGame.randomNumGen)
+        cogSpawnSpot = self.maze.createRandomSpotsList(numCogs, self.distGame.randomNumGen)
         self.guiMgr = CogdoMazeGuiManager(self.maze, bossCode)
         self.cogs = []
         self.cogsById = {}
@@ -50,22 +50,22 @@ class CogdoMazeGame(DirectObject):
         difficulty = self.distGame.getDifficulty()
         serialNum = 0
         for i in range(numCogs[0]):
-            suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeBossSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[0][i])
-            self.addCog(suit)
-            self.guiMgr.mazeMapGui.addCog(suit.suit)
+            cogRng = RandomNumGen(self.distGame.doId + serialNum * 10)
+            cog = CogdoMazeBossSuit(serialNum, self.maze, cogRng, difficulty, startTile=cogSpawnSpot[0][i])
+            self.addCog(cog)
+            self.guiMgr.mazeMapGui.addCog(cog.cog)
             serialNum += 1
 
         for i in range(numCogs[1]):
-            suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeFastMinionSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[1][i])
-            self.addCog(suit)
+            cogRng = RandomNumGen(self.distGame.doId + serialNum * 10)
+            cog = CogdoMazeFastMinionSuit(serialNum, self.maze, cogRng, difficulty, startTile=cogSpawnSpot[1][i])
+            self.addCog(cog)
             serialNum += 1
 
         for i in range(numCogs[2]):
-            suitRng = RandomNumGen(self.distGame.doId + serialNum * 10)
-            suit = CogdoMazeSlowMinionSuit(serialNum, self.maze, suitRng, difficulty, startTile=suitSpawnSpot[2][i])
-            self.addCog(suit)
+            cogRng = RandomNumGen(self.distGame.doId + serialNum * 10)
+            cog = CogdoMazeSlowMinionSuit(serialNum, self.maze, cogRng, difficulty, startTile=cogSpawnSpot[2][i])
+            self.addCog(cog)
             serialNum += 1
 
         self.toonId2Door = {}
@@ -105,27 +105,27 @@ class CogdoMazeGame(DirectObject):
         self._audioMgr.destroy()
         del self._audioMgr
 
-    def addCog(self, suit):
-        id = suit.serialNum
-        self.cogs.append(suit)
-        if suit.type == Globals.SuitTypes.Boss:
-            self.shakers.append(suit)
-        self.cogsById[id] = suit
+    def addCog(self, cog):
+        id = cog.serialNum
+        self.cogs.append(cog)
+        if cog.type == Globals.SuitTypes.Boss:
+            self.shakers.append(cog)
+        self.cogsById[id] = cog
 
-    def removeSuit(self, suit):
-        id = suit.serialNum
+    def removeSuit(self, cog):
+        id = cog.serialNum
         del self.cogsById[id]
-        if suit.type == Globals.SuitTypes.Boss:
-            self.shakers.remove(suit)
+        if cog.type == Globals.SuitTypes.Boss:
+            self.shakers.remove(cog)
             self.guiMgr.showBossCode(id)
-            self.guiMgr.mazeMapGui.removeSuit(suit.suit)
-        self.cogs.remove(suit)
-        suit.destroy()
+            self.guiMgr.mazeMapGui.removeSuit(cog.cog)
+        self.cogs.remove(cog)
+        cog.destroy()
 
     def unload(self):
         self.toonsThatRevealedDoor = []
-        for suit in self.cogs:
-            suit.destroy()
+        for cog in self.cogs:
+            cog.destroy()
 
         del self.cogs
         for id in list(self.drops.keys()):
@@ -158,8 +158,8 @@ class CogdoMazeGame(DirectObject):
     def offstage(self):
         self.maze.offstage()
         self._exit.offstage()
-        for suit in self.cogs:
-            suit.offstage()
+        for cog in self.cogs:
+            cog.offstage()
 
     def startIntro(self):
         self._movie.play()
@@ -222,15 +222,15 @@ class CogdoMazeGame(DirectObject):
             player.handleGameStart()
             player.request('Normal')
 
-        for suit in self.cogs:
-            suit.onstage()
-            suit.gameStart(self.distGame.getStartTime())
+        for cog in self.cogs:
+            cog.onstage()
+            cog.gameStart(self.distGame.getStartTime())
 
     def exit(self):
         self._quakeSfx1.stop()
         self._quakeSfx2.stop()
-        for suit in self.cogs:
-            suit.gameEnd()
+        for cog in self.cogs:
+            cog.gameEnd()
 
         self.ignore(self.PlayerDropCollision)
         self.ignore(self.PlayerCoolerCollision)
@@ -333,47 +333,47 @@ class CogdoMazeGame(DirectObject):
         else:
             self._quakeSfx2.getAudioSound().setVolume(volume)
 
-    def handleLocalToonMeetsSuit(self, suitType, suitNum):
+    def handleLocalToonMeetsSuit(self, cogType, cogNum):
         if self.localPlayer.state == 'Normal' and not self.localPlayer.invulnerable:
-            self.distGame.b_toonHitBySuit(suitType, suitNum)
+            self.distGame.b_toonHitBySuit(cogType, cogNum)
 
-    def toonHitBySuit(self, toonId, suitType, suitNum, elapsedTime = 0.0):
+    def toonHitBySuit(self, toonId, cogType, cogNum, elapsedTime = 0.0):
         player = self.toonId2Player[toonId]
         if player.state == 'Normal':
             player.request('Hit', elapsedTime)
 
-    def handleSuitDeath(self, suitType, suitNum):
-        suit = self.cogsById[suitNum]
-        self.dropMemos(suit)
-        self.removeSuit(suit)
+    def handleSuitDeath(self, cogType, cogNum):
+        cog = self.cogsById[cogNum]
+        self.dropMemos(cog)
+        self.removeSuit(cog)
 
-    def dropMemos(self, suit):
-        numDrops = suit.memos
+    def dropMemos(self, cog):
+        numDrops = cog.memos
         if numDrops > 0:
             start = math.radians(random.randint(0, 360))
             step = math.radians(360.0 / numDrops)
             radius = 2.0
             for i in range(numDrops):
                 angle = start + i * step
-                x = radius * math.cos(angle) + suit.suit.getX()
-                y = radius * math.sin(angle) + suit.suit.getY()
+                x = radius * math.cos(angle) + cog.cog.getX()
+                y = radius * math.sin(angle) + cog.cog.getY()
                 self.generatePickup(x, y)
 
-    def handleSuitThink(self, suit, TX, TY):
-        if suit in self.shakers:
-            self.guiMgr.mazeMapGui.updateSuit(suit.suit, TX, TY)
-            suit.dropTimer += 1
-            if suit.dropTimer >= Globals.DropFrequency:
-                self.doDrop(suit)
-                suit.dropTimer = 0
+    def handleSuitThink(self, cog, TX, TY):
+        if cog in self.shakers:
+            self.guiMgr.mazeMapGui.updateSuit(cog.cog, TX, TY)
+            cog.dropTimer += 1
+            if cog.dropTimer >= Globals.DropFrequency:
+                self.doDrop(cog)
+                cog.dropTimer = 0
 
     def doDrop(self, boss):
         dropLoc = boss.pickRandomValidSpot()
         self.generateDrop(dropLoc[0], dropLoc[1])
 
-    def handleBossShake(self, suit, strength):
+    def handleBossShake(self, cog, strength):
         if Globals.BossShakeEnabled:
-            self.shakeCamera(suit.suit, strength, Globals.BossMaxDistance)
+            self.shakeCamera(cog.cog, strength, Globals.BossMaxDistance)
 
     def randomDrop(self, centerTX, centerTY, radius):
         dropArray = []
@@ -475,17 +475,17 @@ class CogdoMazeGame(DirectObject):
         player = self.toonId2Player[hitToon]
         player.hitByGag()
 
-    def handleLocalSuitMeetsGag(self, suitType, suitNum, gag):
+    def handleLocalSuitMeetsGag(self, cogType, cogNum, gag):
         self.removeGag(gag)
-        self.localPlayer.hitSuit(suitType)
-        self.distGame.b_suitHitByGag(suitType, suitNum)
+        self.localPlayer.hitSuit(cogType)
+        self.distGame.b_cogHitByGag(cogType, cogNum)
 
-    def suitHitByGag(self, toonId, suitType, suitNum, elapsedTime = 0.0):
-        if suitType == Globals.SuitTypes.Boss:
-            self.guiMgr.showBossHit(suitNum)
-        if suitNum in list(self.cogsById.keys()):
-            suit = self.cogsById[suitNum]
-            suit.hitByGag()
+    def cogHitByGag(self, toonId, cogType, cogNum, elapsedTime = 0.0):
+        if cogType == Globals.SuitTypes.Boss:
+            self.guiMgr.showBossHit(cogNum)
+        if cogNum in list(self.cogsById.keys()):
+            cog = self.cogsById[cogNum]
+            cog.hitByGag()
 
     def removeGag(self, gag):
         gag.detachNode()

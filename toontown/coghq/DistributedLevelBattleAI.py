@@ -10,17 +10,17 @@ from direct.showbase.PythonUtil import addListsByValue
 class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedLevelBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, winState, roundCallback=None, finishCallback=None, maxCogs=4):
+    def __init__(self, air, battleMgr, pos, cog, toonId, zoneId, level, battleCellId, winState, roundCallback=None, finishCallback=None, maxCogs=4):
         self.blocker = None
         self.level = level
         self.battleCellId = battleCellId
         self.winState = winState
         self.roundCallback = roundCallback
-        self.cogTrack = suit.dna.dept
-        DistributedBattleAI.DistributedBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, finishCallback, maxCogs, tutorialFlag=0, levelFlag=1)
+        self.cogTrack = cog.dna.dept
+        DistributedBattleAI.DistributedBattleAI.__init__(self, air, battleMgr, pos, cog, toonId, zoneId, finishCallback, maxCogs, tutorialFlag=0, levelFlag=1)
         isBossBattle = 0
-        for suit in self.battleMgr.level.planner.battleCellId2cogs[battleCellId]:
-            if suit.boss:
+        for cog in self.battleMgr.level.planner.battleCellId2cogs[battleCellId]:
+            if cog.boss:
                 isBossBattle = 1
                 break
 
@@ -55,9 +55,9 @@ class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
             self.b_setState('Resume')
         else:
             totalHp = 0
-            for suit in self.cogs:
-                if suit.currHP > 0:
-                    totalHp += suit.currHP
+            for cog in self.cogs:
+                if cog.currHP > 0:
+                    totalHp += cog.currHP
 
             self.roundCallback(self.battleCellId, self.activeToons, totalHp, deadCogs)
 
@@ -134,12 +134,12 @@ class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
         if not self.ignoreFaceOffDone:
             self.handleFaceOffDone()
 
-    def suitRequestJoin(self, suit):
-        self.notify.debug('DistributedLevelBattleAI.suitRequestJoin(%d)' % suit.getDoId())
-        if suit in self.cogs:
-            self.notify.warning('suit %s already in this battle' % suit.getDoId())
+    def cogRequestJoin(self, cog):
+        self.notify.debug('DistributedLevelBattleAI.cogRequestJoin(%d)' % cog.getDoId())
+        if cog in self.cogs:
+            self.notify.warning('cog %s already in this battle' % cog.getDoId())
             return 0
-        DistributedBattleBaseAI.DistributedBattleBaseAI.suitRequestJoin(self, suit)
+        DistributedBattleBaseAI.DistributedBattleBaseAI.cogRequestJoin(self, cog)
 
     def enterReward(self):
         self.joinableFsm.request('Unjoinable')

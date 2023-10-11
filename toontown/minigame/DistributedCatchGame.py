@@ -107,18 +107,18 @@ class DistributedCatchGame(DistributedMinigame):
         self.toonSDs[avId] = toonSD
         toonSD.load()
         if self.WantCogs:
-            suitTypes = ['flunky',
+            cogTypes = ['flunky',
              'telemarketer',
              'penny_pincher',
              'double_talker']
             self.cogs = []
-            for type in suitTypes:
-                suit = Suit.Suit()
+            for type in cogTypes:
+                cog = Suit.Suit()
                 d = CogDNA.CogDNA()
                 d.newSuit(type)
-                suit.setDNA(d)
-                suit.pose('walk', 0)
-                self.cogs.append(suit)
+                cog.setDNA(d)
+                cog.pose('walk', 0)
+                self.cogs.append(cog)
 
         self.__textGen = TextNode('ringGame')
         self.__textGen.setFont(ToontownGlobals.getSignFont())
@@ -138,9 +138,9 @@ class DistributedCatchGame(DistributedMinigame):
             toonSD.unload()
 
         del self.toonSDs
-        for suit in self.cogs:
-            suit.reparentTo(hidden)
-            suit.delete()
+        for cog in self.cogs:
+            cog.reparentTo(hidden)
+            cog.delete()
 
         del self.cogs
         self.ground.removeNode()
@@ -464,18 +464,18 @@ class DistributedCatchGame(DistributedMinigame):
     def enterPlay(self):
         self.notify.debug('enterPlay')
         self.orthoWalk.start()
-        for suit in self.cogs:
-            suitCollSphere = CollisionSphere(0, 0, 0, 1.0)
-            suit.collSphereName = 'suitCollSphere%s' % self.cogs.index(suit)
-            suitCollSphere.setTangible(0)
-            suitCollNode = CollisionNode(self.uniqueName(suit.collSphereName))
-            suitCollNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
-            suitCollNode.addSolid(suitCollSphere)
-            suit.collNodePath = suit.attachNewNode(suitCollNode)
-            suit.collNodePath.hide()
+        for cog in self.cogs:
+            cogCollSphere = CollisionSphere(0, 0, 0, 1.0)
+            cog.collSphereName = 'cogCollSphere%s' % self.cogs.index(cog)
+            cogCollSphere.setTangible(0)
+            cogCollNode = CollisionNode(self.uniqueName(cog.collSphereName))
+            cogCollNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
+            cogCollNode.addSolid(cogCollSphere)
+            cog.collNodePath = cog.attachNewNode(cogCollNode)
+            cog.collNodePath.hide()
             if self.ShowSuitSpheres:
-                suit.collNodePath.show()
-            self.accept(self.uniqueName('enter' + suit.collSphereName), self.handleSuitCollision)
+                cog.collNodePath.show()
+            self.accept(self.uniqueName('enter' + cog.collSphereName), self.handleSuitCollision)
 
         self.scores = [0] * self.numPlayers
         spacing = 0.4
@@ -516,9 +516,9 @@ class DistributedCatchGame(DistributedMinigame):
         self.timer.destroy()
         del self.timer
         self.music.stop()
-        for suit in self.cogs:
-            self.ignore(self.uniqueName('enter' + suit.collSphereName))
-            suit.collNodePath.removeNode()
+        for cog in self.cogs:
+            self.ignore(self.uniqueName('enter' + cog.collSphereName))
+            cog.collNodePath.removeNode()
 
         for ival in list(self.dropIntervals.values()):
             ival.finish()
@@ -755,11 +755,11 @@ class DistributedCatchGame(DistributedMinigame):
             ival.append(walkIval)
 
         ival.start()
-        self.suitWalkIval = ival
+        self.cogWalkIval = ival
 
     def stopSuitWalkTask(self):
-        self.suitWalkIval.finish()
-        del self.suitWalkIval
+        self.cogWalkIval.finish()
+        del self.cogWalkIval
 
     def getCogWalkIval(self, startPos, stopPos, rng):
         data = {}
@@ -768,21 +768,21 @@ class DistributedCatchGame(DistributedMinigame):
         def setup(self = self, startPos = startPos, stopPos = stopPos, data = data, lerpNP = lerpNP, rng = rng):
             if len(self.cogs) == 0:
                 return
-            suit = rng.choice(self.cogs)
-            data['suit'] = suit
-            self.cogs.remove(suit)
-            suit.reparentTo(lerpNP)
-            suit.loop('walk')
-            suit.setPlayRate(self.SuitSpeed / ToontownGlobals.SuitWalkSpeed, 'walk')
-            suit.setPos(0, 0, 0)
+            cog = rng.choice(self.cogs)
+            data['cog'] = cog
+            self.cogs.remove(cog)
+            cog.reparentTo(lerpNP)
+            cog.loop('walk')
+            cog.setPlayRate(self.SuitSpeed / ToontownGlobals.SuitWalkSpeed, 'walk')
+            cog.setPos(0, 0, 0)
             lerpNP.setPos(startPos)
-            suit.lookAt(stopPos)
+            cog.lookAt(stopPos)
 
         def cleanup(self = self, data = data, lerpNP = lerpNP):
-            if 'suit' in data:
-                suit = data['suit']
-                suit.reparentTo(hidden)
-                self.cogs.append(suit)
+            if 'cog' in data:
+                cog = data['cog']
+                cog.reparentTo(hidden)
+                self.cogs.append(cog)
             lerpNP.removeNode()
 
         distance = Vec3(stopPos - startPos).length()
@@ -799,12 +799,12 @@ class DistributedCatchGame(DistributedMinigame):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() != 'play':
-            self.notify.warning('ignoring msg: av %s hit by suit' % avId)
+            self.notify.warning('ignoring msg: av %s hit by cog' % avId)
             return
         toon = self.getAvatar(avId)
         if toon == None:
             return
-        self.notify.debug('avatar %s hit by a suit' % avId)
+        self.notify.debug('avatar %s hit by a cog' % avId)
         if avId != self.localAvId:
             self.toonSDs[avId].fsm.request('fallBack')
         return
@@ -847,9 +847,9 @@ class DistributedCatchGame(DistributedMinigame):
          0.0,
          26.57,
          0.0)
-        suitViewCamPosHpr = (0, -11.5, 13, 0, -35, 0)
+        cogViewCamPosHpr = (0, -11.5, 13, 0, -35, 0)
         finalCamPosHpr = self.CameraPosHpr
-        cameraIval = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, treeNode, *initialCamPosHpr), WaitInterval(4.0), LerpPosHprInterval(camera, 2.0, Point3(*suitViewCamPosHpr[:3]), Point3(*suitViewCamPosHpr[3:]), blendType='easeInOut', name='lerpToSuitView'), WaitInterval(4.0), LerpPosHprInterval(camera, 3.0, Point3(*finalCamPosHpr[:3]), Point3(*finalCamPosHpr[3:]), blendType='easeInOut', name='lerpToPlayView'))
+        cameraIval = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, treeNode, *initialCamPosHpr), WaitInterval(4.0), LerpPosHprInterval(camera, 2.0, Point3(*cogViewCamPosHpr[:3]), Point3(*cogViewCamPosHpr[3:]), blendType='easeInOut', name='lerpToSuitView'), WaitInterval(4.0), LerpPosHprInterval(camera, 3.0, Point3(*finalCamPosHpr[:3]), Point3(*finalCamPosHpr[3:]), blendType='easeInOut', name='lerpToPlayView'))
 
         def getIntroToon(toonProperties, parent, pos):
             toon = Toon.Toon()

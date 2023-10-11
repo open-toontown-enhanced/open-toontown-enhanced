@@ -68,19 +68,19 @@ class QuestRewardCounter:
         HQdepts = (ToontownGlobals.cogHQZoneId2deptIndex(ToontownGlobals.SellbotHQ), ToontownGlobals.cogHQZoneId2deptIndex(ToontownGlobals.LawbotHQ), ToontownGlobals.cogHQZoneId2deptIndex(ToontownGlobals.CashbotHQ))
         levels = av.getCogLevels()
         cogTypes = av.getCogTypes()
-        suitHp = 0
+        cogHp = 0
         for dept in HQdepts:
             level = levels[dept]
             type = cogTypes[dept]
             if type >= CogDNA.cogsPerDept - 1:
                 for milestoneLevel in ToontownGlobals.CogSuitHPLevels:
                     if level >= milestoneLevel:
-                        suitHp += 1
+                        cogHp += 1
                     else:
                         break
 
-        self.notify.debug('Adding %s hp for cog cogs' % suitHp)
-        self.maxHp += suitHp
+        self.notify.debug('Adding %s hp for cog suits' % cogHp)
+        self.maxHp += cogHp
         kartingHp = int(av.kartingTrophies.count(1) / RaceGlobals.TrophiesPerCup)
         self.notify.debug('Adding %s hp for karting trophies' % kartingHp)
         self.maxHp += kartingHp

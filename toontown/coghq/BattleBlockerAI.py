@@ -31,16 +31,16 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
     def getActive(self):
         return self.active
 
-    def addCog(self, suit):
-        self.cogIds.append(suit.doId)
+    def addCog(self, cog):
+        self.cogIds.append(cog.doId)
         self.d_setCogs()
 
-    def removeSuit(self, suit):
+    def removeSuit(self, cog):
         try:
-            self.cogIds.remove(suit.doId)
+            self.cogIds.remove(cog.doId)
             self.d_setCogs()
         except:
-            self.notify.debug("didn't have cogId %d" % suit.doId)
+            self.notify.debug("didn't have cogId %d" % cog.doId)
 
     def d_setCogs(self):
         self.sendUpdate('setCogs', [self.cogIds])
@@ -71,8 +71,8 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
             self.cogIds = []
             cogs = self.level.planner.battleCellId2cogs.get(self.cellId)
             if cogs:
-                for suit in cogs:
-                    self.cogIds.append(suit.doId)
+                for cog in cogs:
+                    self.cogIds.append(cog.doId)
 
             else:
                 self.notify.warning("Couldn't find battle cell id %d in battleCellId2cogs" % self.cellId)

@@ -203,24 +203,24 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
         self.joiningReserves = []
         for cogId in cogIds:
             if cogId in self.cr.doId2do:
-                suit = self.cr.doId2do[cogId]
-                self.cogs.append(suit)
-                suit.fsm.request('Battle')
-                suit.buildingSuit = 1
-                suit.reparentTo(render)
-                if oldcogs.count(suit) == 0:
-                    self.joiningReserves.append(suit)
+                cog = self.cr.doId2do[cogId]
+                self.cogs.append(cog)
+                cog.fsm.request('Battle')
+                cog.buildingSuit = 1
+                cog.reparentTo(render)
+                if oldcogs.count(cog) == 0:
+                    self.joiningReserves.append(cog)
             else:
-                self.notify.warning('setCogs() - no suit: %d' % cogId)
+                self.notify.warning('setCogs() - no cog: %d' % cogId)
 
         self.reserveCogs = []
         for index in range(len(reserveIds)):
             cogId = reserveIds[index]
             if cogId in self.cr.doId2do:
-                suit = self.cr.doId2do[cogId]
-                self.reserveCogs.append((suit, values[index]))
+                cog = self.cr.doId2do[cogId]
+                self.reserveCogs.append((cog, values[index]))
             else:
-                self.notify.warning('setCogs() - no suit: %d' % cogId)
+                self.notify.warning('setCogs() - no cog: %d' % cogId)
 
         if len(self.joiningReserves) > 0:
             self.fsm.request('ReservesJoining')
@@ -252,7 +252,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
         if self.floorModel:
             self.floorModel.removeNode()
         if self.currentFloor == 0:
-            self.floorModel = loader.loadModel('phase_7/models/modules/suit_interior')
+            self.floorModel = loader.loadModel('phase_7/models/modules/cog_interior')
             SuitHs = self.BottomFloor_SuitHs
             SuitPositions = self.BottomFloor_SuitPositions
         elif self.currentFloor == self.numFloors - 1:
@@ -337,12 +337,12 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
 
     def __playReservesJoining(self, ts, name, callback):
         index = 0
-        for suit in self.joiningReserves:
-            suit.reparentTo(render)
-            suit.setPos(self.elevatorModelOut, Point3(ElevatorPoints[index][0], ElevatorPoints[index][1], ElevatorPoints[index][2]))
+        for cog in self.joiningReserves:
+            cog.reparentTo(render)
+            cog.setPos(self.elevatorModelOut, Point3(ElevatorPoints[index][0], ElevatorPoints[index][1], ElevatorPoints[index][2]))
             index += 1
-            suit.setH(180)
-            suit.loop('neutral')
+            cog.setH(180)
+            cog.loop('neutral')
 
         track = Sequence(Func(camera.wrtReparentTo, self.elevatorModelOut), Func(camera.setPos, Point3(0, -8, 2)), Func(camera.setHpr, Vec3(0, 10, 0)), Parallel(SoundInterval(self.openSfx), LerpPosInterval(self.leftDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getLeftClosePoint(ELEVATOR_NORMAL), blendType='easeOut'), LerpPosInterval(self.rightDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getRightClosePoint(ELEVATOR_NORMAL), blendType='easeOut')), Wait(COG_HOLD_ELEVATOR_TIME), Func(camera.wrtReparentTo, render), Func(callback))
         track.start(ts)

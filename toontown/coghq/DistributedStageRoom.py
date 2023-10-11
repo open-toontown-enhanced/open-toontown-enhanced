@@ -193,8 +193,8 @@ class DistributedStageRoom(DistributedLevel.DistributedLevel, StageRoomBase.Stag
         if len(newSuitIds):
 
             def bringOutOfReserve(cogs):
-                for suit in cogs:
-                    suit.comeOutOfReserve()
+                for cog in cogs:
+                    cog.comeOutOfReserve()
 
             self.relatedObjectMgrRequest = self.cr.relatedObjectMgr.requestObjects(newSuitIds, bringOutOfReserve)
 

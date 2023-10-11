@@ -172,10 +172,10 @@ class DistributedCogThiefGame(DistributedMinigame):
         toonSD.fsm.request('normal')
         self.stopGameWalk()
         for cogIndex in range(self.getNumCogs()):
-            suit = self.cogInfo[cogIndex]['suit'].suit
+            cog = self.cogInfo[cogIndex]['cog'].cog
             pos = self.cogInfo[cogIndex]['pos']
-            suit.reparentTo(self.gameBoard)
-            suit.setPos(pos)
+            cog.reparentTo(self.gameBoard)
+            cog.setPos(pos)
 
         for avId in self.avIdList:
             self.toonHitTracks[avId] = Wait(0.1)
@@ -299,7 +299,7 @@ class DistributedCogThiefGame(DistributedMinigame):
 
         self.toonPieTracks = {}
         for key in self.cogInfo:
-            cogThief = self.cogInfo[key]['suit']
+            cogThief = self.cogInfo[key]['cog']
             cogThief.cleanup()
 
         self.removeUpdateCogsTask()
@@ -354,19 +354,19 @@ class DistributedCogThiefGame(DistributedMinigame):
             self.cogInfo[cogIndex] = {'pos': Point3(CTGG.CogStartingPositions[cogIndex]),
              'goal': CTGG.NoGoal,
              'goalId': CTGG.InvalidGoalId,
-             'suit': None}
+             'cog': None}
 
         return
 
     def loadCogs(self):
-        suitTypes = ['downsizer',
+        cogTypes = ['downsizer',
          'ambulance_chaser',
          'bean_counter',
          'mover_and_shaker']
-        for suitIndex in range(self.getNumCogs()):
-            st = self.randomNumGen.choice(suitTypes)
-            suit = CogThief.CogThief(suitIndex, st, self, self.getCogSpeed())
-            self.cogInfo[suitIndex]['suit'] = suit
+        for cogIndex in range(self.getNumCogs()):
+            st = self.randomNumGen.choice(cogTypes)
+            cog = CogThief.CogThief(cogIndex, st, self, self.getCogSpeed())
+            self.cogInfo[cogIndex]['cog'] = cog
 
     def handleEnterSphere(self, colEntry):
         if self.gameIsEnding:
@@ -379,34 +379,34 @@ class DistributedCogThiefGame(DistributedMinigame):
         intoName = colEntry.getIntoNodePath().getName()
         if 'CogThiefSphere' in intoName:
             parts = intoName.split('-')
-            suitNum = int(parts[1])
-            self.localToonHitBySuit(suitNum)
+            cogNum = int(parts[1])
+            self.localToonHitBySuit(cogNum)
 
-    def localToonHitBySuit(self, suitNum):
-        self.notify.debug('localToonHitBySuit %d' % suitNum)
+    def localToonHitBySuit(self, cogNum):
+        self.notify.debug('localToonHitBySuit %d' % cogNum)
         timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)
-        pos = self.cogInfo[suitNum]['suit'].suit.getPos()
+        pos = self.cogInfo[cogNum]['cog'].cog.getPos()
         self.sendUpdate('hitBySuit', [self.localAvId,
          timestamp,
-         suitNum,
+         cogNum,
          pos[0],
          pos[1],
          pos[2]])
         self.showToonHitBySuit(self.localAvId, timestamp)
-        self.makeSuitRespondToToonHit(timestamp, suitNum)
+        self.makeSuitRespondToToonHit(timestamp, cogNum)
 
-    def hitBySuit(self, avId, timestamp, suitNum, x, y, z):
+    def hitBySuit(self, avId, timestamp, cogNum, x, y, z):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() not in ['play']:
-            self.notify.warning('ignoring msg: av %s hit by suit' % avId)
+            self.notify.warning('ignoring msg: av %s hit by cog' % avId)
             return
         if self.gameIsEnding:
             return
-        self.notify.debug('avatar ' + repr(avId) + ' hit by a suit')
+        self.notify.debug('avatar ' + repr(avId) + ' hit by a cog')
         if avId != self.localAvId:
             self.showToonHitBySuit(avId, timestamp)
-            self.makeSuitRespondToToonHit(timestamp, suitNum)
+            self.makeSuitRespondToToonHit(timestamp, cogNum)
 
     def showToonHitBySuit(self, avId, timestamp):
         toon = self.getAvatar(avId)
@@ -513,30 +513,30 @@ class DistributedCogThiefGame(DistributedMinigame):
         hitTrack.start(globalClockDelta.localElapsedTime(timestamp))
         return
 
-    def updateSuitGoal(self, timestamp, inResponseToClientStamp, suitNum, goalType, goalId, x, y, z):
+    def updateSuitGoal(self, timestamp, inResponseToClientStamp, cogNum, goalType, goalId, x, y, z):
         if not self.hasLocalToon:
             return
         self.notify.debug('updateSuitGoal gameTime=%s timeStamp=%s cog=%s goal=%s goalId=%s (%.1f, %.1f,%.1f)' % (self.getCurrentGameTime(),
          timestamp,
-         suitNum,
+         cogNum,
          CTGG.GoalStr[goalType],
          goalId,
          x,
          y,
          z))
-        cog = self.cogInfo[suitNum]
+        cog = self.cogInfo[cogNum]
         cog['goal'] = goalType
         cog['goalId'] = goalId
         newPos = Point3(x, y, z)
         cog['pos'] = newPos
-        suit = cog['suit']
-        suit.updateGoal(timestamp, inResponseToClientStamp, goalType, goalId, newPos)
+        cog = cog['cog']
+        cog.updateGoal(timestamp, inResponseToClientStamp, goalType, goalId, newPos)
 
     def spawnUpdateCogsTask(self):
         self.notify.debug('spawnUpdateCogsTask')
         for cogIndex in self.cogInfo:
-            suit = self.cogInfo[cogIndex]['suit']
-            suit.gameStart(self.gameStartTime)
+            cog = self.cogInfo[cogIndex]['cog']
+            cog.gameStart(self.gameStartTime)
 
         taskMgr.remove(self.UPDATE_COGS_TASK)
         taskMgr.add(self.updateCogsTask, self.UPDATE_COGS_TASK)
@@ -548,13 +548,13 @@ class DistributedCogThiefGame(DistributedMinigame):
         if self.gameIsEnding:
             return task.done
         for cogIndex in self.cogInfo:
-            suit = self.cogInfo[cogIndex]['suit']
-            suit.think()
+            cog = self.cogInfo[cogIndex]['cog']
+            cog.think()
 
         return task.cont
 
-    def makeSuitRespondToToonHit(self, timestamp, suitNum):
-        cog = self.cogInfo[suitNum]['suit']
+    def makeSuitRespondToToonHit(self, timestamp, cogNum):
+        cog = self.cogInfo[cogNum]['cog']
         cog.respondToToonHit(timestamp)
 
     def handleEnterBarrel(self, colEntry):
@@ -571,11 +571,11 @@ class DistributedCogThiefGame(DistributedMinigame):
             barrelName = colEntry.getFromNodePath().getName()
             barrelParts = barrelName.split('-')
             barrelIndex = int(barrelParts[1])
-            cog = self.cogInfo[cogIndex]['suit']
+            cog = self.cogInfo[cogIndex]['cog']
             if cog.barrel == CTGG.NoBarrelCarried and barrelIndex not in self.stolenBarrels:
                 timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)
-                if cog.suit:
-                    cogPos = cog.suit.getPos()
+                if cog.cog:
+                    cogPos = cog.cog.getPos()
                     collisionPos = colEntry.getContactPos(render)
                     if (cogPos - collisionPos).length() > 4:
                         import pdb
@@ -601,7 +601,7 @@ class DistributedCogThiefGame(DistributedMinigame):
          z))
         barrel = self.barrels[barrelIndex]
         self.notify.debug('barrelPos= %s' % barrel.getPos())
-        cog = self.cogInfo[cogIndex]['suit']
+        cog = self.cogInfo[cogIndex]['cog']
         cogPos = Point3(x, y, z)
         cog.makeCogCarryBarrel(timestamp, inResponseToClientStamp, barrel, barrelIndex, cogPos)
 
@@ -617,7 +617,7 @@ class DistributedCogThiefGame(DistributedMinigame):
          z))
         barrel = self.barrels[barrelIndex]
         self.notify.debug('barrelPos= %s' % barrel.getPos())
-        cog = self.cogInfo[cogIndex]['suit']
+        cog = self.cogInfo[cogIndex]['cog']
         cogPos = Point3(x, y, z)
         cog.makeCogDropBarrel(timestamp, inResponseToClientStamp, barrel, barrelIndex, cogPos)
 
@@ -647,7 +647,7 @@ class DistributedCogThiefGame(DistributedMinigame):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() not in ['play']:
-            self.notify.warning('ignoring msg: av %s hit by suit' % avId)
+            self.notify.warning('ignoring msg: av %s hit by cog' % avId)
             return
         self.notify.debug('avatar ' + repr(avId) + ' throwing pie')
         if avId != self.localAvId:
@@ -724,33 +724,33 @@ class DistributedCogThiefGame(DistributedMinigame):
         if 'CogThiefPieSphere' in intoName:
             timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime(), bits=32)
             parts = intoName.split('-')
-            suitNum = int(parts[1])
-            pos = self.cogInfo[suitNum]['suit'].suit.getPos()
+            cogNum = int(parts[1])
+            pos = self.cogInfo[cogNum]['cog'].cog.getPos()
             if pos in CTGG.CogStartingPositions:
-                self.notify.debug('Cog %d hit at starting pos %s, ignoring' % (suitNum, pos))
+                self.notify.debug('Cog %d hit at starting pos %s, ignoring' % (cogNum, pos))
             else:
                 self.sendUpdate('pieHitSuit', [self.localAvId,
                  timestamp,
-                 suitNum,
+                 cogNum,
                  pos[0],
                  pos[1],
                  pos[2]])
-                self.makeSuitRespondToPieHit(timestamp, suitNum)
+                self.makeSuitRespondToPieHit(timestamp, cogNum)
 
-    def pieHitSuit(self, avId, timestamp, suitNum, x, y, z):
+    def pieHitSuit(self, avId, timestamp, cogNum, x, y, z):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() not in ['play']:
-            self.notify.warning('ignoring msg: av %s hit by suit' % avId)
+            self.notify.warning('ignoring msg: av %s hit by cog' % avId)
             return
         if self.gameIsEnding:
             return
-        self.notify.debug('avatar ' + repr(avId) + ' hit by a suit')
+        self.notify.debug('avatar ' + repr(avId) + ' hit by a cog')
         if avId != self.localAvId:
-            self.makeSuitRespondToPieHit(timestamp, suitNum)
+            self.makeSuitRespondToPieHit(timestamp, cogNum)
 
-    def makeSuitRespondToPieHit(self, timestamp, suitNum):
-        cog = self.cogInfo[suitNum]['suit']
+    def makeSuitRespondToPieHit(self, timestamp, cogNum):
+        cog = self.cogInfo[cogNum]['cog']
         cog.respondToPieHit(timestamp)
 
     def sendCogAtReturnPos(self, cogIndex, barrelIndex):
@@ -826,7 +826,7 @@ class DistributedCogThiefGame(DistributedMinigame):
             self.gameWalk.exit()
 
     def getCogThief(self, cogIndex):
-        return self.cogInfo[cogIndex]['suit']
+        return self.cogInfo[cogIndex]['cog']
 
     def isToonPlayingHitTrack(self, avId):
         if avId in self.toonHitTracks:
@@ -855,9 +855,9 @@ class DistributedCogThiefGame(DistributedMinigame):
                 barrel.wrtReparentTo(render)
 
             for key in self.cogInfo:
-                thief = self.cogInfo[key]['suit']
-                thief.suit.setPos(100, 0, 0)
-                thief.suit.hide()
+                thief = self.cogInfo[key]['cog']
+                thief.cog.setPos(100, 0, 0)
+                thief.cog.hide()
 
             self.__killRewardCountdown()
             self.stopGameWalk()

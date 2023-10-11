@@ -37,17 +37,17 @@ class CogdoMazeGameIntro(CogdoGameMovie):
             self._cogDialogueSfx.play()
             self.cogHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, suitType):
-        suit = Suit.Suit()
+    def makeSuit(self, cogType):
+        cog = Suit.Suit()
         dna = CogDNA.CogDNA()
-        dna.newSuit(suitType)
-        suit.setStyle(dna)
-        suit.isDisguised = 1
-        suit.generateSuit()
-        suit.setScale(1, 1, 2)
-        suit.setPos(0, 0, -4.4)
-        suit.reparentTo(self.toonHead)
-        for part in suit.getHeadParts():
+        dna.newSuit(cogType)
+        cog.setStyle(dna)
+        cog.isDisguised = 1
+        cog.generateSuit()
+        cog.setScale(1, 1, 2)
+        cog.setPos(0, 0, -4.4)
+        cog.reparentTo(self.toonHead)
+        for part in cog.getHeadParts():
             part.hide()
 
     def load(self):
@@ -78,12 +78,12 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         audioMgr = base.cogdoGameAudioMgr
         self._cogDialogueSfx = audioMgr.createSfx('cogDialogue')
         self._toonDialogueSfx = audioMgr.createSfx('toonDialogue')
-        suitData = Globals.SuitData[Globals.SuitTypes.Boss]
+        cogData = Globals.SuitData[Globals.SuitTypes.Boss]
         bossSuit = Suit.Suit()
         d = CogDNA.CogDNA()
-        d.newSuit(suitData['dnaName'])
+        d.newSuit(cogData['dnaName'])
         bossSuit.setDNA(d)
-        bossSuit.setScale(suitData['scale'])
+        bossSuit.setScale(cogData['scale'])
         bossSuit.loop('neutral')
         bossSuit.reparentTo(render)
         bossSuit.setPos(self._exit, -5, -5, 0)
@@ -152,10 +152,10 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self._camTarget = None
         self._camHelperNode.removeNode()
         del self._camHelperNode
-        for suit in self._cogs:
-            suit.cleanup()
-            suit.removeNode()
-            suit.delete()
+        for cog in self._cogs:
+            cog.cleanup()
+            cog.removeNode()
+            cog.delete()
 
         self._cogs = []
         CogdoGameMovie.unload(self)

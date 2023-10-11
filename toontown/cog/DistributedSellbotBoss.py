@@ -240,18 +240,18 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             self.placeToonInElevator(toon)
             toon.wrtReparentTo(render)
             walkMopath = MopathInterval(mopath, toon)
-            ival = Sequence(Wait(delay), Func(toon.suit.setPlayRate, 1, 'walk'), Func(toon.suit.loop, 'walk'), toon.posInterval(1, Point3(0, 90, 20)), ParallelEndTogether(walkMopath, toon.posInterval(2, destPos, blendType='noBlend')), Func(toon.suit.loop, 'neutral'))
+            ival = Sequence(Wait(delay), Func(toon.cog.setPlayRate, 1, 'walk'), Func(toon.cog.loop, 'walk'), toon.posInterval(1, Point3(0, 90, 20)), ParallelEndTogether(walkMopath, toon.posInterval(2, destPos, blendType='noBlend')), Func(toon.cog.loop, 'neutral'))
             self.toonMopathInterval.append(walkMopath)
             track.append(ival)
             delayDeletes.append(DelayDelete.DelayDelete(toon, 'SellbotBoss.__walkToonToPromotion'))
 
-    def __walkDoober(self, suit, delay, turnPos, track, delayDeletes):
+    def __walkDoober(self, cog, delay, turnPos, track, delayDeletes):
         turnPos = Point3(*turnPos)
         turnPosDown = Point3(*ToontownGlobals.SellbotBossDooberTurnPosDown)
         flyPos = Point3(*ToontownGlobals.SellbotBossDooberFlyPos)
-        seq = Sequence(Func(suit.headsUp, turnPos), Wait(delay), Func(suit.loop, 'walk', 0), self.__walkSuitToPoint(suit, suit.getPos(), turnPos), self.__walkSuitToPoint(suit, turnPos, turnPosDown), self.__walkSuitToPoint(suit, turnPosDown, flyPos), suit.beginSupaFlyMove(flyPos, 0, 'flyAway'), Func(suit.fsm.request, 'Off'))
+        seq = Sequence(Func(cog.headsUp, turnPos), Wait(delay), Func(cog.loop, 'walk', 0), self.__walkSuitToPoint(cog, cog.getPos(), turnPos), self.__walkSuitToPoint(cog, turnPos, turnPosDown), self.__walkSuitToPoint(cog, turnPosDown, flyPos), cog.beginSupaFlyMove(flyPos, 0, 'flyAway'), Func(cog.fsm.request, 'Off'))
         track.append(seq)
-        delayDeletes.append(DelayDelete.DelayDelete(suit, 'SellbotBoss.__walkDoober'))
+        delayDeletes.append(DelayDelete.DelayDelete(cog, 'SellbotBoss.__walkDoober'))
 
     def __walkSuitToPoint(self, node, fromPos, toPos):
         vector = Vec3(toPos - fromPos)
@@ -1128,11 +1128,11 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
     def __doobersToPromotionPosition(self, doobers, battleNode):
         points = BattleBase.BattleBase.toonPoints[len(doobers) - 1]
         for i in range(len(doobers)):
-            suit = doobers[i]
-            suit.fsm.request('neutral')
-            suit.loop('neutral')
+            cog = doobers[i]
+            cog.fsm.request('neutral')
+            cog.loop('neutral')
             pos, h = points[i]
-            suit.setPosHpr(battleNode, pos[0], pos[1] + 10, pos[2], h, 0, 0)
+            cog.setPosHpr(battleNode, pos[0], pos[1] + 10, pos[2], h, 0, 0)
 
     def __touchedCage(self, entry):
         self.sendUpdate('touchCage', [])

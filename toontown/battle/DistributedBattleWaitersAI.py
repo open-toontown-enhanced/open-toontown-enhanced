@@ -14,8 +14,8 @@ class DistributedBattleWaitersAI(DistributedBattleFinalAI.DistributedBattleFinal
                 self.activeToons.append(toonId)
 
         self.d_setMembers()
-        for suit in cogs:
-            self.pendingCogs.append(suit)
+        for cog in cogs:
+            self.pendingCogs.append(cog)
 
         self.d_setMembers()
         self.needAdjust = 1

@@ -31,7 +31,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.offsetDict = {}
         self.kMovement = 0.02
         self.cogId = 666
-        self.suitForces = [(6, 4),
+        self.cogForces = [(6, 4),
          (2, 5),
          (2, 6.5),
          (3, 8.0),
@@ -39,9 +39,9 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
          (8, 8),
          (9, 8.5),
          (4, 9)]
-        self.suitForceMultiplier = 0.75
+        self.cogForceMultiplier = 0.75
         self.curSuitForce = 0
-        self.suitOffset = 0
+        self.cogOffset = 0
         self.contestEnded = 0
         self.losingSide = -1
         self.winners = []
@@ -56,7 +56,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         del self.forceDict
         del self.keyRateDict
         del self.offsetDict
-        del self.suitForces
+        del self.cogForces
         del self.winners
         del self.tieers
         del self.losers
@@ -64,21 +64,21 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
 
     def setGameReady(self):
         self.notify.debug('setGameReady')
-        self.suitType = random.randrange(1, 5)
-        self.suitJellybeanReward = math.pow(2, self.suitType - 1)
+        self.cogType = random.randrange(1, 5)
+        self.cogJellybeanReward = math.pow(2, self.cogType - 1)
         if self.isSinglePlayer():
             self.gameType = TugOfWarGameGlobals.TOON_VS_COG
-            self.suitForceMultiplier = 0.58 + float(self.suitType) / 10.0
+            self.cogForceMultiplier = 0.58 + float(self.cogType) / 10.0
         else:
             randInt = random.randrange(0, 10)
             if randInt < 8:
                 self.gameType = TugOfWarGameGlobals.TOON_VS_COG
-                self.suitForceMultiplier = 0.65 + float(self.suitType) / 16.0
+                self.cogForceMultiplier = 0.65 + float(self.cogType) / 16.0
                 self.kMovement = 0.02
             else:
                 self.gameType = TugOfWarGameGlobals.TOON_VS_TOON
                 self.kMovement = 0.04
-        self.sendUpdate('sendGameType', [self.gameType, self.suitType])
+        self.sendUpdate('sendGameType', [self.gameType, self.cogType])
         DistributedMinigameAI.setGameReady(self)
         self.__initGameVars()
 
@@ -154,7 +154,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         taskMgr.doMethodLater(TugOfWarGameGlobals.GAME_DURATION, self.timerExpired, self.taskName('gameTimer'))
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
             self.curSuitForceInd = 0
-            taskMgr.add(self.timeForNewSuitForce, self.taskName('suitForceTimer'))
+            taskMgr.add(self.timeForNewSuitForce, self.taskName('cogForceTimer'))
         taskMgr.doMethodLater(1, self.calcTimeBonus, self.taskName('timeBonusTimer'))
         self.sendUpdate('sendGoSignal', [[0, 1]])
         self.gameFSM.request('waitForResults')
@@ -166,10 +166,10 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
 
     def timeForNewSuitForce(self, task):
         self.notify.debug('timeForNewSuitForce')
-        if self.curSuitForceInd < len(self.suitForces):
+        if self.curSuitForceInd < len(self.cogForces):
             randForce = random.random() - 0.5
-            self.curSuitForce = self.suitForceMultiplier * self.numPlayers * (self.suitForces[self.curSuitForceInd][1] + randForce)
-            taskMgr.doMethodLater(self.suitForces[self.curSuitForceInd][0], self.timeForNewSuitForce, self.taskName('suitForceTimer'))
+            self.curSuitForce = self.cogForceMultiplier * self.numPlayers * (self.cogForces[self.curSuitForceInd][1] + randForce)
+            taskMgr.doMethodLater(self.cogForces[self.curSuitForceInd][0], self.timeForNewSuitForce, self.taskName('cogForceTimer'))
         self.curSuitForceInd += 1
         return Task.done
 
@@ -205,9 +205,9 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
             self.offsetDict[avId] += offset
 
         if deltaX < 0:
-            self.suitOffset += deltaX
+            self.cogOffset += deltaX
         else:
-            self.suitOffset += deltaX / 2.0
+            self.cogOffset += deltaX / 2.0
 
     def reportCurrentKeyRate(self, keyRate, force):
         avId = self.air.getAvatarIdFromSender()
@@ -223,7 +223,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
             self.calculateOffsets()
             self.sendUpdate('sendCurrentPosition', [list(self.offsetDict.keys()), list(self.offsetDict.values())])
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-                self.sendUpdate('sendSuitPosition', [self.suitOffset])
+                self.sendUpdate('sendSuitPosition', [self.cogOffset])
 
     def reportEndOfContest(self, index):
         if index not in [0, 1]:
@@ -246,7 +246,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
                 for i in range(0, self.numPlayers):
                     avId = self.avIdList[i]
                     if self.side[avId] != self.losingSide:
-                        self.scoreDict[avId] = self.suitJellybeanReward + TugOfWarGameGlobals.WIN_JELLYBEANS
+                        self.scoreDict[avId] = self.cogJellybeanReward + TugOfWarGameGlobals.WIN_JELLYBEANS
                         self.winners.append(avId)
                     else:
                         self.scoreDict[avId] = TugOfWarGameGlobals.LOSS_JELLYBEANS
@@ -265,11 +265,11 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         elif self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
             for i in range(0, self.numPlayers):
                 avId = self.avIdList[i]
-                if -self.offsetDict[avId] > self.suitOffset:
-                    self.scoreDict[avId] = self.suitJellybeanReward / 2 + TugOfWarGameGlobals.TIE_WIN_JELLYBEANS
+                if -self.offsetDict[avId] > self.cogOffset:
+                    self.scoreDict[avId] = self.cogJellybeanReward / 2 + TugOfWarGameGlobals.TIE_WIN_JELLYBEANS
                     self.winners.append(avId)
                 else:
-                    self.scoreDict[avId] = self.suitJellybeanReward / 2 + TugOfWarGameGlobals.TIE_LOSS_JELLYBEANS
+                    self.scoreDict[avId] = self.cogJellybeanReward / 2 + TugOfWarGameGlobals.TIE_LOSS_JELLYBEANS
                     self.losers.append(avId)
                     self.winners.append(self.cogId)
 
@@ -326,7 +326,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.notify.debug('enterCleanup')
         taskMgr.remove(self.taskName('gameTimer'))
         taskMgr.remove(self.taskName('timeBonusTimer'))
-        taskMgr.remove(self.taskName('suitForceTimer'))
+        taskMgr.remove(self.taskName('cogForceTimer'))
         self.gameFSM.request('off')
 
     def exitCleanup(self):

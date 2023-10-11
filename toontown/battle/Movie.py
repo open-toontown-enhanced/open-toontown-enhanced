@@ -161,13 +161,13 @@ class Movie(DirectObject.DirectObject):
                 sleevePart.setHpr(0, 0, 0)
                 handsPart.setHpr(0, 0, 0)
 
-        for suit in self.battle.activeCogs:
-            if suit._Actor__animControlDict != None:
-                suit.loop('neutral')
-                suit.battleTrapIsFresh = 0
-                origPos, origHpr = self.battle.getActorPosHpr(suit)
-                suit.setPosHpr(self.battle, origPos, origHpr)
-                hands = [suit.getRightHand(), suit.getLeftHand()]
+        for cog in self.battle.activeCogs:
+            if cog._Actor__animControlDict != None:
+                cog.loop('neutral')
+                cog.battleTrapIsFresh = 0
+                origPos, origHpr = self.battle.getActorPosHpr(cog)
+                cog.setPosHpr(self.battle, origPos, origHpr)
+                hands = [cog.getRightHand(), cog.getLeftHand()]
                 for hand in hands:
                     props = hand.getChildren()
                     for prop in props:
@@ -199,7 +199,7 @@ class Movie(DirectObject.DirectObject):
         if finish == 1:
             self.restore()
         self.toonAttackDicts = []
-        self.suitAttackDicts = []
+        self.cogAttackDicts = []
         self.restoreColor = 0
         self.restoreHips = 0
         self.restoreHeadScale = 0
@@ -253,8 +253,8 @@ class Movie(DirectObject.DirectObject):
             dur = self.track.getDuration()
             ts = float(randNum) / 100.0 * dur
         self.track.delayDeletes = []
-        for suit in self.battle.cogs:
-            self.track.delayDeletes.append(DelayDelete.DelayDelete(suit, 'Movie.play'))
+        for cog in self.battle.cogs:
+            self.track.delayDeletes.append(DelayDelete.DelayDelete(cog, 'Movie.play'))
 
         for toon in self.battle.toons:
             self.track.delayDeletes.append(DelayDelete.DelayDelete(toon, 'Movie.play'))
@@ -550,7 +550,7 @@ class Movie(DirectObject.DirectObject):
           died3,
           revive3))
         self.__genToonAttackDicts(toons, cogs, toonAttacks)
-        suitAttacks = ((sid0,
+        cogAttacks = ((sid0,
           at0,
           stg0,
           dm0,
@@ -578,7 +578,7 @@ class Movie(DirectObject.DirectObject):
           sd3,
           sb3,
           st3))
-        self.__genSuitAttackDicts(toons, cogs, suitAttacks)
+        self.__genSuitAttackDicts(toons, cogs, cogAttacks)
 
     def __genToonAttackDicts(self, toons, cogs, toonAttacks):
         for ta in toonAttacks:
@@ -634,15 +634,15 @@ class Movie(DirectObject.DirectObject):
                             toonHandles.append(target)
 
                     adict['toons'] = toonHandles
-                    suitHandles = []
+                    cogHandles = []
                     for s in cogs:
                         if s != -1:
                             target = self.battle.findSuit(s)
                             if target == None:
                                 continue
-                            suitHandles.append(target)
+                            cogHandles.append(target)
 
-                    adict['cogs'] = suitHandles
+                    adict['cogs'] = cogHandles
                     if track == PETSOS:
                         del adict['special']
                         targets = []
@@ -703,7 +703,7 @@ class Movie(DirectObject.DirectObject):
                                     continue
                             targetIndex = cogs.index(s)
                             sdict = {}
-                            sdict['suit'] = target
+                            sdict['cog'] = target
                             sdict['hp'] = hps[targetIndex]
                             if ta[TOON_TRACK_COL] == NPCSOS and track == DROP and hps[targetIndex] == 0:
                                 continue
@@ -725,25 +725,25 @@ class Movie(DirectObject.DirectObject):
                         targetId = cogs[targetIndex]
                         target = self.battle.findSuit(targetId)
                         sdict = {}
-                        sdict['suit'] = target
+                        sdict['cog'] = target
                         if self.battle.activeCogs.count(target) == 0:
                             targetGone = 1
-                            suitIndex = 0
+                            cogIndex = 0
                         else:
-                            suitIndex = self.battle.activeCogs.index(target)
+                            cogIndex = self.battle.activeCogs.index(target)
                         leftCogs = []
-                        for si in range(0, suitIndex):
-                            asuit = self.battle.activeCogs[si]
-                            if self.battle.isSuitLured(asuit) == 0:
-                                leftCogs.append(asuit)
+                        for si in range(0, cogIndex):
+                            acog = self.battle.activeCogs[si]
+                            if self.battle.isSuitLured(acog) == 0:
+                                leftCogs.append(acog)
 
                         lenCogs = len(self.battle.activeCogs)
                         rightCogs = []
-                        if lenCogs > suitIndex + 1:
-                            for si in range(suitIndex + 1, lenCogs):
-                                asuit = self.battle.activeCogs[si]
-                                if self.battle.isSuitLured(asuit) == 0:
-                                    rightCogs.append(asuit)
+                        if lenCogs > cogIndex + 1:
+                            for si in range(cogIndex + 1, lenCogs):
+                                acog = self.battle.activeCogs[si]
+                                if self.battle.isSuitLured(acog) == 0:
+                                    rightCogs.append(acog)
 
                         sdict['leftCogs'] = leftCogs
                         sdict['rightCogs'] = rightCogs
@@ -806,18 +806,18 @@ class Movie(DirectObject.DirectObject):
             pass
         return tp
 
-    def __genSuitAttackDicts(self, toons, cogs, suitAttacks):
-        for sa in suitAttacks:
+    def __genSuitAttackDicts(self, toons, cogs, cogAttacks):
+        for sa in cogAttacks:
             targetGone = 0
             attack = sa[COG_ATK_COL]
             if attack != NO_ATTACK:
-                suitIndex = sa[COG_ID_COL]
-                cogId = cogs[suitIndex]
-                suit = self.battle.findSuit(cogId)
-                if suit == None:
-                    self.notify.error('suit: %d not in battle!' % cogId)
-                adict = getCogAttack(suit.getStyleName(), suit.getLevel(), attack)
-                adict['suit'] = suit
+                cogIndex = sa[COG_ID_COL]
+                cogId = cogs[cogIndex]
+                cog = self.battle.findSuit(cogId)
+                if cog == None:
+                    self.notify.error('cog: %d not in battle!' % cogId)
+                adict = getCogAttack(cog.getStyleName(), cog.getLevel(), attack)
+                adict['cog'] = cog
                 adict['battle'] = self.battle
                 adict['playByPlayText'] = self.playByPlayText
                 adict['taunt'] = sa[COG_TAUNT_COL]
@@ -870,20 +870,20 @@ class Movie(DirectObject.DirectObject):
                     tdict['rightToons'] = rightToons
                     adict['target'] = tdict
                 else:
-                    self.notify.warning('got suit attack not group or single!')
+                    self.notify.warning('got cog attack not group or single!')
                 if targetGone == 0:
-                    self.suitAttackDicts.append(adict)
+                    self.cogAttackDicts.append(adict)
                 else:
                     self.notify.warning('genSuitAttackDicts() - target gone!')
 
         return
 
     def __doSuitAttacks(self):
-        if base.config.GetBool('want-suit-anims', 1):
-            track = Sequence(name='suit-attacks')
-            camTrack = Sequence(name='suit-attacks-cam')
+        if base.config.GetBool('want-cog-anims', 1):
+            track = Sequence(name='cog-attacks')
+            camTrack = Sequence(name='cog-attacks-cam')
             isLocalToonSad = False
-            for a in self.suitAttackDicts:
+            for a in self.cogAttackDicts:
                 ival, camIval = MovieSuitAttacks.doSuitAttack(a)
                 if ival:
                     track.append(ival)

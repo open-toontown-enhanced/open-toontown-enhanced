@@ -17,7 +17,7 @@ class PlayingCardBase:
         return self.rank
 
     def getCog(self):
-        return self.suit
+        return self.cog
 
     def getValue(self):
         return self.value
@@ -28,11 +28,11 @@ class PlayingCardBase:
     def setValue(self, value):
         self.value = value
         if self.value == PlayingCardGlobals.Unknown:
-            self.suit = None
+            self.cog = None
             self.rank = None
             self.turnDown()
         else:
-            self.suit = value // PlayingCardGlobals.MaxRank
+            self.cog = value // PlayingCardGlobals.MaxRank
             self.rank = value % PlayingCardGlobals.MaxRank
         self.setImage()
         return
@@ -63,7 +63,7 @@ class PlayingCardNodePath(NodePath, PlayingCardBase):
 
     def setImage(self):
         if self.faceUp:
-            image = PlayingCardGlobals.getImage(self.style, self.suit, self.rank)
+            image = PlayingCardGlobals.getImage(self.style, self.cog, self.rank)
         else:
             image = PlayingCardGlobals.getBack(self.style)
         if self.image:
@@ -84,7 +84,7 @@ class PlayingCardButton(PlayingCardBase, DirectButton):
 
     def setImage(self):
         if self.faceUp:
-            image = PlayingCardGlobals.getImage(self.style, self.suit, self.rank)
+            image = PlayingCardGlobals.getImage(self.style, self.cog, self.rank)
         else:
             image = PlayingCardGlobals.getBack(self.style)
         self['image'] = image

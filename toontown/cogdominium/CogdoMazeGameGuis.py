@@ -15,24 +15,24 @@ class CogdoMazeMapGui(MazeMapGui):
 
     def __init__(self, mazeCollTable):
         MazeMapGui.__init__(self, mazeCollTable, bgColor=Globals.MapGuiBgColor, fgColor=Globals.MapGuiFgColor)
-        self._suit2marker = {}
+        self._cog2marker = {}
         self._initModel()
         self.setPos(*Globals.MapGuiPos)
         self.setScale(Globals.MapGuiScale)
 
     def destroy(self):
-        for marker in list(self._suit2marker.values()):
+        for marker in list(self._cog2marker.values()):
             marker.removeNode()
 
-        del self._suit2marker
+        del self._cog2marker
         self._entrance.removeNode()
         del self._entrance
         self._exit.removeNode()
         del self._exit
         del self._exitOpen
         del self._exitClosed
-        self._suitMarkerTemplate.removeNode()
-        del self._suitMarkerTemplate
+        self._cogMarkerTemplate.removeNode()
+        del self._cogMarkerTemplate
         self._waterCoolerTemplate.removeNode()
         del self._waterCoolerTemplate
         MazeMapGui.destroy(self)
@@ -60,9 +60,9 @@ class CogdoMazeMapGui(MazeMapGui):
         self._exitOpen.reparentTo(self._exit)
         self._exitClosed = cardModel.find(baseName + 'exitClosed')
         self._exitClosed.reparentTo(self._exit)
-        self._suitMarkerTemplate = cardModel.find(baseName + 'cogIcon')
-        self._suitMarkerTemplate.detachNode()
-        self._suitMarkerTemplate.setScale(0.225)
+        self._cogMarkerTemplate = cardModel.find(baseName + 'cogIcon')
+        self._cogMarkerTemplate.detachNode()
+        self._cogMarkerTemplate.setScale(0.225)
         self._waterCoolerTemplate = cardModel.find(baseName + 'waterDrop')
         self._waterCoolerTemplate.detachNode()
         self._waterCoolerTemplate.setScale(0.225)
@@ -76,19 +76,19 @@ class CogdoMazeMapGui(MazeMapGui):
         x, y = self.tile2gui(tX, tY)
         marker.setPos(*self.gui2pos(x, y))
 
-    def addCog(self, suit):
-        marker = NodePath('SuitMarker-%i' % len(self._suit2marker))
-        self._suitMarkerTemplate.copyTo(marker)
+    def addCog(self, cog):
+        marker = NodePath('SuitMarker-%i' % len(self._cog2marker))
+        self._cogMarkerTemplate.copyTo(marker)
         marker.reparentTo(self)
-        self._suit2marker[suit] = marker
+        self._cog2marker[cog] = marker
 
-    def removeSuit(self, suit):
-        self._suit2marker[suit].removeNode()
-        del self._suit2marker[suit]
+    def removeSuit(self, cog):
+        self._cog2marker[cog].removeNode()
+        del self._cog2marker[cog]
 
-    def updateSuit(self, suit, tX, tY):
+    def updateSuit(self, cog, tX, tY):
         x, y = self.tile2gui(tX, tY)
-        self._suit2marker[suit].setPos(*self.gui2pos(x, y))
+        self._cog2marker[cog].setPos(*self.gui2pos(x, y))
 
     def showExit(self):
         self._exit.show()

@@ -337,7 +337,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         # Welcome Valley zones
         self.welcomeValleyManager.createWelcomeValleyZones()
 
-        # Assign the initial suit buildings.
+        # Assign the initial cog buildings.
         for cogPlanner in list(self.cogPlanners.values()):
             cogPlanner.assignInitialCogBuildings()
 

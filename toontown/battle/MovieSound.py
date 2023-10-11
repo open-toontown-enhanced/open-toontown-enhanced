@@ -69,15 +69,15 @@ def __getCogTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamage
         uberDelay = 3.0
         isUber = 1
     for target in targets:
-        suit = target['suit']
+        cog = target['cog']
         if totalDamage > 0 and sound == lastSoundThatHit:
             hp = target['hp']
             died = target['died']
             battle = sound['battle']
             kbbonus = target['kbbonus']
             cogTrack = Sequence()
-            showDamage = Func(suit.showHpText, -totalDamage, openEnded=0)
-            updateHealthBar = Func(suit.updateHealthBar, totalDamage)
+            showDamage = Func(cog.showHpText, -totalDamage, openEnded=0)
+            updateHealthBar = Func(cog.updateHealthBar, totalDamage)
             if isUber:
                 breakEffect = BattleParticles.createParticleEffect(file='soundBreak')
                 breakEffect.setDepthWrite(0)
@@ -88,28 +88,28 @@ def __getCogTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamage
             if isUber:
                 delayTime = random.random()
                 cogTrack.append(Wait(delayTime + 2.0))
-                cogTrack.append(Func(setPosFromOther, breakEffect, suit, Point3(0, 0.0, suit.getHeight() - 1.0)))
-                cogTrack.append(Parallel(showDamage, updateHealthBar, SoundInterval(soundEffect, node=suit), __getPartTrack(breakEffect, 0.0, 1.0, [breakEffect, suit, 0], softStop=-0.5)))
+                cogTrack.append(Func(setPosFromOther, breakEffect, cog, Point3(0, 0.0, cog.getHeight() - 1.0)))
+                cogTrack.append(Parallel(showDamage, updateHealthBar, SoundInterval(soundEffect, node=cog), __getPartTrack(breakEffect, 0.0, 1.0, [breakEffect, cog, 0], softStop=-0.5)))
             else:
                 cogTrack.append(showDamage)
                 cogTrack.append(updateHealthBar)
             if hitCount == 1:
-                cogTrack.append(Parallel(ActorInterval(suit, 'squirt-small-react'), MovieUtil.createSuitStunInterval(suit, 0.5, 1.8)))
+                cogTrack.append(Parallel(ActorInterval(cog, 'squirt-small-react'), MovieUtil.createSuitStunInterval(cog, 0.5, 1.8)))
             else:
-                cogTrack.append(ActorInterval(suit, 'squirt-small-react'))
+                cogTrack.append(ActorInterval(cog, 'squirt-small-react'))
             if kbbonus == 0:
-                cogTrack.append(__createSuitResetPosTrack(suit, battle))
-                cogTrack.append(Func(battle.unlureSuit, suit))
+                cogTrack.append(__createSuitResetPosTrack(cog, battle))
+                cogTrack.append(Func(battle.unlureSuit, cog))
             bonusTrack = None
             if hpbonus > 0:
-                bonusTrack = Sequence(Wait(delay + tSuitReact + delay + 0.75 + uberDelay), Func(suit.showHpText, -hpbonus, 1, openEnded=0))
-            cogTrack.append(Func(suit.loop, 'neutral'))
+                bonusTrack = Sequence(Wait(delay + tSuitReact + delay + 0.75 + uberDelay), Func(cog.showHpText, -hpbonus, 1, openEnded=0))
+            cogTrack.append(Func(cog.loop, 'neutral'))
             if bonusTrack == None:
                 tracks.append(cogTrack)
             else:
                 tracks.append(Parallel(cogTrack, bonusTrack))
         elif totalDamage <= 0:
-            tracks.append(Sequence(Wait(2.9), Func(MovieUtil.indicateMissed, suit, 1.0)))
+            tracks.append(Sequence(Wait(2.9), Func(MovieUtil.indicateMissed, cog, 1.0)))
 
     return tracks
 
@@ -139,30 +139,30 @@ def __doSoundsLevel(sounds, delay, hitCount, npcs):
         tracks.append(__getCogTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamage, hpbonus, toon, npcs))
         for target in targets:
             battle = sound['battle']
-            suit = target['suit']
+            cog = target['cog']
             died = target['died']
             revived = target['revived']
             if revived:
-                deathTracks.append(MovieUtil.createSuitReviveTrack(suit, toon, battle, npcs))
+                deathTracks.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
             elif died:
-                deathTracks.append(MovieUtil.createSuitDeathTrack(suit, toon, battle, npcs))
+                deathTracks.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
 
     mainTrack.append(tracks)
     mainTrack.append(deathTracks)
     return mainTrack
 
 
-def __createSuitResetPosTrack(suit, battle):
-    resetPos, resetHpr = battle.getActorPosHpr(suit)
-    moveDist = Vec3(suit.getPos(battle) - resetPos).length()
+def __createSuitResetPosTrack(cog, battle):
+    resetPos, resetHpr = battle.getActorPosHpr(cog)
+    moveDist = Vec3(cog.getPos(battle) - resetPos).length()
     moveDuration = 0.5
-    walkTrack = Sequence(Func(suit.setHpr, battle, resetHpr), ActorInterval(suit, 'walk', startTime=1, duration=moveDuration, endTime=0.0001), Func(suit.loop, 'neutral'))
-    moveTrack = LerpPosInterval(suit, moveDuration, resetPos, other=battle)
+    walkTrack = Sequence(Func(cog.setHpr, battle, resetHpr), ActorInterval(cog, 'walk', startTime=1, duration=moveDuration, endTime=0.0001), Func(cog.loop, 'neutral'))
+    moveTrack = LerpPosInterval(cog, moveDuration, resetPos, other=battle)
     return Parallel(walkTrack, moveTrack)
 
 
-def createSuitResetPosTrack(suit, battle):
-    return __createSuitResetPosTrack(suit, battle)
+def createSuitResetPosTrack(cog, battle):
+    return __createSuitResetPosTrack(cog, battle)
 
 
 def __createToonInterval(sound, delay, toon, operaInstrument = None):

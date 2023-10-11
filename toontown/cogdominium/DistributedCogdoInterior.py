@@ -324,24 +324,24 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.joiningReserves = []
         for cogId in cogIds:
             if cogId in self.cr.doId2do:
-                suit = self.cr.doId2do[cogId]
-                self.cogs.append(suit)
-                suit.fsm.request('Battle')
-                suit.buildingSuit = 1
-                suit.reparentTo(render)
-                if oldcogs.count(suit) == 0:
-                    self.joiningReserves.append(suit)
+                cog = self.cr.doId2do[cogId]
+                self.cogs.append(cog)
+                cog.fsm.request('Battle')
+                cog.buildingSuit = 1
+                cog.reparentTo(render)
+                if oldcogs.count(cog) == 0:
+                    self.joiningReserves.append(cog)
             else:
-                self.notify.warning('setCogs() - no suit: %d' % cogId)
+                self.notify.warning('setCogs() - no cog: %d' % cogId)
 
         self.reserveCogs = []
         for index in range(len(reserveIds)):
             cogId = reserveIds[index]
             if cogId in self.cr.doId2do:
-                suit = self.cr.doId2do[cogId]
-                self.reserveCogs.append((suit, values[index]))
+                cog = self.cr.doId2do[cogId]
+                self.reserveCogs.append((cog, values[index]))
             else:
-                self.notify.warning('setCogs() - no suit: %d' % cogId)
+                self.notify.warning('setCogs() - no cog: %d' % cogId)
 
         if len(self.joiningReserves) > 0:
             self.fsm.request('ReservesJoining')
@@ -638,12 +638,12 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
 
     def __playReservesJoining(self, ts, name, callback):
         index = 0
-        for suit in self.joiningReserves:
-            suit.reparentTo(render)
-            suit.setPos(self.elevatorModelOut, Point3(ElevatorPoints[index][0], ElevatorPoints[index][1], ElevatorPoints[index][2]))
+        for cog in self.joiningReserves:
+            cog.reparentTo(render)
+            cog.setPos(self.elevatorModelOut, Point3(ElevatorPoints[index][0], ElevatorPoints[index][1], ElevatorPoints[index][2]))
             index += 1
-            suit.setH(180)
-            suit.loop('neutral')
+            cog.setH(180)
+            cog.loop('neutral')
 
         if len(self.cogs) == len(self.joiningReserves):
             camSequence = Sequence(Func(camera.wrtReparentTo, localAvatar), Func(camera.setPos, Point3(0, 5, 5)), Func(camera.headsUp, self.elevatorModelOut))

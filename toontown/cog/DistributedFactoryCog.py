@@ -162,7 +162,7 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
         if not base.localAvatar.wantBattles:
             return
         toonId = base.localAvatar.getDoId()
-        self.notify.debug('Distributed suit %d: requesting a Battle with toon: %d' % (self.doId, toonId))
+        self.notify.debug('Distributed cog %d: requesting a Battle with toon: %d' % (self.doId, toonId))
         self.d_requestBattle(self.getPos(), self.getHpr())
         self.setState('WaitForBattle')
         return None
@@ -176,7 +176,7 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
             self.reparentTo(self.idealPathNode)
             self.setPos(0, 0, 0)
             self.path.reparentTo(parent)
-            self.walkTrack = self.path.makePathTrack(self.idealPathNode, self.velocity, self.uniqueName('suitWalk'))
+            self.walkTrack = self.path.makePathTrack(self.idealPathNode, self.velocity, self.uniqueName('cogWalk'))
         self.setState('Walk')
         return
 
@@ -236,8 +236,8 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
     def __handleToonAlert(self, collEntry):
         self.notify.debug('%s: ahah!  i saw you' % self.doId)
         toonZ = base.localAvatar.getZ(render)
-        suitZ = self.getZ(render)
-        dZ = abs(toonZ - suitZ)
+        cogZ = self.getZ(render)
+        dZ = abs(toonZ - cogZ)
         if dZ < 8.0:
             self.sendUpdate('setAlert', [base.localAvatar.doId])
 
@@ -282,8 +282,8 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
             self.setReturn()
             return Task.done
         toonPos = av.getPos(self.getParent())
-        suitPos = self.getPos()
-        distance = Vec3(suitPos - toonPos).length()
+        cogPos = self.getPos()
+        distance = Vec3(cogPos - toonPos).length()
         if self.chaseTrack:
             self.chaseTrack.pause()
             del self.chaseTrack
@@ -292,11 +292,11 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
         rand1 = 0.5
         rand2 = 0.5
         rand3 = 0.5
-        targetPos = Vec3(toonPos[0] + 4.0 * (rand1 - 0.5), toonPos[1] + 4.0 * (rand2 - 0.5), suitPos[2])
+        targetPos = Vec3(toonPos[0] + 4.0 * (rand1 - 0.5), toonPos[1] + 4.0 * (rand2 - 0.5), cogPos[2])
         track = Sequence(Func(self.headsUp, targetPos[0], targetPos[1], targetPos[2]), Func(self.loop, 'walk', 0))
         chaseSpeed = 4.0
         duration = distance / chaseSpeed
-        track.extend([LerpPosInterval(self, duration=duration, pos=Point3(targetPos), startPos=Point3(suitPos))])
+        track.extend([LerpPosInterval(self, duration=duration, pos=Point3(targetPos), startPos=Point3(cogPos))])
         self.chaseTrack = track
         self.chaseTrack.start()
         self.startChaseTask(1.0)

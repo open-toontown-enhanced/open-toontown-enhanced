@@ -32,7 +32,7 @@ class DisguisePage(ShtikerPage.ShtikerPage):
         self.bkgd.setTextureOff(1)
         self.tabs = []
         self.pageFrame = DirectFrame(parent=self.frame, relief=None)
-        for dept in CogDNA.suitDepts:
+        for dept in CogDNA.cogDepts:
             if dept == 'c':
                 tabIndex = 1
                 textPos = (1.57, 0.75)
@@ -47,7 +47,7 @@ class DisguisePage(ShtikerPage.ShtikerPage):
                 textPos = (1.57, -1.05)
             pageGeom = gui.find('**/page%d' % tabIndex)
             tabGeom = gui.find('**/tab%d' % tabIndex)
-            tab = DirectButton(parent=self.pageFrame, relief=None, geom=tabGeom, geom_color=DeptColors[tabIndex - 1], text=CogDNA.suitDeptFullnames[dept], text_font=ToontownGlobals.getCogFont(), text_pos=textPos, text_roll=-90, text_scale=TTLocalizer.DPtab, text_align=TextNode.ACenter, text1_fg=Vec4(1, 0, 0, 1), text2_fg=Vec4(0.5, 0.4, 0.4, 1), text3_fg=Vec4(0.4, 0.4, 0.4, 1), command=self.doTab, extraArgs=[len(self.tabs)], pressEffect=0)
+            tab = DirectButton(parent=self.pageFrame, relief=None, geom=tabGeom, geom_color=DeptColors[tabIndex - 1], text=CogDNA.cogDeptFullnames[dept], text_font=ToontownGlobals.getCogFont(), text_pos=textPos, text_roll=-90, text_scale=TTLocalizer.DPtab, text_align=TextNode.ACenter, text1_fg=Vec4(1, 0, 0, 1), text2_fg=Vec4(0.5, 0.4, 0.4, 1), text3_fg=Vec4(0.4, 0.4, 0.4, 1), command=self.doTab, extraArgs=[len(self.tabs)], pressEffect=0)
             self.tabs.append(tab)
             page = DirectFrame(parent=tab, relief=None, geom=pageGeom)
 
@@ -173,15 +173,15 @@ class DisguisePage(ShtikerPage.ShtikerPage):
                 tab['text2_fg'] = (0.5, 0.4, 0.4, 1)
 
         self.bkgd.setColor(DeptColors[index])
-        self.deptLabel['text'] = (CogDNA.suitDeptFullnames[CogDNA.suitDepts[index]],)
+        self.deptLabel['text'] = (CogDNA.cogDeptFullnames[CogDNA.cogDepts[index]],)
         cogIndex = base.localAvatar.cogTypes[index] + CogDNA.cogsPerDept * index
-        cog = CogDNA.suitHeadTypes[cogIndex]
+        cog = CogDNA.cogHeadTypes[cogIndex]
         self.progressTitle.hide()
-        if CogDNA.suitDepts[index] == 'm':
+        if CogDNA.cogDepts[index] == 'm':
             self.progressTitle = self.cogbuckTitle
-        elif CogDNA.suitDepts[index] == 'l':
+        elif CogDNA.cogDepts[index] == 'l':
             self.progressTitle = self.juryNoticeTitle
-        elif CogDNA.suitDepts[index] == 'c':
+        elif CogDNA.cogDepts[index] == 'c':
             self.progressTitle = self.stockOptionTitle
         else:
             self.progressTitle = self.meritTitle

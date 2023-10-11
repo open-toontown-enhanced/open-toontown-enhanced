@@ -29,9 +29,9 @@ class TwoDEnemyMgr(DirectObject):
         self.enemies = []
         for index in range(len(self.enemyList)):
             enemyId = self.section.getSectionizedId(index)
-            suitAttribs = self.enemyList[index]
-            newEnemy = TwoDEnemy.TwoDEnemy(self, enemyId, suitAttribs)
-            newEnemy.suit.reparentTo(self.enemiesNP)
+            cogAttribs = self.enemyList[index]
+            newEnemy = TwoDEnemy.TwoDEnemy(self, enemyId, cogAttribs)
+            newEnemy.cog.reparentTo(self.enemiesNP)
             self.enemies.append(newEnemy)
 
     def enterPlay(self, elapsedTime):

@@ -159,8 +159,8 @@ class DistributedBuildingMgrAI:
             else:
                 self.notify.warning('we had a cog building in welcome valley %d' % building.zoneId)
             building.becameSuitTime = blockData.get('becameSuitTime', time.time())
-            if blockData['state'] == 'suit':
-                building.setState('suit')
+            if blockData['state'] == 'cog':
+                building.setState('cog')
             elif blockData['state'] == 'cogdo':
                 if simbase.air.wantCogdominiums:
                     building.numFloors = DistributedBuildingAI.DistributedBuildingAI.FieldOfficeNumFloors
@@ -184,8 +184,8 @@ class DistributedBuildingMgrAI:
             else:
                 self.notify.warning('we had a cog building in welcome valley %d' % building.zoneId)
             building.becameSuitTime = blockData.get('becameSuitTime', time.time())
-            if blockData['state'] == 'suit':
-                building.setState('suit')
+            if blockData['state'] == 'cog':
+                building.setState('cog')
             else:
                 building.setState('toon')
         else:

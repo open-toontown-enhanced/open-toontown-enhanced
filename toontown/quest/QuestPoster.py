@@ -146,12 +146,12 @@ class QuestPoster(DirectFrame):
         lm.adjustText()
         return lm
 
-    def createSuitHead(self, suitName):
+    def createSuitHead(self, cogName):
         CogDNA = CogDNA.CogDNA()
-        CogDNA.newSuit(suitName)
-        suit = Suit.Suit()
-        suit.setDNA(CogDNA)
-        headParts = suit.getHeadParts()
+        CogDNA.newSuit(cogName)
+        cog = Suit.Suit()
+        cog.setDNA(CogDNA)
+        headParts = cog.getHeadParts()
         head = hidden.attachNewNode('head')
         for part in headParts:
             copyPart = part.copyTo(head)
@@ -159,8 +159,8 @@ class QuestPoster(DirectFrame):
             copyPart.setDepthWrite(1)
 
         self.fitGeometry(head, fFlip=1)
-        suit.delete()
-        suit = None
+        cog.delete()
+        cog = None
         return head
 
     def loadElevator(self, building, numFloors):
@@ -182,8 +182,8 @@ class QuestPoster(DirectFrame):
                 np.hide()
 
         elevatorModel.reparentTo(elevatorNodePath)
-        suitDoorOrigin = building.find('**/*_door_origin')
-        elevatorNodePath.reparentTo(suitDoorOrigin)
+        cogDoorOrigin = building.find('**/*_door_origin')
+        elevatorNodePath.reparentTo(cogDoorOrigin)
         elevatorNodePath.setPosHpr(0, 0, 0, 0, 0, 0)
         return
 

@@ -563,7 +563,7 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
 
     def putToonInCogSuit(self, toon):
         if not toon.isDisguised:
-            deptIndex = CogDNA.suitDepts.index(self.style.dept)
+            deptIndex = CogDNA.cogDepts.index(self.style.dept)
             toon.setCogIndex(deptIndex)
         toon.getGeomNode().hide()
 
@@ -573,7 +573,7 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
         toon.reparentTo(self.elevatorModel)
         toon.setPos(*ElevatorConstants.BigElevatorPoints[toonIndex])
         toon.setHpr(180, 0, 0)
-        toon.suit.loop('neutral')
+        toon.cog.loop('neutral')
 
     def toonNormalEyes(self, toons, bArrayOfObjs = False):
         if bArrayOfObjs:
@@ -1095,7 +1095,7 @@ class DistributedBossCog(DistributedAvatar.DistributedAvatar, BossCog.BossCog):
             toon = base.cr.doId2do.get(toonIds[i])
             if toon:
                 if toon.isDisguised:
-                    toon.suit.loop('neutral')
+                    toon.cog.loop('neutral')
                 toon.loop('neutral')
 
     def wearCogCogs(self, toons, battleNode, camLoc, arrayOfObjs = False, waiter = False):

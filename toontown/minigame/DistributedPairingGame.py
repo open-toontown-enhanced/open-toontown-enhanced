@@ -95,7 +95,7 @@ class DistributedPairingGame(DistributedMinigame):
             oneCard.setPos(xPos, yPos, 0)
             oneCard.reparentTo(render)
             self.notify.debug('%s' % oneCard.getPos())
-            self.notify.debug('suit %s rank %s value %s' % (oneCard.suit, oneCard.rank, oneCard.value))
+            self.notify.debug('cog %s rank %s value %s' % (oneCard.cog, oneCard.rank, oneCard.value))
             self.accept('entercardCollision-%d' % oneCard.value, self.enterCard)
             self.accept('exitcardCollision-%d' % oneCard.value, self.exitCard)
             oneCard.turnDown(doInterval=False)

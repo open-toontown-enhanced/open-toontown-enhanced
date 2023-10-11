@@ -44,7 +44,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
      'slip-backward',
      'victory',
      'sad-neutral']
-    suitAnimNames = ['neutral',
+    cogAnimNames = ['neutral',
      'tug-o-war',
      'slip-forward',
      'slip-backward',
@@ -65,10 +65,10 @@ class DistributedTugOfWarGame(DistributedMinigame):
          State('cleanup', self.enterCleanup, self.exitCleanup, [])], 'off', 'cleanup')
         self.addChildGameFSM(self.gameFSM)
         self.gameType = TugOfWarGameGlobals.TOON_VS_TOON
-        self.suit = None
+        self.cog = None
         self.cogId = 666
-        self.suitType = 'flunky'
-        self.suitLevel = 1
+        self.cogType = 'flunky'
+        self.cogLevel = 1
         self.sides = {}
         self.avList = [[], []]
         self.buttons = [0, 1]
@@ -152,9 +152,9 @@ class DistributedTugOfWarGame(DistributedMinigame):
             self.disableArrow(self.arrows[x])
 
         self.splash = Splash(base.render)
-        self.suitSplash = Splash(base.render)
+        self.cogSplash = Splash(base.render)
         self.ripples = Ripples(base.render)
-        self.suitRipples = Ripples(base.render)
+        self.cogRipples = Ripples(base.render)
 
     def toggleMouseMode(self, param):
         self.mouseMode = not self.mouseMode
@@ -202,17 +202,17 @@ class DistributedTugOfWarGame(DistributedMinigame):
         del self.arrows
         self.splash.destroy()
         del self.splash
-        self.suitSplash.destroy()
-        del self.suitSplash
+        self.cogSplash.destroy()
+        del self.cogSplash
         if self.ripples != None:
             self.ripples.stop()
             self.ripples.detachNode()
             del self.ripples
 
-        if self.suitRipples != None:
-            self.suitRipples.stop()
-            self.suitRipples.detachNode()
-            del self.suitRipples
+        if self.cogRipples != None:
+            self.cogRipples.stop()
+            self.cogRipples.detachNode()
+            del self.cogRipples
 
         for x in self.avList:
             del x
@@ -246,9 +246,9 @@ class DistributedTugOfWarGame(DistributedMinigame):
         del self.hprDict
         self.removeChildGameFSM(self.gameFSM)
         del self.gameFSM
-        if self.suit:
-            self.suit.delete()
-            del self.suit
+        if self.cog:
+            self.cog.delete()
+            del self.cog
 
         del self.sides
         del self.buttons
@@ -277,7 +277,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         base.camera.setPosHpr(-11.4427, 9.03559, 2.80094, -49.104, -0.89, 0)
         self.dropShadow.setBin('fixed', 0, 1)
         self.splash.reparentTo(base.render)
-        self.suitSplash.reparentTo(base.render)
+        self.cogSplash.reparentTo(base.render)
         base.playMusic(self.music, looping=1, volume=1)
         for x in range(len(self.arrows)):
             self.arrows[x].show()
@@ -325,8 +325,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.sky.reparentTo(base.hidden)
         self.splash.reparentTo(base.hidden)
         self.splash.stop()
-        self.suitSplash.reparentTo(base.hidden)
-        self.suitSplash.stop()
+        self.cogSplash.reparentTo(base.hidden)
+        self.cogSplash.stop()
         self.ripples.reparentTo(base.hidden)
         self.ripples.stop()
         self.hideControls()
@@ -342,8 +342,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
             if x != None:
                 x.reparentTo(base.hidden)
 
-        if self.suit:
-            self.suit.reparentTo(base.hidden)
+        if self.cog:
+            self.cog.reparentTo(base.hidden)
 
         for avId in self.avIdList:
             if avId in self.dropShadowDict:
@@ -366,20 +366,20 @@ class DistributedTugOfWarGame(DistributedMinigame):
         base.camLens.setMinFov(45 + 1.5 * self.numPlayers)
         base.camLens.setFar(450.0)
 
-    def sendGameType(self, index, suit):
+    def sendGameType(self, index, cog):
         if not self.hasLocalToon:
             return
 
         self.gameType = index
-        self.suitLevel = suit
-        if suit == 1:
-            self.suitType = 'penny_pincher'
-        elif suit == 2:
-            self.suitType = 'double_talker'
-        elif suit == 3:
-            self.suitType = 'glad_hander'
-        elif suit == 4:
-            self.suitType = 'corporate_raider'
+        self.cogLevel = cog
+        if cog == 1:
+            self.cogType = 'penny_pincher'
+        elif cog == 2:
+            self.cogType = 'double_talker'
+        elif cog == 3:
+            self.cogType = 'glad_hander'
+        elif cog == 4:
+            self.cogType = 'corporate_raider'
 
     def setGameReady(self):
         if not self.hasLocalToon:
@@ -425,17 +425,17 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
     def setUpRopes(self, notTaut):
         if self.numPlayers == 1:
-            suitRightHand = self.suit.getRightHand()
+            cogRightHand = self.cog.getRightHand()
             toonRightHand = self.rightHandDict[self.avIdList[0]]
             if notTaut:
-                self.tugRopes[0].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (suitRightHand, (0, 0, 0))), [0,
+                self.tugRopes[0].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (cogRightHand, (0, 0, 0))), [0,
                  0,
                  0,
                  1,
                  1,
                  1])
             else:
-                self.tugRopes[0].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (suitRightHand, (0, 0, 0))), [0,
+                self.tugRopes[0].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (cogRightHand, (0, 0, 0))), [0,
                  0,
                  0,
                  1,
@@ -451,17 +451,17 @@ class DistributedTugOfWarGame(DistributedMinigame):
                  1,
                  1,
                  1])
-                suitRightHand = self.suit.getRightHand()
+                cogRightHand = self.cog.getRightHand()
                 toonRightHand = self.rightHandDict[self.avIdList[1]]
                 if notTaut:
-                    self.tugRopes[1].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[1].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
                      1,
                      1])
                 else:
-                    self.tugRopes[1].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[1].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
@@ -501,17 +501,17 @@ class DistributedTugOfWarGame(DistributedMinigame):
                  1,
                  1,
                  1])
-                suitRightHand = self.suit.getRightHand()
+                cogRightHand = self.cog.getRightHand()
                 toonRightHand = self.rightHandDict[self.avIdList[2]]
                 if notTaut:
-                    self.tugRopes[2].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[2].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
                      1,
                      1])
                 else:
-                    self.tugRopes[2].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[2].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
@@ -565,17 +565,17 @@ class DistributedTugOfWarGame(DistributedMinigame):
                  1,
                  1,
                  1])
-                suitRightHand = self.suit.getRightHand()
+                cogRightHand = self.cog.getRightHand()
                 toonRightHand = self.rightHandDict[self.avIdList[3]]
                 if notTaut:
-                    self.tugRopes[3].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[3].setup(3, ((toonRightHand, (0, 0, 0)), (base.render, (0, 18, -1)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
                      1,
                      1])
                 else:
-                    self.tugRopes[3].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (suitRightHand, (0, 0, 0))), [0,
+                    self.tugRopes[3].setup(3, ((toonRightHand, (0, 0, 0)), (toonRightHand, (0, 0, 0)), (cogRightHand, (0, 0, 0))), [0,
                      0,
                      0,
                      1,
@@ -799,13 +799,13 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.__spawnUpdateTimerTask()
         self.__spawnUpdateKeyPressRateTask()
         taskMgr.doMethodLater(TugOfWarGameGlobals.TUG_TIMEOUT, self.tugTimeoutTask, self.taskName('tug-timeout'))
-        if self.suit:
-            self.suit.loop('tug-o-war')
+        if self.cog:
+            self.cog.loop('tug-o-war')
 
     def exitTug(self):
         self.notify.debug('exitTug')
-        if self.suit:
-            self.suit.loop('neutral')
+        if self.cog:
+            self.cog.loop('neutral')
 
         self.timer.stop()
         self.timer.hide()
@@ -963,28 +963,28 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.hideControls()
         reactSeq = Sequence()
         exitSeq = Sequence()
-        suitSlipTime = 0
+        cogSlipTime = 0
         if self.gameFSM.getCurrentState().getName() == 'cleanup' or not self.randomNumGen:
             return
 
-        if self.suit:
+        if self.cog:
             if self.cogId in winners:
                 newPos = VBase3(2.65, 18, 0.1)
                 randInt = self.randomNumGen.randrange(0, 10)
                 oopsTrack = Wait(0)
                 if randInt < 3:
-                    suitSlipTime = 2.2
+                    cogSlipTime = 2.2
                     waterPos = VBase3(0, 16, -5)
                     newPos -= VBase3(0.4, 0, 0)
-                    self.suitSplash.stop()
-                    self.suitSplash.setPos(waterPos[0], waterPos[1], -1.8)
-                    self.suitSplash.setScale(3.5, 3.5, 1)
-                    self.suitRipples.setPos(waterPos[0], waterPos[1], -1.7)
-                    self.suitRipples.setScale(1, 1, 1)
-                    startHpr = self.suit.getHpr()
+                    self.cogSplash.stop()
+                    self.cogSplash.setPos(waterPos[0], waterPos[1], -1.8)
+                    self.cogSplash.setScale(3.5, 3.5, 1)
+                    self.cogRipples.setPos(waterPos[0], waterPos[1], -1.7)
+                    self.cogRipples.setScale(1, 1, 1)
+                    startHpr = self.cog.getHpr()
                     destHpr = startHpr + VBase3(0, 0, -30)
-                    oopsTrack = Sequence(Parallel(Func(self.suit.play, 'flail', None, 26, 38), LerpHprInterval(self.suit, 0.5, destHpr, startHpr=startHpr)), Parallel(Func(self.suit.play, 'slip-forward'), LerpPosInterval(self.suit, duration=1, pos=waterPos), Sequence(Wait(0.55), Func(base.playSfx, self.sndHitWater), Func(self.suitSplash.play), Func(self.ripples.play))))
-                    reactSeq.append(Sequence(Func(self.suit.loop, 'victory'), Wait(2.6), LerpPosInterval(self.suit, duration=2, pos=newPos), oopsTrack, Func(self.suit.loop, 'neutral')))
+                    oopsTrack = Sequence(Parallel(Func(self.cog.play, 'flail', None, 26, 38), LerpHprInterval(self.cog, 0.5, destHpr, startHpr=startHpr)), Parallel(Func(self.cog.play, 'slip-forward'), LerpPosInterval(self.cog, duration=1, pos=waterPos), Sequence(Wait(0.55), Func(base.playSfx, self.sndHitWater), Func(self.cogSplash.play), Func(self.ripples.play))))
+                    reactSeq.append(Sequence(Func(self.cog.loop, 'victory'), Wait(2.6), LerpPosInterval(self.cog, duration=2, pos=newPos), oopsTrack, Func(self.cog.loop, 'neutral')))
 
         for avId in self.avIdList:
             toon = self.getAvatar(avId)
@@ -1001,7 +1001,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
             exitSeq.append(Wait(5.0))
         elif self.localAvId in losers:
             exitSeq.append(Func(self.setText, self.roundText, TTLocalizer.TugOfWarGameEnd))
-            exitSeq.append(Wait(4.8 + suitSlipTime))
+            exitSeq.append(Wait(4.8 + cogSlipTime))
         else:
             exitSeq.append(Func(self.setText, self.roundText, TTLocalizer.TugOfWarGameTie))
             exitSeq.append(Wait(2.5))
@@ -1024,14 +1024,14 @@ class DistributedTugOfWarGame(DistributedMinigame):
         if avId != self.localAvId:
             self.setAnimState(avId, keyRate)
 
-    def sendSuitPosition(self, suitOffset):
+    def sendSuitPosition(self, cogOffset):
         if not self.hasLocalToon:
             return
 
         if self.gameFSM.getCurrentState().getName() != 'tug':
             return
 
-        self.suitOffset = suitOffset
+        self.cogOffset = cogOffset
         self.moveCogs()
 
     def sendCurrentPosition(self, avIdList, offsetList):
@@ -1049,21 +1049,21 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
     def createCogs(self):
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            self.suit = Suit()
+            self.cog = Suit()
             self.origSuitPosHpr = [VBase3(6.0, 18, 0.1), VBase3(120, 0, 0)]
-            self.suitOffset = 0
+            self.cogOffset = 0
             d = CogDNA()
-            d.newSuit(self.suitType)
-            self.suit.setDNA(d)
-            self.suit.reparentTo(base.render)
-            self.suit.setPos(self.origSuitPosHpr[0])
-            self.suit.setHpr(self.origSuitPosHpr[1])
-            for anim in self.suitAnimNames:
-                self.suit.pose(anim, 0)
+            d.newSuit(self.cogType)
+            self.cog.setDNA(d)
+            self.cog.reparentTo(base.render)
+            self.cog.setPos(self.origSuitPosHpr[0])
+            self.cog.setHpr(self.origSuitPosHpr[1])
+            for anim in self.cogAnimNames:
+                self.cog.pose(anim, 0)
 
-            self.suit.pose('tug-o-war', 0)
+            self.cog.pose('tug-o-war', 0)
             self.dropShadowDict[self.cogId] = self.dropShadow.copyTo(base.hidden)
-            self.dropShadowDict[self.cogId].reparentTo(self.suit)
+            self.dropShadowDict[self.cogId].reparentTo(self.cog)
             self.dropShadowDict[self.cogId].setScale(0.45)
 
     def initHandycaps(self):
@@ -1121,15 +1121,15 @@ class DistributedTugOfWarGame(DistributedMinigame):
             return
 
         origPos = self.origSuitPosHpr[0]
-        curPos = self.suit.getPos()
-        newPos = VBase3(origPos[0] + self.suitOffset, curPos[1], curPos[2])
+        curPos = self.cog.getPos()
+        newPos = VBase3(origPos[0] + self.cogOffset, curPos[1], curPos[2])
         if self.animTracks[self.cogId] != None:
             if self.animTracks[self.cogId].isPlaying():
                 self.animTracks[self.cogId].finish()
                 self.checkIfFallen()
 
         if self.cogId not in self.fallenList:
-            self.animTracks[self.cogId] = Sequence(LerpPosInterval(self.suit, duration=TugOfWarGameGlobals.SEND_UPDATE, pos=newPos), Func(self.checkIfFallen))
+            self.animTracks[self.cogId] = Sequence(LerpPosInterval(self.cog, duration=TugOfWarGameGlobals.SEND_UPDATE, pos=newPos), Func(self.checkIfFallen))
             self.animTracks[self.cogId].start()
 
     def moveToons(self):
@@ -1152,7 +1152,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
     def checkIfFallen(self, avId = None):
         if avId == None:
             if self.cogId not in self.fallenList:
-                curPos = self.suit.getPos()
+                curPos = self.cog.getPos()
                 if curPos[0] < 0 and curPos[0] > -2 or curPos[0] > 0 and curPos[0] < 2:
                     self.hideControls()
                     self.throwInWater()
@@ -1175,10 +1175,10 @@ class DistributedTugOfWarGame(DistributedMinigame):
         if avId == None:
             self.fallenList.append(self.cogId)
             waterPos = self.drinkPositions.pop()
-            newPos = VBase3(waterPos[0], waterPos[1], waterPos[2] - self.suit.getHeight() / 1.5)
-            self.suit.loop('neutral')
+            newPos = VBase3(waterPos[0], waterPos[1], waterPos[2] - self.cog.getHeight() / 1.5)
+            self.cog.loop('neutral')
             self.dropShadowDict[self.cogId].reparentTo(base.hidden)
-            loser = self.suit
+            loser = self.cog
             animId = self.cogId
         else:
             self.fallenList.append(avId)

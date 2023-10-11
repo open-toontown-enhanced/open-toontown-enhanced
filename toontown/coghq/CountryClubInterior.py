@@ -284,7 +284,7 @@ class CountryClubInterior(BattlePlace.BattlePlace):
                 self.fsm.request('walk')
         elif where == 'exit':
             self.fsm.request('walk')
-        elif where == 'factoryInterior' or where == 'suitInterior':
+        elif where == 'factoryInterior' or where == 'cogInterior':
             self.doneStatus = doneStatus
             self.doneEvent = 'lawOfficeFloorDone'
             messenger.send(self.doneEvent)

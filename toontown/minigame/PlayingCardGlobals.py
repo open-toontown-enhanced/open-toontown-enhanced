@@ -28,8 +28,8 @@ def getCardName(value):
         return TTLocalizer.PlayingCardUnknown
     else:
         rank = value % MaxRank
-        suit = value / MaxRank
-        return TTLocalizer.getPlayingCardName(suit, rank)
+        cog = value / MaxRank
+        return TTLocalizer.getPlayingCardName(cog, rank)
 
 
 Styles = ['standard']
@@ -52,20 +52,20 @@ def convertRankToGagTrackAndLevel(rank):
 
 def initCardImages():
     global _cardImagesInitialized
-    suitCodes = ('h', 'd', 'c', 's')
+    cogCodes = ('h', 'd', 'c', 's')
     rankCodes = ('02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '01')
     for style in Styles:
         modelPath = _modelPathBase
         cardModel = loader.loadModel(modelPath)
         cardModel.hide()
         CardImages[style] = {}
-        for suitIndex in range(MaxSuit):
-            CardImages[style][suitIndex] = {}
+        for cogIndex in range(MaxSuit):
+            CardImages[style][cogIndex] = {}
             for rankIndex in range(MaxRank):
                 track, level = convertRankToGagTrackAndLevel(rankIndex)
                 propName = ToontownBattleGlobals.AvPropsNew[track][level]
                 cardNode = cardModel.find('**/%s' % propName)
-                CardImages[style][suitIndex][rankIndex] = cardNode
+                CardImages[style][cogIndex][rankIndex] = cardNode
 
         propName = ToontownBattleGlobals.AvPropsNew[ToontownBattleGlobals.MAX_TRACK_INDEX][ToontownBattleGlobals.MAX_LEVEL_INDEX]
         CardImages[style]['back'] = cardModel.find(propName)
@@ -73,10 +73,10 @@ def initCardImages():
     _cardImagesInitialized = 1
 
 
-def getImage(style, suit, rank):
+def getImage(style, cog, rank):
     if _cardImagesInitialized == 0:
         initCardImages()
-    return CardImages[style][suit][rank]
+    return CardImages[style][cog][rank]
 
 
 def getBack(style):

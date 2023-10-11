@@ -933,7 +933,7 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
             parts = self.getCogParts()
             if CogDisguiseGlobals.isPaidSuitComplete(self, parts, index):
                 cogIndex = self.cogTypes[index] + CogDNA.cogsPerDept * index
-                cog = CogDNA.suitHeadTypes[cogIndex]
+                cog = CogDNA.cogHeadTypes[cogIndex]
                 self.putOnSuit(cog)
             else:
                 self.putOnSuit(index, rental=True)
@@ -1798,17 +1798,17 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
         self.effect = WinterCarolingEffect(beanAmount)
         self.effect.play()
 
-    def d_reqCogSummons(self, type, suitIndex):
+    def d_reqCogSummons(self, type, cogIndex):
         if type == 'single':
             pass
         elif type == 'building':
             pass
         elif type == 'invasion':
             pass
-        self.sendUpdate('reqCogSummons', [type, suitIndex])
+        self.sendUpdate('reqCogSummons', [type, cogIndex])
 
-    def cogSummonsResponse(self, returnCode, suitIndex, doId):
-        messenger.send('cog-summons-response', [returnCode, suitIndex, doId])
+    def cogSummonsResponse(self, returnCode, cogIndex, doId):
+        messenger.send('cog-summons-response', [returnCode, cogIndex, doId])
 
     def setCogSummonsEarned(self, cogSummonsEarned):
         self.cogSummonsEarned = cogSummonsEarned
@@ -1816,9 +1816,9 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
     def getCogSummonsEarned(self):
         return self.cogSummonsEarned
 
-    def hasCogSummons(self, suitIndex, type = None):
+    def hasCogSummons(self, cogIndex, type = None):
         summons = self.getCogSummonsEarned()
-        curSetting = summons[suitIndex]
+        curSetting = summons[cogIndex]
         if type == 'single':
             return curSetting & 1
         elif type == 'building':

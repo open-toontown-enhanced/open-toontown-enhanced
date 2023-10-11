@@ -54,7 +54,7 @@ def getCogVitals(name, level = -1):
     return dict
 
 
-def pickSuitAttack(attacks, suitLevel):
+def pickSuitAttack(attacks, cogLevel):
     attackNum = None
     randNum = random.randint(0, 99)
     notify.debug('pickSuitAttack: rolled %d' % randNum)
@@ -62,10 +62,10 @@ def pickSuitAttack(attacks, suitLevel):
     index = 0
     total = 0
     for c in attacks:
-        total = total + c[3][suitLevel]
+        total = total + c[3][cogLevel]
 
     for c in attacks:
-        count = count + c[3][suitLevel]
+        count = count + c[3][cogLevel]
         if randNum < count:
             attackNum = index
             notify.debug('picking attack %d' % attackNum)
@@ -91,21 +91,21 @@ def pickSuitAttack(attacks, suitLevel):
     return
 
 
-def getCogAttack(suitName, suitLevel, attackNum = -1):
-    attackChoices = CogAttributes[suitName]['attacks']
+def getCogAttack(cogName, cogLevel, attackNum = -1):
+    attackChoices = CogAttributes[cogName]['attacks']
     if attackNum == -1:
-        notify.debug('getCogAttack: picking attacking for %s' % suitName)
-        attackNum = pickSuitAttack(attackChoices, suitLevel)
+        notify.debug('getCogAttack: picking attacking for %s' % cogName)
+        attackNum = pickSuitAttack(attackChoices, cogLevel)
     attack = attackChoices[attackNum]
     adict = {}
-    adict['suitName'] = suitName
+    adict['cogName'] = cogName
     name = attack[0]
     adict['name'] = name
     adict['id'] = list(SuitAttacks.keys()).index(name)
     adict['animName'] = SuitAttacks[name][0]
-    adict['hp'] = attack[1][suitLevel]
-    adict['acc'] = attack[2][suitLevel]
-    adict['freq'] = attack[3][suitLevel]
+    adict['hp'] = attack[1][cogLevel]
+    adict['acc'] = attack[2][cogLevel]
+    adict['freq'] = attack[3][cogLevel]
     adict['group'] = SuitAttacks[name][1]
     return adict
 
@@ -3021,9 +3021,9 @@ WATERCOOLER = list(SuitAttacks.keys()).index('Watercooler')
 WITHDRAWAL = list(SuitAttacks.keys()).index('Withdrawal')
 WRITE_OFF = list(SuitAttacks.keys()).index('WriteOff')
 
-def getFaceoffTaunt(suitName, doId):
-    if suitName in SuitFaceoffTaunts:
-        taunts = SuitFaceoffTaunts[suitName]
+def getFaceoffTaunt(cogName, doId):
+    if cogName in SuitFaceoffTaunts:
+        taunts = SuitFaceoffTaunts[cogName]
     else:
         taunts = TTLocalizer.SuitFaceoffDefaultTaunts
     return taunts[doId % len(taunts)]
@@ -3031,8 +3031,8 @@ def getFaceoffTaunt(suitName, doId):
 
 SuitFaceoffTaunts = OTPLocalizer.SuitFaceoffTaunts
 
-def getAttackTauntIndexFromIndex(suit, attackIndex):
-    adict = getCogAttack(suit.getStyleName(), suit.getLevel(), attackIndex)
+def getAttackTauntIndexFromIndex(cog, attackIndex):
+    adict = getCogAttack(cog.getStyleName(), cog.getLevel(), attackIndex)
     return getAttackTauntIndex(adict['name'])
 
 

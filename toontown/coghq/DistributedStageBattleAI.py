@@ -12,8 +12,8 @@ from otp.otpbase.PythonUtil import enumerate
 class DistributedStageBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStageBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
-        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'StageReward', roundCallback, finishCallback, maxCogs)
+    def __init__(self, air, battleMgr, pos, cog, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
+        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, cog, toonId, zoneId, level, battleCellId, 'StageReward', roundCallback, finishCallback, maxCogs)
         self.battleCalc.setSkillCreditMultiplier(1)
         if self.bossBattle:
             self.level.d_setBossConfronted(toonId)

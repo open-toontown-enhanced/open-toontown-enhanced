@@ -129,14 +129,14 @@ class DistributedLawOfficeAI(DistributedObjectAI, LawOfficeBase.LawOfficeBase):
 
     def getCogs(self):
         cogIds = []
-        for suit in self.cogs:
-            cogIds.append(suit.doId)
+        for cog in self.cogs:
+            cogIds.append(cog.doId)
 
         return cogIds
 
     def getReserveCogs(self):
         cogIds = []
-        for suit in self.reserveCogs:
-            cogIds.append(suit[0].doId)
+        for cog in self.reserveCogs:
+            cogIds.append(cog[0].doId)
 
         return cogIds

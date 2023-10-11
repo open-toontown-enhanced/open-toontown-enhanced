@@ -27,7 +27,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.victorResponses = None
         self.fsm = ClassicFSM.ClassicFSM('DistributedBuildingAI', [
          State.State('off', self.enterOff, self.exitOff, [
-          'waitForVictors', 'becomingToon', 'toon', 'clearOutToonInterior', 'becomingSuit', 'suit', 'clearOutToonInteriorForCogdo', 'becomingCogdo', 'becomingCogdoFromCogdo', 'cogdo']),
+          'waitForVictors', 'becomingToon', 'toon', 'clearOutToonInterior', 'becomingSuit', 'cog', 'clearOutToonInteriorForCogdo', 'becomingCogdo', 'becomingCogdoFromCogdo', 'cogdo']),
          State.State('waitForVictors', self.enterWaitForVictors, self.exitWaitForVictors, [
           'becomingToon']),
          State.State('waitForVictorsFromCogdo', self.enterWaitForVictorsFromCogdo, self.exitWaitForVictorsFromCogdo, [
@@ -41,8 +41,8 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
          State.State('clearOutToonInterior', self.enterClearOutToonInterior, self.exitClearOutToonInterior, [
           'becomingSuit']),
          State.State('becomingSuit', self.enterBecomingSuit, self.exitBecomingSuit, [
-          'suit']),
-         State.State('suit', self.enterSuit, self.exitSuit, [
+          'cog']),
+         State.State('cog', self.enterSuit, self.exitSuit, [
           'waitForVictors', 'becomingToon']),
          State.State('clearOutToonInteriorForCogdo', self.enterClearOutToonInteriorForCogdo, self.exitClearOutToonInteriorForCogdo, [
           'becomingCogdo']),
@@ -83,7 +83,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.requestDelete()
 
     def delete(self):
-        taskMgr.remove(self.taskName('suitbldg-time-out'))
+        taskMgr.remove(self.taskName('cogbldg-time-out'))
         taskMgr.remove(self.taskName(str(self.block) + '_becomingToon-timer'))
         taskMgr.remove(self.taskName(str(self.block) + '_becomingSuit-timer'))
         DistributedObjectAI.DistributedObjectAI.delete(self)
@@ -104,7 +104,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
     def _getMinMaxFloors(self, difficulty):
         return CogBuildingGlobals.CogBuildingInfo[difficulty][0]
 
-    def suitTakeOver(self, cogTrack, difficulty, buildingHeight):
+    def cogTakeOver(self, cogTrack, difficulty, buildingHeight):
         if not self.isToonBlock():
             return
         self.updateSavedBy([])
@@ -176,7 +176,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
 
     def isCogBuilding(self):
         state = self.fsm.getCurrentState().getName()
-        return state == 'suit' or state == 'becomingSuit' or state == 'clearOutToonInterior'
+        return state == 'cog' or state == 'becomingSuit' or state == 'clearOutToonInterior'
 
     def isCogdo(self):
         state = self.fsm.getCurrentState().getName()
@@ -188,7 +188,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
 
     def isEstablishedSuitBlock(self):
         state = self.fsm.getCurrentState().getName()
-        return state == 'suit'
+        return state == 'cog'
 
     def isToonBlock(self):
         state = self.fsm.getCurrentState().getName()
@@ -475,7 +475,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
             del self.knockKnock
 
     def becomingSuitTask(self, task):
-        self.fsm.request('suit')
+        self.fsm.request('cog')
         self.cogPlannerExt.buildingMgr.save()
         return Task.done
 
@@ -484,7 +484,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
          ord(self.track), self.difficulty, self.numFloors])
         zoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self.planner = SuitPlannerInteriorAI.SuitPlannerInteriorAI(self.numFloors, self.difficulty, self.track, interiorZoneId)
-        self.d_setState('suit')
+        self.d_setState('cog')
         exteriorZoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
         self.elevator = DistributedElevatorExtAI.DistributedElevatorExtAI(self.air, self)
         self.elevator.generateWithRequired(exteriorZoneId)

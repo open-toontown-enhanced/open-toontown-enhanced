@@ -17,7 +17,7 @@ COLOR_RED = VBase4(1, 0, 0, 0.3)
 class TwoDEnemy(DirectObject):
     notify = DirectNotifyGlobal.directNotify.newCategory('TwoDEnemy')
 
-    def __init__(self, enemyMgr, index, suitAttribs):
+    def __init__(self, enemyMgr, index, cogAttribs):
         self.enemyMgr = enemyMgr
         self.game = self.enemyMgr.section.sectionMgr.game
         self.index = index
@@ -27,14 +27,14 @@ class TwoDEnemy(DirectObject):
         self.shotTrack = None
         self.deathTrack = None
         self.deathSuit = None
-        self.suitSound = None
+        self.cogSound = None
         self.deleteMeCallback = None
         self.isMovingUpDown = False
         self.isMovingLeftRight = False
         self.showCollSpheres = False
         self.isDestroyed = False
         self.isGoingUp = False
-        self.setupEnemy(suitAttribs)
+        self.setupEnemy(cogAttribs)
         BattleParticles.loadParticles()
         return
 
@@ -42,14 +42,14 @@ class TwoDEnemy(DirectObject):
         if self.isDestroyed:
             return
         self.isDestroyed = True
-        if hasattr(self.suit, 'prop') and self.suit.prop:
-            self.suit.prop.stash()
+        if hasattr(self.cog, 'prop') and self.cog.prop:
+            self.cog.prop.stash()
         if self.propTrack:
             self.propTrack.finish()
             self.propTrack = None
-        if self.suitSound:
-            self.suitSound.stop()
-            del self.suitSound
+        if self.cogSound:
+            self.cogSound.stop()
+            del self.cogSound
         if self.animTrack:
             self.animTrack.finish()
             self.animTrack = None
@@ -61,44 +61,44 @@ class TwoDEnemy(DirectObject):
             self.deathTrack = None
         if self.deathSuit:
             self.deathSuit.detachNode()
-            self.suit.cleanupLoseActor()
+            self.cog.cleanupLoseActor()
             self.deathSuit = None
         if self.moveIval:
             self.moveIval.pause()
             del self.moveIval
-        if self.suit:
-            self.suit.delete()
-            self.suit = None
+        if self.cog:
+            self.cog.delete()
+            self.cog = None
         BattleParticles.unloadParticles()
-        self.ignore(self.game.uniqueName('enter' + self.suitName))
+        self.ignore(self.game.uniqueName('enter' + self.cogName))
         self.game = None
         self.enemyMgr = None
         return
 
-    def setupEnemy(self, suitAttribs):
-        suitType = suitAttribs[0]
-        self.suit = Suit.Suit()
+    def setupEnemy(self, cogAttribs):
+        cogType = cogAttribs[0]
+        self.cog = Suit.Suit()
         CogDNA = CogDNA.CogDNA()
-        CogDNA.newSuit(suitType)
-        self.suit.setDNA(CogDNA)
-        self.suit.pose('walk', 0)
-        self.suitName = 'Enemy-%s' % self.index
-        self.suit.setName(self.suitName)
-        suitPosAttribs = suitAttribs[1]
-        initX, initY, initZ = suitPosAttribs[0]
+        CogDNA.newSuit(cogType)
+        self.cog.setDNA(CogDNA)
+        self.cog.pose('walk', 0)
+        self.cogName = 'Enemy-%s' % self.index
+        self.cog.setName(self.cogName)
+        cogPosAttribs = cogAttribs[1]
+        initX, initY, initZ = cogPosAttribs[0]
         initPos = Point3(initX, initY, initZ)
-        if len(suitPosAttribs) == 3:
-            finalX, finalY, finalZ = suitPosAttribs[1]
+        if len(cogPosAttribs) == 3:
+            finalX, finalY, finalZ = cogPosAttribs[1]
             finalPos = Point3(finalX, finalY, finalZ)
-            posIvalDuration = suitPosAttribs[2]
+            posIvalDuration = cogPosAttribs[2]
             self.clearMoveIval()
 
             def getForwardIval(blendTypeStr, self = self):
-                forwardIval = LerpPosInterval(self.suit, posIvalDuration, pos=finalPos, startPos=initPos, name='%s-moveFront' % self.suitName, blendType=blendTypeStr, fluid=1)
+                forwardIval = LerpPosInterval(self.cog, posIvalDuration, pos=finalPos, startPos=initPos, name='%s-moveFront' % self.cogName, blendType=blendTypeStr, fluid=1)
                 return forwardIval
 
             def getBackwardIval(blendTypeStr, self = self):
-                backwardIval = LerpPosInterval(self.suit, posIvalDuration, pos=initPos, startPos=finalPos, name='%s-moveBack' % self.suitName, blendType=blendTypeStr, fluid=1)
+                backwardIval = LerpPosInterval(self.cog, posIvalDuration, pos=initPos, startPos=finalPos, name='%s-moveBack' % self.cogName, blendType=blendTypeStr, fluid=1)
                 return backwardIval
 
             if abs(finalZ - initZ) > 0.0:
@@ -107,37 +107,37 @@ class TwoDEnemy(DirectObject):
                     self.isGoingUp = value
 
                 self.isMovingUpDown = True
-                self.suit.setH(90)
-                self.suit.prop = None
-                if self.suit.prop == None:
-                    self.suit.prop = BattleProps.globalPropPool.getProp('propeller')
-                    self.suit.prop.setScale(1.1)
-                    self.suit.prop.setColor(1, 1, 0.6, 1)
-                head = self.suit.find('**/joint_head')
-                self.suit.prop.reparentTo(head)
-                self.propTrack = Sequence(ActorInterval(self.suit.prop, 'propeller', startFrame=8, endFrame=25, playRate=2.0))
-                self.animTrack = Sequence(ActorInterval(self.suit, 'landing', startFrame=8, endFrame=28, playRate=0.5), ActorInterval(self.suit, 'landing', startFrame=8, endFrame=28, playRate=-0.5))
+                self.cog.setH(90)
+                self.cog.prop = None
+                if self.cog.prop == None:
+                    self.cog.prop = BattleProps.globalPropPool.getProp('propeller')
+                    self.cog.prop.setScale(1.1)
+                    self.cog.prop.setColor(1, 1, 0.6, 1)
+                head = self.cog.find('**/joint_head')
+                self.cog.prop.reparentTo(head)
+                self.propTrack = Sequence(ActorInterval(self.cog.prop, 'propeller', startFrame=8, endFrame=25, playRate=2.0))
+                self.animTrack = Sequence(ActorInterval(self.cog, 'landing', startFrame=8, endFrame=28, playRate=0.5), ActorInterval(self.cog, 'landing', startFrame=8, endFrame=28, playRate=-0.5))
                 self.moveIval = Sequence(Func(setIsGoingUp, True), getForwardIval('easeInOut'), Func(setIsGoingUp, False), getBackwardIval('easeInOut'))
-                self.suitSound = base.loader.loadSfx('phase_4/audio/sfx/TB_propeller.ogg')
+                self.cogSound = base.loader.loadSfx('phase_4/audio/sfx/TB_propeller.ogg')
             else:
                 self.isMovingLeftRight = True
                 self.moveIval = Sequence(Func(self.setHeading, finalPos, initPos), getForwardIval('noBlend'), Func(self.setHeading, initPos, finalPos), getBackwardIval('noBlend'))
-        self.suit.setPos(initX, initY, initZ)
-        self.suit.dropShadow.hide()
+        self.cog.setPos(initX, initY, initZ)
+        self.cog.dropShadow.hide()
         self.setupCollision()
         return
 
     def setupCollision(self):
         collSphere = CollisionSphere(0, 0, 2, 2)
         collSphere.setTangible(1)
-        collNode = CollisionNode(self.game.uniqueName(self.suitName))
+        collNode = CollisionNode(self.game.uniqueName(self.cogName))
         collNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
         collNode.addSolid(collSphere)
-        self.collNodePath = self.suit.attachNewNode(collNode)
+        self.collNodePath = self.cog.attachNewNode(collNode)
         self.collNodePath.hide()
         if self.showCollSpheres:
             self.collNodePath.show()
-        self.accept(self.game.uniqueName('enter' + self.suitName), self.handleEnemyCollision)
+        self.accept(self.game.uniqueName('enter' + self.cogName), self.handleEnemyCollision)
 
     def clearMoveIval(self):
         if self.moveIval:
@@ -151,28 +151,28 @@ class TwoDEnemy(DirectObject):
             self.moveIval.loop()
             self.moveIval.setT(elapsedTime)
         if self.isMovingLeftRight:
-            self.suit.loop('walk')
+            self.cog.loop('walk')
         elif self.isMovingUpDown:
             self.propTrack.loop()
             self.animTrack.loop()
-            base.playSfx(self.suitSound, node=self.suit, looping=1)
+            base.playSfx(self.cogSound, node=self.cog, looping=1)
 
     def enterPause(self):
         if hasattr(self, 'moveIval') and self.moveIval:
             self.moveIval.pause()
-            self.suit.loop('neutral')
-        if self.suitSound:
-            self.suitSound.stop()
+            self.cog.loop('neutral')
+        if self.cogSound:
+            self.cogSound.stop()
 
     def exitPause(self):
         if hasattr(self, 'moveIval') and self.moveIval:
             self.moveIval.resume()
             if self.isMovingLeftRight:
-                self.suit.loop('walk')
+                self.cog.loop('walk')
             elif self.isMovingUpDown:
                 self.propTrack.loop()
                 self.animTrack.loop()
-                base.playSfx(self.suitSound, node=self.suit, looping=1, volume=0.1)
+                base.playSfx(self.cogSound, node=self.cog, looping=1, volume=0.1)
 
     def handleEnemyCollision(self, cevent):
         messenger.send('enemyHit')
@@ -180,20 +180,20 @@ class TwoDEnemy(DirectObject):
     def setHeading(self, finalPos, initPos):
         diffX = finalPos.getX() - initPos.getX()
         angle = -90 * diffX / math.fabs(diffX)
-        startAngle = self.suit.getH()
+        startAngle = self.cog.getH()
         startAngle = PythonUtil.fitSrcAngle2Dest(startAngle, angle)
         dur = 0.1 * abs(startAngle - angle) / 90
-        self.suitTurnIval = LerpHprInterval(self.suit, dur, Point3(angle, 0, 0), startHpr=Point3(startAngle, 0, 0), name='SuitLerpHpr')
-        self.suitTurnIval.start()
+        self.cogTurnIval = LerpHprInterval(self.cog, dur, Point3(angle, 0, 0), startHpr=Point3(startAngle, 0, 0), name='SuitLerpHpr')
+        self.cogTurnIval.start()
 
     def blinkColor(self, color, duration):
-        blink = Sequence(LerpColorScaleInterval(self.suit, 0.5, color, startColorScale=VBase4(1, 1, 1, 1)), LerpColorScaleInterval(self.suit, 0.5, VBase4(1, 1, 1, 1), startColorScale=color))
+        blink = Sequence(LerpColorScaleInterval(self.cog, 0.5, color, startColorScale=VBase4(1, 1, 1, 1)), LerpColorScaleInterval(self.cog, 0.5, VBase4(1, 1, 1, 1), startColorScale=color))
         track = Sequence(Func(blink.loop), Wait(duration), Func(blink.finish))
         return track
 
     def doShotTrack(self):
         blinkRed = self.blinkColor(COLOR_RED, 2)
-        point = Point3(self.suit.getX(render), self.suit.getY(render), self.suit.getZ(render) + self.suit.height / 2.0)
+        point = Point3(self.cog.getX(render), self.cog.getY(render), self.cog.getZ(render) + self.cog.height / 2.0)
         scale = 0.3
         splashHold = 0.1
 
@@ -214,21 +214,21 @@ class TwoDEnemy(DirectObject):
 
     def doDeathTrack(self):
 
-        def removeDeathSuit(suit, deathSuit):
+        def removeDeathSuit(cog, deathSuit):
             if not deathSuit.isEmpty():
                 deathSuit.detachNode()
-                suit.cleanupLoseActor()
+                cog.cleanupLoseActor()
 
-        if self.suitSound:
-            self.suitSound.stop()
-        self.deathSuit = self.suit.getLoseActor()
+        if self.cogSound:
+            self.cogSound.stop()
+        self.deathSuit = self.cog.getLoseActor()
         self.deathSuit.reparentTo(self.enemyMgr.enemiesNP)
-        self.deathSuit.setPos(render, self.suit.getPos(render))
-        self.deathSuit.setHpr(render, self.suit.getHpr(render))
-        self.suit.hide()
+        self.deathSuit.setPos(render, self.cog.getPos(render))
+        self.deathSuit.setHpr(render, self.cog.getHpr(render))
+        self.cog.hide()
         self.collNodePath.reparentTo(self.deathSuit)
-        treasureSpawnPoint = Point3(self.suit.getX(), self.suit.getY(), self.suit.getZ() + self.suit.height / 2.0)
-        gearPoint = Point3(0, 0, self.suit.height / 2.0 + 2.0)
+        treasureSpawnPoint = Point3(self.cog.getX(), self.cog.getY(), self.cog.getZ() + self.cog.height / 2.0)
+        gearPoint = Point3(0, 0, self.cog.height / 2.0 + 2.0)
         spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
         deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
         smallGears = BattleParticles.createParticleEffect(file='gearExplosionSmall')
@@ -245,7 +245,7 @@ class TwoDEnemy(DirectObject):
         bigGearExplosion.setDepthWrite(False)
         if self.isMovingLeftRight:
             self.enterPause()
-            cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
+            cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.cog, self.deathSuit, name='remove-death-cog'))
             explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
             soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
             gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
@@ -260,8 +260,8 @@ class TwoDEnemy(DirectObject):
                 pos = Point3(self.deathSuit.getX(), self.deathSuit.getY(), self.deathSuit.getZ() + 2.0 * direction)
                 return pos
 
-            deathMoveIval = LerpPosInterval(self.deathSuit, 1.5, pos=getFinalPos(), name='%s-deathSuitMove' % self.suitName, blendType='easeInOut', fluid=1)
-            cogTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
+            deathMoveIval = LerpPosInterval(self.deathSuit, 1.5, pos=getFinalPos(), name='%s-deathSuitMove' % self.cogName, blendType='easeInOut', fluid=1)
+            cogTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathSuit, self.cog, self.deathSuit, name='remove-death-cog'))
             explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
             soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
             gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')

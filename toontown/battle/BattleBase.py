@@ -86,7 +86,7 @@ def getToonAttack(id, track = NO_ATTACK, level = -1, target = -1):
 
 
 def getDefaultSuitAttacks():
-    suitAttacks = [[NO_ID,
+    cogAttacks = [[NO_ID,
       NO_ATTACK,
       -1,
       [],
@@ -114,7 +114,7 @@ def getDefaultSuitAttacks():
       0,
       0,
       0]]
-    return suitAttacks
+    return cogAttacks
 
 
 def getDefaultSuitAttack():
@@ -169,14 +169,14 @@ MAX_EXPECTED_DISTANCE_FROM_BATTLE = 50.0
 
 class BattleBase:
     notify = DirectNotifyGlobal.directNotify.newCategory('BattleBase')
-    suitPoints = (((Point3(0, 5, 0), 179),),
+    cogPoints = (((Point3(0, 5, 0), 179),),
      ((Point3(2, 5.3, 0), 170), (Point3(-2, 5.3, 0), 180)),
      ((Point3(4, 5.2, 0), 170), (Point3(0, 6, 0), 179), (Point3(-4, 5.2, 0), 190)),
      ((Point3(6, 4.4, 0), 160),
       (Point3(2, 6.3, 0), 170),
       (Point3(-2, 6.3, 0), 190),
       (Point3(-6, 4.4, 0), 200)))
-    suitPendingPoints = ((Point3(-4, 8.2, 0), 190),
+    cogPendingPoints = ((Point3(-4, 8.2, 0), 190),
      (Point3(0, 9, 0), 179),
      (Point3(4, 8.2, 0), 170),
      (Point3(8, 3.2, 0), 160))
@@ -216,16 +216,16 @@ class BattleBase:
      posG,
      posF,
      posE]
-    suitCwise = [posE,
+    cogCwise = [posE,
      posF,
      posG,
      posH,
      posA]
-    suitCCwise = [posD,
+    cogCCwise = [posD,
      posC,
      posB,
      posA]
-    suitSpeed = 4.8
+    cogSpeed = 4.8
     toonSpeed = 8.0
 
     def __init__(self):
@@ -240,7 +240,7 @@ class BattleBase:
         self.joiningCogs = []
         self.activeCogs = []
         self.luredCogs = []
-        self.suitGone = 0
+        self.cogGone = 0
         self.toons = []
         self.joiningToons = []
         self.pendingToons = []
@@ -249,16 +249,16 @@ class BattleBase:
         self.toonGone = 0
         self.helpfulToons = []
 
-    def calcFaceoffTime(self, centerpos, suitpos):
-        facing = Vec3(centerpos - suitpos)
+    def calcFaceoffTime(self, centerpos, cogpos):
+        facing = Vec3(centerpos - cogpos)
         facing.normalize()
-        suitdest = Point3(centerpos - Point3(facing * 6.0))
-        dist = Vec3(suitdest - suitpos).length()
-        return dist / BattleBase.suitSpeed
+        cogdest = Point3(centerpos - Point3(facing * 6.0))
+        dist = Vec3(cogdest - cogpos).length()
+        return dist / BattleBase.cogSpeed
 
     def calcSuitMoveTime(self, pos0, pos1):
         dist = Vec3(pos0 - pos1).length()
-        return dist / BattleBase.suitSpeed
+        return dist / BattleBase.cogSpeed
 
     def calcToonMoveTime(self, pos0, pos1):
         dist = Vec3(pos0 - pos1).length()
@@ -293,14 +293,14 @@ class BattleBase:
         elif nearestP == BattleBase.posA:
             self.notify.debug('buildJoinPointList() - posA')
             plist = [BattleBase.posA]
-        elif BattleBase.suitCwise.count(nearestP) == 1:
+        elif BattleBase.cogCwise.count(nearestP) == 1:
             self.notify.debug('buildJoinPointList() - clockwise')
-            index = BattleBase.suitCwise.index(nearestP)
-            plist = BattleBase.suitCwise[index + 1:]
+            index = BattleBase.cogCwise.index(nearestP)
+            plist = BattleBase.cogCwise[index + 1:]
         else:
             self.notify.debug('buildJoinPointList() - counter-clockwise')
-            index = BattleBase.suitCCwise.index(nearestP)
-            plist = BattleBase.suitCCwise[index + 1:]
+            index = BattleBase.cogCCwise.index(nearestP)
+            plist = BattleBase.cogCCwise[index + 1:]
         self.notify.debug('buildJoinPointList() - plist: %s' % plist)
         return plist
 

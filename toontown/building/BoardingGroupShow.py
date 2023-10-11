@@ -152,7 +152,7 @@ class BoardingGroupShow:
             if wantToonRotation:
                 runTrack.append(Func(self.toon.headsUp, elevatorModel, offset))
             if self.toon.isDisguised:
-                runTrack.append(Func(self.toon.suit.loop, 'walk'))
+                runTrack.append(Func(self.toon.cog.loop, 'walk'))
             else:
                 runTrack.append(Func(self.toon.setAnimState, 'run'))
             runTrack.append(LerpPosInterval(self.toon, 1, Point3(offset)))

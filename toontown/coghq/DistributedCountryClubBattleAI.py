@@ -11,8 +11,8 @@ from direct.showbase.PythonUtil import addListsByValue
 class DistributedCountryClubBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCountryClubBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
-        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'CountryClubReward', roundCallback, finishCallback, maxCogs)
+    def __init__(self, air, battleMgr, pos, cog, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
+        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, cog, toonId, zoneId, level, battleCellId, 'CountryClubReward', roundCallback, finishCallback, maxCogs)
         self.battleCalc.setSkillCreditMultiplier(1)
         if self.bossBattle:
             self.level.d_setBossConfronted(toonId)

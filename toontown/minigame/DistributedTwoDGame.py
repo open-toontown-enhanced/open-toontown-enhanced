@@ -408,7 +408,7 @@ class DistributedTwoDGame(DistributedMinigame):
 
     def toonHitByEnemy(self, avId, timestamp):
         if self.checkValidity(avId):
-            self.notify.debug('avatar %s hit by a suit' % avId)
+            self.notify.debug('avatar %s hit by a cog' % avId)
             if avId != self.localAvId:
                 self.updateScore(avId, ToonBlitzGlobals.ScoreLossPerEnemyCollision[self.getSafezoneId()])
                 self.toonSDs[avId].fsm.request('fallBack')
@@ -491,7 +491,7 @@ class DistributedTwoDGame(DistributedMinigame):
                     self.sectionMgr.sections[sectionIndex].enemyMgr.enemies[enemyIndex].doShotTrack()
             else:
                 enemy = self.sectionMgr.sections[sectionIndex].enemyMgr.enemies[enemyIndex]
-                treasureSpawnPoint = Point3(enemy.suit.getX(), enemy.suit.getY(), enemy.suit.getZ() + enemy.suit.height / 2.0)
+                treasureSpawnPoint = Point3(enemy.cog.getX(), enemy.cog.getY(), enemy.cog.getZ() + enemy.cog.height / 2.0)
                 self.spawnTreasure(sectionIndex, enemyIndex, treasureSpawnPoint)
                 enemy.doDeathTrack()
 

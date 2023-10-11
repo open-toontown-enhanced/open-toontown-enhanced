@@ -36,10 +36,10 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
         del self.sky
         self.mickeyMovie.cleanup()
         del self.mickeyMovie
-        self.suitWalkTrack.finish()
-        del self.suitWalkTrack
-        self.suit.delete()
-        del self.suit
+        self.cogWalkTrack.finish()
+        del self.cogWalkTrack
+        self.cog.delete()
+        del self.cog
         self.ignore('enterTutotialInterior')
         DistributedObject.DistributedObject.disable(self)
 
@@ -145,15 +145,15 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
         self.mickeyMovie.play()
 
     def createSuit(self):
-        self.suit = Suit.Suit()
+        self.cog = Suit.Suit()
         CogDNA = CogDNA.CogDNA()
         CogDNA.newSuit('flunky')
-        self.suit.setDNA(CogDNA)
-        self.suit.loop('neutral')
-        self.suit.setPosHpr(-20, 8, 0, 0, 0, 0)
-        self.suit.reparentTo(self.interior)
-        self.suitWalkTrack = Sequence(self.suit.hprInterval(0.1, Vec3(0, 0, 0)), Func(self.suit.loop, 'walk'), self.suit.posInterval(2, Point3(-20, 20, 0)), Func(self.suit.loop, 'neutral'), Wait(1.0), self.suit.hprInterval(0.1, Vec3(180, 0, 0)), Func(self.suit.loop, 'walk'), self.suit.posInterval(2, Point3(-20, 10, 0)), Func(self.suit.loop, 'neutral'), Wait(1.0))
-        self.suitWalkTrack.loop()
+        self.cog.setDNA(CogDNA)
+        self.cog.loop('neutral')
+        self.cog.setPosHpr(-20, 8, 0, 0, 0, 0)
+        self.cog.reparentTo(self.interior)
+        self.cogWalkTrack = Sequence(self.cog.hprInterval(0.1, Vec3(0, 0, 0)), Func(self.cog.loop, 'walk'), self.cog.posInterval(2, Point3(-20, 20, 0)), Func(self.cog.loop, 'neutral'), Wait(1.0), self.cog.hprInterval(0.1, Vec3(180, 0, 0)), Func(self.cog.loop, 'walk'), self.cog.posInterval(2, Point3(-20, 10, 0)), Func(self.cog.loop, 'neutral'), Wait(1.0))
+        self.cogWalkTrack.loop()
 
     def setZoneIdAndBlock(self, zoneId, block):
         self.zoneId = zoneId

@@ -1377,21 +1377,21 @@ class Toon(Avatar.Avatar, ToonHead):
                 self.loop(anim)
                 self.setPlayRate(rate, anim)
                 if self.isDisguised:
-                    rightHand = self.suit.rightHand
+                    rightHand = self.cog.rightHand
                     numChildren = rightHand.getNumChildren()
                     if numChildren > 0:
                         anim = 'tray-' + anim
                         if anim == 'tray-run':
                             anim = 'tray-walk'
-                    self.suit.stop()
-                    self.suit.loop(anim)
-                    self.suit.setPlayRate(rate, anim)
+                    self.cog.stop()
+                    self.cog.loop(anim)
+                    self.cog.setPlayRate(rate, anim)
             elif rate != self.playingRate:
                 self.playingRate = rate
                 if not self.isDisguised:
                     self.setPlayRate(rate, anim)
                 else:
-                    self.suit.setPlayRate(rate, anim)
+                    self.cog.setPlayRate(rate, anim)
             showWake, wakeWaterHeight = ZoneUtil.getWakeInfo()
             if showWake and self.getZ(render) < wakeWaterHeight and abs(forwardSpeed) > ToontownGlobals.WalkCutOff:
                 currT = globalClock.getFrameTime()
@@ -2707,38 +2707,38 @@ class Toon(Avatar.Avatar, ToonHead):
             return Sequence(Func(self.nametag3d.show), self.__doToonGhostColorScale(None, lerpTime, keepDefault=1))
         return Sequence()
 
-    def putOnSuit(self, suitType, setDisplayName = True, rental = False):
+    def putOnSuit(self, cogType, setDisplayName = True, rental = False):
         if self.isDisguised:
             self.takeOffSuit()
         if launcher and not launcher.getPhaseComplete(5):
             return
         from toontown.cog import Suit
-        deptIndex = suitType
-        suit = Suit.Suit()
+        deptIndex = cogType
+        cog = Suit.Suit()
         dna = CogDNA.CogDNA()
         if rental == True:
-            if CogDNA.suitDepts[deptIndex] == 's':
-                suitType = 'cold_caller'
-            elif CogDNA.suitDepts[deptIndex] == 'm':
-                suitType = 'short_change'
-            elif CogDNA.suitDepts[deptIndex] == 'l':
-                suitType = 'bottom_feeder'
-            elif CogDNA.suitDepts[deptIndex] == 'c':
-                suitType = 'flunky'
+            if CogDNA.cogDepts[deptIndex] == 's':
+                cogType = 'cold_caller'
+            elif CogDNA.cogDepts[deptIndex] == 'm':
+                cogType = 'short_change'
+            elif CogDNA.cogDepts[deptIndex] == 'l':
+                cogType = 'bottom_feeder'
+            elif CogDNA.cogDepts[deptIndex] == 'c':
+                cogType = 'flunky'
             else:
-                self.notify.warning('Suspicious: Incorrect rental suit department requested')
-                suitType = 'cold_caller'
-        dna.newSuit(suitType)
-        suit.setStyle(dna)
-        suit.isDisguised = 1
-        suit.generateSuit()
-        suit.initializeDropShadow()
-        suit.setPos(self.getPos())
-        suit.setHpr(self.getHpr())
-        for part in suit.getHeadParts():
+                self.notify.warning('Suspicious: Incorrect rental cog department requested')
+                cogType = 'cold_caller'
+        dna.newSuit(cogType)
+        cog.setStyle(dna)
+        cog.isDisguised = 1
+        cog.generateSuit()
+        cog.initializeDropShadow()
+        cog.setPos(self.getPos())
+        cog.setHpr(self.getHpr())
+        for part in cog.getHeadParts():
             part.hide()
 
-        suitHeadNull = suit.find('**/joint_head')
+        cogHeadNull = cog.find('**/joint_head')
         toonHead = self.getPart('head', '1000')
         Emote.globalEmote.disableAll(self)
         toonGeom = self.getGeomNode()
@@ -2748,15 +2748,15 @@ class Toon(Avatar.Avatar, ToonHead):
         headPosNode = hidden.attachNewNode('headPos')
         toonHead.reparentTo(headPosNode)
         toonHead.setPos(0, 0, 0.2)
-        headPosNode.reparentTo(suitHeadNull)
+        headPosNode.reparentTo(cogHeadNull)
         headPosNode.setScale(render, worldScale)
-        suitGeom = suit.getGeomNode()
-        suitGeom.reparentTo(self)
+        cogGeom = cog.getGeomNode()
+        cogGeom.reparentTo(self)
         if rental == True:
-            suit.makeRentalSuit(CogDNA.suitDepts[deptIndex])
-        self.suit = suit
-        self.suitGeom = suitGeom
-        self.setHeight(suit.getHeight())
+            cog.makeRentalSuit(CogDNA.cogDepts[deptIndex])
+        self.cog = cog
+        self.cogGeom = cogGeom
+        self.setHeight(cog.getHeight())
         self.nametag3d.setPos(0, 0, self.height + 1.3)
         if self.isLocal():
             if hasattr(self, 'book'):
@@ -2772,10 +2772,10 @@ class Toon(Avatar.Avatar, ToonHead):
                 self.startTrackAnimToSpeed()
             self.controlManager.disableAvatarJump()
             indices = list(range(OTPLocalizer.SCMenuCommonCogIndices[0], OTPLocalizer.SCMenuCommonCogIndices[1] + 1))
-            customIndices = OTPLocalizer.SCMenuCustomCogIndices[suitType]
+            customIndices = OTPLocalizer.SCMenuCustomCogIndices[cogType]
             indices += list(range(customIndices[0], customIndices[1] + 1))
             self.chatMgr.chatInputSpeedChat.addCogMenu(indices)
-        self.suit.loop('neutral')
+        self.cog.loop('neutral')
         self.isDisguised = 1
         self.setFont(ToontownGlobals.getCogFont())
         if setDisplayName:
@@ -2783,17 +2783,17 @@ class Toon(Avatar.Avatar, ToonHead):
                 name = self.getAvIdName()
             else:
                 name = self.getName()
-            suitDept = CogDNA.suitDepts.index(CogDNA.getCogDept(suitType))
-            suitName = CogBattleGlobals.CogAttributes[suitType]['name']
+            cogDept = CogDNA.cogDepts.index(CogDNA.getCogDept(cogType))
+            cogName = CogBattleGlobals.CogAttributes[cogType]['name']
             self.nametag.setDisplayName(TTLocalizer.CogBaseNameWithLevel % {'name': name,
-             'dept': suitName,
-             'level': self.cogLevels[suitDept] + 1})
+             'dept': cogName,
+             'level': self.cogLevels[cogDept] + 1})
             self.nametag.setNameWordwrap(9.0)
 
     def takeOffSuit(self):
         if not self.isDisguised:
             return
-        suitType = self.suit.style.name
+        cogType = self.cog.style.name
         toonHeadNull = self.find('**/1000/**/def_head')
         if not toonHeadNull:
             toonHeadNull = self.find('**/1000/**/joint_head')
@@ -2801,9 +2801,9 @@ class Toon(Avatar.Avatar, ToonHead):
         toonHead.reparentTo(toonHeadNull)
         toonHead.setScale(self.headOrigScale)
         toonHead.setPos(0, 0, 0)
-        headPosNode = self.suitGeom.find('**/headPos')
+        headPosNode = self.cogGeom.find('**/headPos')
         headPosNode.removeNode()
-        self.suitGeom.reparentTo(self.suit)
+        self.cogGeom.reparentTo(self.cog)
         self.resetHeight()
         self.nametag3d.setPos(0, 0, self.height + 0.5)
         toonGeom = self.getGeomNode()
@@ -2831,14 +2831,14 @@ class Toon(Avatar.Avatar, ToonHead):
             del self.oldRotate
             self.controlManager.enableAvatarJump()
             self.chatMgr.chatInputSpeedChat.removeCogMenu()
-        self.suit.delete()
-        del self.suit
-        del self.suitGeom
+        self.cog.delete()
+        del self.cog
+        del self.cogGeom
 
     def makeWaiter(self):
         if not self.isDisguised:
             return
-        self.suit.makeWaiter(self.suitGeom)
+        self.cog.makeWaiter(self.cogGeom)
 
     def getPieModel(self):
         from toontown.toonbase import ToontownBattleGlobals

@@ -1898,13 +1898,13 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         return self.lastTimeReadNews
 
     def cheatCogdoMazeGame(self, kindOfCheat = 0):
-        if base.config.GetBool('allow-cogdo-maze-suit-hit-cheat'):
+        if base.config.GetBool('allow-cogdo-maze-cog-hit-cheat'):
             maze = base.cr.doFind('DistCogdoMazeGame')
             if maze:
                 if kindOfCheat == 0:
-                    for suitNum in list(maze.game.cogsById.keys()):
-                        suit = maze.game.cogsById[suitNum]
-                        maze.sendUpdate('requestSuitHitByGag', [suit.type, suitNum])
+                    for cogNum in list(maze.game.cogsById.keys()):
+                        cog = maze.game.cogsById[cogNum]
+                        maze.sendUpdate('requestSuitHitByGag', [cog.type, cogNum])
 
                 elif kindOfCheat == 1:
                     for joke in maze.game.pickups:

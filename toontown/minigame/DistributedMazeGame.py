@@ -574,8 +574,8 @@ class DistributedMazeGame(DistributedMinigame):
             self.treasures.append(MazeTreasure.MazeTreasure(self.treasureModel, self.maze.treasurePosList[i], i, self.doId))
 
         self.__loadCogs()
-        for suit in self.cogs:
-            suit.onstage()
+        for cog in self.cogs:
+            cog.onstage()
 
         self.sndTable = {'hitBySuit': [None] * self.numPlayers,
          'falling': [None] * self.numPlayers}
@@ -623,8 +623,8 @@ class DistributedMazeGame(DistributedMinigame):
         self.goalBar.destroy()
         del self.goalBar
         base.setCellsAvailable(base.rightCells, 1)
-        for suit in self.cogs:
-            suit.offstage()
+        for cog in self.cogs:
+            cog.offstage()
 
         self.__unloadCogs()
         for treasure in self.treasures:
@@ -756,7 +756,7 @@ class DistributedMazeGame(DistributedMinigame):
 
         self.goalBar['value'] = 100.0 * (float(total) / float(self.maze.numTreasures))
 
-    def __hitBySuit(self, suitNum):
+    def __hitBySuit(self, cogNum):
         self.notify.debug('hitBySuit')
         timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
         self.sendUpdate('hitBySuit', [self.localAvId, timestamp])
@@ -766,9 +766,9 @@ class DistributedMazeGame(DistributedMinigame):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() not in ['play', 'showScores']:
-            self.notify.warning('ignoring msg: av %s hit by suit' % avId)
+            self.notify.warning('ignoring msg: av %s hit by cog' % avId)
             return
-        self.notify.debug('avatar ' + repr(avId) + ' hit by a suit')
+        self.notify.debug('avatar ' + repr(avId) + ' hit by a cog')
         if avId != self.localAvId:
             self.__showToonHitBySuit(avId, timestamp)
 
@@ -1004,23 +1004,23 @@ class DistributedMazeGame(DistributedMinigame):
         if self.FASTER_COG_CURVE:
             fasterTable = self.fasterSuitPeriodsCurve
         fasterPeriods = fasterTable[safeZone][self.numCogs]
-        suitPeriods = slowerPeriods + fasterPeriods
-        self.notify.debug('suit periods: ' + repr(suitPeriods))
-        self.randomNumGen.shuffle(suitPeriods)
+        cogPeriods = slowerPeriods + fasterPeriods
+        self.notify.debug('cog periods: ' + repr(cogPeriods))
+        self.randomNumGen.shuffle(cogPeriods)
         for i in range(self.numCogs):
-            self.cogs.append(MazeSuit(i, self.maze, self.randomNumGen, suitPeriods[i], self.getDifficulty()))
+            self.cogs.append(MazeSuit(i, self.maze, self.randomNumGen, cogPeriods[i], self.getDifficulty()))
 
     def __unloadCogs(self):
         self.notify.debug('unloadCogs')
-        for suit in self.cogs:
-            suit.destroy()
+        for cog in self.cogs:
+            cog.destroy()
 
         del self.cogs
 
     def __spawnUpdateCogsTask(self):
         self.notify.debug('spawnUpdateCogsTask')
-        for suit in self.cogs:
-            suit.gameStart(self.gameStartTime)
+        for cog in self.cogs:
+            cog.gameStart(self.gameStartTime)
 
         taskMgr.remove(self.UPDATE_COGS_TASK)
         taskMgr.add(self.__updateCogsTask, self.UPDATE_COGS_TASK)
@@ -1028,42 +1028,42 @@ class DistributedMazeGame(DistributedMinigame):
     def __killUpdateCogsTask(self):
         self.notify.debug('killUpdateCogsTask')
         taskMgr.remove(self.UPDATE_COGS_TASK)
-        for suit in self.cogs:
-            suit.gameEnd()
+        for cog in self.cogs:
+            cog.gameEnd()
 
     def __updateCogsTask(self, task):
         curT = globalClock.getFrameTime() - self.gameStartTime
         curTic = int(curT * float(MazeGameGlobals.COG_TIC_FREQ))
-        suitUpdates = []
+        cogUpdates = []
         for i in range(len(self.cogs)):
             updateTics = self.cogs[i].getThinkTimestampTics(curTic)
-            suitUpdates.extend(list(zip(updateTics, [i] * len(updateTics))))
+            cogUpdates.extend(list(zip(updateTics, [i] * len(updateTics))))
 
-        suitUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
-        if len(suitUpdates) > 0:
+        cogUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
+        if len(cogUpdates) > 0:
             curTic = 0
-            for i in range(len(suitUpdates)):
-                update = suitUpdates[i]
+            for i in range(len(cogUpdates)):
+                update = cogUpdates[i]
                 tic = update[0]
-                suitIndex = update[1]
-                suit = self.cogs[suitIndex]
+                cogIndex = update[1]
+                cog = self.cogs[cogIndex]
                 if tic > curTic:
                     curTic = tic
                     j = i + 1
-                    while j < len(suitUpdates):
-                        if suitUpdates[j][0] > tic:
+                    while j < len(cogUpdates):
+                        if cogUpdates[j][0] > tic:
                             break
-                        self.cogs[suitUpdates[j][1]].prepareToThink()
+                        self.cogs[cogUpdates[j][1]].prepareToThink()
                         j += 1
 
                 unwalkables = []
-                for si in range(suitIndex):
+                for si in range(cogIndex):
                     unwalkables.extend(self.cogs[si].occupiedTiles)
 
-                for si in range(suitIndex + 1, len(self.cogs)):
+                for si in range(cogIndex + 1, len(self.cogs)):
                     unwalkables.extend(self.cogs[si].occupiedTiles)
 
-                suit.think(curTic, curT, unwalkables)
+                cog.think(curTic, curT, unwalkables)
 
         return Task.cont
 

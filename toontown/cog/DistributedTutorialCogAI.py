@@ -29,11 +29,11 @@ class DistributedTutorialCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                                str( self.zoneId ) + \
                                ': request battle with toon: %d' % toonId )
 
-        # Store the suit's actual pos and hpr on the client
+        # Store the cog's actual pos and hpr on the client
         self.confrontPos = Point3(x, y, z)
         self.confrontHpr = Vec3(h, p, r)
 
-        # Request a battle from the suit planner
+        # Request a battle from the cog planner
         if (self.sp.requestBattle(self.zoneId, self, toonId)):
             self.acceptOnce(self.getDeathEvent(), self._logDeath, [toonId])
             if self.notify.getDebug():
@@ -42,7 +42,7 @@ class DistributedTutorialCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         else:
             # Suit tells toon to get lost
             if self.notify.getDebug():
-                self.notify.debug('requestBattle from suit %d - denied by battle manager' % (self.getDoId()))
+                self.notify.debug('requestBattle from cog %d - denied by battle manager' % (self.getDoId()))
             self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
             self.d_denyBattle( toonId )
 

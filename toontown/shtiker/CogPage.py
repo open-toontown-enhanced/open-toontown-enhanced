@@ -203,7 +203,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         gui = loader.loadModel('phase_3.5/models/gui/suitpage_gui')
         self.panelModel = gui.find('**/card')
         self.shadowModels = []
-        for index in range(1, len(CogDNA.suitHeadTypes) + 1):
+        for index in range(1, len(CogDNA.cogHeadTypes) + 1):
             self.shadowModels.append(gui.find('**/shadow' + str(index)))
 
         del gui
@@ -251,7 +251,7 @@ class CogPage(ShtikerPage.ShtikerPage):
 
     def exit(self):
         taskMgr.remove('buildingListResponseTimeout-later')
-        taskMgr.remove('suitListResponseTimeout-later')
+        taskMgr.remove('cogListResponseTimeout-later')
         taskMgr.remove('showCogRadarLater')
         taskMgr.remove('showBuildingRadarLater')
         for index in range(0, len(self.radarOn)):
@@ -306,9 +306,9 @@ class CogPage(ShtikerPage.ShtikerPage):
         if self.radarOn[deptNum]:
             if hasattr(base.cr, 'currSuitPlanner'):
                 if base.cr.currSuitPlanner != None:
-                    base.cr.currSuitPlanner.d_suitListQuery()
-                    self.acceptOnce('suitListResponse', self.updateCogRadar, extraArgs=[deptNum, panels])
-                    taskMgr.doMethodLater(1.0, self.suitListResponseTimeout, 'suitListResponseTimeout-later', extraArgs=(deptNum, panels))
+                    base.cr.currSuitPlanner.d_cogListQuery()
+                    self.acceptOnce('cogListResponse', self.updateCogRadar, extraArgs=[deptNum, panels])
+                    taskMgr.doMethodLater(1.0, self.cogListResponseTimeout, 'cogListResponseTimeout-later', extraArgs=(deptNum, panels))
                     if self.radarButtons[deptNum].building:
                         base.cr.currSuitPlanner.d_buildingListQuery()
                         self.acceptOnce('buildingListResponse', self.updateBuildingRadar, extraArgs=[deptNum])
@@ -325,7 +325,7 @@ class CogPage(ShtikerPage.ShtikerPage):
             self.updateBuildingRadar(deptNum)
         return
 
-    def suitListResponseTimeout(self, deptNum, panels):
+    def cogListResponseTimeout(self, deptNum, panels):
         self.updateCogRadar(deptNum, panels, 1)
 
     def buildingListResponseTimeout(self, deptNum):
@@ -338,7 +338,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         yStart = -0.18
         xOffset = 0.199
         yOffset = 0.284
-        for dept in range(0, len(CogDNA.suitDepts)):
+        for dept in range(0, len(CogDNA.cogDepts)):
             row = []
             color = PANEL_COLORS[dept]
             for type in range(0, CogDNA.cogsPerDept):
@@ -367,7 +367,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         panel.quotaLabel = quotaLabel
         return
 
-    def addCogHead(self, panel, suitName):
+    def addCogHead(self, panel, cogName):
         panelIndex = self.panels.index(panel)
         shadow = panel.attachNewNode('shadow')
         shadowModel = self.shadowModels[panelIndex]
@@ -376,7 +376,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         shadow.setScale(coords[0])
         shadow.setPos(coords[1], coords[2], coords[3])
         panel.shadow = shadow
-        panel.head = Suit.attachSuitHead(panel, suitName)
+        panel.head = Suit.attachSuitHead(panel, cogName)
 
     def addCogRadarLabel(self, panel):
         cogRadarLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text='', text_scale=0.05, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getCogFont())
@@ -412,7 +412,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         return
 
     def addBuildingRadarLabel(self, button):
-        gui = loader.loadModel('phase_3.5/models/gui/suit_detail_panel')
+        gui = loader.loadModel('phase_3.5/models/gui/cog_detail_panel')
         zPos = BUILDING_RADAR_POS[self.radarButtons.index(button)]
         buildingRadarLabel = DirectLabel(parent=button, relief=None, pos=(0.225, 0.0, zPos), state=DGG.DISABLED, image=gui.find('**/avatar_panel'), image_hpr=(0, 0, 90), image_scale=(0.05, 1, 0.1), image_pos=(0, 0, 0.015), text=TTLocalizer.CogPageBuildingRadarP % '0', text_scale=0.05, text_fg=(1, 0, 0, 1), text_font=ToontownGlobals.getCogFont())
         gui.removeNode()
@@ -443,9 +443,9 @@ class CogPage(ShtikerPage.ShtikerPage):
         if status == COG_UNSEEN:
             panel['text'] = TTLocalizer.CogPageMystery
         elif status == COG_BATTLED:
-            suitName = CogDNA.suitHeadTypes[index]
-            suitFullName = CogBattleGlobals.CogAttributes[suitName]['name']
-            panel['text'] = suitFullName
+            cogName = CogDNA.cogHeadTypes[index]
+            cogFullName = CogBattleGlobals.CogAttributes[cogName]['name']
+            panel['text'] = cogFullName
             if panel.quotaLabel:
                 panel.quotaLabel.show()
             else:
@@ -454,7 +454,7 @@ class CogPage(ShtikerPage.ShtikerPage):
                 panel.head.show()
                 panel.shadow.show()
             else:
-                self.addCogHead(panel, suitName)
+                self.addCogHead(panel, cogName)
             if base.localAvatar.hasCogSummons(index):
                 if panel.summonButton:
                     panel.summonButton.show()
@@ -481,7 +481,7 @@ class CogPage(ShtikerPage.ShtikerPage):
     def updatePage(self):
         index = 0
         cogs = base.localAvatar.cogs
-        for dept in range(0, len(CogDNA.suitDepts)):
+        for dept in range(0, len(CogDNA.cogDepts)):
             for type in range(0, CogDNA.cogsPerDept):
                 self.updateCogStatus(dept, type, cogs[index])
                 index += 1
@@ -490,7 +490,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         self.updateBuildingRadarButtons(base.localAvatar.buildingRadar)
 
     def updateCogStatus(self, dept, type, status):
-        if dept < 0 or dept > len(CogDNA.suitDepts):
+        if dept < 0 or dept > len(CogDNA.cogDepts):
             print('ucs: bad cog dept: ', dept)
         elif type < 0 or type > CogDNA.cogsPerDept:
             print('ucs: bad cog type: ', type)
@@ -521,9 +521,9 @@ class CogPage(ShtikerPage.ShtikerPage):
                 self.radarButtons[index]['state'] = DGG.NORMAL
 
     def updateCogRadar(self, deptNum, panels, timeout = 0):
-        taskMgr.remove('suitListResponseTimeout-later')
+        taskMgr.remove('cogListResponseTimeout-later')
         if not timeout and hasattr(base.cr, 'currSuitPlanner') and base.cr.currSuitPlanner != None:
-            cogList = base.cr.currSuitPlanner.suitList
+            cogList = base.cr.currSuitPlanner.cogList
         else:
             cogList = []
         for panel in panels:

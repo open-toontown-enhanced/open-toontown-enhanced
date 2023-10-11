@@ -172,8 +172,8 @@ class DistributedLaserFieldAI(BattleBlockerAI.BattleBlockerAI, NodePath, BasicEn
         cogs = self.level.planner.battleCellId2cogs.get(self.cellId)
         messenger.send(self.getOutputEventName(), [1])
         if self.hasShownCogs == 0:
-            for suit in cogs:
-                suit.requestRemoval()
+            for cog in cogs:
+                cog.requestRemoval()
 
         self.sendUpdate('setActiveLF', [0])
         stage = self.air.getDo(self.level.stageDoId)
@@ -193,25 +193,25 @@ class DistributedLaserFieldAI(BattleBlockerAI.BattleBlockerAI, NodePath, BasicEn
 
     def hideCogs(self):
         cogs = self.level.planner.battleCellId2cogs.get(self.cellId)
-        suitArray = []
-        for suit in cogs:
-            suitArray.append(suit.doId)
+        cogArray = []
+        for cog in cogs:
+            cogArray.append(cog.doId)
 
-        if suitArray:
-            self.sendUpdate('hideSuit', [suitArray])
+        if cogArray:
+            self.sendUpdate('hideSuit', [cogArray])
 
     def showCogs(self):
         if self.hasShownCogs == 0:
             cogs = self.level.planner.battleCellId2cogs.get(self.cellId)
-            suitArray = []
-            for suit in cogs:
-                suit.setVirtual()
-                suitArray.append(suit.doId)
+            cogArray = []
+            for cog in cogs:
+                cog.setVirtual()
+                cogArray.append(cog.doId)
 
-            if suitArray:
-                self.sendUpdate('showSuit', [suitArray])
+            if cogArray:
+                self.sendUpdate('showSuit', [cogArray])
         self.hasShownCogs = 1
 
-    def addCog(self, suit):
-        print('Adding Suit %s' % suit.doId)
-        BattleBlockerAI.BattleBlockerAI.addCog(self, suit)
+    def addCog(self, cog):
+        print('Adding Suit %s' % cog.doId)
+        BattleBlockerAI.BattleBlockerAI.addCog(self, cog)

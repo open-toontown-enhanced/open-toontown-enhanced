@@ -70,34 +70,34 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
             leaderIndex = 1
         else:
             maxTypeNum = -1
-            for suit in self.cogs:
-                suitTypeNum = CogDNA.getCogType(suit.dna.name)
-                if maxTypeNum < suitTypeNum:
-                    maxTypeNum = suitTypeNum
-                    leaderIndex = self.cogs.index(suit)
+            for cog in self.cogs:
+                cogTypeNum = CogDNA.getCogType(cog.dna.name)
+                if maxTypeNum < cogTypeNum:
+                    maxTypeNum = cogTypeNum
+                    leaderIndex = self.cogs.index(cog)
 
         delay = FACEOFF_TAUNT_T
         cogTrack = Parallel()
-        suitLeader = None
-        for suit in self.cogs:
-            suit.setState('Battle')
-            suitIsLeader = 0
+        cogLeader = None
+        for cog in self.cogs:
+            cog.setState('Battle')
+            cogIsLeader = 0
             oneSuitTrack = Sequence()
-            oneSuitTrack.append(Func(suit.loop, 'neutral'))
-            oneSuitTrack.append(Func(suit.headsUp, elevatorPos))
-            if self.cogs.index(suit) == leaderIndex:
-                suitLeader = suit
-                suitIsLeader = 1
+            oneSuitTrack.append(Func(cog.loop, 'neutral'))
+            oneSuitTrack.append(Func(cog.headsUp, elevatorPos))
+            if self.cogs.index(cog) == leaderIndex:
+                cogLeader = cog
+                cogIsLeader = 1
                 if self.bossBattle == 1:
                     taunt = self.getBossBattleTaunt()
                 else:
-                    taunt = CogBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
-                oneSuitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
-            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
+                    taunt = CogBattleGlobals.getFaceoffTaunt(cog.getStyleName(), cog.doId)
+                oneSuitTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+            destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
             oneSuitTrack.append(Wait(delay))
-            if suitIsLeader == 1:
-                oneSuitTrack.append(Func(suit.clearChat))
-            oneSuitTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
+            if cogIsLeader == 1:
+                oneSuitTrack.append(Func(cog.clearChat))
+            oneSuitTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
             cogTrack.append(oneSuitTrack)
 
         toonTrack = Parallel()
@@ -113,19 +113,19 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         def setCamMinFov(minFov: float):
             base.camLens.setMinFov(minFov)
 
-        camTrack.append(Func(camera.wrtReparentTo, suitLeader))
+        camTrack.append(Func(camera.wrtReparentTo, cogLeader))
         camTrack.append(Func(setCamMinFov, self.camFOMinFov))
-        suitHeight = suitLeader.getHeight()
-        suitOffsetPnt = Point3(0, 0, suitHeight)
-        MidTauntCamHeight = suitHeight * 0.66
-        MidTauntCamHeightLim = suitHeight - 1.8
+        cogHeight = cogLeader.getHeight()
+        cogOffsetPnt = Point3(0, 0, cogHeight)
+        MidTauntCamHeight = cogHeight * 0.66
+        MidTauntCamHeightLim = cogHeight - 1.8
         if MidTauntCamHeight < MidTauntCamHeightLim:
             MidTauntCamHeight = MidTauntCamHeightLim
         TauntCamY = 18
         TauntCamX = 0
         TauntCamHeight = random.choice((MidTauntCamHeight, 1, 11))
         camTrack.append(Func(camera.setPos, TauntCamX, TauntCamY, TauntCamHeight))
-        camTrack.append(Func(camera.lookAt, suitLeader, suitOffsetPnt))
+        camTrack.append(Func(camera.lookAt, cogLeader, cogOffsetPnt))
         camTrack.append(Wait(delay))
         camPos = Point3(0, -6, 4)
         camHpr = Vec3(0, 0, 0)

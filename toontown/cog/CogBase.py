@@ -81,4 +81,4 @@ class CogBase:
             print('\t', self.sp.dnaStore.getSuitPointWithIndex(indexVal))
 
     def makeLegList(self):
-        self.legList = SuitLegList(self.path, self.sp.dnaStore, self.sp.suitWalkSpeed, CogTimings.fromSky, CogTimings.toSky, CogTimings.fromCogBuilding, CogTimings.toCogBuilding, CogTimings.toToonBuilding)
+        self.legList = SuitLegList(self.path, self.sp.dnaStore, self.sp.cogWalkSpeed, CogTimings.fromSky, CogTimings.toSky, CogTimings.fromCogBuilding, CogTimings.toCogBuilding, CogTimings.toToonBuilding)

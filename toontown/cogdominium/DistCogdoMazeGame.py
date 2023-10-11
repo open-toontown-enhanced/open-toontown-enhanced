@@ -117,21 +117,21 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.d_requestUseGag(x, y, h)
         self.game.toonUsedGag(base.localAvatar.doId, x, y, h)
 
-    def suitHitByGag(self, toonId, suitType, suitNum):
+    def cogHitByGag(self, toonId, cogType, cogNum):
         if not self._gameInProgress():
             return
         if not self.getToon(base.localAvatar.doId):
             return
         if toonId == localAvatar.doId:
             return
-        self.game.suitHitByGag(toonId, suitType, suitNum)
+        self.game.cogHitByGag(toonId, cogType, cogNum)
 
-    def d_requestSuitHitByGag(self, suitType, suitNum):
-        self.sendUpdate('requestSuitHitByGag', [suitType, suitNum])
+    def d_requestSuitHitByGag(self, cogType, cogNum):
+        self.sendUpdate('requestSuitHitByGag', [cogType, cogNum])
 
-    def b_suitHitByGag(self, suitType, suitNum):
-        self.d_requestSuitHitByGag(suitType, suitNum)
-        self.game.suitHitByGag(base.localAvatar.doId, suitType, suitNum)
+    def b_cogHitByGag(self, cogType, cogNum):
+        self.d_requestSuitHitByGag(cogType, cogNum)
+        self.game.cogHitByGag(base.localAvatar.doId, cogType, cogNum)
 
     def toonHitByGag(self, toonId, hitToon, networkTime):
         if not self._gameInProgress():
@@ -150,7 +150,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.d_broadcastSendToonHitByGag(toonId)
         self.game.toonHitByGag(base.localAvatar.doId, toonId)
 
-    def toonHitBySuit(self, toonId, suitType, suitNum, networkTime):
+    def toonHitBySuit(self, toonId, cogType, cogNum, networkTime):
         if not self._gameInProgress():
             return
         if not self.getToon(base.localAvatar.doId):
@@ -158,15 +158,15 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         if toonId == localAvatar.doId:
             return
         elapsedTime = globalClockDelta.localElapsedTime(networkTime)
-        self.game.toonHitBySuit(toonId, suitType, suitNum, elapsedTime)
+        self.game.toonHitBySuit(toonId, cogType, cogNum, elapsedTime)
 
-    def d_requestHitBySuit(self, suitType, suitNum):
+    def d_requestHitBySuit(self, cogType, cogNum):
         networkTime = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
-        self.sendUpdate('requestHitBySuit', [suitType, suitNum, networkTime])
+        self.sendUpdate('requestHitBySuit', [cogType, cogNum, networkTime])
 
-    def b_toonHitBySuit(self, suitType, suitNum):
-        self.d_requestHitBySuit(suitType, suitNum)
-        self.game.toonHitBySuit(base.localAvatar.doId, suitType, suitNum)
+    def b_toonHitBySuit(self, cogType, cogNum):
+        self.d_requestHitBySuit(cogType, cogNum)
+        self.game.toonHitBySuit(base.localAvatar.doId, cogType, cogNum)
 
     def toonHitByDrop(self, toonId):
         if not self._gameInProgress():

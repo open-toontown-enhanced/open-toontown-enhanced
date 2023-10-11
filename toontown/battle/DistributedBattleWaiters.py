@@ -16,8 +16,8 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
 
     def announceGenerate(self):
         DistributedBattleFinal.DistributedBattleFinal.announceGenerate(self)
-        for suit in self.cogs:
-            suit.makeWaiter()
+        for cog in self.cogs:
+            cog.makeWaiter()
 
         self.moveCogsToInitialPos()
 
@@ -42,38 +42,38 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
         self.storeInterval(track, name)
 
     def moveCogsToInitialPos(self):
-        battlePts = self.suitPoints[len(self.suitPendingPoints) - 1]
+        battlePts = self.cogPoints[len(self.cogPendingPoints) - 1]
         for i in range(len(self.cogs)):
-            suit = self.cogs[i]
-            suit.reparentTo(self)
-            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
-            suit.setPos(destPos)
-            suit.setHpr(destHpr)
+            cog = self.cogs[i]
+            cog.reparentTo(self)
+            destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
+            cog.setPos(destPos)
+            cog.setHpr(destHpr)
 
     def showCogsFalling(self, cogs, ts, name, callback):
         if self.bossCog == None:
             return
         cogTrack = Parallel()
         delay = 0
-        for suit in cogs:
-            suit.makeWaiter()
-            suit.setState('Battle')
-            if suit.dna.dept == 'l':
-                suit.reparentTo(self.bossCog)
-                suit.setPos(0, 0, 0)
-            if suit in self.joiningCogs:
-                i = len(self.pendingCogs) + self.joiningCogs.index(suit)
-                destPos, h = self.suitPendingPoints[i]
+        for cog in cogs:
+            cog.makeWaiter()
+            cog.setState('Battle')
+            if cog.dna.dept == 'l':
+                cog.reparentTo(self.bossCog)
+                cog.setPos(0, 0, 0)
+            if cog in self.joiningCogs:
+                i = len(self.pendingCogs) + self.joiningCogs.index(cog)
+                destPos, h = self.cogPendingPoints[i]
                 destHpr = VBase3(h, 0, 0)
             else:
-                destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
+                destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
             startPos = destPos + Point3(0, 0, CogTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
-            self.notify.debug('startPos for %s = %s' % (suit, startPos))
-            suit.reparentTo(self)
-            suit.setPos(startPos)
-            suit.headsUp(self)
-            flyIval = suit.beginSupaFlyMove(destPos, True, 'flyIn')
-            cogTrack.append(Track((delay, Sequence(flyIval, Func(suit.loop, 'neutral')))))
+            self.notify.debug('startPos for %s = %s' % (cog, startPos))
+            cog.reparentTo(self)
+            cog.setPos(startPos)
+            cog.headsUp(self)
+            flyIval = cog.beginSupaFlyMove(destPos, True, 'flyIn')
+            cogTrack.append(Track((delay, Sequence(flyIval, Func(cog.loop, 'neutral')))))
             delay += 1
 
         if self.hasLocalToon():

@@ -72,7 +72,7 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
             self.bossLevel = self.bldg.getBossLevel()
             self.setupElevator()
         else:
-            self.notify.warning('setBldgDoId: elevator %d cannot find suitDoorOrigin for bldg %d!' % (self.doId, bldgDoId))
+            self.notify.warning('setBldgDoId: elevator %d cannot find cogDoorOrigin for bldg %d!' % (self.doId, bldgDoId))
         return
 
     def setFloor(self, floorNumber):

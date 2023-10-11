@@ -71,7 +71,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.choseAttackAlready = 0
         self.toons = []
         self.exitedToons = []
-        self.suitTraps = ''
+        self.cogTraps = ''
         self.membersKeep = None
         self.faceOffName = self.uniqueBattleName('faceoff')
         self.localToonBattleEvent = self.uniqueBattleName('localtoon-battle-event')
@@ -174,21 +174,21 @@ class DistributedBattleBase(DistributedNode, BattleBase):
 
         self.localToonFsm.request('WaitForServer')
         self.ignoreAll()
-        for suit in self.cogs:
-            if suit.battleTrap != NO_TRAP:
-                self.notify.debug('250 calling self.removeTrap, suit=%d' % suit.doId)
-                self.removeTrap(suit)
+        for cog in self.cogs:
+            if cog.battleTrap != NO_TRAP:
+                self.notify.debug('250 calling self.removeTrap, cog=%d' % cog.doId)
+                self.removeTrap(cog)
 
-            suit.battleTrap = NO_TRAP
-            suit.battleTrapProp = None
-            self.notify.debug('253 suit.battleTrapProp = None')
-            suit.battleTrapIsFresh = 0
+            cog.battleTrap = NO_TRAP
+            cog.battleTrapProp = None
+            self.notify.debug('253 cog.battleTrapProp = None')
+            cog.battleTrapIsFresh = 0
 
         self.cogs = []
         self.pendingCogs = []
         self.joiningCogs = []
         self.activeCogs = []
-        self.suitTraps = ''
+        self.cogTraps = ''
         self.toons = []
         self.joiningToons = []
         self.pendingToons = []
@@ -212,23 +212,23 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.timer = None
         DistributedNode.delete(self)
 
-    def loadTrap(self, suit, trapid):
-        self.notify.debug('loadTrap() trap: %d suit: %d' % (trapid, suit.doId))
+    def loadTrap(self, cog, trapid):
+        self.notify.debug('loadTrap() trap: %d cog: %d' % (trapid, cog.doId))
         trapName = ToontownBattleGlobals.AvProps[TRAP][trapid]
         trap = globalPropPool.getProp(trapName)
-        suit.battleTrap = trapid
-        suit.battleTrapIsFresh = 0
-        suit.battleTrapProp = trap
-        self.notify.debug('suit.battleTrapProp = trap %s' % trap)
+        cog.battleTrap = trapid
+        cog.battleTrapIsFresh = 0
+        cog.battleTrapProp = trap
+        self.notify.debug('cog.battleTrapProp = trap %s' % trap)
         if trap.getName() == 'traintrack':
             pass
         else:
-            trap.wrtReparentTo(suit)
+            trap.wrtReparentTo(cog)
 
         distance = MovieUtil.COG_TRAP_DISTANCE
         if trapName == 'rake':
             distance = MovieUtil.COG_TRAP_RAKE_DISTANCE
-            distance += MovieUtil.getCogRakeOffset(suit)
+            distance += MovieUtil.getCogRakeOffset(cog)
             trap.setH(180)
             trap.setScale(0.7)
         elif trapName == 'trapdoor' or trapName == 'quicksand':
@@ -248,19 +248,19 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             frame = trap.getNumFrames(trapName) - 1
             trap.pose(trapName, frame)
 
-    def removeTrap(self, suit, removeTrainTrack = False):
-        self.notify.debug('removeTrap() from suit: %d, removeTrainTrack=%s' % (suit.doId, removeTrainTrack))
-        if suit.battleTrapProp == None:
-            self.notify.debug('suit.battleTrapProp == None, suit.battleTrap=%s setting to NO_TRAP, returning' % suit.battleTrap)
-            suit.battleTrap = NO_TRAP
+    def removeTrap(self, cog, removeTrainTrack = False):
+        self.notify.debug('removeTrap() from cog: %d, removeTrainTrack=%s' % (cog.doId, removeTrainTrack))
+        if cog.battleTrapProp == None:
+            self.notify.debug('cog.battleTrapProp == None, cog.battleTrap=%s setting to NO_TRAP, returning' % cog.battleTrap)
+            cog.battleTrap = NO_TRAP
             return
 
-        if suit.battleTrap == ToontownBattleGlobals.UBER_GAG_LEVEL_INDEX:
+        if cog.battleTrap == ToontownBattleGlobals.UBER_GAG_LEVEL_INDEX:
             if removeTrainTrack:
                 self.notify.debug('doing removeProp on traintrack')
-                MovieUtil.removeProp(suit.battleTrapProp)
+                MovieUtil.removeProp(cog.battleTrapProp)
                 for otherSuit in self.cogs:
-                    if not otherSuit == suit:
+                    if not otherSuit == cog:
                         otherSuit.battleTrapProp = None
                         self.notify.debug('351 otherSuit=%d otherSuit.battleTrapProp = None' % otherSuit.doId)
                         otherSuit.battleTrap = NO_TRAP
@@ -268,13 +268,13 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             else:
                 self.notify.debug('deliberately not doing removeProp on traintrack')
         else:
-            self.notify.debug('suit.battleTrap != UBER_GAG_LEVEL_INDEX')
-            MovieUtil.removeProp(suit.battleTrapProp)
+            self.notify.debug('cog.battleTrap != UBER_GAG_LEVEL_INDEX')
+            MovieUtil.removeProp(cog.battleTrapProp)
 
-        suit.battleTrapProp = None
-        self.notify.debug('360 suit.battleTrapProp = None')
-        suit.battleTrap = NO_TRAP
-        suit.battleTrapIsFresh = 0
+        cog.battleTrapProp = None
+        self.notify.debug('360 cog.battleTrapProp = None')
+        cog.battleTrap = NO_TRAP
+        cog.battleTrapIsFresh = 0
 
     def pause(self):
         self.timer.stop()
@@ -296,22 +296,22 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             if t == toon:
                 return t
 
-    def isSuitLured(self, suit):
-        if self.luredCogs.count(suit) != 0:
+    def isSuitLured(self, cog):
+        if self.luredCogs.count(cog) != 0:
             return 1
 
         return 0
 
-    def unlureSuit(self, suit):
-        self.notify.debug('movie unluring suit %s' % suit.doId)
-        if self.luredCogs.count(suit) != 0:
-            self.luredCogs.remove(suit)
+    def unlureSuit(self, cog):
+        self.notify.debug('movie unluring cog %s' % cog.doId)
+        if self.luredCogs.count(cog) != 0:
+            self.luredCogs.remove(cog)
             self.needAdjustTownBattle = 1
 
-    def lureSuit(self, suit):
-        self.notify.debug('movie luring suit %s' % suit.doId)
-        if self.luredCogs.count(suit) == 0:
-            self.luredCogs.append(suit)
+    def lureSuit(self, cog):
+        self.notify.debug('movie luring cog %s' % cog.doId)
+        if self.luredCogs.count(cog) == 0:
+            self.luredCogs.append(cog)
             self.needAdjustTownBattle = 1
 
     def getActorPosHpr(self, actor, actorList = []):
@@ -322,10 +322,10 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             if actorList.count(actor) != 0:
                 numCogs = len(actorList) - 1
                 index = actorList.index(actor)
-                point = self.suitPoints[numCogs][index]
+                point = self.cogPoints[numCogs][index]
                 return (Point3(point[0]), VBase3(point[1], 0.0, 0.0))
             else:
-                self.notify.warning('getActorPosHpr() - suit not active')
+                self.notify.warning('getActorPosHpr() - cog not active')
         else:
             if actorList == []:
                 actorList = self.activeToons
@@ -372,16 +372,16 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.notify.debug('setState(%s)' % state)
         self.fsm.request(state, [globalClockDelta.localElapsedTime(timestamp)])
 
-    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, suitTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
+    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, cogTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
         if self.__battleCleanedUp:
             return
 
-        self.notify.debug('setMembers() - cogs: %s cogsJoining: %s cogsPending: %s cogsActive: %s cogsLured: %s suitTraps: %s toons: %s toonsJoining: %s toonsPending: %s toonsActive: %s toonsRunning: %s' % (cogs,
+        self.notify.debug('setMembers() - cogs: %s cogsJoining: %s cogsPending: %s cogsActive: %s cogsLured: %s cogTraps: %s toons: %s toonsJoining: %s toonsPending: %s toonsActive: %s toonsRunning: %s' % (cogs,
          cogsJoining,
          cogsPending,
          cogsActive,
          cogsLured,
-         suitTraps,
+         cogTraps,
          toons,
          toonsJoining,
          toonsPending,
@@ -390,31 +390,31 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         ts = globalClockDelta.localElapsedTime(timestamp)
         oldcogs = self.cogs
         self.cogs = []
-        suitGone = 0
+        cogGone = 0
         for s in cogs:
             if s in self.cr.doId2do:
-                suit = self.cr.doId2do[s]
-                suit.setState('Battle')
-                self.cogs.append(suit)
-                suit.interactivePropTrackBonus = self.interactivePropTrackBonus
+                cog = self.cr.doId2do[s]
+                cog.setState('Battle')
+                self.cogs.append(cog)
+                cog.interactivePropTrackBonus = self.interactivePropTrackBonus
                 try:
-                    suit.battleTrap
+                    cog.battleTrap
                 except:
-                    suit.battleTrap = NO_TRAP
-                    suit.battleTrapProp = None
-                    self.notify.debug('496 suit.battleTrapProp = None')
-                    suit.battleTrapIsFresh = 0
+                    cog.battleTrap = NO_TRAP
+                    cog.battleTrapProp = None
+                    self.notify.debug('496 cog.battleTrapProp = None')
+                    cog.battleTrapIsFresh = 0
             else:
-                self.notify.warning('setMembers() - no suit in repository: %d' % s)
+                self.notify.warning('setMembers() - no cog in repository: %d' % s)
                 self.cogs.append(None)
-                suitGone = 1
+                cogGone = 1
 
         numCogsThatDied = 0
         for s in oldcogs:
             if self.cogs.count(s) == 0:
                 self.__removeSuit(s)
                 numCogsThatDied += 1
-                self.notify.debug('suit %d dies, numCogsThatDied=%d' % (s.doId, numCogsThatDied))
+                self.notify.debug('cog %d dies, numCogsThatDied=%d' % (s.doId, numCogsThatDied))
 
         if numCogsThatDied == 4:
             trainTrap = self.find('**/traintrack')
@@ -423,28 +423,28 @@ class DistributedBattleBase(DistributedNode, BattleBase):
                 trainTrap.removeNode()
 
         for s in cogsJoining:
-            suit = self.cogs[int(s)]
-            if suit != None and self.joiningCogs.count(suit) == 0:
-                self.makeSuitJoin(suit, ts)
+            cog = self.cogs[int(s)]
+            if cog != None and self.joiningCogs.count(cog) == 0:
+                self.makeSuitJoin(cog, ts)
 
         for s in cogsPending:
-            suit = self.cogs[int(s)]
-            if suit != None and self.pendingCogs.count(suit) == 0:
-                self.__makeSuitPending(suit)
+            cog = self.cogs[int(s)]
+            if cog != None and self.pendingCogs.count(cog) == 0:
+                self.__makeSuitPending(cog)
 
         activeCogs = []
         for s in cogsActive:
-            suit = self.cogs[int(s)]
-            if suit != None and self.activeCogs.count(suit) == 0:
-                activeCogs.append(suit)
+            cog = self.cogs[int(s)]
+            if cog != None and self.activeCogs.count(cog) == 0:
+                activeCogs.append(cog)
 
         oldLuredCogs = self.luredCogs
         self.luredCogs = []
         for s in cogsLured:
-            suit = self.cogs[int(s)]
-            if suit != None:
-                self.luredCogs.append(suit)
-                if oldLuredCogs.count(suit) == 0:
+            cog = self.cogs[int(s)]
+            if cog != None:
+                self.luredCogs.append(cog)
+                if oldLuredCogs.count(cog) == 0:
                     self.needAdjustTownBattle = 1
 
         if self.needAdjustTownBattle == 0:
@@ -453,33 +453,33 @@ class DistributedBattleBase(DistributedNode, BattleBase):
                     self.needAdjustTownBattle = 1
 
         index = 0
-        oldSuitTraps = self.suitTraps
-        self.suitTraps = suitTraps
-        for s in suitTraps:
+        oldSuitTraps = self.cogTraps
+        self.cogTraps = cogTraps
+        for s in cogTraps:
             trapid = int(s)
             if trapid == 9:
                 trapid = -1
 
-            suit = self.cogs[index]
+            cog = self.cogs[index]
             index += 1
-            if suit != None:
-                if (trapid == NO_TRAP or trapid != suit.battleTrap) and suit.battleTrapProp != None:
-                    self.notify.debug('569 calling self.removeTrap, suit=%d' % suit.doId)
-                    self.removeTrap(suit)
+            if cog != None:
+                if (trapid == NO_TRAP or trapid != cog.battleTrap) and cog.battleTrapProp != None:
+                    self.notify.debug('569 calling self.removeTrap, cog=%d' % cog.doId)
+                    self.removeTrap(cog)
 
-                if trapid != NO_TRAP and suit.battleTrapProp == None:
+                if trapid != NO_TRAP and cog.battleTrapProp == None:
                     if self.fsm.getCurrentState().getName() != 'PlayMovie':
-                        self.loadTrap(suit, trapid)
+                        self.loadTrap(cog, trapid)
 
-        if len(oldSuitTraps) != len(self.suitTraps):
+        if len(oldSuitTraps) != len(self.cogTraps):
             self.needAdjustTownBattle = 1
         else:
             for i in range(len(oldSuitTraps)):
-                if oldSuitTraps[i] == '9' and self.suitTraps[i] != '9' or oldSuitTraps[i] != '9' and self.suitTraps[i] == '9':
+                if oldSuitTraps[i] == '9' and self.cogTraps[i] != '9' or oldSuitTraps[i] != '9' and self.cogTraps[i] == '9':
                     self.needAdjustTownBattle = 1
                     break
 
-        if suitGone:
+        if cogGone:
             validCogs = []
             for s in self.cogs:
                 if s != None:
@@ -708,29 +708,29 @@ class DistributedBattleBase(DistributedNode, BattleBase):
 
         self.membersKeep = None
 
-    def __removeSuit(self, suit):
-        self.notify.debug('__removeSuit(%d)' % suit.doId)
-        if self.cogs.count(suit) != 0:
-            self.cogs.remove(suit)
+    def __removeSuit(self, cog):
+        self.notify.debug('__removeSuit(%d)' % cog.doId)
+        if self.cogs.count(cog) != 0:
+            self.cogs.remove(cog)
 
-        if self.joiningCogs.count(suit) != 0:
-            self.joiningCogs.remove(suit)
+        if self.joiningCogs.count(cog) != 0:
+            self.joiningCogs.remove(cog)
 
-        if self.pendingCogs.count(suit) != 0:
-            self.pendingCogs.remove(suit)
+        if self.pendingCogs.count(cog) != 0:
+            self.pendingCogs.remove(cog)
 
-        if self.activeCogs.count(suit) != 0:
-            self.activeCogs.remove(suit)
+        if self.activeCogs.count(cog) != 0:
+            self.activeCogs.remove(cog)
 
-        self.suitGone = 1
-        if suit.battleTrap != NO_TRAP:
-            self.notify.debug('882 calling self.removeTrap, suit=%d' % suit.doId)
-            self.removeTrap(suit)
+        self.cogGone = 1
+        if cog.battleTrap != NO_TRAP:
+            self.notify.debug('882 calling self.removeTrap, cog=%d' % cog.doId)
+            self.removeTrap(cog)
 
-        suit.battleTrap = NO_TRAP
-        suit.battleTrapProp = None
-        self.notify.debug('883 suit.battleTrapProp = None')
-        suit.battleTrapIsFresh = 0
+        cog.battleTrap = NO_TRAP
+        cog.battleTrapProp = None
+        self.notify.debug('883 cog.battleTrapProp = None')
+        cog.battleTrapIsFresh = 0
 
     def __removeToon(self, toon, unexpected = 0):
         self.notify.debug('__removeToon(%d)' % toon.doId)
@@ -818,7 +818,7 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             timeToPerimeter = 0
             if toon == 0:
                 timeToPerimeter = self.calcSuitMoveTime(plist[0], avPos)
-                timePerSegment = 10.0 / BattleBase.suitSpeed
+                timePerSegment = 10.0 / BattleBase.cogSpeed
                 timeToDest = self.calcSuitMoveTime(BattleBase.posA, destPos)
             else:
                 timeToPerimeter = self.calcToonMoveTime(plist[0], avPos)
@@ -865,34 +865,34 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         else:
             return Sequence(joinTrack, name=name)
 
-    def makeSuitJoin(self, suit, ts):
-        self.notify.debug('makeSuitJoin(%d)' % suit.doId)
+    def makeSuitJoin(self, cog, ts):
+        self.notify.debug('makeSuitJoin(%d)' % cog.doId)
         spotIndex = len(self.pendingCogs) + len(self.joiningCogs)
-        self.joiningCogs.append(suit)
-        suit.setState('Battle')
-        openSpot = self.suitPendingPoints[spotIndex]
+        self.joiningCogs.append(cog)
+        cog.setState('Battle')
+        openSpot = self.cogPendingPoints[spotIndex]
         pos = openSpot[0]
         hpr = VBase3(openSpot[1], 0.0, 0.0)
-        trackName = self.taskName('to-pending-suit-%d' % suit.doId)
-        track = self.__createJoinInterval(suit, pos, hpr, trackName, ts, self.__handleSuitJoinDone)
+        trackName = self.taskName('to-pending-cog-%d' % cog.doId)
+        track = self.__createJoinInterval(cog, pos, hpr, trackName, ts, self.__handleSuitJoinDone)
         track.start(ts)
-        track.delayDelete = DelayDelete(suit, 'makeSuitJoin')
+        track.delayDelete = DelayDelete(cog, 'makeSuitJoin')
         self.storeInterval(track, trackName)
         if ToontownBattleGlobals.SkipMovie:
             track.finish()
 
-    def __handleSuitJoinDone(self, suit, ts):
-        self.notify.debug('suit: %d is now pending' % suit.doId)
+    def __handleSuitJoinDone(self, cog, ts):
+        self.notify.debug('cog: %d is now pending' % cog.doId)
         if self.hasLocalToon():
-            self.d_joinDone(base.localAvatar.doId, suit.doId)
+            self.d_joinDone(base.localAvatar.doId, cog.doId)
 
-    def __makeSuitPending(self, suit):
-        self.notify.debug('__makeSuitPending(%d)' % suit.doId)
-        self.clearInterval(self.taskName('to-pending-suit-%d' % suit.doId), finish=1)
-        if self.joiningCogs.count(suit):
-            self.joiningCogs.remove(suit)
+    def __makeSuitPending(self, cog):
+        self.notify.debug('__makeSuitPending(%d)' % cog.doId)
+        self.clearInterval(self.taskName('to-pending-cog-%d' % cog.doId), finish=1)
+        if self.joiningCogs.count(cog):
+            self.joiningCogs.remove(cog)
 
-        self.pendingCogs.append(suit)
+        self.pendingCogs.append(cog)
 
     def __teleportToSafeZone(self, toon):
         self.notify.debug('teleportToSafeZone(%d)' % toon.doId)
@@ -951,25 +951,25 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         self.__stopAdjusting()
         for s in cogs:
             if self.joiningCogs.count(s):
-                self.notify.warning('suit: %d was in joining list!' % s.doId)
+                self.notify.warning('cog: %d was in joining list!' % s.doId)
                 self.joiningCogs.remove(s)
 
             if self.pendingCogs.count(s):
                 self.pendingCogs.remove(s)
 
-            self.notify.debug('__makeAvsActive() - suit: %d' % s.doId)
+            self.notify.debug('__makeAvsActive() - cog: %d' % s.doId)
             self.activeCogs.append(s)
 
         if len(self.activeCogs) >= 1:
-            for suit in self.activeCogs:
-                suitPos, suitHpr = self.getActorPosHpr(suit)
-                if self.isSuitLured(suit) == 0:
-                    suit.setPosHpr(self, suitPos, suitHpr)
+            for cog in self.activeCogs:
+                cogPos, cogHpr = self.getActorPosHpr(cog)
+                if self.isSuitLured(cog) == 0:
+                    cog.setPosHpr(self, cogPos, cogHpr)
                 else:
-                    spos = Point3(suitPos[0], suitPos[1] - MovieUtil.COG_LURE_DISTANCE, suitPos[2])
-                    suit.setPosHpr(self, spos, suitHpr)
+                    spos = Point3(cogPos[0], cogPos[1] - MovieUtil.COG_LURE_DISTANCE, cogPos[2])
+                    cog.setPosHpr(self, spos, cogHpr)
 
-                suit.loop('neutral')
+                cog.loop('neutral')
 
         for toon in toons:
             if self.joiningToons.count(toon):
@@ -1167,8 +1167,8 @@ class DistributedBattleBase(DistributedNode, BattleBase):
             if len(self.luredCogs) > 0:
                 if track == TRAP or track == LURE and not levelAffectsGroup(LURE, level):
                     if target != -1:
-                        suit = self.findSuit(targetId)
-                        if self.luredCogs.count(suit) != 0:
+                        cog = self.findSuit(targetId)
+                        if self.luredCogs.count(cog) != 0:
                             self.notify.warning('Suit: %d was lured!' % targetId)
                             track = -1
                             level = -1
@@ -1185,8 +1185,8 @@ class DistributedBattleBase(DistributedNode, BattleBase):
                     if attackAffectsGroup(track, level):
                         pass
                     else:
-                        suit = self.findSuit(targetId)
-                        if suit.battleTrap != NO_TRAP:
+                        cog = self.findSuit(targetId)
+                        if cog.battleTrap != NO_TRAP:
                             self.notify.warning('Suit: %d was already trapped!' % targetId)
                             track = -1
                             level = -1
@@ -1378,28 +1378,28 @@ class DistributedBattleBase(DistributedNode, BattleBase):
     def __adjust(self, ts, callback):
         self.notify.debug('__adjust(%f)' % ts)
         adjustTrack = Parallel()
-        if len(self.pendingCogs) > 0 or self.suitGone == 1:
-            self.suitGone = 0
+        if len(self.pendingCogs) > 0 or self.cogGone == 1:
+            self.cogGone = 0
             numCogs = len(self.pendingCogs) + len(self.activeCogs) - 1
             index = 0
-            for suit in self.activeCogs:
-                point = self.suitPoints[numCogs][index]
-                pos = suit.getPos(self)
+            for cog in self.activeCogs:
+                point = self.cogPoints[numCogs][index]
+                pos = cog.getPos(self)
                 destPos = point[0]
-                if self.isSuitLured(suit) == 1:
+                if self.isSuitLured(cog) == 1:
                     destPos = Point3(destPos[0], destPos[1] - MovieUtil.COG_LURE_DISTANCE, destPos[2])
 
                 if pos != destPos:
                     destHpr = VBase3(point[1], 0.0, 0.0)
-                    adjustTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
+                    adjustTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
 
                 index += 1
 
-            for suit in self.pendingCogs:
-                point = self.suitPoints[numCogs][index]
+            for cog in self.pendingCogs:
+                point = self.cogPoints[numCogs][index]
                 destPos = point[0]
                 destHpr = VBase3(point[1], 0.0, 0.0)
-                adjustTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
+                adjustTrack.append(self.createAdjustInterval(cog, destPos, destHpr))
                 index += 1
 
         if len(self.pendingToons) > 0 or self.toonGone == 1:
@@ -1458,16 +1458,16 @@ class DistributedBattleBase(DistributedNode, BattleBase):
         if self.localToonActive() and len(self.activeCogs) > 0:
             self.notify.debug('__adjustTownBattle() - adjusting town battle')
             luredCogs = []
-            for suit in self.luredCogs:
-                if suit not in self.activeCogs:
-                    self.notify.error('lured suit not in self.activeCogs')
+            for cog in self.luredCogs:
+                if cog not in self.activeCogs:
+                    self.notify.error('lured cog not in self.activeCogs')
 
-                luredCogs.append(self.activeCogs.index(suit))
+                luredCogs.append(self.activeCogs.index(cog))
 
             trappedCogs = []
-            for suit in self.activeCogs:
-                if suit.battleTrap != NO_TRAP:
-                    trappedCogs.append(self.activeCogs.index(suit))
+            for cog in self.activeCogs:
+                if cog.battleTrap != NO_TRAP:
+                    trappedCogs.append(self.activeCogs.index(cog))
 
             self.townBattle.adjustCogsAndToons(self.activeCogs, luredCogs, trappedCogs, self.activeToons)
             if hasattr(self, 'townBattleAttacks'):

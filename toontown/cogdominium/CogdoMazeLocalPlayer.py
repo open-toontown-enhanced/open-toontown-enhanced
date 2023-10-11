@@ -156,11 +156,11 @@ class CogdoMazeLocalPlayer(CogdoMazePlayer):
             self._guiMgr.setMessage(TTLocalizer.CogdoMazeThrowHint)
             self.hints['throw'] = True
 
-    def hitSuit(self, suitType):
-        if suitType == Globals.SuitTypes.Boss and not self.hints['boss']:
+    def hitSuit(self, cogType):
+        if cogType == Globals.SuitTypes.Boss and not self.hints['boss']:
             self._guiMgr.setMessageTemporary(TTLocalizer.CogdoMazeBossHint, Globals.HintTimeout)
             self.hints['boss'] = True
-        if suitType != Globals.SuitTypes.Boss and not self.hints['minion']:
+        if cogType != Globals.SuitTypes.Boss and not self.hints['minion']:
             self._guiMgr.setMessageTemporary(TTLocalizer.CogdoMazeMinionHint, Globals.HintTimeout)
             self.hints['minion'] = True
 
@@ -252,7 +252,7 @@ class CogdoMazeLocalPlayer(CogdoMazePlayer):
             self._guiMgr.setMessage(message)
             self._winSfx.play()
             self._audioMgr.stopMusic()
-        self.notify.info('toonId:%d laff:%d/%d  %d player(s) succeeded in maze game. Going to the executive suit building.' % (toonId,
+        self.notify.info('toonId:%d laff:%d/%d  %d player(s) succeeded in maze game. Going to the executive cog building.' % (toonId,
          self.toon.hp,
          self.toon.maxHp,
          len(self.game.players)))

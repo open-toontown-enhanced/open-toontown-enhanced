@@ -39,40 +39,40 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
         self.storeInterval(track, name)
 
     def moveCogsToInitialPos(self):
-        battlePts = self.suitPoints[len(self.suitPendingPoints) - 1]
+        battlePts = self.cogPoints[len(self.cogPendingPoints) - 1]
         for i in range(len(self.cogs)):
-            suit = self.cogs[i]
-            suit.reparentTo(self)
-            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
-            suit.setPos(destPos)
-            suit.setHpr(destHpr)
+            cog = self.cogs[i]
+            cog.reparentTo(self)
+            destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
+            cog.setPos(destPos)
+            cog.setHpr(destHpr)
 
     def showCogsFalling(self, cogs, ts, name, callback):
         if self.bossCog == None:
             return
         cogTrack = Parallel()
         delay = 0
-        for suit in cogs:
-            suit.setState('Battle')
-            if suit.dna.dept == 'l':
-                suit.reparentTo(self.bossCog)
-                suit.setPos(0, 0, 0)
-            if suit in self.joiningCogs:
-                i = len(self.pendingCogs) + self.joiningCogs.index(suit)
-                destPos, h = self.suitPendingPoints[i]
+        for cog in cogs:
+            cog.setState('Battle')
+            if cog.dna.dept == 'l':
+                cog.reparentTo(self.bossCog)
+                cog.setPos(0, 0, 0)
+            if cog in self.joiningCogs:
+                i = len(self.pendingCogs) + self.joiningCogs.index(cog)
+                destPos, h = self.cogPendingPoints[i]
                 destHpr = VBase3(h, 0, 0)
             else:
-                destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
+                destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
             startPos = destPos + Point3(0, 0, CogTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
-            self.notify.debug('startPos for %s = %s' % (suit, startPos))
-            suit.reparentTo(self)
-            suit.setPos(startPos)
-            suit.headsUp(self)
+            self.notify.debug('startPos for %s = %s' % (cog, startPos))
+            cog.reparentTo(self)
+            cog.setPos(startPos)
+            cog.headsUp(self)
             moveIval = Sequence()
             chairInfo = self.bossCog.claimOneChair()
             if chairInfo:
-                moveIval = self.createDinerMoveIval(suit, destPos, chairInfo)
-            cogTrack.append(Track((delay, Sequence(moveIval, Func(suit.loop, 'neutral')))))
+                moveIval = self.createDinerMoveIval(cog, destPos, chairInfo)
+            cogTrack.append(Track((delay, Sequence(moveIval, Func(cog.loop, 'neutral')))))
             delay += 1
 
         if self.hasLocalToon():
@@ -90,9 +90,9 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
         self.storeInterval(track, name)
         return
 
-    def createDinerMoveIval(self, suit, destPos, chairInfo):
-        dur = suit.getDuration('landing')
-        fr = suit.getFrameRate('landing')
+    def createDinerMoveIval(self, cog, destPos, chairInfo):
+        dur = cog.getDuration('landing')
+        fr = cog.getFrameRate('landing')
         landingDur = dur
         totalDur = 7.3
         animTimeInAir = totalDur - dur
@@ -104,20 +104,20 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
         chairLocator = table.chairLocators[chairIndex]
         chairPos = chairLocator.getPos(self)
         chairHpr = chairLocator.getHpr(self)
-        suit.setPos(chairPos)
+        cog.setPos(chairPos)
         table.setDinerStatus(chairIndex, table.HIDDEN)
-        suit.setHpr(chairHpr)
+        cog.setHpr(chairHpr)
         wayPoint = (chairPos + destPos) / 2.0
         wayPoint.setZ(wayPoint.getZ() + 20)
-        moveIval = Sequence(Func(suit.headsUp, self), Func(suit.pose, 'landing', 0), ProjectileInterval(suit, duration=flyingDur, startPos=chairPos, endPos=destPos, gravityMult=0.25), ActorInterval(suit, 'landing'))
-        if suit.prop == None:
-            suit.prop = BattleProps.globalPropPool.getProp('propeller')
-        propDur = suit.prop.getDuration('propeller')
+        moveIval = Sequence(Func(cog.headsUp, self), Func(cog.pose, 'landing', 0), ProjectileInterval(cog, duration=flyingDur, startPos=chairPos, endPos=destPos, gravityMult=0.25), ActorInterval(cog, 'landing'))
+        if cog.prop == None:
+            cog.prop = BattleProps.globalPropPool.getProp('propeller')
+        propDur = cog.prop.getDuration('propeller')
         lastSpinFrame = 8
-        fr = suit.prop.getFrameRate('propeller')
+        fr = cog.prop.getFrameRate('propeller')
         spinTime = lastSpinFrame / fr
         openTime = (lastSpinFrame + 1) / fr
-        suit.attachPropeller()
-        propTrack = Parallel(SoundInterval(suit.propInSound, duration=flyingDur, node=suit), Sequence(ActorInterval(suit.prop, 'propeller', constrainedLoop=1, duration=flyingDur + 1, startTime=0.0, endTime=spinTime), ActorInterval(suit.prop, 'propeller', duration=landingDur, startTime=openTime), Func(suit.detachPropeller)))
+        cog.attachPropeller()
+        propTrack = Parallel(SoundInterval(cog.propInSound, duration=flyingDur, node=cog), Sequence(ActorInterval(cog.prop, 'propeller', constrainedLoop=1, duration=flyingDur + 1, startTime=0.0, endTime=spinTime), ActorInterval(cog.prop, 'propeller', duration=landingDur, startTime=openTime), Func(cog.detachPropeller)))
         result = Parallel(moveIval, propTrack)
         return result

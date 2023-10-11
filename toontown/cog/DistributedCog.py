@@ -230,7 +230,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def verifySuitPlanner(self):
         if self.sp == None and self.spDoId != 0:
-            self.notify.warning('Suit %d does not have a suit planner!  Expected SP doId %s.' % (self.doId, self.spDoId))
+            self.notify.warning('Suit %d does not have a cog planner!  Expected SP doId %s.' % (self.doId, self.spDoId))
             self.sp = self.cr.doId2do.get(self.spDoId, None)
         if self.sp == None:
             return 0
@@ -365,7 +365,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
             angle = math.atan2(ydelta, xdelta)
             return rad2Deg(angle) - 90
 
-    def beginBuildingMove(self, moveIn, doneEvent, suit = 0):
+    def beginBuildingMove(self, moveIn, doneEvent, cog = 0):
         doorPt = Point3(0)
         buildingPt = Point3(0)
         streetPt = Point3(0)
@@ -381,7 +381,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         dy = doorPt[1] - streetPt[1]
         buildingPt = Point3(doorPt[0] + dx, doorPt[1] + dy, doorPt[2])
         if moveIn:
-            if suit:
+            if cog:
                 moveTime = CogTimings.toCogBuilding
             else:
                 moveTime = CogTimings.toToonBuilding
@@ -394,7 +394,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.spDoId = doId
         self.sp = self.cr.doId2do.get(doId, None)
         if self.sp == None and self.spDoId != 0:
-            self.notify.warning('Suit %s created before its suit planner, %d' % (self.doId, self.spDoId))
+            self.notify.warning('Suit %s created before its cog planner, %d' % (self.doId, self.spDoId))
         return
 
     def d_requestBattle(self, pos, hpr):
@@ -410,7 +410,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         if not base.localAvatar.wantBattles:
             return
         toonId = base.localAvatar.getDoId()
-        self.notify.debug('Distributed suit: requesting a Battle with ' + 'toon: %d' % toonId)
+        self.notify.debug('Distributed cog: requesting a Battle with ' + 'toon: %d' % toonId)
         self.d_requestBattle(self.getPos(), self.getHpr())
         self.setState('WaitForBattle')
 
@@ -519,7 +519,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         b = leg.getPosB()
         delta = Vec3(b - a)
         length = delta.length()
-        delta2 = delta * (self.sp.suitWalkSpeed * leg.getLegTime()) / length
+        delta2 = delta * (self.sp.cogWalkSpeed * leg.getLegTime()) / length
         delta *= (length - STAND_OUTSIDE_DOOR) / length
         b1 = Point3(b - delta)
         a1 = Point3(b1 - delta2)
@@ -548,7 +548,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         b = leg.getPosB()
         delta = Vec3(b - a)
         length = delta.length()
-        delta2 = delta * (self.sp.suitWalkSpeed * leg.getLegTime()) / length
+        delta2 = delta * (self.sp.cogWalkSpeed * leg.getLegTime()) / length
         delta *= (length - STAND_OUTSIDE_DOOR) / length
         a1 = Point3(a + delta)
         b1 = Point3(a1 + delta2)

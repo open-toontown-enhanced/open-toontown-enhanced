@@ -62,7 +62,7 @@ class DistributedLawbotBossCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                 self.notify.debug('Suit %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
         else:
             if self.notify.getDebug():
-                self.notify.debug('requestBattle from suit %d - denied by battle manager' % self.getDoId())
+                self.notify.debug('requestBattle from cog %d - denied by battle manager' % self.getDoId())
             self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
             self.d_denyBattle(toonId)
 

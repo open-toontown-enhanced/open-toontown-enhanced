@@ -15,15 +15,15 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
     notify = DirectNotifyGlobal.directNotify.newCategory('SummonCogDialog')
     notify.setInfo(True)
 
-    def __init__(self, suitIndex):
+    def __init__(self, cogIndex):
         DirectFrame.__init__(self, parent=aspect2dp, pos=(0, 0, 0.3), relief=None, image=DGG.getDefaultDialogGeom(), image_scale=(1.6, 1, 0.7), image_pos=(0, 0, 0.18), image_color=ToontownGlobals.GlobalDialogColor, text=TTL.SummonDlgTitle, text_scale=0.12, text_pos=(0, 0.4), borderWidth=(0.01, 0.01), sortOrder=NO_FADE_SORT_INDEX)
         StateData.StateData.__init__(self, 'summon-cog-done')
         self.initialiseoptions(SummonCogDialog)
-        self.suitIndex = suitIndex
+        self.cogIndex = cogIndex
         base.summonDialog = self
         self.popup = None
-        self.suitName = CogDNA.suitHeadTypes[self.suitIndex]
-        self.suitFullName = CogBattleGlobals.CogAttributes[self.suitName]['name']
+        self.cogName = CogDNA.cogHeadTypes[self.cogIndex]
+        self.cogFullName = CogBattleGlobals.CogAttributes[self.cogName]['name']
         return
 
     def unload(self):
@@ -40,10 +40,10 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
         self.isLoaded = 1
         gui = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
-        self.head = Suit.attachSuitHead(self, self.suitName)
+        self.head = Suit.attachSuitHead(self, self.cogName)
         z = self.head.getZ()
         self.head.setPos(-0.4, -0.1, z + 0.2)
-        self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getCogFont(), pos=(-0.4, 0, 0), scale=0.07)
+        self.cogLabel = DirectLabel(parent=self, relief=None, text=self.cogFullName, text_font=ToontownGlobals.getCogFont(), pos=(-0.4, 0, 0), scale=0.07)
         closeButtonImage = (gui.find('**/CloseBtn_UP'), gui.find('**/CloseBtn_DN'), gui.find('**/CloseBtn_Rllvr'))
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         disabledColor = Vec4(0.5, 0.5, 0.5, 1)
@@ -88,7 +88,7 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
             self.popup = None
         return
 
-    def cogSummonsDone(self, returnCode, suitIndex, buildingId):
+    def cogSummonsDone(self, returnCode, cogIndex, buildingId):
         self.cancel['state'] = DGG.NORMAL
         if self.summonsType == 'single':
             if returnCode == 'success':
@@ -119,7 +119,7 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
             if returnCode == 'success':
                 self.statusLabel['text'] = TTL.SummonDlgInvasionSuccess
             elif returnCode == 'busy':
-                self.statusLabel['text'] = TTL.SummonDlgInvasionBusy % self.suitFullName
+                self.statusLabel['text'] = TTL.SummonDlgInvasionBusy % self.cogFullName
             elif returnCode == 'fail':
                 self.statusLabel['text'] = TTL.SummonDlgInvasionFail
 
@@ -135,7 +135,7 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
             text = TTL.SummonDlgBuildingConf
         elif summonsType == 'invasion':
             text = TTL.SummonDlgInvasionConf
-        text = text % self.suitFullName
+        text = text % self.cogFullName
 
         def handleResponse(resp):
             self.popup.cleanup()
@@ -143,11 +143,11 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
             self.reparentTo(self.getParent(), NO_FADE_SORT_INDEX)
             base.transitions.fadeScreen(0.5)
             if resp == DGG.DIALOG_OK:
-                self.notify.info('issuing %s summons for %s' % (summonsType, self.suitIndex))
+                self.notify.info('issuing %s summons for %s' % (summonsType, self.cogIndex))
                 self.accept('cog-summons-response', self.cogSummonsDone)
                 self.summonsType = summonsType
                 self.doIssueSummonsText()
-                base.localAvatar.d_reqCogSummons(self.summonsType, self.suitIndex)
+                base.localAvatar.d_reqCogSummons(self.summonsType, self.cogIndex)
                 self.hideSummonButtons()
                 self.cancel['state'] = DGG.DISABLED
             return
@@ -165,11 +165,11 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
         self.summonInvasionButton['state'] = DGG.DISABLED
 
     def enableButtons(self):
-        if base.localAvatar.hasCogSummons(self.suitIndex, 'single'):
+        if base.localAvatar.hasCogSummons(self.cogIndex, 'single'):
             self.summonSingleButton['state'] = DGG.NORMAL
-        if base.localAvatar.hasCogSummons(self.suitIndex, 'building'):
+        if base.localAvatar.hasCogSummons(self.cogIndex, 'building'):
             self.summonBuildingButton['state'] = DGG.NORMAL
-        if base.localAvatar.hasCogSummons(self.suitIndex, 'invasion'):
+        if base.localAvatar.hasCogSummons(self.cogIndex, 'invasion'):
             self.summonInvasionButton['state'] = DGG.NORMAL
 
     def __cancel(self):

@@ -56,8 +56,8 @@ class RewardPanel(DirectFrame):
         self.meritLabels = []
         self.meritIncLabels = []
         self.meritBars = []
-        for i in range(len(CogDNA.suitDepts)):
-            deptName = TextEncoder.upper(CogDNA.suitDeptFullnames[CogDNA.suitDepts[i]])
+        for i in range(len(CogDNA.cogDepts)):
+            deptName = TextEncoder.upper(CogDNA.cogDeptFullnames[CogDNA.cogDepts[i]])
             self.meritLabels.append(DirectLabel(parent=self.gagExpFrame, relief=None, text=deptName, text_scale=0.05, text_align=TextNode.ARight, pos=(TTLocalizer.RPmeritLabelPosX, 0, -0.09 * i - 0.125), text_pos=(0, -0.02)))
             self.meritIncLabels.append(DirectLabel(parent=self.gagExpFrame, relief=None, text='', text_scale=0.05, text_align=TextNode.ALeft, pos=(0.7, 0, -0.09 * i - 0.125), text_pos=(0, -0.02)))
             self.meritBars.append(DirectWaitBar(parent=self.gagExpFrame, relief=DGG.SUNKEN, frameSize=(-1,
@@ -191,7 +191,7 @@ class RewardPanel(DirectFrame):
         self.missedItemFrame.hide()
         trackBarOffset = 0
         self.skipButton['state'] = choice(noSkip, DGG.DISABLED, DGG.NORMAL)
-        for i in range(len(CogDNA.suitDepts)):
+        for i in range(len(CogDNA.cogDepts)):
             meritBar = self.meritBars[i]
             meritLabel = self.meritLabels[i]
             totalMerits = CogDisguiseGlobals.getTotalMerits(toon, i)
@@ -530,8 +530,8 @@ class RewardPanel(DirectFrame):
         self.questFrame.hide()
         self.itemFrame.hide()
         self.missedItemFrame.hide()
-        name = CogDNA.suitDepts[dept]
-        self.promotionFrame['text'] = TTLocalizer.RewardPanelPromotion % CogDNA.suitDeptFullnames[name]
+        name = CogDNA.cogDepts[dept]
+        self.promotionFrame['text'] = TTLocalizer.RewardPanelPromotion % CogDNA.cogDeptFullnames[name]
         icons = loader.loadModel('phase_3/models/gui/cog_icons')
         if dept == 0:
             self.deptIcon = icons.find('**/CorpIcon').copyTo(self.promotionFrame)
@@ -594,9 +594,9 @@ class RewardPanel(DirectFrame):
             hasRevives = flags & ToontownBattleGlobals.DLF_REVIVES
             if isVP or isCFO:
                 cogType = None
-                cogTrack = CogDNA.suitDepts[cogIndex]
+                cogTrack = CogDNA.cogDepts[cogIndex]
             else:
-                cogType = CogDNA.suitHeadTypes[cogIndex]
+                cogType = CogDNA.cogHeadTypes[cogIndex]
                 cogTrack = CogDNA.getCogDept(cogType)
             cogList.append({'type': cogType,
              'level': cogLevel,
@@ -713,7 +713,7 @@ class RewardPanel(DirectFrame):
                     endTracks[trackIndex] = 1
                     trackEnded = 1
 
-        for dept in range(len(CogDNA.suitDepts)):
+        for dept in range(len(CogDNA.cogDepts)):
             if meritList[dept]:
                 track += self.getMeritIntervalList(toon, dept, origMeritList[dept], meritList[dept])
 

@@ -21,7 +21,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         self.dept = dept
         self.dna = CogDNA.CogDNA()
         self.dna.newBossCog(self.dept)
-        self.deptIndex = CogDNA.suitDepts.index(self.dept)
+        self.deptIndex = CogDNA.cogDepts.index(self.dept)
         self.resetBattleCounters()
         self.looseToons = []
         self.involvedToons = []
@@ -365,11 +365,11 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             self.battleB = None
             self.battleBId = 0
             sendReset = 1
-        for suit in self.cogsA + self.cogsB:
-            suit.requestDelete()
+        for cog in self.cogsA + self.cogsB:
+            cog.requestDelete()
 
-        for suit, joinChance in self.reserveCogs:
-            suit.requestDelete()
+        for cog, joinChance in self.reserveCogs:
+            cog.requestDelete()
 
         self.cogsA = []
         self.activeCogsA = []
@@ -456,14 +456,14 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             self.notify.warning('initializeBattles: no toons!')
             return
         self.battleNumber = battleNumber
-        suitHandles = self.generateCogs(battleNumber)
-        self.cogsA = suitHandles['activeCogs']
+        cogHandles = self.generateCogs(battleNumber)
+        self.cogsA = cogHandles['activeCogs']
         self.activeCogsA = self.cogsA[:]
-        self.reserveCogs = suitHandles['reserveCogs']
-        suitHandles = self.generateCogs(battleNumber)
-        self.cogsB = suitHandles['activeCogs']
+        self.reserveCogs = cogHandles['reserveCogs']
+        cogHandles = self.generateCogs(battleNumber)
+        self.cogsB = cogHandles['activeCogs']
         self.activeCogsB = self.cogsB[:]
-        self.reserveCogs += suitHandles['reserveCogs']
+        self.reserveCogs += cogHandles['reserveCogs']
         if self.toonsA:
             self.battleA = self.makeBattle(bossCogPosHpr, ToontownGlobals.BossCogBattleAPosHpr, self.handleRoundADone, self.handleBattleADone, battleNumber, 0)
             self.battleAId = self.battleA.doId
@@ -507,14 +507,14 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         bossNode.setPosHpr(*cogPosHpr)
         battleNode = bossNode.attachNewNode('battleNode')
         battleNode.setPosHpr(*battlePosHpr)
-        suitNode = battleNode.attachNewNode('suitNode')
-        suitNode.setPos(0, 1, 0)
+        cogNode = battleNode.attachNewNode('cogNode')
+        cogNode.setPos(0, 1, 0)
         battle.pos = battleNode.getPos(NodePath())
-        battle.initialSuitPos = suitNode.getPos(NodePath())
+        battle.initialSuitPos = cogNode.getPos(NodePath())
 
     def moveCogs(self, active):
-        for suit in active:
-            self.reserveCogs.append((suit, 0))
+        for cog in active:
+            self.reserveCogs.append((cog, 0))
 
     def handleRoundADone(self, toonIds, totalHp, deadCogs):
         if self.battleA:
@@ -557,12 +557,12 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         planner.respectInvasions = 0
         cogs = planner.genFloorCogs(0)
         if skelecog:
-            for suit in cogs['activeCogs']:
-                suit.b_setSkelecog(1)
+            for cog in cogs['activeCogs']:
+                cog.b_setSkelecog(1)
 
             for reserve in cogs['reserveCogs']:
-                suit = reserve[0]
-                suit.b_setSkelecog(1)
+                cog = reserve[0]
+                cog.b_setSkelecog(1)
 
         return cogs
 
@@ -571,11 +571,11 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
 
     def handleRoundDone(self, battle, cogs, activeCogs, toonIds, totalHp, deadCogs):
         totalMaxHp = 0
-        for suit in cogs:
-            totalMaxHp += suit.maxHP
+        for cog in cogs:
+            totalMaxHp += cog.maxHP
 
-        for suit in deadCogs:
-            activeCogs.remove(suit)
+        for cog in deadCogs:
+            activeCogs.remove(cog)
 
         joinedReserves = []
         if len(self.reserveCogs) > 0 and len(activeCogs) < 4:

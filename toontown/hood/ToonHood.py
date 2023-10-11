@@ -17,27 +17,27 @@ class ToonHood(Hood.Hood):
 
     def __init__(self, parentFSM, doneEvent, dnaStore, hoodId):
         Hood.Hood.__init__(self, parentFSM, doneEvent, dnaStore, hoodId)
-        self.suitInteriorDoneEvent = 'suitInteriorDone'
+        self.cogInteriorDoneEvent = 'cogInteriorDone'
         self.minigameDoneEvent = 'minigameDone'
         self.safeZoneLoaderClass = None
         self.townLoaderClass = None
         self.fsm = ClassicFSM.ClassicFSM('Hood', [State.State('start', self.enterStart, self.exitStart, ['townLoader', 'safeZoneLoader']),
          State.State('townLoader', self.enterTownLoader, self.exitTownLoader, ['quietZone',
           'safeZoneLoader',
-          'suitInterior',
+          'cogInterior',
           'cogdoInterior']),
          State.State('safeZoneLoader', self.enterSafeZoneLoader, self.exitSafeZoneLoader, ['quietZone',
-          'suitInterior',
+          'cogInterior',
           'cogdoInterior',
           'townLoader',
           'minigame']),
          State.State('purchase', self.enterPurchase, self.exitPurchase, ['quietZone', 'minigame', 'safeZoneLoader']),
-         State.State('suitInterior', self.enterSuitInterior, self.exitSuitInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
+         State.State('cogInterior', self.enterSuitInterior, self.exitSuitInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
          State.State('cogdoInterior', self.enterCogdoInterior, self.exitCogdoInterior, ['quietZone', 'townLoader', 'safeZoneLoader']),
          State.State('minigame', self.enterMinigame, self.exitMinigame, ['purchase']),
          State.State('quietZone', self.enterQuietZone, self.exitQuietZone, ['safeZoneLoader',
           'townLoader',
-          'suitInterior',
+          'cogInterior',
           'cogdoInterior',
           'minigame']),
          State.State('final', self.enterFinal, self.exitFinal, [])], 'start', 'final')
@@ -122,7 +122,7 @@ class ToonHood(Hood.Hood):
         return
 
     def enterSuitInterior(self, requestStatus = None):
-        self.placeDoneEvent = 'suit-interior-done'
+        self.placeDoneEvent = 'cog-interior-done'
         self.acceptOnce(self.placeDoneEvent, self.handleSuitInteriorDone)
         self.place = SuitInterior.SuitInterior(self, self.fsm, self.placeDoneEvent)
         self.place.load()

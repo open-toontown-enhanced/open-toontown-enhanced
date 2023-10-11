@@ -64,8 +64,8 @@ class DistributedCashbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         reserveCogs = cogs['reserveCogs'] + skelecogs['reserveCogs']
         random.shuffle(activeCogs)
         while len(activeCogs) > 4:
-            suit = activeCogs.pop()
-            reserveCogs.append((suit, 100))
+            cog = activeCogs.pop()
+            reserveCogs.append((cog, 100))
 
         def compareJoinChance(a, b):
             return cmp(a[1], b[1])

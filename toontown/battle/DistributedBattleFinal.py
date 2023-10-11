@@ -71,21 +71,21 @@ class DistributedBattleFinal(DistributedBattleBase.DistributedBattleBase):
     def setBattleSide(self, battleSide):
         self.battleSide = battleSide
 
-    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, suitTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
+    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, cogTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
         if self.battleCleanedUp():
             return
-        oldtoons = DistributedBattleBase.DistributedBattleBase.setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, suitTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp)
+        oldtoons = DistributedBattleBase.DistributedBattleBase.setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, cogTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp)
         if len(self.toons) == 4 and len(oldtoons) < 4:
             self.notify.debug('setMembers() - battle is now full of toons')
             self.closeBattleCollision()
         elif len(self.toons) < 4 and len(oldtoons) == 4:
             self.openBattleCollision()
 
-    def makeSuitJoin(self, suit, ts):
-        self.notify.debug('makeSuitJoin(%d)' % suit.doId)
-        self.joiningCogs.append(suit)
+    def makeSuitJoin(self, cog, ts):
+        self.notify.debug('makeSuitJoin(%d)' % cog.doId)
+        self.joiningCogs.append(cog)
         if self.hasLocalToon():
-            self.d_joinDone(base.localAvatar.doId, suit.doId)
+            self.d_joinDone(base.localAvatar.doId, cog.doId)
 
     def showCogsJoining(self, cogs, ts, name, callback):
         if self.bossCog == None:
@@ -98,21 +98,21 @@ class DistributedBattleFinal(DistributedBattleBase.DistributedBattleBase):
             closeDoor = Func(self.bossCog.doorA.request, 'close')
         cogTrack = Parallel()
         delay = 0
-        for suit in cogs:
-            suit.setState('Battle')
-            if suit.dna.dept == 'l':
-                suit.reparentTo(self.bossCog)
-                suit.setPos(0, 0, 0)
-            suit.setPos(self.bossCog, 0, 0, 0)
-            suit.headsUp(self)
-            suit.setScale(3.8 / suit.height)
-            if suit in self.joiningCogs:
-                i = len(self.pendingCogs) + self.joiningCogs.index(suit)
-                destPos, h = self.suitPendingPoints[i]
+        for cog in cogs:
+            cog.setState('Battle')
+            if cog.dna.dept == 'l':
+                cog.reparentTo(self.bossCog)
+                cog.setPos(0, 0, 0)
+            cog.setPos(self.bossCog, 0, 0, 0)
+            cog.headsUp(self)
+            cog.setScale(3.8 / cog.height)
+            if cog in self.joiningCogs:
+                i = len(self.pendingCogs) + self.joiningCogs.index(cog)
+                destPos, h = self.cogPendingPoints[i]
                 destHpr = VBase3(h, 0, 0)
             else:
-                destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
-            cogTrack.append(Track((delay, self.createAdjustInterval(suit, destPos, destHpr)), (delay + 1.5, suit.scaleInterval(1.5, 1))))
+                destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
+            cogTrack.append(Track((delay, self.createAdjustInterval(cog, destPos, destHpr)), (delay + 1.5, cog.scaleInterval(1.5, 1))))
             delay += 1
 
         if self.hasLocalToon():

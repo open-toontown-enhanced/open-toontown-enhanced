@@ -41,10 +41,10 @@ class MazeSuit(DirectObject):
         self._walkSameDirectionProb = walkSameDirectionProb
         self._walkTurnAroundProb = walkTurnAroundProb
         self._walkAnimName = walkAnimName or 'walk'
-        self.suit = Suit.Suit()
+        self.cog = Suit.Suit()
         d = CogDNA.CogDNA()
         d.newSuit(CogDNAName)
-        self.suit.setDNA(d)
+        self.cog.setDNA(d)
         if startTile is None:
             defaultStartPos = MazeGameGlobals.COG_START_POSITIONS[self.serialNum]
             self.startTile = (defaultStartPos[0] * self.maze.width, defaultStartPos[1] * self.maze.height)
@@ -57,7 +57,7 @@ class MazeSuit(DirectObject):
         return
 
     def destroy(self):
-        self.suit.delete()
+        self.cog.delete()
 
     def uniqueName(self, str):
         return str + repr((self.serialNum))
@@ -79,7 +79,7 @@ class MazeSuit(DirectObject):
         self.moveIval.pause()
         del self.moveIval
         self.shutdownCollisions()
-        self.suit.loop('neutral')
+        self.cog.loop('neutral')
 
     def initCollisions(self):
         self.collSphere = CollisionSphere(0, 0, 0, 2.0)
@@ -87,7 +87,7 @@ class MazeSuit(DirectObject):
         self.collNode = CollisionNode(self.uniqueName(self.COLL_SPHERE_NAME))
         self.collNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
         self.collNode.addSolid(self.collSphere)
-        self.collNodePath = self.suit.attachNewNode(self.collNode)
+        self.collNodePath = self.cog.attachNewNode(self.collNode)
         self.collNodePath.hide()
         self.accept(self.uniqueName('enter' + self.COLL_SPHERE_NAME), self.handleEnterSphere)
 
@@ -135,19 +135,19 @@ class MazeSuit(DirectObject):
         self.lastDirection = self.direction
         self.nextTX = self.TX
         self.nextTY = self.TY
-        self.suit.setPos(self.__getWorldPos(self.TX, self.TY))
-        self.suit.setHpr(self.directionHs[self.direction], 0, 0)
-        self.suit.reparentTo(render)
-        self.suit.pose(self._walkAnimName, 0)
-        self.suit.loop('neutral')
+        self.cog.setPos(self.__getWorldPos(self.TX, self.TY))
+        self.cog.setHpr(self.directionHs[self.direction], 0, 0)
+        self.cog.reparentTo(render)
+        self.cog.pose(self._walkAnimName, 0)
+        self.cog.loop('neutral')
 
     def offstage(self):
-        self.suit.reparentTo(hidden)
+        self.cog.reparentTo(hidden)
 
     def startWalkAnim(self):
-        self.suit.loop(self._walkAnimName)
+        self.cog.loop(self._walkAnimName)
         speed = float(self.maze.cellWidth) / self.cellWalkDuration
-        self.suit.setPlayRate(speed / self.DEFAULT_SPEED, self._walkAnimName)
+        self.cog.setPlayRate(speed / self.DEFAULT_SPEED, self._walkAnimName)
 
     def __applyDirection(self, dir, TX, TY):
         if self.DIR_UP == dir:
@@ -208,7 +208,7 @@ class MazeSuit(DirectObject):
             toCoords = self.maze.tile2world(self.nextTX, self.nextTY)
             self.fromPos.set(fromCoords[0], fromCoords[1], self.COG_Z)
             self.toPos.set(toCoords[0], toCoords[1], self.COG_Z)
-            self.moveIval = LerpPosInterval(self.suit, self.cellWalkDuration, self.toPos, startPos=self.fromPos, name=self.uniqueName(self.MOVE_IVAL_NAME))
+            self.moveIval = LerpPosInterval(self.cog, self.cellWalkDuration, self.toPos, startPos=self.fromPos, name=self.uniqueName(self.MOVE_IVAL_NAME))
             if self.direction != self.lastDirection:
                 self.fromH = self.directionHs[self.lastDirection]
                 toH = self.directionHs[self.direction]
@@ -218,45 +218,45 @@ class MazeSuit(DirectObject):
                     self.fromH = 360
                 self.fromHpr.set(self.fromH, 0, 0)
                 self.toHpr.set(toH, 0, 0)
-                turnIval = LerpHprInterval(self.suit, self.turnDuration, self.toHpr, startHpr=self.fromHpr, name=self.uniqueName('turnMazeSuit'))
+                turnIval = LerpHprInterval(self.cog, self.turnDuration, self.toHpr, startHpr=self.fromHpr, name=self.uniqueName('turnMazeSuit'))
                 self.moveIval = Parallel(self.moveIval, turnIval, name=self.uniqueName(self.MOVE_IVAL_NAME))
             else:
-                self.suit.setH(self.directionHs[self.direction])
+                self.cog.setH(self.directionHs[self.direction])
             moveStartT = float(self.nextThinkTic) / float(self.ticFreq)
             self.moveIval.start(curT - (moveStartT + self.gameStartTime))
         self.nextThinkTic += self.ticPeriod
 
     @staticmethod
-    def thinkCogs(suitList, startTime, ticFreq = MazeGameGlobals.COG_TIC_FREQ):
+    def thinkCogs(cogList, startTime, ticFreq = MazeGameGlobals.COG_TIC_FREQ):
         curT = globalClock.getFrameTime() - startTime
         curTic = int(curT * float(ticFreq))
-        suitUpdates = []
-        for i in range(len(suitList)):
-            updateTics = suitList[i].getThinkTimestampTics(curTic)
-            suitUpdates.extend(list(zip(updateTics, [i] * len(updateTics))))
+        cogUpdates = []
+        for i in range(len(cogList)):
+            updateTics = cogList[i].getThinkTimestampTics(curTic)
+            cogUpdates.extend(list(zip(updateTics, [i] * len(updateTics))))
 
-        suitUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
-        if len(suitUpdates) > 0:
+        cogUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
+        if len(cogUpdates) > 0:
             curTic = 0
-            for i in range(len(suitUpdates)):
-                update = suitUpdates[i]
+            for i in range(len(cogUpdates)):
+                update = cogUpdates[i]
                 tic = update[0]
-                suitIndex = update[1]
-                suit = suitList[suitIndex]
+                cogIndex = update[1]
+                cog = cogList[cogIndex]
                 if tic > curTic:
                     curTic = tic
                     j = i + 1
-                    while j < len(suitUpdates):
-                        if suitUpdates[j][0] > tic:
+                    while j < len(cogUpdates):
+                        if cogUpdates[j][0] > tic:
                             break
-                        suitList[suitUpdates[j][1]].prepareToThink()
+                        cogList[cogUpdates[j][1]].prepareToThink()
                         j += 1
 
                 unwalkables = []
-                for si in range(suitIndex):
-                    unwalkables.extend(suitList[si].occupiedTiles)
+                for si in range(cogIndex):
+                    unwalkables.extend(cogList[si].occupiedTiles)
 
-                for si in range(suitIndex + 1, len(suitList)):
-                    unwalkables.extend(suitList[si].occupiedTiles)
+                for si in range(cogIndex + 1, len(cogList)):
+                    unwalkables.extend(cogList[si].occupiedTiles)
 
-                suit.think(curTic, curT, unwalkables)
+                cog.think(curTic, curT, unwalkables)

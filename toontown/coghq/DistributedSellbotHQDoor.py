@@ -9,13 +9,13 @@ class DistributedSellbotHQDoor(DistributedCogHQDoor.DistributedCogHQDoor):
     def __init__(self, cr):
         DistributedCogHQDoor.DistributedCogHQDoor.__init__(self, cr)
 
-    def informPlayer(self, suitType):
+    def informPlayer(self, cogType):
         self.notify.debugStateCall(self)
-        if suitType == CogDisguiseGlobals.suitTypes.NoSuit:
+        if cogType == CogDisguiseGlobals.cogTypes.NoSuit:
             popupMsg = TTLocalizer.SellbotRentalSuitMessage
-        elif suitType == CogDisguiseGlobals.suitTypes.NoMerits:
+        elif cogType == CogDisguiseGlobals.cogTypes.NoMerits:
             popupMsg = TTLocalizer.SellbotCogSuitNoMeritsMessage
-        elif suitType == CogDisguiseGlobals.suitTypes.FullSuit:
+        elif cogType == CogDisguiseGlobals.cogTypes.FullSuit:
             popupMsg = TTLocalizer.SellbotCogSuitHasMeritsMessage
         else:
             popupMsg = TTLocalizer.FADoorCodes_SB_DISGUISE_INCOMPLETE

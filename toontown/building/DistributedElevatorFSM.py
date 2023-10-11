@@ -213,8 +213,8 @@ class DistributedElevatorFSM(DistributedObject.DistributedObject, FSM):
             toon.setZ(self.getElevatorModel(), self.getScaledPoint(index)[2])
             toon.setShadowHeight(0)
             if toon.isDisguised:
-                toon.suit.loop('walk')
-                animFunc = Func(toon.suit.loop, 'neutral')
+                toon.cog.loop('walk')
+                animFunc = Func(toon.cog.loop, 'neutral')
             else:
                 toon.setAnimState('run', 1.0)
                 animFunc = Func(toon.setAnimState, 'neutral', 1.0)
@@ -280,8 +280,8 @@ class DistributedElevatorFSM(DistributedObject.DistributedObject, FSM):
             toon = self.cr.doId2do[avId]
             toon.stopSmooth()
             if toon.isDisguised:
-                toon.suit.loop('walk')
-                animFunc = Func(toon.suit.loop, 'neutral')
+                toon.cog.loop('walk')
+                animFunc = Func(toon.cog.loop, 'neutral')
             else:
                 toon.setAnimState('run', 1.0)
                 animFunc = Func(toon.setAnimState, 'neutral', 1.0)
@@ -433,8 +433,8 @@ class DistributedElevatorFSM(DistributedObject.DistributedObject, FSM):
         if self.localToonOnBoard:
             self.localAvatar.stopGlitchKiller()
             hoodId = ZoneUtil.getHoodId(zoneId)
-            loader = 'suitInterior'
-            where = 'suitInterior'
+            loader = 'cogInterior'
+            where = 'cogInterior'
             if base.cr.wantCogdominiums:
                 loader = 'cogdoInterior'
                 where = 'cogdoInterior'

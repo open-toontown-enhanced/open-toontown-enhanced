@@ -40,10 +40,10 @@ class DistributedMintRoomAI(DistributedLevelAI.DistributedLevelAI, MintRoomBase.
         self.notify.debug('creating cogs')
         cogSpecModule = MintRoomSpecs.getCogSpecModule(self.roomId)
         self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedMintCogAI.DistributedMintCogAI, DistributedMintBattleAI.DistributedMintBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
-        suitHandles = self.planner.genCogs()
+        cogHandles = self.planner.genCogs()
         messenger.send('plannerCreated-' + str(self.doId))
-        self.cogs = suitHandles['activeCogs']
-        self.reserveCogs = suitHandles['reserveCogs']
+        self.cogs = cogHandles['activeCogs']
+        self.reserveCogs = cogHandles['reserveCogs']
         self.d_setCogs()
         self.notify.debug('finish mint room %s %s creation' % (self.roomId, self.doId))
 
@@ -55,10 +55,10 @@ class DistributedMintRoomAI(DistributedLevelAI.DistributedLevelAI, MintRoomBase.
 
         self.planner.destroy()
         del self.planner
-        for suit in cogs:
-            if not suit.isDeleted():
-                suit.factoryIsGoingDown()
-                suit.requestDelete()
+        for cog in cogs:
+            if not cog.isDeleted():
+                cog.factoryIsGoingDown()
+                cog.requestDelete()
 
         del self.battleExpAggreg
         DistributedLevelAI.DistributedLevelAI.delete(self, deAllocZone=False)
@@ -80,15 +80,15 @@ class DistributedMintRoomAI(DistributedLevelAI.DistributedLevelAI, MintRoomBase.
 
     def getCogs(self):
         cogIds = []
-        for suit in self.cogs:
-            cogIds.append(suit.doId)
+        for cog in self.cogs:
+            cogIds.append(cog.doId)
 
         return cogIds
 
     def getReserveCogs(self):
         cogIds = []
-        for suit in self.reserveCogs:
-            cogIds.append(suit[0].doId)
+        for cog in self.reserveCogs:
+            cogIds.append(cog[0].doId)
 
         return cogIds
 

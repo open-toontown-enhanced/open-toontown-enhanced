@@ -40,7 +40,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
     BUILDING_HEIGHT_DISTRIBUTION = [
      14, 18, 25, 23, 20]
 
-    defaultSuitName = simbase.config.GetString('suit-type', 'random')
+    defaultSuitName = simbase.config.GetString('cog-type', 'random')
     if defaultSuitName == 'random':
         defaultSuitName = None
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCogPlannerAI')
@@ -82,7 +82,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         self.pendingBuildingTracks: list[str] = []
         self.pendingBuildingHeights: list[int] = []
         self.pendingCogdoHeights: list[int] = []
-        self.suitList: DistributedCogAI = []
+        self.cogList: DistributedCogAI = []
         self.numFlyInCogs: int = 0
         self.numBuildingCogs: int = 0
         self.numAttemptingTakeover: int = 0
@@ -107,25 +107,25 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
 
         self.dnaStore.resetBlockNumbers()
         self.initBuildingsAndPoints()
-        numCogs = simbase.config.GetInt('suit-count', -1)
+        numCogs = simbase.config.GetInt('cog-count', -1)
         if numCogs >= 0:
             self.currDesired = numCogs
-        suitHood = simbase.config.GetInt('cogs-only-in-hood', -1)
-        if suitHood >= 0:
-            if self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_ZONE] != suitHood:
+        cogHood = simbase.config.GetInt('cogs-only-in-hood', -1)
+        if cogHood >= 0:
+            if self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_ZONE] != cogHood:
                 self.currDesired = 0
-        self.suitCountAdjust: int = 0
+        self.cogCountAdjust: int = 0
 
     def cleanup(self):
         taskMgr.remove(self.taskName('sptUpkeepPopulation'))
         taskMgr.remove(self.taskName('sptAdjustPopulation'))
-        for suit in self.suitList:
-            suit.stopTasks()
-            if suit.isGenerated():
-                self.zoneChange(suit, suit.zoneId)
-                suit.requestDelete()
+        for cog in self.cogList:
+            cog.stopTasks()
+            if cog.isGenerated():
+                self.zoneChange(cog, cog.zoneId)
+                cog.requestDelete()
 
-        self.suitList = []
+        self.cogList = []
         self.numFlyInCogs = 0
         self.numBuildingCogs = 0
         self.numAttemptingTakeover = 0
@@ -171,11 +171,11 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                 self.notify.warning('No side door for building %d in zone %d' % (blockNumber, self.zoneId))
 
     def countNumCogsPerTrack(self, count: int):
-        for suit in self.suitList:
-            if suit.track in count:
-                count[suit.track] += 1
+        for cog in self.cogList:
+            if cog.track in count:
+                count[cog.track] += 1
             else:
-                count[suit.track] = 1
+                count[cog.track] = 1
 
     def countNumBuildingsPerTrack(self, count: int):
         if self.buildingMgr:
@@ -206,15 +206,15 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
     def calcDesiredNumFlyInCogs(self) -> int:
         if self.currDesired != None:
             return 0
-        return self.baseNumCogs + self.suitCountAdjust
+        return self.baseNumCogs + self.cogCountAdjust
 
     def calcDesiredNumBuildingCogs(self) -> int:
         if self.currDesired != None:
             return self.currDesired
         if not self.buildingMgr:
             return 0
-        suitBuildings = self.buildingMgr.getEstablishedSuitBlocks()
-        return int(len(suitBuildings) * self.COG_BUILDING_NUM_COGS)
+        cogBuildings = self.buildingMgr.getEstablishedSuitBlocks()
+        return int(len(cogBuildings) * self.COG_BUILDING_NUM_COGS)
 
     def getZoneIdToPointMap(self) -> dict[int, DNASuitPoint]:
         if self.zoneIdToPointMap != None:
@@ -261,8 +261,8 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         return pointList
 
     def createNewSuit(self, blockNumbers: list[int], streetPoints: list[DNASuitPoint], toonBlockTakeover: int = None, cogdoTakeover: bool= None,
-                      minPathLen: int = None, maxPathLen: int = None, buildingHeight: int = None, suitLevel: int = None, suitType: int = None,
-                      cogTrack: str= None, suitName: str = None, skelecog: bool = None, revives: int = None):
+                      minPathLen: int = None, maxPathLen: int = None, buildingHeight: int = None, cogLevel: int = None, cogType: int = None,
+                      cogTrack: str= None, cogName: str = None, skelecog: bool = None, revives: int = None):
         startPoint = None
         blockNumber = None
         if self.notify.getDebug():
@@ -279,7 +279,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                         p = self.pointIndexes[pi]
                         i -= 1
                         startTime = CogTimings.fromCogBuilding
-                        startTime += self.dnaStore.getSuitEdgeTravelTime(doorPoint.getIndex(), pi, self.suitWalkSpeed)
+                        startTime += self.dnaStore.getSuitEdgeTravelTime(doorPoint.getIndex(), pi, self.cogWalkSpeed)
                         if not self.pointCollision(p, doorPoint, startTime):
                             startTime = CogTimings.fromCogBuilding
                             startPoint = doorPoint
@@ -335,22 +335,22 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             else:
                 if cogdoTakeover and cogTrack == None:
                     cogTrack = random.choice(['s'])
-        if suitName == None:
+        if cogName == None:
             if not cogdoTakeover:
-                suitName, skelecog = self.air.cogInvasionManager.getInvadingCog()
+                cogName, skelecog = self.air.cogInvasionManager.getInvadingCog()
                 self.air.cogInvasionManager.subtractNumCogsRemaining(1)
-            if suitName == None:
-                suitName = self.defaultSuitName
-        if suitType == None and suitName != None:
-            suitType = CogDNA.getCogType(suitName)
-            cogTrack = CogDNA.getCogDept(suitName)
-        if suitLevel == None and buildingHeight != None:
+            if cogName == None:
+                cogName = self.defaultSuitName
+        if cogType == None and cogName != None:
+            cogType = CogDNA.getCogType(cogName)
+            cogTrack = CogDNA.getCogDept(cogName)
+        if cogLevel == None and buildingHeight != None:
             if not cogdoTakeover:
-                suitLevel = self.chooseSuitLevel(self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_LVL], buildingHeight)
+                cogLevel = self.chooseSuitLevel(self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_LVL], buildingHeight)
             else:
-                suitLevel = self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_LVL][-1] + 1
-        suitLevel, suitType, cogTrack = self.pickLevelTypeAndTrack(suitLevel, suitType, cogTrack)
-        newSuit.setupCogDNA(suitLevel, suitType, cogTrack)
+                cogLevel = self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_LVL][-1] + 1
+        cogLevel, cogType, cogTrack = self.pickLevelTypeAndTrack(cogLevel, cogType, cogTrack)
+        newSuit.setupCogDNA(cogLevel, cogType, cogTrack)
         newSuit.buildingHeight = buildingHeight
         gotDestination = self.chooseDestination(newSuit, startTime, toonBlockTakeover=toonBlockTakeover, cogdoTakeover=cogdoTakeover, minPathLen=minPathLen, maxPathLen=maxPathLen)
         if not gotDestination:
@@ -366,7 +366,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             newSuit.setSkeleRevives(revives)
         newSuit.generateWithRequired(newSuit.zoneId)
         newSuit.moveToNextLeg(None)
-        self.suitList.append(newSuit)
+        self.cogList.append(newSuit)
         if newSuit.flyInSuit:
             self.numFlyInCogs += 1
         if newSuit.buildingSuit:
@@ -403,18 +403,18 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         self.notify.debug('DSP %d is planning a takeover attempt in zone %d' % (self.getDoId(), self.zoneId))
         return True
 
-    def chooseDestination(self, suit: DistributedCogAI, startTime: float, toonBlockTakeover: int = None,
+    def chooseDestination(self, cog: DistributedCogAI, startTime: float, toonBlockTakeover: int = None,
                           cogdoTakeover: bool = None, minPathLen: int = None, maxPathLen: int= None) -> bool:
         possibles = []
         backup = []
         if cogdoTakeover is None:
             cogdoTakeover = False
         if toonBlockTakeover != None:
-            suit.attemptingTakeover = 1
+            cog.attemptingTakeover = 1
             blockNumber = toonBlockTakeover
             if blockNumber in self.buildingFrontDoors:
                 possibles.append((blockNumber, self.buildingFrontDoors[blockNumber]))
-        elif suit.attemptingTakeover:
+        elif cog.attemptingTakeover:
             for blockNumber in self.buildingMgr.getToonBlocks():
                 building = self.buildingMgr.getBuilding(blockNumber)
                 extZoneId, intZoneId = building.getExteriorAndInteriorZoneId()
@@ -426,7 +426,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             if self.buildingMgr:
                 for blockNumber in self.buildingMgr.getCogBlocks():
                     track = self.buildingMgr.getBuildingTrack(blockNumber)
-                    if track == suit.track and blockNumber in self.buildingSideDoors:
+                    if track == cog.track and blockNumber in self.buildingSideDoors:
                         for doorPoint in self.buildingSideDoors[blockNumber]:
                             possibles.append((blockNumber, doorPoint))
 
@@ -440,7 +440,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             possibles = backup
             backup = []
         if minPathLen == None:
-            if suit.attemptingTakeover:
+            if cog.attemptingTakeover:
                 minPathLen = self.MIN_TAKEOVER_PATH_LEN
             else:
                 minPathLen = self.MIN_PATH_LEN
@@ -453,14 +453,14 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             if len(possibles) == 0:
                 possibles = backup
                 backup = []
-            path = self.genPath(suit.startPoint, p[1], minPathLen, maxPathLen)
+            path = self.genPath(cog.startPoint, p[1], minPathLen, maxPathLen)
             if path and not self.pathCollision(path, startTime):
-                suit.endPoint = p[1]
-                suit.minPathLen = minPathLen
-                suit.maxPathLen = maxPathLen
-                suit.buildingDestination = p[0]
-                suit.buildingDestinationIsCogdo = cogdoTakeover
-                suit.setPath(path)
+                cog.endPoint = p[1]
+                cog.minPathLen = minPathLen
+                cog.maxPathLen = maxPathLen
+                cog.buildingDestination = p[0]
+                cog.buildingDestinationIsCogdo = cogdoTakeover
+                cog.setPath(path)
                 return True
             retryCount += 1
 
@@ -478,13 +478,13 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             pi = path.getPointIndex(i)
             adjacentPoint = point
             point = self.pointIndexes[pi]
-            elapsedTime += self.dnaStore.getSuitEdgeTravelTime(lastPi, pi, self.suitWalkSpeed)
+            elapsedTime += self.dnaStore.getSuitEdgeTravelTime(lastPi, pi, self.cogWalkSpeed)
 
         return self.pointCollision(point, adjacentPoint, elapsedTime)
 
     def pointCollision(self, point: DNASuitPoint, adjacentPoint: DNASuitPoint, elapsedTime: float) -> bool:
-        for suit in self.suitList:
-            if suit.pointInMyPath(point, elapsedTime):
+        for cog in self.cogList:
+            if cog.pointInMyPath(point, elapsedTime):
                 return True
 
         if adjacentPoint != None:
@@ -506,32 +506,32 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         zoneId = int(self.extractGroupName(zoneName))
         return self.battleMgr.cellHasBattle(zoneId)
 
-    def removeSuit(self, suit: DistributedCogAI):
-        self.zoneChange(suit, suit.zoneId)
-        if self.suitList.count(suit) > 0:
-            self.suitList.remove(suit)
-            if suit.flyInSuit:
+    def removeSuit(self, cog: DistributedCogAI):
+        self.zoneChange(cog, cog.zoneId)
+        if self.cogList.count(cog) > 0:
+            self.cogList.remove(cog)
+            if cog.flyInSuit:
                 self.numFlyInCogs -= 1
-            if suit.buildingSuit:
+            if cog.buildingSuit:
                 self.numBuildingCogs -= 1
-            if suit.attemptingTakeover:
+            if cog.attemptingTakeover:
                 self.numAttemptingTakeover -= 1
-                if suit.takeoverIsCogdo:
+                if cog.takeoverIsCogdo:
                     self.numAttemptingCogdoTakeover -= 1
-        suit.requestDelete()
+        cog.requestDelete()
 
     def countTakeovers(self):
         count = 0
-        for suit in self.suitList:
-            if suit.attemptingTakeover:
+        for cog in self.cogList:
+            if cog.attemptingTakeover:
                 count += 1
 
         return count
 
     def countCogdoTakeovers(self):
         count = 0
-        for suit in self.suitList:
-            if suit.attemptingTakeover and suit.takeoverIsCogdo:
+        for cog in self.cogList:
+            if cog.attemptingTakeover and cog.takeoverIsCogdo:
                 count += 1
 
         return count
@@ -555,18 +555,18 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             flyInDeficit -= 1
 
         if self.buildingMgr:
-            suitBuildings = self.buildingMgr.getEstablishedSuitBlocks()
+            cogBuildings = self.buildingMgr.getEstablishedSuitBlocks()
         else:
-            suitBuildings = []
+            cogBuildings = []
         if self.currDesired != None:
             targetBuildingNum = max(0, self.currDesired - self.numFlyInCogs)
         else:
-            targetBuildingNum = int(len(suitBuildings) * self.COG_BUILDING_NUM_COGS)
+            targetBuildingNum = int(len(cogBuildings) * self.COG_BUILDING_NUM_COGS)
         targetBuildingNum += flyInDeficit
         targetBuildingNum = min(targetBuildingNum, self.TOTAL_MAX_COGS - self.numFlyInCogs)
         buildingDeficit = (targetBuildingNum - self.numBuildingCogs + 3) // 4
         while buildingDeficit > 0:
-            if not self.createNewSuit(suitBuildings, streetPoints):
+            if not self.createNewSuit(cogBuildings, streetPoints):
                 break
             buildingDeficit -= 1
 
@@ -575,15 +575,15 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             if buildingDeficit != 0:
                 self.notify.debug('remaining deficit is %d.' % buildingDeficit)
         if self.buildingMgr:
-            suitBuildings = self.buildingMgr.getEstablishedSuitBlocks()
-            timeoutIndex = min(len(suitBuildings), len(self.COG_BUILDING_TIMEOUT) - 1)
+            cogBuildings = self.buildingMgr.getEstablishedSuitBlocks()
+            timeoutIndex = min(len(cogBuildings), len(self.COG_BUILDING_TIMEOUT) - 1)
             timeout = self.COG_BUILDING_TIMEOUT[timeoutIndex]
             if timeout != None:
                 timeout *= 3600.0
                 oldest = None
                 oldestAge = 0
                 now = time.time()
-                for b in suitBuildings:
+                for b in cogBuildings:
                     building = self.buildingMgr.getBuilding(b)
                     if hasattr(building, 'elevator'):
                         if building.elevator.fsm.getCurrentState().getName() == 'waitEmpty':
@@ -593,7 +593,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                                 oldestAge = age
 
                 if oldestAge > timeout:
-                    self.notify.info('Street %d has %d buildings; reclaiming %0.2f-hour-old building.' % (self.zoneId, len(suitBuildings), oldestAge / 3600.0))
+                    self.notify.info('Street %d has %d buildings; reclaiming %0.2f-hour-old building.' % (self.zoneId, len(cogBuildings), oldestAge / 3600.0))
                     oldest.b_setVictorList([0, 0, 0, 0])
                     oldest.updateSavedBy([])
                     oldest.toonTakeOver()
@@ -608,23 +608,23 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         min = hoodInfo[self.COG_HOOD_INFO_MIN]
         max = hoodInfo[self.COG_HOOD_INFO_MAX]
         adjustment = random.choice((-2, -1, -1, 0, 0, 0, 1, 1, 2))
-        self.suitCountAdjust += adjustment
+        self.cogCountAdjust += adjustment
         desiredNum = self.calcDesiredNumFlyInCogs()
         if desiredNum < min:
-            self.suitCountAdjust = min - self.baseNumCogs
+            self.cogCountAdjust = min - self.baseNumCogs
         else:
             if desiredNum > max:
-                self.suitCountAdjust = max - self.baseNumCogs
+                self.cogCountAdjust = max - self.baseNumCogs
         self.__waitForNextAdjust()
         return Task.done
 
-    def suitTakeOver(self, blockNumber: int, cogTrack: str, difficulty: int, buildingHeight: int):
+    def cogTakeOver(self, blockNumber: int, cogTrack: str, difficulty: int, buildingHeight: int):
         if self.pendingBuildingTracks.count(cogTrack) > 0:
             self.pendingBuildingTracks.remove(cogTrack)
         if self.pendingBuildingHeights.count(buildingHeight) > 0:
             self.pendingBuildingHeights.remove(buildingHeight)
         building = self.buildingMgr.getBuilding(blockNumber)
-        building.suitTakeOver(cogTrack, difficulty, buildingHeight)
+        building.cogTakeOver(cogTrack, difficulty, buildingHeight)
 
     def cogdoTakeOver(self, blockNumber: int, cogTrack: str, difficulty: int, buildingHeight: int):
         if self.pendingCogdoHeights.count(buildingHeight) > 0:
@@ -666,7 +666,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             wantedCogBuildings -= wantedCogdos
         else:
             wantedCogdos = 0
-        self.notify.debug('Want %d out of %d total suit buildings; we currently have %d assigned, %d actual.' % (wantedCogBuildings, totalBuildings, targetCogBuildings, actualCogBuildings))
+        self.notify.debug('Want %d out of %d total cog buildings; we currently have %d assigned, %d actual.' % (wantedCogBuildings, totalBuildings, targetCogBuildings, actualCogBuildings))
         if actualCogBuildings > 0:
             numReassigned = 0
             for sp in list(self.air.cogPlanners.values()):
@@ -681,7 +681,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                     numReassigned += more
 
             if numReassigned > 0:
-                self.notify.debug('Assigned %d buildings where suit buildings already existed.' % numReassigned)
+                self.notify.debug('Assigned %d buildings where cog buildings already existed.' % numReassigned)
         if simbase.air.wantCogdominiums:
             if actualCogdos > 0:
                 numReassigned = 0
@@ -740,7 +740,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             smallestTracks = []
             for trackIndex in range(4):
                 if totalWeightPerTrack[trackIndex]:
-                    track = CogDNA.suitDepts[trackIndex]
+                    track = CogDNA.cogDepts[trackIndex]
                     count = numPerTrack[track]
                     if smallestCount == None or count < smallestCount:
                         smallestTracks = [
@@ -753,7 +753,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                 self.notify.info('No more room for buildings, with %s still to assign.' % numToAssign)
                 return
             buildingTrack = random.choice(smallestTracks)
-            buildingTrackIndex = CogDNA.suitDepts.index(buildingTrack)
+            buildingTrackIndex = CogDNA.cogDepts.index(buildingTrack)
             smallestCount = None
             smallestHeights = []
             for height in range(5):
@@ -774,7 +774,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             repeat = 1
             while repeat and buildingTrack != None and buildingHeight != None:
                 if len(hoodInfo) == 0:
-                    self.notify.warning('No more streets can have suit buildings, with %d buildings unassigned!' % numToAssign)
+                    self.notify.warning('No more streets can have cog buildings, with %d buildings unassigned!' % numToAssign)
                     return
                 repeat = 0
                 currHoodInfo = self.chooseStreetWithPreference(hoodInfo, buildingTrackIndex, buildingHeight)
@@ -826,7 +826,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
             repeat = 1
             while repeat:
                 if len(hoodInfo) == 0:
-                    self.notify.warning('No more streets can remove suit buildings, with %d buildings too many!' % numToAssign)
+                    self.notify.warning('No more streets can remove cog buildings, with %d buildings too many!' % numToAssign)
                     return
                 repeat = 0
                 currHoodInfo = self.chooseStreetNoPreference(hoodInfo, totalWeight)
@@ -957,16 +957,16 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         self.__waitForNextAdjust()
 
     def resyncCogs(self):
-        for suit in self.suitList:
-            suit.resync()
+        for cog in self.cogList:
+            cog.resync()
 
     def flyCogs(self):
-        for suit in self.suitList:
-            if suit.pathState == 1:
-                suit.flyAwayNow()
+        for cog in self.cogList:
+            if cog.pathState == 1:
+                cog.flyAwayNow()
 
-    def requestBattle(self, zoneId: int, suit: DistributedCogAI, toonId: int) -> bool:
-        self.notify.debug('requestBattle() - zone: %d suit: %d toon: %d' % (zoneId, suit.doId, toonId))
+    def requestBattle(self, zoneId: int, cog: DistributedCogAI, toonId: int) -> bool:
+        self.notify.debug('requestBattle() - zone: %d cog: %d toon: %d' % (zoneId, cog.doId, toonId))
         canonicalZoneId = ZoneUtil.getCanonicalZoneId(zoneId)
         if canonicalZoneId not in self.battlePosDict:
             return False
@@ -988,10 +988,10 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                 holidayId = trackToHolidayDict[tentativeBonusTrack]
                 if simbase.air.holidayManager.isHolidayRunning(holidayId) and simbase.air.holidayManager.getCurPhase(holidayId) >= 1:
                     interactivePropTrackBonus = tentativeBonusTrack
-        self.battleMgr.newBattle(zoneId, zoneId, pos, suit, toonId, self.__battleFinished, self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_SMAX], interactivePropTrackBonus)
+        self.battleMgr.newBattle(zoneId, zoneId, pos, cog, toonId, self.__battleFinished, self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_SMAX], interactivePropTrackBonus)
         for currOther in self.zoneInfo[zoneId]:
-            self.notify.debug('Found suit %d in this new battle zone %d' % (currOther.getDoId(), zoneId))
-            if currOther != suit:
+            self.notify.debug('Found cog %d in this new battle zone %d' % (currOther.getDoId(), zoneId))
+            if currOther != cog:
                 if currOther.pathState == 1 and currOther.legType == SuitLeg.TWalk:
                     self.checkForBattle(zoneId, currOther)
 
@@ -1000,7 +1000,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
     def __battleFinished(self, zoneId: int):
         self.notify.debug('DistSuitPlannerAI:  battle in zone ' + str(zoneId) + ' finished')
 
-    def __suitCanJoinBattle(self, zoneId: int) -> bool:
+    def __cogCanJoinBattle(self, zoneId: int) -> bool:
         battle = self.battleMgr.getBattle(zoneId)
         if len(battle.cogs) >= 4:
             return False
@@ -1014,24 +1014,24 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
                     if random.randint(0, 99) < jChanceList[ratioIdx]:
                         return True
                 else:
-                    self.notify.warning('__suitCanJoinBattle idx out of range!')
+                    self.notify.warning('__cogCanJoinBattle idx out of range!')
                     return True
         return False
 
-    def checkForBattle(self, zoneId: int, suit: DistributedCogAI):
+    def checkForBattle(self, zoneId: int, cog: DistributedCogAI):
         if self.battleMgr.cellHasBattle(zoneId):
-            if self.__suitCanJoinBattle(zoneId) and self.battleMgr.requestBattleAddSuit(zoneId, suit):
+            if self.__cogCanJoinBattle(zoneId) and self.battleMgr.requestBattleAddSuit(zoneId, cog):
                 pass
             else:
-                suit.flyAwayNow()
+                cog.flyAwayNow()
 
-    def zoneChange(self, suit: DistributedCogAI, oldZone: int, newZone: int = None):
-        if oldZone in self.zoneInfo and suit in self.zoneInfo[oldZone]:
-            self.zoneInfo[oldZone].remove(suit)
+    def zoneChange(self, cog: DistributedCogAI, oldZone: int, newZone: int = None):
+        if oldZone in self.zoneInfo and cog in self.zoneInfo[oldZone]:
+            self.zoneInfo[oldZone].remove(cog)
         if newZone != None:
             if newZone not in self.zoneInfo:
                 self.zoneInfo[newZone] = []
-            self.zoneInfo[newZone].append(suit)
+            self.zoneInfo[newZone].append(cog)
 
     def d_setZoneId(self, zoneId: int):
         self.sendUpdate('setZoneId', [self.getZoneId()])
@@ -1039,20 +1039,20 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
     def getZoneId(self) -> int:
         return self.zoneId
 
-    def suitListQuery(self):
-        suitIndexList = []
-        for suit in self.suitList:
-            suitIndexList.append(CogDNA.suitHeadTypes.index(suit.dna.name))
+    def cogListQuery(self):
+        cogIndexList = []
+        for cog in self.cogList:
+            cogIndexList.append(CogDNA.cogHeadTypes.index(cog.dna.name))
 
-        self.sendUpdateToAvatarId(self.air.getAvatarIdFromSender(), 'suitListResponse', [suitIndexList])
+        self.sendUpdateToAvatarId(self.air.getAvatarIdFromSender(), 'cogListResponse', [cogIndexList])
 
     def buildingListQuery(self):
         buildingDict = {}
         self.countNumBuildingsPerTrack(buildingDict)
         buildingList = [0, 0, 0, 0]
-        for dept in CogDNA.suitDepts:
+        for dept in CogDNA.cogDepts:
             if dept in buildingDict:
-                buildingList[CogDNA.suitDepts.index(dept)] = buildingDict[dept]
+                buildingList[CogDNA.cogDepts.index(dept)] = buildingDict[dept]
 
         self.sendUpdateToAvatarId(self.air.getAvatarIdFromSender(), 'buildingListResponse', [buildingList])
 
@@ -1065,7 +1065,7 @@ class DistributedCogPlannerAI(DistributedObjectAI, CogPlannerBase):
         else:
             level = min(max(level, type), type + 4)
         if track == None:
-            track = CogDNA.suitDepts[CogBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_TRACK])]
+            track = CogDNA.cogDepts[CogBattleGlobals.pickFromFreqList(self.SuitHoodInfo[self.hoodInfoIdx][self.COG_HOOD_INFO_TRACK])]
         self.notify.debug('pickLevelTypeAndTrack: %d %d %s' % (level, type, track))
         return (
          level, type, track)

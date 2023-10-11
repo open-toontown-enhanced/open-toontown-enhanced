@@ -49,8 +49,8 @@ class DistributedBattleFinalAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
                 self.activeToons.append(toonId)
 
         self.d_setMembers()
-        for suit in cogs:
-            joined = self.suitRequestJoin(suit)
+        for cog in cogs:
+            joined = self.cogRequestJoin(cog)
 
         self.d_setMembers()
         self.b_setState('ReservesJoining')
@@ -66,16 +66,16 @@ class DistributedBattleFinalAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             self.b_setState('Resume')
         else:
             totalHp = 0
-            for suit in self.cogs:
-                if suit.currHP > 0:
-                    totalHp += suit.currHP
+            for cog in self.cogs:
+                if cog.currHP > 0:
+                    totalHp += cog.currHP
 
             self.roundCallback(self.activeToons, totalHp, deadCogs)
 
     def resume(self, joinedReserves):
         if len(joinedReserves) != 0:
             for info in joinedReserves:
-                joined = self.suitRequestJoin(info[0])
+                joined = self.cogRequestJoin(info[0])
 
             self.d_setMembers()
             self.b_setState('ReservesJoining')

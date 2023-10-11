@@ -134,8 +134,8 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         activeCogs = self.activeCogsA
         if battleSide:
             activeCogs = self.activeCogsB
-        for suit in activeCogs:
-            battle.addCog(suit)
+        for cog in activeCogs:
+            battle.addCog(cog)
 
         battle.generateWithRequired(self.zoneId)
         return battle
@@ -146,10 +146,10 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             self.notify.warning('initializeBattles: no toons!')
             return
         self.battleNumber = battleNumber
-        suitHandles = self.generateCogs(battleNumber)
-        self.cogsA = suitHandles['activeCogs']
+        cogHandles = self.generateCogs(battleNumber)
+        self.cogsA = cogHandles['activeCogs']
         self.activeCogsA = self.cogsA[:]
-        self.reserveCogs = suitHandles['reserveCogs']
+        self.reserveCogs = cogHandles['reserveCogs']
         if battleNumber == 3:
             if self.toonsB:
                 movedSuit = self.cogsA.pop()
@@ -160,10 +160,10 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
                 self.cogsB = []
                 self.activeCogsB = []
         else:
-            suitHandles = self.generateCogs(battleNumber)
-            self.cogsB = suitHandles['activeCogs']
+            cogHandles = self.generateCogs(battleNumber)
+            self.cogsB = cogHandles['activeCogs']
             self.activeCogsB = self.cogsB[:]
-            self.reserveCogs += suitHandles['reserveCogs']
+            self.reserveCogs += cogHandles['reserveCogs']
         if self.toonsA:
             if battleNumber == 1:
                 self.battleA = self.makeBattle(bossCogPosHpr, ToontownGlobals.WaiterBattleAPosHpr, self.handleRoundADone, self.handleBattleADone, battleNumber, 0)
@@ -330,42 +330,42 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         diners = []
         for i in range(len(self.notDeadList)):
             if simbase.config.GetBool('bossbot-boss-cheat', 0):
-                suit = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
+                cog = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
             else:
                 info = self.notDeadList[i]
-                suitType = info[2] - 4
-                suitLevel = info[2]
-                suit = self.__genSuitObject(self.zoneId, suitType, 'c', suitLevel, 1)
-            diners.append((suit, 100))
+                cogType = info[2] - 4
+                cogLevel = info[2]
+                cog = self.__genSuitObject(self.zoneId, cogType, 'c', cogLevel, 1)
+            diners.append((cog, 100))
 
         active = []
         for i in range(2):
             if simbase.config.GetBool('bossbot-boss-cheat', 0):
-                suit = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
+                cog = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
             else:
-                suitType = 8
-                suitLevel = 12
-                suit = self.__genSuitObject(self.zoneId, suitType, 'c', suitLevel, 1)
-            active.append(suit)
+                cogType = 8
+                cogLevel = 12
+                cog = self.__genSuitObject(self.zoneId, cogType, 'c', cogLevel, 1)
+            active.append(cog)
 
         return {'activeCogs': active, 'reserveCogs': diners}
 
-    def __genSuitObject(self, suitZone, suitType, bldgTrack, suitLevel, revives=0):
+    def __genSuitObject(self, cogZone, cogType, bldgTrack, cogLevel, revives=0):
         newSuit = DistributedCogAI.DistributedCogAI(simbase.air, None)
-        skel = self.__setupSuitInfo(newSuit, bldgTrack, suitLevel, suitType)
+        skel = self.__setupSuitInfo(newSuit, bldgTrack, cogLevel, cogType)
         if skel:
             newSuit.setSkelecog(1)
         newSuit.setSkeleRevives(revives)
-        newSuit.generateWithRequired(suitZone)
-        newSuit.node().setName('suit-%s' % newSuit.doId)
+        newSuit.generateWithRequired(cogZone)
+        newSuit.node().setName('cog-%s' % newSuit.doId)
         return newSuit
 
-    def __setupSuitInfo(self, suit, bldgTrack, suitLevel, suitType):
+    def __setupSuitInfo(self, cog, bldgTrack, cogLevel, cogType):
         dna = CogDNA.CogDNA()
-        dna.newSuitRandom(suitType, bldgTrack)
-        suit.dna = dna
-        self.notify.debug('Creating suit type ' + suit.dna.name + ' of level ' + str(suitLevel) + ' from type ' + str(suitType) + ' and track ' + str(bldgTrack))
-        suit.setLevel(suitLevel)
+        dna.newSuitRandom(cogType, bldgTrack)
+        cog.dna = dna
+        self.notify.debug('Creating cog type ' + cog.dna.name + ' of level ' + str(cogLevel) + ' from type ' + str(cogType) + ' and track ' + str(bldgTrack))
+        cog.setLevel(cogLevel)
         return False
 
     def enterBattleThree(self):

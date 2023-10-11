@@ -71,10 +71,10 @@ class BattleBlocker(BasicEntities.DistributedNodePathEntity):
                 callback = battle.handleBattleBlockerCollision
         elif len(self.cogIds) > 0:
             for cogId in self.cogIds:
-                suit = base.cr.doId2do.get(cogId)
-                if suit:
-                    self.notify.debug('act like we collided with Suit %d ( in state %s )' % (cogId, suit.fsm.getCurrentState().getName()))
-                    callback = suit.handleBattleBlockerCollision
+                cog = base.cr.doId2do.get(cogId)
+                if cog:
+                    self.notify.debug('act like we collided with Suit %d ( in state %s )' % (cogId, cog.fsm.getCurrentState().getName()))
+                    callback = cog.handleBattleBlockerCollision
                     break
 
         self.showReaction(callback)

@@ -33,20 +33,20 @@ class CogdoFlyingGameIntro(CogdoGameMovie):
             self._cogDialogueSfx.play()
             self.cogHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, suitType):
-        suit = Suit.Suit()
+    def makeSuit(self, cogType):
+        cog = Suit.Suit()
         dna = CogDNA.CogDNA()
-        dna.newSuit(suitType)
-        suit.setStyle(dna)
-        suit.isDisguised = 1
-        suit.generateSuit()
-        suit.setScale(1, 1, 2)
-        suit.setPos(0, 0, -4.4)
-        suit.reparentTo(self.toonHead)
-        for part in suit.getHeadParts():
+        dna.newSuit(cogType)
+        cog.setStyle(dna)
+        cog.isDisguised = 1
+        cog.generateSuit()
+        cog.setScale(1, 1, 2)
+        cog.setPos(0, 0, -4.4)
+        cog.reparentTo(self.toonHead)
+        for part in cog.getHeadParts():
             part.hide()
 
-        suit.loop('neutral')
+        cog.loop('neutral')
 
     def load(self):
         CogdoGameMovie.load(self)

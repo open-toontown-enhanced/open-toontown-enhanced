@@ -685,16 +685,16 @@ class DistributedLaserField(BattleBlocker.BattleBlocker):
 
     def hideSuit(self, cogIdarray):
         for cogId in cogIdarray:
-            suit = base.cr.doId2do.get(cogId)
-            if suit:
-                suit.stash()
+            cog = base.cr.doId2do.get(cogId)
+            if cog:
+                cog.stash()
 
     def showSuit(self, cogIdarray):
         for cogId in cogIdarray:
-            suit = base.cr.doId2do.get(cogId)
-            if suit:
-                suit.unstash()
-                suit.setVirtual()
+            cog = base.cr.doId2do.get(cogId)
+            if cog:
+                cog.unstash()
+                cog.setVirtual()
 
     def initCollisionGeom(self):
         print('Laser Field initCollisionGeom')

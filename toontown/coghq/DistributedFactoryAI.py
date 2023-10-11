@@ -40,10 +40,10 @@ class DistributedFactoryAI(DistributedLevelAI.DistributedLevelAI, FactoryBase.Fa
         self.notify.info('creating cogs')
         cogSpecModule = FactorySpecs.getCogSpecModule(self.factoryId)
         self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedFactoryCogAI.DistributedFactoryCogAI, DistributedBattleFactoryAI.DistributedBattleFactoryAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells)
-        suitHandles = self.planner.genCogs()
+        cogHandles = self.planner.genCogs()
         messenger.send('plannerCreated-' + str(self.doId))
-        self.cogs = suitHandles['activeCogs']
-        self.reserveCogs = suitHandles['reserveCogs']
+        self.cogs = cogHandles['activeCogs']
+        self.reserveCogs = cogHandles['reserveCogs']
         self.d_setCogs()
         scenario = 0
         description = '%s|%s|%s|%s' % (self.factoryId, self.entranceId, scenario, self.avIdList)
@@ -63,10 +63,10 @@ class DistributedFactoryAI(DistributedLevelAI.DistributedLevelAI, FactoryBase.Fa
 
         self.planner.destroy()
         del self.planner
-        for suit in cogs:
-            if not suit.isDeleted():
-                suit.factoryIsGoingDown()
-                suit.requestDelete()
+        for cog in cogs:
+            if not cog.isDeleted():
+                cog.factoryIsGoingDown()
+                cog.requestDelete()
 
         DistributedLevelAI.DistributedLevelAI.delete(self)
 
@@ -119,14 +119,14 @@ class DistributedFactoryAI(DistributedLevelAI.DistributedLevelAI, FactoryBase.Fa
 
     def getCogs(self):
         cogIds = []
-        for suit in self.cogs:
-            cogIds.append(suit.doId)
+        for cog in self.cogs:
+            cogIds.append(cog.doId)
 
         return cogIds
 
     def getReserveCogs(self):
         cogIds = []
-        for suit in self.reserveCogs:
-            cogIds.append(suit[0].doId)
+        for cog in self.reserveCogs:
+            cogIds.append(cog[0].doId)
 
         return cogIds

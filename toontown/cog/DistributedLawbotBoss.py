@@ -217,10 +217,10 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.lawyerRequest = None
         self.lawyers = lawyers
         for i in range(len(self.lawyers)):
-            suit = self.lawyers[i]
-            suit.fsm.request('neutral')
-            suit.loop('neutral')
-            suit.setBossCogId(self.doId)
+            cog = self.lawyers[i]
+            cog.fsm.request('neutral')
+            cog.loop('neutral')
+            cog.setBossCogId(self.doId)
 
         return
 
@@ -260,7 +260,7 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             destPos = toon.getPos()
             self.placeToonInElevator(toon)
             toon.wrtReparentTo(render)
-            ival = Sequence(Wait(delay), Func(toon.suit.setPlayRate, 1, 'walk'), Func(toon.suit.loop, 'walk'), toon.posInterval(1, Point3(0, 90, 20)), ParallelEndTogether(MopathInterval(mopath, toon), toon.posInterval(2, destPos, blendType='noBlend')), Func(toon.suit.loop, 'neutral'))
+            ival = Sequence(Wait(delay), Func(toon.cog.setPlayRate, 1, 'walk'), Func(toon.cog.loop, 'walk'), toon.posInterval(1, Point3(0, 90, 20)), ParallelEndTogether(MopathInterval(mopath, toon), toon.posInterval(2, destPos, blendType='noBlend')), Func(toon.cog.loop, 'neutral'))
             track.append(ival)
             delayDeletes.append(DelayDelete.DelayDelete(toon, 'LawbotBoss.__walkToonToPromotion'))
 

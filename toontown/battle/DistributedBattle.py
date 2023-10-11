@@ -60,10 +60,10 @@ class DistributedBattle(DistributedBattleBase.DistributedBattleBase):
         else:
             self.notify.warning('no hood  self.interactiveProp is None')
 
-    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, suitTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
+    def setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, cogTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp):
         if self.battleCleanedUp():
             return
-        oldtoons = DistributedBattleBase.DistributedBattleBase.setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, suitTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp)
+        oldtoons = DistributedBattleBase.DistributedBattleBase.setMembers(self, cogs, cogsJoining, cogsPending, cogsActive, cogsLured, cogTraps, toons, toonsJoining, toonsPending, toonsActive, toonsRunning, timestamp)
         if len(self.toons) == 4 and len(oldtoons) < 4:
             self.notify.debug('setMembers() - battle is now full of toons')
             self.closeBattleCollision()
@@ -77,10 +77,10 @@ class DistributedBattle(DistributedBattleBase.DistributedBattleBase):
         if len(self.toons) == 0:
             self.notify.warning('__faceOff(): no toons.')
             return
-        suit = self.cogs[0]
-        point = self.suitPoints[0][0]
-        suitPos = point[0]
-        suitHpr = VBase3(point[1], 0.0, 0.0)
+        cog = self.cogs[0]
+        point = self.cogPoints[0][0]
+        cogPos = point[0]
+        cogHpr = VBase3(point[1], 0.0, 0.0)
         toon = self.toons[0]
         point = self.toonPoints[0][0]
         toonPos = point[0]
@@ -88,51 +88,51 @@ class DistributedBattle(DistributedBattleBase.DistributedBattleBase):
         p = toon.getPos(self)
         toon.setPos(self, p[0], p[1], 0.0)
         toon.setShadowHeight(0)
-        suit.setState('Battle')
+        cog.setState('Battle')
         cogTrack = Sequence()
         toonTrack = Sequence()
-        cogTrack.append(Func(suit.loop, 'neutral'))
-        cogTrack.append(Func(suit.headsUp, toon))
-        taunt = CogBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
-        cogTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
+        cogTrack.append(Func(cog.loop, 'neutral'))
+        cogTrack.append(Func(cog.headsUp, toon))
+        taunt = CogBattleGlobals.getFaceoffTaunt(cog.getStyleName(), cog.doId)
+        cogTrack.append(Func(cog.setChatAbsolute, taunt, CFSpeech | CFTimeout))
         toonTrack.append(Func(toon.loop, 'neutral'))
-        toonTrack.append(Func(toon.headsUp, suit))
-        suitHeight = suit.getHeight()
-        suitOffsetPnt = Point3(0, 0, suitHeight)
+        toonTrack.append(Func(toon.headsUp, cog))
+        cogHeight = cog.getHeight()
+        cogOffsetPnt = Point3(0, 0, cogHeight)
         faceoffTime = self.calcFaceoffTime(self.getPos(), self.initialSuitPos)
         faceoffTime = max(faceoffTime, BATTLE_SMALL_VALUE)
         delay = FACEOFF_TAUNT_T
         if self.hasLocalToon():
-            MidTauntCamHeight = suitHeight * 0.66
-            MidTauntCamHeightLim = suitHeight - 1.8
+            MidTauntCamHeight = cogHeight * 0.66
+            MidTauntCamHeightLim = cogHeight - 1.8
             if MidTauntCamHeight < MidTauntCamHeightLim:
                 MidTauntCamHeight = MidTauntCamHeightLim
             TauntCamY = 16
             TauntCamX = random.choice((-5, 5))
             TauntCamHeight = random.choice((MidTauntCamHeight, 1, 11))
             camTrack = Sequence()
-            camTrack.append(Func(camera.wrtReparentTo, suit))
+            camTrack.append(Func(camera.wrtReparentTo, cog))
             camTrack.append(Func(base.camLens.setMinFov, self.camFOMinFov))
             camTrack.append(Func(camera.setPos, TauntCamX, TauntCamY, TauntCamHeight))
-            camTrack.append(Func(camera.lookAt, suit, suitOffsetPnt))
+            camTrack.append(Func(camera.lookAt, cog, cogOffsetPnt))
             camTrack.append(Wait(delay))
             camTrack.append(Func(base.camLens.setMinFov, self.camMinFov))
             camTrack.append(Func(camera.wrtReparentTo, self))
             camTrack.append(Func(camera.setPos, self.camFOPos))
-            camTrack.append(Func(camera.lookAt, suit.getPos(self)))
+            camTrack.append(Func(camera.lookAt, cog.getPos(self)))
             camTrack.append(Wait(faceoffTime))
             if self.interactiveProp:
                 camTrack.append(Func(camera.lookAt, self.interactiveProp.node.getPos(self)))
                 camTrack.append(Wait(FACEOFF_LOOK_AT_PROP_T))
         cogTrack.append(Wait(delay))
         toonTrack.append(Wait(delay))
-        cogTrack.append(Func(suit.headsUp, self, suitPos))
-        cogTrack.append(Func(suit.clearChat))
+        cogTrack.append(Func(cog.headsUp, self, cogPos))
+        cogTrack.append(Func(cog.clearChat))
         toonTrack.append(Func(toon.headsUp, self, toonPos))
-        cogTrack.append(Func(suit.loop, 'walk'))
-        cogTrack.append(LerpPosInterval(suit, faceoffTime, suitPos, other=self))
-        cogTrack.append(Func(suit.loop, 'neutral'))
-        cogTrack.append(Func(suit.setHpr, self, suitHpr))
+        cogTrack.append(Func(cog.loop, 'walk'))
+        cogTrack.append(LerpPosInterval(cog, faceoffTime, cogPos, other=self))
+        cogTrack.append(Func(cog.loop, 'neutral'))
+        cogTrack.append(Func(cog.setHpr, self, cogHpr))
         toonTrack.append(Func(toon.loop, 'run'))
         toonTrack.append(LerpPosInterval(toon, faceoffTime, toonPos, other=self))
         toonTrack.append(Func(toon.loop, 'neutral'))
@@ -147,7 +147,7 @@ class DistributedBattle(DistributedBattleBase.DistributedBattleBase):
             mtrack = Parallel(mtrack, camTrack)
         done = Func(callback)
         track = Sequence(mtrack, done, name=name)
-        track.delayDeletes = [DelayDelete.DelayDelete(toon, '__faceOff'), DelayDelete.DelayDelete(suit, '__faceOff')]
+        track.delayDeletes = [DelayDelete.DelayDelete(toon, '__faceOff'), DelayDelete.DelayDelete(cog, '__faceOff')]
         track.start(ts)
         self.storeInterval(track, name)
 

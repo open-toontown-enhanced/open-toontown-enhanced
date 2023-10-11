@@ -250,8 +250,8 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
 
     def __sendLawyerIds(self):
         lawyerIds = []
-        for suit in self.lawyers:
-            lawyerIds.append(suit.doId)
+        for cog in self.lawyers:
+            lawyerIds.append(cog.doId)
 
         self.sendUpdate('setLawyerIds', [lawyerIds])
 
@@ -620,7 +620,7 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
         self.d_setBattleExperience()
         self.b_setState('Reward')
         BattleExperienceAI.assignRewards(self.involvedToons, self.toonSkillPtsGained, self.cogsKilled, ToontownGlobals.dept2cogHQ(self.dept), self.helpfulToons)
-        preferredDept = random.randrange(len(CogDNA.suitDepts))
+        preferredDept = random.randrange(len(CogDNA.cogDepts))
         typeWeights = ['single'] * 70 + ['building'] * 27 + ['invasion'] * 3
         preferredSummonType = random.choice(typeWeights)
         for toonId in self.involvedToons:
@@ -645,7 +645,7 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
                 summonType = 'invasion'
             else:
                 foundOne = False
-                for curDeptIndex in range(len(CogDNA.suitDepts)):
+                for curDeptIndex in range(len(CogDNA.cogDepts)):
                     if not toon.hasParticularCogSummons(curDeptIndex, cogLevel, prefSummonType):
                         deptIndex = curDeptIndex
                         foundOne = True
@@ -667,7 +667,7 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
                         break
 
                 possibleCogLevel = list(range(CogDNA.cogsPerDept))
-                possibleDeptIndex = list(range(len(CogDNA.suitDepts)))
+                possibleDeptIndex = list(range(len(CogDNA.cogDepts)))
                 possibleSummonType = ['single', 'building', 'invasion']
                 typeWeights = [
                  'single'] * 70 + ['building'] * 27 + ['invasion'] * 3
@@ -744,8 +744,8 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
             return
 
     def __resetLawyers(self):
-        for suit in self.lawyers:
-            suit.requestDelete()
+        for cog in self.lawyers:
+            cog.requestDelete()
 
         self.lawyers = []
 
@@ -754,14 +754,14 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
         lawCogChoices = [
          'bloodsucker', 'double_talker', 'ambulance_chaser', 'back_stabber', 'spin_doctor', 'legal_eagle', 'big_wig']
         for i in range(self.numLawyers):
-            suit = DistributedLawbotBossCogAI.DistributedLawbotBossCogAI(self.air, None)
-            suit.dna = CogDNA.CogDNA()
+            cog = DistributedLawbotBossCogAI.DistributedLawbotBossCogAI(self.air, None)
+            cog.dna = CogDNA.CogDNA()
             lawCog = random.choice(lawCogChoices)
-            suit.dna.newSuit(lawCog)
-            suit.setPosHpr(*ToontownGlobals.LawbotBossLawyerPosHprs[i])
-            suit.setBoss(self)
-            suit.generateWithRequired(self.zoneId)
-            self.lawyers.append(suit)
+            cog.dna.newSuit(lawCog)
+            cog.setPosHpr(*ToontownGlobals.LawbotBossLawyerPosHprs[i])
+            cog.setBoss(self)
+            cog.generateWithRequired(self.zoneId)
+            self.lawyers.append(cog)
 
         self.__sendLawyerIds()
         return

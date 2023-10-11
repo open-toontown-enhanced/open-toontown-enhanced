@@ -217,15 +217,15 @@ def cogExists(filePrefix):
     return True
 
 
-def loadSuitAnims(suit, flag = 1):
-    if suit in CogDNA.suitHeadTypes:
+def loadSuitAnims(cog, flag = 1):
+    if cog in CogDNA.cogHeadTypes:
         try:
-            animList = eval(suit)
+            animList = eval(cog)
         except NameError:
             animList = ()
 
     else:
-        print('Invalid suit name: ', suit)
+        print('Invalid cog name: ', cog)
         return -1
     for anim in animList:
         phase = 'phase_' + str(anim[2])
@@ -281,27 +281,27 @@ def unloadSkelDialog():
     SkelCogDialogArray = []
 
 
-def attachSuitHead(node, suitName):
-    suitIndex = CogDNA.suitHeadTypes.index(suitName)
+def attachSuitHead(node, cogName):
+    cogIndex = CogDNA.cogHeadTypes.index(cogName)
     CogDNA = CogDNA.CogDNA()
-    CogDNA.newSuit(suitName)
-    suit = Suit()
-    suit.setDNA(CogDNA)
-    headParts = suit.getHeadParts()
+    CogDNA.newSuit(cogName)
+    cog = Suit()
+    cog.setDNA(CogDNA)
+    headParts = cog.getHeadParts()
     head = node.attachNewNode('head')
     for part in headParts:
         copyPart = part.copyTo(head)
         copyPart.setDepthTest(1)
         copyPart.setDepthWrite(1)
 
-    suit.delete()
-    suit = None
+    cog.delete()
+    cog = None
     p1 = Point3()
     p2 = Point3()
     head.calcTightBounds(p1, p2)
     d = p2 - p1
     biggest = max(d[0], d[2])
-    column = suitIndex % CogDNA.cogsPerDept
+    column = cogIndex % CogDNA.cogsPerDept
     s = (0.2 + column / 100.0) / biggest
     pos = -0.14 + (CogDNA.cogsPerDept - column - 1) / 135.0
     head.setPosHprScale(0, 0, pos, 180, 0, 0, s, s, s)
@@ -735,16 +735,16 @@ class Suit(Avatar.Avatar):
         modelRoot.find('**/arms').setTexture(armTex, 1)
         modelRoot.find('**/legs').setTexture(legTex, 1)
 
-    def makeRentalSuit(self, suitType, modelRoot = None):
+    def makeRentalSuit(self, cogType, modelRoot = None):
         if not modelRoot:
             modelRoot = self.getGeomNode()
-        if suitType == 's':
+        if cogType == 's':
             torsoTex = loader.loadTexture('phase_3.5/maps/tt_t_ene_sellbotRental_blazer.png')
             legTex = loader.loadTexture('phase_3.5/maps/tt_t_ene_sellbotRental_leg.png')
             armTex = loader.loadTexture('phase_3.5/maps/tt_t_ene_sellbotRental_sleeve.png')
             handTex = loader.loadTexture('phase_3.5/maps/tt_t_ene_sellbotRental_hand.png')
         else:
-            self.notify.warning('No rental suit for cog type %s' % suitType)
+            self.notify.warning('No rental cog for cog type %s' % cogType)
             return
         self.isRental = 1
         modelRoot.find('**/torso').setTexture(torsoTex, 1)

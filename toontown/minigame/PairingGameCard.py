@@ -28,7 +28,7 @@ class PairingGameCard(PlayingCardNodePath):
     def load(self):
         oneCard = loader.loadModel('phase_4/models/minigames/garden_sign_memory')
         prop = self.attachNewNode('prop')
-        PlayingCardGlobals.getImage(self.style, self.suit, self.rank).copyTo(prop)
+        PlayingCardGlobals.getImage(self.style, self.cog, self.rank).copyTo(prop)
         prop.setScale(7)
         oneCard.find('**/glow').removeNode()
         cs = oneCard.find('**/collision')

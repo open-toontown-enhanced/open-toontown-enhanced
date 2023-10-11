@@ -358,10 +358,10 @@ class DistributedBanquetTable(DistributedObject.DistributedObject, FSM.FSM, Banq
 
     def changeDinerToDead(self, chairIndex):
 
-        def removeDeathSuit(suit, deathSuit):
+        def removeDeathSuit(cog, deathSuit):
             if not deathSuit.isEmpty():
                 deathSuit.detachNode()
-                suit.cleanupLoseActor()
+                cog.cleanupLoseActor()
 
         self.removeFoodModel(chairIndex)
         indicator = self.dinerStatusIndicators.get(chairIndex)
@@ -371,7 +371,7 @@ class DistributedBanquetTable(DistributedObject.DistributedObject, FSM.FSM, Banq
         deathSuit = diner
         locator = self.tableGroup.find('**/chair_%d' % (chairIndex + 1))
         deathSuit = diner.getLoseActor()
-        ival = Sequence(Func(self.notify.debug, 'before actorinterval sit-lose'), ActorInterval(diner, 'sit-lose'), Func(self.notify.debug, 'before deathSuit.setHpr'), Func(deathSuit.setHpr, diner.getHpr()), Func(self.notify.debug, 'before diner.hide'), Func(diner.hide), Func(self.notify.debug, 'before deathSuit.reparentTo'), Func(deathSuit.reparentTo, self.chairLocators[chairIndex]), Func(self.notify.debug, 'befor ActorInterval lose'), ActorInterval(deathSuit, 'lose', duration=MovieUtil.COG_LOSE_DURATION), Func(self.notify.debug, 'before remove deathsuit'), Func(removeDeathSuit, diner, deathSuit, name='remove-death-suit-%d-%d' % (chairIndex, self.index)), Func(self.notify.debug, 'diner.stash'), Func(diner.stash))
+        ival = Sequence(Func(self.notify.debug, 'before actorinterval sit-lose'), ActorInterval(diner, 'sit-lose'), Func(self.notify.debug, 'before deathSuit.setHpr'), Func(deathSuit.setHpr, diner.getHpr()), Func(self.notify.debug, 'before diner.hide'), Func(diner.hide), Func(self.notify.debug, 'before deathSuit.reparentTo'), Func(deathSuit.reparentTo, self.chairLocators[chairIndex]), Func(self.notify.debug, 'befor ActorInterval lose'), ActorInterval(deathSuit, 'lose', duration=MovieUtil.COG_LOSE_DURATION), Func(self.notify.debug, 'before remove deathcog'), Func(removeDeathSuit, diner, deathSuit, name='remove-death-cog-%d-%d' % (chairIndex, self.index)), Func(self.notify.debug, 'diner.stash'), Func(diner.stash))
         spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
         deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
         deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathSuit), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathSuit), SoundInterval(deathSound, volume=0.32, node=deathSuit))

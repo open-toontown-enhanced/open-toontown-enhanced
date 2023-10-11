@@ -66,7 +66,7 @@ class DistributedFactoryCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                 self.notify.debug('Suit %d requesting battle in zone %d with toon %d' % (self.getDoId(), self.zoneId, toonId))
         else:
             if self.notify.getDebug():
-                self.notify.debug('requestBattle from suit %d, toon %d- denied by battle manager' % (toonId, self.getDoId()))
+                self.notify.debug('requestBattle from cog %d, toon %d- denied by battle manager' % (toonId, self.getDoId()))
             self.b_setBrushOff(CogDialog.getBrushOffIndex(self.getStyleName()))
             self.d_denyBattle(toonId)
 
@@ -75,7 +75,7 @@ class DistributedFactoryCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
          self.confrontPos, self.confrontHpr)
 
     def setBattleCellIndex(self, battleCellIndex):
-        self.sp.suitBattleCellChange(self, oldCell=self.battleCellIndex, newCell=battleCellIndex)
+        self.sp.cogBattleCellChange(self, oldCell=self.battleCellIndex, newCell=battleCellIndex)
         self.battleCellIndex = battleCellIndex
         self.attachBattleBlocker()
         self.accept(self.sp.getBattleBlockerEvent(self.battleCellIndex), self.attachBattleBlocker)
