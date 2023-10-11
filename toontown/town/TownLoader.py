@@ -68,7 +68,7 @@ class TownLoader(StateData.StateData):
         del self.streetClass
         self.landmarkBlocks.removeNode()
         del self.landmarkBlocks
-        self.hood.dnaStore.resetCogPoints()
+        self.hood.dnaStore.resetSuitPoints()
         self.hood.dnaStore.resetBattleCells()
         del self.hood
         del self.nodeDict
