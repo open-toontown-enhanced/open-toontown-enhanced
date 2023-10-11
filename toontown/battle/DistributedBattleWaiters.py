@@ -67,7 +67,7 @@ class DistributedBattleWaiters(DistributedBattleFinal.DistributedBattleFinal):
                 destHpr = VBase3(h, 0, 0)
             else:
                 destPos, destHpr = self.getActorPosHpr(cog, self.cogs)
-            startPos = destPos + Point3(0, 0, CogTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
+            startPos = destPos + Point3(0, 0, CogTimings.fromSky * ToontownGlobals.CogWalkSpeed)
             self.notify.debug('startPos for %s = %s' % (cog, startPos))
             cog.reparentTo(self)
             cog.setPos(startPos)

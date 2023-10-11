@@ -4,7 +4,7 @@ from direct.interval.MetaInterval import Sequence, Parallel
 from direct.interval.FunctionInterval import Func, Wait
 from toontown.toonbase import TTLocalizer
 from toontown.toon import Toon, ToonHead, ToonDNA
-from toontown.cog import Suit, CogDNA
+from toontown.cog import Cog, CogDNA
 from . import CogdoFlyingGameGlobals as Globals
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoUtil
@@ -33,13 +33,13 @@ class CogdoFlyingGameIntro(CogdoGameMovie):
             self._cogDialogueSfx.play()
             self.cogHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, cogType):
-        cog = Suit.Suit()
+    def makeCog(self, cogType):
+        cog = Cog.Cog()
         dna = CogDNA.CogDNA()
-        dna.newSuit(cogType)
+        dna.newCog(cogType)
         cog.setStyle(dna)
         cog.isDisguised = 1
-        cog.generateSuit()
+        cog.generateCog()
         cog.setScale(1, 1, 2)
         cog.setPos(0, 0, -4.4)
         cog.reparentTo(self.toonHead)
@@ -54,16 +54,16 @@ class CogdoFlyingGameIntro(CogdoGameMovie):
         self.toonDNA.newToonFromProperties('dss', 'ss', 'm', 'm', 2, 0, 2, 2, 1, 8, 1, 8, 1, 14)
         self.toonHead = Toon.Toon()
         self.toonHead.setDNA(self.toonDNA)
-        self.makeSuit('short_change')
+        self.makeCog('short_change')
         self.toonHead.getGeomNode().setDepthWrite(1)
         self.toonHead.getGeomNode().setDepthTest(1)
         self.toonHead.loop('neutral')
         self.toonHead.setPosHprScale(-0.73, 0, -1.27, 180, 0, 0, 0.18, 0.18, 0.18)
         self.toonHead.reparentTo(hidden)
         self.toonHead.startBlink()
-        self.cogHead = Suit.Suit()
+        self.cogHead = Cog.Cog()
         self.cogDNA = CogDNA.CogDNA()
-        self.cogDNA.newSuit('legal_eagle')
+        self.cogDNA.newCog('legal_eagle')
         self.cogHead.setDNA(self.cogDNA)
         self.cogHead.getGeomNode().setDepthWrite(1)
         self.cogHead.getGeomNode().setDepthTest(1)

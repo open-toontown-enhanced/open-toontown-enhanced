@@ -7,7 +7,7 @@ from direct.interval.IntervalGlobal import Sequence, Parallel, LerpScaleInterval
 from direct.directutil import Mopath
 from direct.showbase.PythonUtil import bound as clamp
 from panda3d.core import CollisionSphere, CollisionNode, CollisionTube, CollisionPolygon, Vec3, Point3
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
@@ -46,9 +46,9 @@ class CogdoFlyingLegalEagle(FSM, DirectObject):
         self.target = None
         self.isEagleInterested = False
         self.collSphere = None
-        self.cog = Suit.Suit()
+        self.cog = Cog.Cog()
         d = CogDNA.CogDNA()
-        d.newSuit(CogDNAName)
+        d.newCog(CogDNAName)
         self.cog.setDNA(d)
         self.cog.reparentTo(render)
         swapAvatarShadowPlacer(self.cog, 'legalEagle-%sShadowPlacer' % index)

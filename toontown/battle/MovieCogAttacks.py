@@ -251,7 +251,7 @@ def doCogAttack(attack):
     else:
         notify.warning('unknown attack: %d substituting Finger Wag' % name)
         cogTrack = doDefault(attack)
-    camTrack = MovieCamera.chooseSuitShot(attack, cogTrack.getDuration())
+    camTrack = MovieCamera.chooseCogShot(attack, cogTrack.getDuration())
     battle = attack['battle']
     target = attack['target']
     groupStatus = attack['group']
@@ -272,7 +272,7 @@ def doCogAttack(attack):
     if battle.isCogLured(cog):
         resetTrack = getResetTrack(cog, battle)
         resetCogTrack = Sequence(resetTrack, cogTrack)
-        waitTrack = Sequence(Wait(resetTrack.getDuration()), Func(battle.unlureSuit, cog))
+        waitTrack = Sequence(Wait(resetTrack.getDuration()), Func(battle.unlureCog, cog))
         resetCamTrack = Sequence(waitTrack, camTrack)
         return (resetCogTrack, resetCamTrack)
     else:
@@ -291,7 +291,7 @@ def getResetTrack(cog, battle):
 def __makeCancelledNodePath():
     tn = TextNode('CANCELLED')
     tn.setFont(getCogFont())
-    tn.setText(TTLocalizer.MovieSuitCancelled)
+    tn.setText(TTLocalizer.MovieCogCancelled)
     tn.setAlign(TextNode.ACenter)
     tntop = hidden.attachNewNode('CancelledTop')
     tnpath = tntop.attachNewNode(tn)
@@ -500,7 +500,7 @@ def getCogTrack(attack, delay = 1e-06, splicedAnims = None):
     origPos, origHpr = battle.getActorPosHpr(cog)
     track.append(Func(cog.setHpr, battle, origHpr))
 
-    def returnTrapToSuit(cog = cog, trapStorage = trapStorage):
+    def returnTrapToCog(cog = cog, trapStorage = trapStorage):
         trapProp = trapStorage['trap']
         if trapProp != None:
             if trapProp.getName() == 'traintrack':
@@ -510,7 +510,7 @@ def getCogTrack(attack, delay = 1e-06, splicedAnims = None):
             cog.battleTrapProp = trapProp
         return
 
-    track.append(Func(returnTrapToSuit))
+    track.append(Func(returnTrapToCog))
     track.append(Func(cog.clearChat))
     return track
 
@@ -1180,13 +1180,13 @@ def doRazzleDazzle(attack):
     target = attack['target']
     toon = target['toon']
     dmg = target['hp']
-    hitSuit = dmg > 0
+    hitCog = dmg > 0
     sign = globalPropPool.getProp('smile')
     BattleParticles.loadParticles()
     particleEffect = BattleParticles.createParticleEffect('Smile')
     cogTrack = getCogTrack(attack)
     signPosPoints = [Point3(0.0, -0.42, -0.04), VBase3(105.715, 73.977, 65.932)]
-    if hitSuit:
+    if hitCog:
         hitPoint = lambda toon = toon: __toonFacePoint(toon)
     else:
         hitPoint = lambda particleEffect = particleEffect, toon = toon, cog = cog: __toonMissPoint(particleEffect, toon, parent=cog.getRightHand())
@@ -2604,7 +2604,7 @@ def doBounceCheck(attack):
     battle = attack['battle']
     toon = target['toon']
     dmg = target['hp']
-    hitSuit = dmg > 0
+    hitCog = dmg > 0
     check = globalPropPool.getProp('bounced-check')
     checkPosPoints = [MovieUtil.PNT3_ZERO, VBase3(95.247, 79.025, 88.849)]
     bounce1Point = lambda cog = cog, toon = toon, battle = battle: getThrowEndPoint(cog, toon, battle, 'one')
@@ -2632,7 +2632,7 @@ def doBounceCheck(attack):
     checkPropTrack.append(Func(check.setHpr, Point3(0, -90, 0)))
     checkPropTrack.append(getThrowTrack(check, bounce1Point, duration=0.5, parent=toon))
     checkPropTrack.append(getThrowTrack(check, bounce2Point, duration=0.9, parent=toon))
-    if hitSuit:
+    if hitCog:
         checkPropTrack.append(getThrowTrack(check, hit3Point, duration=0.7, parent=toon))
     else:
         checkPropTrack.append(getThrowTrack(check, miss3Point, duration=0.7, parent=toon))

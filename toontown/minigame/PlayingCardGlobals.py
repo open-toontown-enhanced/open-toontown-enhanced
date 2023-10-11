@@ -4,7 +4,7 @@ from panda3d.core import Vec4
 Up = 1
 Down = 0
 MaxRank = 13
-MaxSuit = 4
+MaxCog = 4
 Hearts = 0
 Diamonds = 1
 Clubs = 2
@@ -38,7 +38,7 @@ _cardImagesInitialized = 0
 _modelPathBase = 'phase_3.5/models/gui/inventory_icons'
 
 def convertValueToGagTrackAndLevel(value):
-    imageNum = int(rank / MaxSuit)
+    imageNum = int(rank / MaxCog)
     track = imageNum % (ToontownBattleGlobals.MAX_TRACK_INDEX + 1)
     level = imageNum / (ToontownBattleGlobals.MAX_TRACK_INDEX + 1)
     return (track, level)
@@ -59,7 +59,7 @@ def initCardImages():
         cardModel = loader.loadModel(modelPath)
         cardModel.hide()
         CardImages[style] = {}
-        for cogIndex in range(MaxSuit):
+        for cogIndex in range(MaxCog):
             CardImages[style][cogIndex] = {}
             for rankIndex in range(MaxRank):
                 track, level = convertRankToGagTrackAndLevel(rankIndex)

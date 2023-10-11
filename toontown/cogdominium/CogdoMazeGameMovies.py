@@ -3,7 +3,7 @@ from direct.showbase.RandomNumGen import RandomNumGen
 from direct.interval.MetaInterval import Sequence, Parallel
 from direct.interval.FunctionInterval import Func, Wait
 from toontown.toonbase import TTLocalizer
-from toontown.cog import Suit, CogDNA
+from toontown.cog import Cog, CogDNA
 from toontown.toon import Toon, ToonHead, ToonDNA
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoMazeGameGlobals as Globals
@@ -37,13 +37,13 @@ class CogdoMazeGameIntro(CogdoGameMovie):
             self._cogDialogueSfx.play()
             self.cogHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, cogType):
-        cog = Suit.Suit()
+    def makeCog(self, cogType):
+        cog = Cog.Cog()
         dna = CogDNA.CogDNA()
-        dna.newSuit(cogType)
+        dna.newCog(cogType)
         cog.setStyle(dna)
         cog.isDisguised = 1
-        cog.generateSuit()
+        cog.generateCog()
         cog.setScale(1, 1, 2)
         cog.setPos(0, 0, -4.4)
         cog.reparentTo(self.toonHead)
@@ -56,16 +56,16 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self.toonDNA.newToonFromProperties('dss', 'ss', 'm', 'm', 2, 0, 2, 2, 1, 8, 1, 8, 1, 14)
         self.toonHead = Toon.Toon()
         self.toonHead.setDNA(self.toonDNA)
-        self.makeSuit('short_change')
+        self.makeCog('short_change')
         self.toonHead.getGeomNode().setDepthWrite(1)
         self.toonHead.getGeomNode().setDepthTest(1)
         self.toonHead.loop('neutral')
         self.toonHead.setPosHprScale(-0.73, 0, -1.27, 180, 0, 0, 0.18, 0.18, 0.18)
         self.toonHead.reparentTo(hidden)
         self.toonHead.startBlink()
-        self.cogHead = Suit.Suit()
+        self.cogHead = Cog.Cog()
         self.cogDNA = CogDNA.CogDNA()
-        self.cogDNA.newSuit('mover_and_shaker')
+        self.cogDNA.newCog('mover_and_shaker')
         self.cogHead.setDNA(self.cogDNA)
         self.cogHead.getGeomNode().setDepthWrite(1)
         self.cogHead.getGeomNode().setDepthTest(1)
@@ -78,17 +78,17 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         audioMgr = base.cogdoGameAudioMgr
         self._cogDialogueSfx = audioMgr.createSfx('cogDialogue')
         self._toonDialogueSfx = audioMgr.createSfx('toonDialogue')
-        cogData = Globals.SuitData[Globals.SuitTypes.Boss]
-        bossSuit = Suit.Suit()
+        cogData = Globals.CogData[Globals.CogTypes.Boss]
+        bossCog = Cog.Cog()
         d = CogDNA.CogDNA()
-        d.newSuit(cogData['dnaName'])
-        bossSuit.setDNA(d)
-        bossSuit.setScale(cogData['scale'])
-        bossSuit.loop('neutral')
-        bossSuit.reparentTo(render)
-        bossSuit.setPos(self._exit, -5, -5, 0)
-        bossSuit.lookAt(self._exit)
-        self._cogs.append(bossSuit)
+        d.newCog(cogData['dnaName'])
+        bossCog.setDNA(d)
+        bossCog.setScale(cogData['scale'])
+        bossCog.loop('neutral')
+        bossCog.reparentTo(render)
+        bossCog.setPos(self._exit, -5, -5, 0)
+        bossCog.lookAt(self._exit)
+        self._cogs.append(bossCog)
         self._camHelperNode = NodePath('CamHelperNode')
         self._camHelperNode.reparentTo(render)
         dialogue = TTLocalizer.CogdoMazeIntroMovieDialogue
@@ -100,8 +100,8 @@ class CogdoMazeGameIntro(CogdoGameMovie):
             self._exit.open(animate=False)
 
         def showBoss():
-            self._setCamTarget(bossSuit, 20, offset=Point3(0, 0, 7), angle=Point3(0, 15, 0))
-            bossSuit.loop('victory')
+            self._setCamTarget(bossCog, 20, offset=Point3(0, 0, 7), angle=Point3(0, 15, 0))
+            bossCog.loop('victory')
             self._state = 1
 
         def showExit():
@@ -109,7 +109,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
             self._exit.close()
             self._state = 2
 
-        showExitIval = Parallel(camera.posInterval(waitDuration * 0.5, (10, -25, 20), other=self._exit, blendType='easeInOut'), Sequence(Wait(waitDuration * 0.25), Func(bossSuit.play, 'effort'), camera.hprInterval(waitDuration * 0.25, (30, -30, 0), blendType='easeInOut'), Func(self._exit.close), Wait(waitDuration * 0.5)))
+        showExitIval = Parallel(camera.posInterval(waitDuration * 0.5, (10, -25, 20), other=self._exit, blendType='easeInOut'), Sequence(Wait(waitDuration * 0.25), Func(bossCog.play, 'effort'), camera.hprInterval(waitDuration * 0.25, (30, -30, 0), blendType='easeInOut'), Func(self._exit.close), Wait(waitDuration * 0.5)))
 
         def showWaterCooler():
             wc = self._maze.getWaterCoolers()[0]
@@ -120,7 +120,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         def end():
             self._stopUpdateTask()
 
-        self._ival = Sequence(Func(start), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[0])), showExitIval, Func(showWaterCooler), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[1])), Wait(waitDuration), Func(showBoss), bossSuit.hprInterval(1.0, bossSuit.getHpr() + Point3(180, 0, 0), blendType='easeInOut'), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[2])), Wait(waitDuration - 1.0), Func(end))
+        self._ival = Sequence(Func(start), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[0])), showExitIval, Func(showWaterCooler), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[1])), Wait(waitDuration), Func(showBoss), bossCog.hprInterval(1.0, bossCog.getHpr() + Point3(180, 0, 0), blendType='easeInOut'), Func(self.displayLine, 'toon', self._getRandomLine(dialogue[2])), Wait(waitDuration - 1.0), Func(end))
         self._startUpdateTask()
 
     def _setCamTarget(self, targetNP, distance, offset = Point3(0, 0, 0), angle = Point3(0, 0, 0)):

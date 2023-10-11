@@ -165,22 +165,22 @@ HeadModelDict = {'a': ('/models/char/suitA-', 4),
  'b': ('/models/char/suitB-', 4),
  'c': ('/models/char/suitC-', 3.5)}
 
-def loadTutorialSuit():
+def loadTutorialCog():
     loader.loadModel('phase_3.5/models/char/suitC-mod').node()
     loadDialog(1)
 
 
 def loadCogs(level):
-    loadSuitModelsAndAnims(level, flag=1)
+    loadCogModelsAndAnims(level, flag=1)
     loadDialog(level)
 
 
 def unloadCogs(level):
-    loadSuitModelsAndAnims(level, flag=0)
+    loadCogModelsAndAnims(level, flag=0)
     unloadDialog(level)
 
 
-def loadSuitModelsAndAnims(level, flag = 0):
+def loadCogModelsAndAnims(level, flag = 0):
     for key in list(ModelDict.keys()):
         model, phase = ModelDict[key]
         if ConfigVariableBool('want-new-cogs', 0).value:
@@ -217,7 +217,7 @@ def cogExists(filePrefix):
     return True
 
 
-def loadSuitAnims(cog, flag = 1):
+def loadCogAnims(cog, flag = 1):
     if cog in CogDNA.cogHeadTypes:
         try:
             animList = eval(cog)
@@ -281,11 +281,11 @@ def unloadSkelDialog():
     SkelCogDialogArray = []
 
 
-def attachSuitHead(node, cogName):
+def attachCogHead(node, cogName):
     cogIndex = CogDNA.cogHeadTypes.index(cogName)
     CogDNA = CogDNA.CogDNA()
-    CogDNA.newSuit(cogName)
-    cog = Suit()
+    CogDNA.newCog(cogName)
+    cog = Cog()
     cog.setDNA(CogDNA)
     headParts = cog.getHeadParts()
     head = node.attachNewNode('head')
@@ -308,7 +308,7 @@ def attachSuitHead(node, cogName):
     return head
 
 
-class Suit(Avatar.Avatar):
+class Cog(Avatar.Avatar):
     healthColors = (Vec4(0, 1, 0, 1),
      Vec4(1, 1, 0, 1),
      Vec4(1, 0.5, 0, 1),
@@ -326,10 +326,10 @@ class Suit(Avatar.Avatar):
 
     def __init__(self):
         try:
-            self.Suit_initialized
+            self.Cog_initialized
             return
         except:
-            self.Suit_initialized = 1
+            self.Cog_initialized = 1
 
         Avatar.Avatar.__init__(self)
         self.setFont(ToontownGlobals.getCogFont())
@@ -349,9 +349,9 @@ class Suit(Avatar.Avatar):
 
     def delete(self):
         try:
-            self.Suit_deleted
+            self.Cog_deleted
         except:
-            self.Suit_deleted = 1
+            self.Cog_deleted = 1
             if self.leftHand:
                 self.leftHand.removeNode()
                 self.leftHand = None
@@ -390,11 +390,11 @@ class Suit(Avatar.Avatar):
             pass
         else:
             self.style = dna
-            self.generateSuit()
+            self.generateCog()
             self.initializeDropShadow()
             self.initializeNametag3d()
 
-    def generateSuit(self):
+    def generateCog(self):
         dna = self.style
         self.headParts = []
         self.headColor = None
@@ -735,7 +735,7 @@ class Suit(Avatar.Avatar):
         modelRoot.find('**/arms').setTexture(armTex, 1)
         modelRoot.find('**/legs').setTexture(legTex, 1)
 
-    def makeRentalSuit(self, cogType, modelRoot = None):
+    def makeRentalCog(self, cogType, modelRoot = None):
         if not modelRoot:
             modelRoot = self.getGeomNode()
         if cogType == 's':

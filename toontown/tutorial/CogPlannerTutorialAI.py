@@ -31,11 +31,11 @@ class CogPlannerTutorialAI:
             self.air)
 
         # Create a flunky
-        newSuit = DistributedTutorialCogAI.DistributedTutorialCogAI(self.air, self)
-        newSuit.setupCogDNA(1, 1, "c")
+        newCog = DistributedTutorialCogAI.DistributedTutorialCogAI(self.air, self)
+        newCog.setupCogDNA(1, 1, "c")
         # This is a special tutorial path state
-        newSuit.generateWithRequired(self.zoneId)
-        self.cog = newSuit
+        newCog.generateWithRequired(self.zoneId)
+        self.cog = newCog
 
     def cleanup(self):
         self.zoneId = None

@@ -12,7 +12,7 @@ class DistributedSellbotHQDoor(DistributedCogHQDoor.DistributedCogHQDoor):
     def informPlayer(self, cogType):
         self.notify.debugStateCall(self)
         if cogType == CogDisguiseGlobals.cogTypes.NoDisguise:
-            popupMsg = TTLocalizer.SellbotRentalSuitMessage
+            popupMsg = TTLocalizer.SellbotRentalCogMessage
         elif cogType == CogDisguiseGlobals.cogTypes.NoMerits:
             popupMsg = TTLocalizer.SellbotCogDisguiseNoMeritsMessage
         elif cogType == CogDisguiseGlobals.cogTypes.FullDisguise:

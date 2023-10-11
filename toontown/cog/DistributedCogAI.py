@@ -35,8 +35,8 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         self.pathState = 0
         self.currentLeg = 0
         self.legType = SuitLeg.TOff
-        self.flyInSuit = 0
-        self.buildingSuit = 0
+        self.flyInCog = 0
+        self.buildingCog = 0
         self.attemptingTakeover = 0
         self.takeoverIsCogdo = False
         self.buildingDestination = None
@@ -82,7 +82,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         self.confrontHpr = Vec3(h, p, r)
         if self.sp.requestBattle(self.zoneId, self, toonId):
             if self.notify.getDebug():
-                self.notify.debug('Suit %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
+                self.notify.debug('Cog %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
         else:
             if self.notify.getDebug():
                 self.notify.debug('requestBattle from cog %d - denied by battle manager' % self.getDoId())
@@ -109,7 +109,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         taskMgr.doMethodLater(CogTimings.victoryDance + CogTimings.toSky, self.finishFlyAwayNow, name)
 
     def finishFlyAwayNow(self, task):
-        self.notify.debug('Suit %s finishFlyAwayNow' % self.doId)
+        self.notify.debug('Cog %s finishFlyAwayNow' % self.doId)
         self.requestRemoval()
         return Task.done
 
@@ -147,7 +147,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         self.d_setPathPosition(index, timestamp)
 
     def d_setPathPosition(self, index, timestamp):
-        self.notify.debug('Suit %d reaches point %d at time %0.2f' % (self.getDoId(), index, timestamp))
+        self.notify.debug('Cog %d reaches point %d at time %0.2f' % (self.getDoId(), index, timestamp))
         self.sendUpdate('setPathPosition', [index, globalClockDelta.localToNetworkTime(timestamp)])
 
     def setPathPosition(self, index, timestamp):
@@ -221,7 +221,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             zoneId = self.legList.getZoneId(nextLeg)
             zoneId = ZoneUtil.getTrueZoneId(zoneId, self.branchId)
             self.__enterZone(zoneId)
-            self.notify.debug('Suit %d reached leg %d of %d in zone %d.' % (self.getDoId(), nextLeg, numLegs - 1, self.zoneId))
+            self.notify.debug('Cog %d reached leg %d of %d in zone %d.' % (self.getDoId(), nextLeg, numLegs - 1, self.zoneId))
             if self.DEBUG_COG_POSITIONS:
                 leg = self.legList.getLeg(nextLeg)
                 pos = leg.getPosAtTime(elapsed - leg.getStartTime())
@@ -265,7 +265,7 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                 self.openToonDoor()
             else:
                 if legType == SuitLeg.TToSuitBuilding:
-                    self.openSuitDoor()
+                    self.openCogDoor()
                 else:
                     if legType == SuitLeg.TToCoghq:
                         self.openCogHQDoor(1)
@@ -274,9 +274,9 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
                             self.openCogHQDoor(0)
 
     def resume(self):
-        self.notify.debug('Suit %s resume' % self.doId)
+        self.notify.debug('Cog %s resume' % self.doId)
         if self.currHP <= 0:
-            self.notify.debug('Suit %s dead after resume' % self.doId)
+            self.notify.debug('Cog %s dead after resume' % self.doId)
             self.requestRemoval()
         else:
             self.danceNowFlyAwayLater()
@@ -314,9 +314,9 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         if not hasattr(building, 'door'):
             self.flyAwayNow()
             return
-        building.door.requestSuitEnter(self.getDoId())
+        building.door.requestCogEnter(self.getDoId())
 
-    def openSuitDoor(self):
+    def openCogDoor(self):
         blockNumber = self.buildingDestination
         building = self.sp.buildingMgr.getBuilding(blockNumber)
         if not building.isCogBlock():
@@ -332,16 +332,16 @@ class DistributedCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             return
 
         if enter:
-            door.requestSuitEnter(self.getDoId())
+            door.requestCogEnter(self.getDoId())
         else:
-            door.requestSuitExit(self.getDoId())
+            door.requestCogExit(self.getDoId())
 
     def startTakeOver(self):
         if not self.COG_BUILDINGS:
             return
         blockNumber = self.buildingDestination
         if not self.sp.buildingMgr.isCogBlock(blockNumber):
-            self.notify.debug('Suit %d taking over building %d in %d' % (self.getDoId(), blockNumber, self.zoneId))
+            self.notify.debug('Cog %d taking over building %d in %d' % (self.getDoId(), blockNumber, self.zoneId))
             difficulty = self.getActualLevel() - 1
             dept = CogDNA.getCogDept(self.dna.name)
             if self.buildingDestinationIsCogdo:

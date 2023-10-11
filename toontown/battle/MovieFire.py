@@ -14,8 +14,8 @@ from .MovieUtil import calcAvgCogPos
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieThrow')
 hitSoundFiles = ('AA_tart_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_wholepie_only.ogg', 'AA_wholepie_only.ogg')
 tPieLeavesHand = 2.7
-tPieHitsSuit = 3.0
-tSuitDodges = 2.45
+tPieHitsCog = 3.0
+tCogDodges = 2.45
 ratioMissToHit = 1.5
 tPieShrink = 0.7
 pieFlyTaskName = 'MovieThrow-pieFly'
@@ -71,7 +71,7 @@ def doFires(fires):
     firedTargets = []
     for sf in cogFires:
         if len(sf) > 0:
-            ival = __doSuitFires(sf)
+            ival = __doCogFires(sf)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
             delay = delay + TOON_FIRE_COG_DELAY
@@ -82,7 +82,7 @@ def doFires(fires):
     camTrack = MovieCamera.chooseFireShot(fires, cogFiresDict, camDuration)
     return (retTrack, camTrack)
 
-def __doSuitFires(fires):
+def __doCogFires(fires):
     toonTracks = Parallel()
     delay = 0.0
     hitCount = 0
@@ -98,12 +98,12 @@ def __doSuitFires(fires):
             cogList.append(fire['target']['cog'])
 
     for fire in fires:
-        showSuitCannon = 1
+        showCogCannon = 1
         if fire['target']['cog'] not in cogList:
-            showSuitCannon = 0
+            showCogCannon = 0
         else:
             cogList.remove(fire['target']['cog'])
-        tracks = __throwPie(fire, delay, hitCount, showSuitCannon)
+        tracks = __throwPie(fire, delay, hitCount, showCogCannon)
         if tracks:
             for track in tracks:
                 toonTracks.append(track)
@@ -215,7 +215,7 @@ def __pieMissGroupLerpCallback(t, missDict):
         pie.setScale(newScale)
 
 
-def __getSoundTrack(level, hitSuit, node = None):
+def __getSoundTrack(level, hitCog, node = None):
     throwSound = globalBattleSoundCache.getSound('AA_drop_trigger_box.ogg')
     throwTrack = Sequence(Wait(2.15), SoundInterval(throwSound, node=node))
     return throwTrack
@@ -242,7 +242,7 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
      hp,
      died))
     pieName = pieNames[0]
-    hitSuit = hp > 0
+    hitCog = hp > 0
     button = globalPropPool.getProp('button')
     buttonType = globalPropPool.getPropType('button')
     button2 = MovieUtil.copyProp(button)
@@ -268,7 +268,7 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     buttonTrack.append(Wait(2.5))
     buttonTrack.append(buttonScaleDown)
     buttonTrack.append(buttonHide)
-    soundTrack = __getSoundTrack(level, hitSuit, toon)
+    soundTrack = __getSoundTrack(level, hitCog, toon)
     cogResponseTrack = Sequence()
     reactIval = Sequence()
     if showCannon:
@@ -322,14 +322,14 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
         reactIval = Parallel(ActorInterval(cog, 'pie-small-react'), Sequence(Wait(0.0), LerpPosInterval(cannonHolder, 2.0, posFinal, startPos=posInit, blendType='easeInOut'), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 45, 0), startHpr=Point3(0, 90, 0), blendType='easeIn'), playSoundCannonAdjust), Wait(2.0), Parallel(LerpHprInterval(barrel, 0.6, Point3(0, 90, 0), startHpr=Point3(0, 45, 0), blendType='easeIn'), playSoundCannonAdjust), LerpPosInterval(cannonHolder, 1.0, posInit, startPos=posFinal, blendType='easeInOut')), Sequence(Wait(0.0), Parallel(ActorInterval(cog, 'flail'), cog.scaleInterval(1.0, cogScale), LerpPosInterval(cog, 0.25, Point3(0, -1.0, 0.0)), Sequence(Wait(0.25), Parallel(playSoundCogPanic, LerpPosInterval(cog, 1.5, Point3(0, -deep, 0.0), blendType='easeIn')))), Wait(2.5), Parallel(playSoundBomb, playSoundFly, Sequence(Func(smoke.show), Parallel(LerpScaleInterval(smoke, 0.5, 3), LerpColorScaleInterval(smoke, 0.5, Vec4(2, 2, 2, 0))), Func(smoke.hide)), Sequence(Func(kapow.show),
 ActorInterval(kapow, 'kapow'), Func(kapow.hide)), LerpPosInterval(cog, 3.0, Point3(0, 150.0, 0.0)), cog.scaleInterval(3.0, 0.01)), Func(cog.hide)))
         if hitCount == 1:
-            sival = Sequence(Parallel(reactIval, MovieUtil.createSuitStunInterval(cog, 0.3, 1.3)), Wait(0.0), Func(cannonHolder.remove))
+            sival = Sequence(Parallel(reactIval, MovieUtil.createCogStunInterval(cog, 0.3, 1.3)), Wait(0.0), Func(cannonHolder.remove))
         else:
             sival = reactIval
-        cogResponseTrack.append(Wait(delay + tPieHitsSuit))
+        cogResponseTrack.append(Wait(delay + tPieHitsCog))
         cogResponseTrack.append(showDamage)
         cogResponseTrack.append(updateHealthBar)
         cogResponseTrack.append(sival)
-        bonusTrack = Sequence(Wait(delay + tPieHitsSuit))
+        bonusTrack = Sequence(Wait(delay + tPieHitsCog))
         if kbbonus > 0:
             bonusTrack.append(Wait(0.75))
             bonusTrack.append(Func(cog.showHpText, -kbbonus, 2, openEnded=0))

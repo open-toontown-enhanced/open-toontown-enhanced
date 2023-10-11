@@ -9,7 +9,7 @@ from otp.distributed.TelemetryLimiter import RotationLimitToH, TLGatherAllAvs
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.battle import BattlePlace
-from toontown.cog import Suit
+from toontown.cog import Cog
 import math
 
 class CogHQBossBattle(BattlePlace.BattlePlace):
@@ -89,7 +89,7 @@ class CogHQBossBattle(BattlePlace.BattlePlace):
         self.parentFSM.getStateNamed('cogHQBossBattle').addChild(self.fsm)
         self.townBattle = self.loader.townBattle
         for i in range(1, 3):
-            Suit.loadCogs(i)
+            Cog.loadCogs(i)
 
     def unload(self):
         BattlePlace.BattlePlace.unload(self)
@@ -98,7 +98,7 @@ class CogHQBossBattle(BattlePlace.BattlePlace):
         del self.fsm
         self.ignoreAll()
         for i in range(1, 3):
-            Suit.unloadCogs(i)
+            Cog.unloadCogs(i)
 
     def getTaskZoneId(self):
         return base.cr.playGame.hood.id

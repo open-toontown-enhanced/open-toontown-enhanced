@@ -9,7 +9,7 @@ from direct.fsm import FSM
 from direct.fsm import State
 from toontown.toonbase import TTLocalizer
 from toontown.battle import BattleParticles
-from . import Suit
+from . import Cog
 from direct.task.Task import Task
 from . import CogDNA
 from toontown.battle import BattleProps
@@ -24,8 +24,8 @@ AnimList = ('Ff_speech', 'ltTurn2Wave', 'wave', 'Ff_lookRt', 'turn2Fb', 'Ff_neut
 
 class BossCog(Avatar.Avatar):
     notify = DirectNotifyGlobal.directNotify.newCategory('BossCog')
-    healthColors = Suit.Suit.healthColors
-    healthGlowColors = Suit.Suit.healthGlowColors
+    healthColors = Cog.Cog.healthColors
+    healthGlowColors = Cog.Cog.healthGlowColors
 
     def __init__(self):
         Avatar.Avatar.__init__(self)

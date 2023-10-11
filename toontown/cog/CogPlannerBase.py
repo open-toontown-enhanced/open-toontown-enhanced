@@ -9,7 +9,7 @@ from toontown.building import CogBuildingGlobals
 
 class CogPlannerBase:
     notify = DirectNotifyGlobal.directNotify.newCategory('CogPlannerBase')
-    SuitHoodInfo = [[2100,
+    CogHoodInfo = [[2100,
       5,
       15,
       0,
@@ -453,7 +453,7 @@ class CogPlannerBase:
      0,
      0,
      0]
-    for currHoodInfo in SuitHoodInfo:
+    for currHoodInfo in CogHoodInfo:
         weight = currHoodInfo[COG_HOOD_INFO_BWEIGHT]
         tracks = currHoodInfo[COG_HOOD_INFO_TRACK]
         levels = currHoodInfo[COG_HOOD_INFO_LVL]
@@ -480,7 +480,7 @@ class CogPlannerBase:
         TOTAL_BWEIGHT_PER_HEIGHT[4] += weight * heights[4]
 
     def __init__(self):
-        self.cogWalkSpeed = ToontownGlobals.SuitWalkSpeed
+        self.cogWalkSpeed = ToontownGlobals.CogWalkSpeed
         self.dnaStore: DNAStorage | None = None
         self.pointIndexes: dict[int, DNASuitPoint] = {}
 

@@ -113,7 +113,7 @@ setDialogClasses(TTDialog.TTDialog, TTDialog.TTGlobalDialog)
 ToonFont = None
 BuildingNametagFont = None
 MinnieFont = None
-SuitFont = None
+CogFont = None
 
 def getToonFont():
     global ToonFont
@@ -137,10 +137,10 @@ def getMinnieFont():
 
 
 def getCogFont():
-    global SuitFont
-    if SuitFont == None:
-        SuitFont = loader.loadFont(TTLocalizer.SuitFont, pixelsPerUnit=40, spaceAdvance=0.25, lineHeight=1.0)
-    return SuitFont
+    global CogFont
+    if CogFont == None:
+        CogFont = loader.loadFont(TTLocalizer.CogFont, pixelsPerUnit=40, spaceAdvance=0.25, lineHeight=1.0)
+    return CogFont
 
 
 DonaldsDock = 1000
@@ -572,7 +572,7 @@ WesternPlutoSpeed = 3.2
 ChipSpeed = 3
 DaleSpeed = 3.5
 DaleOrbitDistance = 3
-SuitWalkSpeed = 4.8
+CogWalkSpeed = 4.8
 PieCodeBossCog = 1
 PieCodeNotBossCog = 2
 PieCodeToon = 3

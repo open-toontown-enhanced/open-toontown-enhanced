@@ -1884,7 +1884,7 @@ class Toon(Avatar.Avatar, ToonHead):
                 callback(*extraArgs)
             return
         if self.isDisguised:
-            self.takeOffSuit()
+            self.takeOffDisguise()
         self.playingAnim = 'lose'
         Emote.globalEmote.disableAll(self, 'enterDied')
         if self.isLocal():
@@ -2027,7 +2027,7 @@ class Toon(Avatar.Avatar, ToonHead):
     def __handleAfkTimeout(self, task):
         print('handling timeout')
         self.ignore('wakeup')
-        self.takeOffSuit()
+        self.takeOffDisguise()
         base.cr.playGame.getPlace().fsm.request('final')
         self.b_setAnimState('TeleportOut', 1, self.__handleAfkExitTeleport, [0])
         return Task.done
@@ -2707,14 +2707,14 @@ class Toon(Avatar.Avatar, ToonHead):
             return Sequence(Func(self.nametag3d.show), self.__doToonGhostColorScale(None, lerpTime, keepDefault=1))
         return Sequence()
 
-    def putOnSuit(self, cogType, setDisplayName = True, rental = False):
+    def putOnDisguise(self, cogType, setDisplayName = True, rental = False):
         if self.isDisguised:
-            self.takeOffSuit()
+            self.takeOffDisguise()
         if launcher and not launcher.getPhaseComplete(5):
             return
-        from toontown.cog import Suit
+        from toontown.cog import Cog
         deptIndex = cogType
-        cog = Suit.Suit()
+        cog = Cog.Cog()
         dna = CogDNA.CogDNA()
         if rental == True:
             if CogDNA.cogDepts[deptIndex] == 's':
@@ -2728,10 +2728,10 @@ class Toon(Avatar.Avatar, ToonHead):
             else:
                 self.notify.warning('Suspicious: Incorrect rental cog department requested')
                 cogType = 'cold_caller'
-        dna.newSuit(cogType)
+        dna.newCog(cogType)
         cog.setStyle(dna)
         cog.isDisguised = 1
-        cog.generateSuit()
+        cog.generateCog()
         cog.initializeDropShadow()
         cog.setPos(self.getPos())
         cog.setHpr(self.getHpr())
@@ -2753,7 +2753,7 @@ class Toon(Avatar.Avatar, ToonHead):
         cogGeom = cog.getGeomNode()
         cogGeom.reparentTo(self)
         if rental == True:
-            cog.makeRentalSuit(CogDNA.cogDepts[deptIndex])
+            cog.makeRentalCog(CogDNA.cogDepts[deptIndex])
         self.cog = cog
         self.cogGeom = cogGeom
         self.setHeight(cog.getHeight())
@@ -2764,8 +2764,8 @@ class Toon(Avatar.Avatar, ToonHead):
             self.oldForward = ToontownGlobals.ToonForwardSpeed
             self.oldReverse = ToontownGlobals.ToonReverseSpeed
             self.oldRotate = ToontownGlobals.ToonRotateSpeed
-            ToontownGlobals.ToonForwardSpeed = ToontownGlobals.SuitWalkSpeed
-            ToontownGlobals.ToonReverseSpeed = ToontownGlobals.SuitWalkSpeed
+            ToontownGlobals.ToonForwardSpeed = ToontownGlobals.CogWalkSpeed
+            ToontownGlobals.ToonReverseSpeed = ToontownGlobals.CogWalkSpeed
             ToontownGlobals.ToonRotateSpeed = ToontownGlobals.ToonRotateSlowSpeed
             if self.hasTrackAnimToSpeed():
                 self.stopTrackAnimToSpeed()
@@ -2790,7 +2790,7 @@ class Toon(Avatar.Avatar, ToonHead):
              'level': self.cogLevels[cogDept] + 1})
             self.nametag.setNameWordwrap(9.0)
 
-    def takeOffSuit(self):
+    def takeOffDisguise(self):
         if not self.isDisguised:
             return
         cogType = self.cog.style.name

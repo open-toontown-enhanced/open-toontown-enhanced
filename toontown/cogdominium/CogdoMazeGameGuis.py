@@ -77,7 +77,7 @@ class CogdoMazeMapGui(MazeMapGui):
         marker.setPos(*self.gui2pos(x, y))
 
     def addCog(self, cog):
-        marker = NodePath('SuitMarker-%i' % len(self._cog2marker))
+        marker = NodePath('CogMarker-%i' % len(self._cog2marker))
         self._cogMarkerTemplate.copyTo(marker)
         marker.reparentTo(self)
         self._cog2marker[cog] = marker
@@ -86,7 +86,7 @@ class CogdoMazeMapGui(MazeMapGui):
         self._cog2marker[cog].removeNode()
         del self._cog2marker[cog]
 
-    def updateSuit(self, cog, tX, tY):
+    def updateCog(self, cog, tX, tY):
         x, y = self.tile2gui(tX, tY)
         self._cog2marker[cog].setPos(*self.gui2pos(x, y))
 

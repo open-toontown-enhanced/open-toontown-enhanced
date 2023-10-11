@@ -6,7 +6,7 @@ from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.cog import CogDNA
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.battle import CogBattleGlobals
 from .CogPageGlobals import *
 SCALE_FACTOR = 1.5
@@ -376,7 +376,7 @@ class CogPage(ShtikerPage.ShtikerPage):
         shadow.setScale(coords[0])
         shadow.setPos(coords[1], coords[2], coords[3])
         panel.shadow = shadow
-        panel.head = Suit.attachSuitHead(panel, cogName)
+        panel.head = Cog.attachCogHead(panel, cogName)
 
     def addCogRadarLabel(self, panel):
         cogRadarLabel = DirectLabel(parent=panel, pos=(0.0, 0.0, -0.215), relief=None, state=DGG.DISABLED, text='', text_scale=0.05, text_fg=(0, 0, 0, 1), text_font=ToontownGlobals.getCogFont())

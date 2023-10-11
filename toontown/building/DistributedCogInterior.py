@@ -33,7 +33,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
          Point3(10, 20, 0),
          Point3(-7, 24, 0),
          Point3(-10, 0, 0)]
-        self.BottomFloor_SuitHs = [75,
+        self.BottomFloor_CogHs = [75,
          170,
          -91,
          -44]
@@ -41,7 +41,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
          Point3(10, 12, 0),
          Point3(-9, 11, 0),
          Point3(-3, 13, 0)]
-        self.Cubicle_SuitHs = [170,
+        self.Cubicle_CogHs = [170,
          56,
          -52,
          10]
@@ -49,7 +49,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
          Point3(10, 20, 0),
          Point3(-10, 6, 0),
          Point3(-17, 34, 11)]
-        self.BossOffice_SuitHs = [170,
+        self.BossOffice_CogHs = [170,
          120,
          12,
          38]
@@ -206,7 +206,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
                 cog = self.cr.doId2do[cogId]
                 self.cogs.append(cog)
                 cog.fsm.request('Battle')
-                cog.buildingSuit = 1
+                cog.buildingCog = 1
                 cog.reparentTo(render)
                 if oldcogs.count(cog) == 0:
                     self.joiningReserves.append(cog)
@@ -247,21 +247,21 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
         return None
 
     def __playElevator(self, ts, name, callback):
-        SuitHs = []
+        CogHs = []
         CogPositions = []
         if self.floorModel:
             self.floorModel.removeNode()
         if self.currentFloor == 0:
             self.floorModel = loader.loadModel('phase_7/models/modules/cog_interior')
-            SuitHs = self.BottomFloor_SuitHs
+            CogHs = self.BottomFloor_CogHs
             CogPositions = self.BottomFloor_CogPositions
         elif self.currentFloor == self.numFloors - 1:
             self.floorModel = loader.loadModel('phase_7/models/modules/boss_suit_office')
-            SuitHs = self.BossOffice_SuitHs
+            CogHs = self.BossOffice_CogHs
             CogPositions = self.BossOffice_CogPositions
         else:
             self.floorModel = loader.loadModel('phase_7/models/modules/cubicle_room')
-            SuitHs = self.Cubicle_SuitHs
+            CogHs = self.Cubicle_CogHs
             CogPositions = self.Cubicle_CogPositions
         self.floorModel.reparentTo(render)
         elevIn = self.floorModel.find('**/elevator-in')
@@ -269,7 +269,7 @@ class DistributedCogInterior(DistributedObject.DistributedObject):
         for index in range(len(self.cogs)):
             self.cogs[index].setPos(CogPositions[index])
             if len(self.cogs) > 2:
-                self.cogs[index].setH(SuitHs[index])
+                self.cogs[index].setH(CogHs[index])
             else:
                 self.cogs[index].setH(170)
             self.cogs[index].loop('neutral')

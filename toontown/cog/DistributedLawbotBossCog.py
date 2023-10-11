@@ -373,7 +373,7 @@ class DistributedLawbotBossCog(DistributedCogBase.DistributedCogBase):
             del self.activeIntervals[throwName]
 
     def enterStunned(self):
-        stunSequence = MovieUtil.createSuitStunInterval(self, 0, ToontownGlobals.LawbotBossLawyerStunTime)
+        stunSequence = MovieUtil.createCogStunInterval(self, 0, ToontownGlobals.LawbotBossLawyerStunTime)
         seqName = stunSequence.getName()
         stunSequence.append(Func(self.fsm.request, 'neutral'))
         self.activeIntervals[seqName] = stunSequence

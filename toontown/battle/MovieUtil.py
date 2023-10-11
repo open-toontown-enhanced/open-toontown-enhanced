@@ -151,53 +151,53 @@ def avatarFacePoint(av, other = render):
     return pnt
 
 
-def insertDeathSuit(cog, deathSuit, battle = None, pos = None, hpr = None):
+def insertDeathCog(cog, deathCog, battle = None, pos = None, hpr = None):
     holdParent = cog.getParent()
     if cog.getVirtual():
-        virtualize(deathSuit)
+        virtualize(deathCog)
     avatarHide(cog)
-    if deathSuit != None and not deathSuit.isEmpty():
+    if deathCog != None and not deathCog.isEmpty():
         if holdParent and 0:
-            deathSuit.reparentTo(holdParent)
+            deathCog.reparentTo(holdParent)
         else:
-            deathSuit.reparentTo(render)
+            deathCog.reparentTo(render)
         if battle != None and pos != None:
-            deathSuit.setPos(battle, pos)
+            deathCog.setPos(battle, pos)
         if battle != None and hpr != None:
-            deathSuit.setHpr(battle, hpr)
+            deathCog.setHpr(battle, hpr)
     return
 
 
-def removeDeathSuit(cog, deathSuit):
-    notify.debug('removeDeathSuit()')
-    if not deathSuit.isEmpty():
-        deathSuit.detachNode()
+def removeDeathCog(cog, deathCog):
+    notify.debug('removeDeathCog()')
+    if not deathCog.isEmpty():
+        deathCog.detachNode()
         cog.cleanupLoseActor()
 
 
-def insertReviveSuit(cog, deathSuit, battle = None, pos = None, hpr = None):
+def insertReviveCog(cog, deathCog, battle = None, pos = None, hpr = None):
     holdParent = cog.getParent()
     if cog.getVirtual():
-        virtualize(deathSuit)
+        virtualize(deathCog)
     cog.hide()
-    if deathSuit != None and not deathSuit.isEmpty():
+    if deathCog != None and not deathCog.isEmpty():
         if holdParent and 0:
-            deathSuit.reparentTo(holdParent)
+            deathCog.reparentTo(holdParent)
         else:
-            deathSuit.reparentTo(render)
+            deathCog.reparentTo(render)
         if battle != None and pos != None:
-            deathSuit.setPos(battle, pos)
+            deathCog.setPos(battle, pos)
         if battle != None and hpr != None:
-            deathSuit.setHpr(battle, hpr)
+            deathCog.setHpr(battle, hpr)
     return
 
 
-def removeReviveSuit(cog, deathSuit):
-    notify.debug('removeDeathSuit()')
+def removeReviveCog(cog, deathCog):
+    notify.debug('removeDeathCog()')
     cog.setSkelecog(1)
     cog.show()
-    if not deathSuit.isEmpty():
-        deathSuit.detachNode()
+    if not deathCog.isEmpty():
+        deathCog.detachNode()
         cog.cleanupLoseActor()
     cog.healthBar.show()
     cog.reseatHealthBarForSkele()
@@ -216,51 +216,51 @@ def virtualize(deathcog):
             thing.setBin('fixed', 1)
 
 
-def createTrainTrackAppearTrack(dyingSuit, toon, battle, npcs):
+def createTrainTrackAppearTrack(dyingCog, toon, battle, npcs):
     retval = Sequence()
     return retval
     possibleCogs = []
     for cogAttack in battle.movie.cogAttackDicts:
         cog = cogAttack['cog']
-        if not cog == dyingSuit:
+        if not cog == dyingCog:
             if hasattr(cog, 'battleTrapProp') and cog.battleTrapProp and cog.battleTrapProp.getName() == 'traintrack':
                 possibleCogs.append(cogAttack['cog'])
 
     closestXDistance = 10000
-    closestSuit = None
+    closestCog = None
     for cog in possibleCogs:
         cogPoint, cogHpr = battle.getActorPosHpr(cog)
         xDistance = abs(cogPoint.getX())
         if xDistance < closestXDistance:
-            closestSuit = cog
+            closestCog = cog
             closestXDistance = xDistance
 
-    if closestSuit and closestSuit.battleTrapProp.isHidden():
-        closestSuit.battleTrapProp.setColorScale(1, 1, 1, 0)
-        closestSuit.battleTrapProp.show()
-        newRelativePos = dyingSuit.battleTrapProp.getPos(closestSuit)
-        newHpr = dyingSuit.battleTrapProp.getHpr(closestSuit)
-        closestSuit.battleTrapProp.setPos(newRelativePos)
-        closestSuit.battleTrapProp.setHpr(newHpr)
-        retval.append(LerpColorScaleInterval(closestSuit.battleTrapProp, 3.0, Vec4(1, 1, 1, 1)))
+    if closestCog and closestCog.battleTrapProp.isHidden():
+        closestCog.battleTrapProp.setColorScale(1, 1, 1, 0)
+        closestCog.battleTrapProp.show()
+        newRelativePos = dyingCog.battleTrapProp.getPos(closestCog)
+        newHpr = dyingCog.battleTrapProp.getHpr(closestCog)
+        closestCog.battleTrapProp.setPos(newRelativePos)
+        closestCog.battleTrapProp.setHpr(newHpr)
+        retval.append(LerpColorScaleInterval(closestCog.battleTrapProp, 3.0, Vec4(1, 1, 1, 1)))
     else:
         notify.debug('could not find closest cog, returning empty sequence')
     return retval
 
 
-def createSuitReviveTrack(cog, toon, battle, npcs = []):
+def createCogReviveTrack(cog, toon, battle, npcs = []):
     cogTrack = Sequence()
     cogPos, cogHpr = battle.getActorPosHpr(cog)
     if hasattr(cog, 'battleTrapProp') and cog.battleTrapProp and cog.battleTrapProp.getName() == 'traintrack' and not cog.battleTrapProp.isHidden():
         cogTrack.append(createTrainTrackAppearTrack(cog, toon, battle, npcs))
-    deathSuit = cog.getLoseActor()
-    cogTrack.append(Func(notify.debug, 'before insertDeathSuit'))
-    cogTrack.append(Func(insertReviveSuit, cog, deathSuit, battle, cogPos, cogHpr))
+    deathCog = cog.getLoseActor()
+    cogTrack.append(Func(notify.debug, 'before insertDeathCog'))
+    cogTrack.append(Func(insertReviveCog, cog, deathCog, battle, cogPos, cogHpr))
     cogTrack.append(Func(notify.debug, 'before actorInterval lose'))
-    cogTrack.append(ActorInterval(deathSuit, 'lose', duration=COG_LOSE_DURATION))
-    cogTrack.append(Func(notify.debug, 'before removeDeathSuit'))
-    cogTrack.append(Func(removeReviveSuit, cog, deathSuit, name='remove-death-cog'))
-    cogTrack.append(Func(notify.debug, 'after removeDeathSuit'))
+    cogTrack.append(ActorInterval(deathCog, 'lose', duration=COG_LOSE_DURATION))
+    cogTrack.append(Func(notify.debug, 'before removeDeathCog'))
+    cogTrack.append(Func(removeReviveCog, cog, deathCog, name='remove-death-cog'))
+    cogTrack.append(Func(notify.debug, 'after removeDeathCog'))
     cogTrack.append(Func(cog.loop, 'neutral'))
     spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
     deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
@@ -294,22 +294,22 @@ def createSuitReviveTrack(cog, toon, battle, npcs = []):
     return Parallel(cogTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
 
 
-def createSuitDeathTrack(cog, toon, battle, npcs = []):
+def createCogDeathTrack(cog, toon, battle, npcs = []):
     cogTrack = Sequence()
     cogPos, cogHpr = battle.getActorPosHpr(cog)
     if hasattr(cog, 'battleTrapProp') and cog.battleTrapProp and cog.battleTrapProp.getName() == 'traintrack' and not cog.battleTrapProp.isHidden():
         cogTrack.append(createTrainTrackAppearTrack(cog, toon, battle, npcs))
-    deathSuit = cog.getLoseActor()
-    cogTrack.append(Func(notify.debug, 'before insertDeathSuit'))
-    cogTrack.append(Func(insertDeathSuit, cog, deathSuit, battle, cogPos, cogHpr))
+    deathCog = cog.getLoseActor()
+    cogTrack.append(Func(notify.debug, 'before insertDeathCog'))
+    cogTrack.append(Func(insertDeathCog, cog, deathCog, battle, cogPos, cogHpr))
     cogTrack.append(Func(notify.debug, 'before actorInterval lose'))
-    cogTrack.append(ActorInterval(deathSuit, 'lose', duration=COG_LOSE_DURATION))
-    cogTrack.append(Func(notify.debug, 'before removeDeathSuit'))
-    cogTrack.append(Func(removeDeathSuit, cog, deathSuit, name='remove-death-cog'))
-    cogTrack.append(Func(notify.debug, 'after removeDeathSuit'))
+    cogTrack.append(ActorInterval(deathCog, 'lose', duration=COG_LOSE_DURATION))
+    cogTrack.append(Func(notify.debug, 'before removeDeathCog'))
+    cogTrack.append(Func(removeDeathCog, cog, deathCog, name='remove-death-cog'))
+    cogTrack.append(Func(notify.debug, 'after removeDeathCog'))
     spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
     deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
-    deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathSuit), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathSuit), SoundInterval(deathSound, volume=0.32, node=deathSuit))
+    deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathCog), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathCog), SoundInterval(deathSound, volume=0.32, node=deathCog))
     BattleParticles.loadParticles()
     smallGears = BattleParticles.createParticleEffect(file='gearExplosionSmall')
     singleGear = BattleParticles.createParticleEffect('GearExplosion', numParticles=1)
@@ -339,7 +339,7 @@ def createSuitDeathTrack(cog, toon, battle, npcs = []):
     return Parallel(cogTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
 
 
-def createSuitDodgeMultitrack(tDodge, cog, leftCogs, rightCogs):
+def createCogDodgeMultitrack(tDodge, cog, leftCogs, rightCogs):
     cogTracks = Parallel()
     cogDodgeList, sidestepAnim = avatarDodge(leftCogs, rightCogs, 'sidestep-left', 'sidestep-right')
     for s in cogDodgeList:
@@ -375,7 +375,7 @@ def createToonDodgeMultitrack(tDodge, toon, leftToons, rightToons):
     return Sequence(Wait(tDodge), toonTracks)
 
 
-def createSuitTeaseMultiTrack(cog, delay = 0.01):
+def createCogTeaseMultiTrack(cog, delay = 0.01):
     cogTrack = Sequence(Wait(delay), ActorInterval(cog, 'victory', startTime=0.5, endTime=1.9), Func(cog.loop, 'neutral'))
     missedTrack = Sequence(Wait(delay + 0.2), Func(indicateMissed, cog, 0.9))
     return Parallel(cogTrack, missedTrack)
@@ -580,7 +580,7 @@ def createKapowExplosionTrack(parent, explosionPoint = None, scale = 1.0):
     return explosionTrack
 
 
-def createSuitStunInterval(cog, before, after):
+def createCogStunInterval(cog, before, after):
     p1 = Point3(0)
     p2 = Point3(0)
     stars = globalPropPool.getProp('stun')

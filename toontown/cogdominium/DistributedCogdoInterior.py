@@ -50,7 +50,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
          Point3(10, 20, 0),
          Point3(-7, 24, 0),
          Point3(-10, 0, 0)]
-        self.BottomFloor_SuitHs = [75,
+        self.BottomFloor_CogHs = [75,
          170,
          -91,
          -44]
@@ -58,7 +58,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
          Point3(10, 12, 0),
          Point3(-9, 11, 0),
          Point3(-3, 13, 0)]
-        self.Cubicle_SuitHs = [170,
+        self.Cubicle_CogHs = [170,
          56,
          -52,
          10]
@@ -66,7 +66,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
          Point3(10, 20, 0),
          Point3(-10, 6, 0),
          Point3(-17, 30, 0)]
-        self.BossOffice_SuitHs = [170,
+        self.BossOffice_CogHs = [170,
          120,
          12,
          38]
@@ -327,7 +327,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
                 cog = self.cr.doId2do[cogId]
                 self.cogs.append(cog)
                 cog.fsm.request('Battle')
-                cog.buildingSuit = 1
+                cog.buildingCog = 1
                 cog.reparentTo(render)
                 if oldcogs.count(cog) == 0:
                     self.joiningReserves.append(cog)
@@ -400,7 +400,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         base.cr.forbidCheesyEffects(0)
 
     def __playElevator(self, ts, name, callback):
-        SuitHs = []
+        CogHs = []
         CogPositions = []
         if self.floorModel:
             self.floorModel.removeNode()
@@ -408,7 +408,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         if self.cage:
             self.cage = None
         if self.currentFloor == 0:
-            SuitHs = self.BottomFloor_SuitHs
+            CogHs = self.BottomFloor_CogHs
             CogPositions = self.BottomFloor_CogPositions
         if self.isBossFloor(self.currentFloor):
             self.barrelRoom.unload()
@@ -428,14 +428,14 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
                     loc = self.floorModel.find('**/loc_painting%d' % (i + 1))
                     paintingModel.reparentTo(loc)
 
-            SuitHs = self.BossOffice_SuitHs
+            CogHs = self.BossOffice_CogHs
             CogPositions = self.BossOffice_CogPositions
             self.__makeShopOwnerNpc()
         else:
             if self._wantBarrelRoom:
                 self.barrelRoom.load()
                 self.barrelRoom.hide()
-            SuitHs = self.Cubicle_SuitHs
+            CogHs = self.Cubicle_CogHs
             CogPositions = self.Cubicle_CogPositions
         if self.floorModel:
             self.floorModel.reparentTo(render)
@@ -470,7 +470,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         for index in range(len(self.cogs)):
             self.cogs[index].setPos(CogPositions[index])
             if len(self.cogs) > 2:
-                self.cogs[index].setH(SuitHs[index])
+                self.cogs[index].setH(CogHs[index])
             else:
                 self.cogs[index].setH(170)
             self.cogs[index].loop('neutral')

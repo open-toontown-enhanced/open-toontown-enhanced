@@ -1,5 +1,5 @@
 from toontown.cog import DistributedFactoryCog
-from toontown.cog.Suit import *
+from toontown.cog.Cog import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.actor import Actor
 from otp.avatar import Avatar

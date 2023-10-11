@@ -5,7 +5,7 @@ from toontown.toon import NPCToons
 from toontown.toon import ToonHead
 from toontown.toon import ToonDNA
 from toontown.cog import CogDNA
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -146,10 +146,10 @@ class QuestPoster(DirectFrame):
         lm.adjustText()
         return lm
 
-    def createSuitHead(self, cogName):
+    def createCogHead(self, cogName):
         CogDNA = CogDNA.CogDNA()
-        CogDNA.newSuit(cogName)
-        cog = Suit.Suit()
+        CogDNA.newCog(cogName)
+        cog = Cog.Cog()
         cog.setDNA(CogDNA)
         headParts = cog.getHeadParts()
         head = hidden.attachNewNode('head')
@@ -377,7 +377,7 @@ class QuestPoster(DirectFrame):
                         elif holder == 'm':
                             icon = cogIcons.find('**/MoneyIcon')
                         rIconGeom = icon.copyTo(hidden)
-                        rIconGeom.setColor(Suit.Suit.medallionColors[holder])
+                        rIconGeom.setColor(Cog.Cog.medallionColors[holder])
                         rIconGeomScale = 0.12
                         cogIcons.removeNode()
                     elif holderType == 'level':
@@ -386,7 +386,7 @@ class QuestPoster(DirectFrame):
                         rIconGeomScale = IMAGE_SCALE_SMALL
                         cogIcons.removeNode()
                     else:
-                        rIconGeom = self.createSuitHead(holder)
+                        rIconGeom = self.createCogHead(holder)
                     lPos.setX(-0.18)
                     auxText = TTLocalizer.QuestPosterAuxFrom
                 infoText = string.capwords(quest.getLocationName())
@@ -778,11 +778,11 @@ class QuestPoster(DirectFrame):
                 elif dept == 'm':
                     icon = cogIcons.find('**/MoneyIcon')
                 lIconGeom = icon.copyTo(hidden)
-                lIconGeom.setColor(Suit.Suit.medallionColors[dept])
+                lIconGeom.setColor(Cog.Cog.medallionColors[dept])
                 cogIcons.removeNode()
             elif quest.getType() == Quests.CogQuest:
                 if quest.getCogType() != Quests.Any:
-                    lIconGeom = self.createSuitHead(quest.getCogType())
+                    lIconGeom = self.createCogHead(quest.getCogType())
                     lIconGeomScale = IMAGE_SCALE_SMALL
                 else:
                     cogIcons = loader.loadModel('phase_3/models/gui/cog_icons')
@@ -796,7 +796,7 @@ class QuestPoster(DirectFrame):
                 cogIcons.removeNode()
             elif quest.getType() == Quests.CogNewbieQuest:
                 if quest.getCogType() != Quests.Any:
-                    rIconGeom = self.createSuitHead(quest.getCogType())
+                    rIconGeom = self.createCogHead(quest.getCogType())
                     rIconGeomScale = IMAGE_SCALE_SMALL
                 else:
                     cogIcons = loader.loadModel('phase_3/models/gui/cog_icons')
@@ -830,7 +830,7 @@ class QuestPoster(DirectFrame):
                 elif dept == 'm':
                     icon = cogIcons.find('**/MoneyIcon')
                 lIconGeom = icon.copyTo(hidden)
-                lIconGeom.setColor(Suit.Suit.medallionColors[dept])
+                lIconGeom.setColor(Cog.Cog.medallionColors[dept])
                 cogIcons.removeNode()
             elif quest.getType() == Quests.SkelecogQuest:
                 cogIcons = loader.loadModel('phase_3.5/models/gui/stickerbook_gui')

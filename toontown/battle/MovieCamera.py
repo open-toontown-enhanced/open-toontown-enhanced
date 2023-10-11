@@ -339,7 +339,7 @@ def chooseNPCExitShot(exits, exitsDuration):
     return track
 
 
-def chooseSuitShot(attack, attackDuration):
+def chooseCogShot(attack, attackDuration):
     groupStatus = attack['group']
     target = attack['target']
     if groupStatus == ATK_TGT_SINGLE:
@@ -478,7 +478,7 @@ def chooseSuitShot(attack, attackDuration):
     elif name == WRITE_OFF:
         camTrack.append(defaultCamera())
     else:
-        notify.warning('unknown attack id in chooseSuitShot: %d using default cam' % name)
+        notify.warning('unknown attack id in chooseCogShot: %d using default cam' % name)
         camTrack.append(defaultCamera())
     pbpText = attack['playByPlayText']
     displayName = TTLocalizer.CogAttackNames[attack['name']]
@@ -486,7 +486,7 @@ def chooseSuitShot(attack, attackDuration):
     return Parallel(camTrack, pbpTrack)
 
 
-def chooseSuitCloseShot(attack, openDuration, openName, attackDuration):
+def chooseCogCloseShot(attack, openDuration, openName, attackDuration):
     av = None
     duration = attackDuration - openDuration
     if duration < 0:
@@ -895,7 +895,7 @@ def randomCameraSelection(cog, attack, attackDuration, openShotDuration):
         openShotDuration = attackDuration
     closeShotDuration = attackDuration - openShotDuration
     openShot = random.choice(shotChoices)(*[cog, openShotDuration])
-    closeShot = chooseSuitCloseShot(attack, closeShotDuration, openShot.getName(), attackDuration)
+    closeShot = chooseCogCloseShot(attack, closeShotDuration, openShot.getName(), attackDuration)
     return Sequence(openShot, closeShot)
 
 

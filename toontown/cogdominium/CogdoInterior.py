@@ -5,7 +5,7 @@ from direct.fsm import ClassicFSM, State
 from toontown.hood import Place
 from toontown.toonbase.ToonBaseGlobal import *
 from toontown.town import TownBattle
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.building import Elevator
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
@@ -77,7 +77,7 @@ class CogdoInterior(Place.Place):
         self.townBattle = TownBattle.TownBattle('town-battle-done')
         self.townBattle.load()
         for i in range(1, 3):
-            Suit.loadCogs(i)
+            Cog.loadCogs(i)
 
     def unload(self):
         Place.Place.unload(self)
@@ -91,7 +91,7 @@ class CogdoInterior(Place.Place):
         self.townBattle.cleanup()
         del self.townBattle
         for i in range(1, 3):
-            Suit.unloadCogs(i)
+            Cog.unloadCogs(i)
 
     def setState(self, state, battleEvent = None):
         if battleEvent:

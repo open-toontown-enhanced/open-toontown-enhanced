@@ -12,7 +12,7 @@ from . import ToonInteriorColors
 from toontown.hood import ZoneUtil
 from toontown.char import Char
 from toontown.cog import CogDNA
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.quest import QuestParser
 
 class DistributedTutorialInterior(DistributedObject.DistributedObject):
@@ -128,7 +128,7 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
         if not npcOrigin.isEmpty():
             self.npc.reparentTo(npcOrigin)
             self.npc.clearMat()
-        self.createSuit()
+        self.createCog()
         self.mickeyMovie = QuestParser.NPCMoviePlayer('tutorial_mickey', base.localAvatar, self.npc)
         place = base.cr.playGame.getPlace()
         if place and hasattr(place, 'fsm') and place.fsm.getCurrentState().getName():
@@ -144,10 +144,10 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
         self.notify.info('Tutorial movie: Play.')
         self.mickeyMovie.play()
 
-    def createSuit(self):
-        self.cog = Suit.Suit()
+    def createCog(self):
+        self.cog = Cog.Cog()
         CogDNA = CogDNA.CogDNA()
-        CogDNA.newSuit('flunky')
+        CogDNA.newCog('flunky')
         self.cog.setDNA(CogDNA)
         self.cog.loop('neutral')
         self.cog.setPosHpr(-20, 8, 0, 0, 0, 0)

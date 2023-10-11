@@ -218,7 +218,7 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
             self.emote = None
         self.cleanupPies()
         if self.isDisguised:
-            self.takeOffSuit()
+            self.takeOffDisguise()
         if self.tunnelTrack:
             self.tunnelTrack.finish()
             self.tunnelTrack = None
@@ -928,15 +928,15 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
         self.cogIndex = index
         if self.cogIndex == -1:
             if self.isDisguised:
-                self.takeOffSuit()
+                self.takeOffDisguise()
         else:
             parts = self.getCogParts()
             if CogDisguiseGlobals.isPaidDisguiseComplete(self, parts, index):
                 cogIndex = self.cogTypes[index] + CogDNA.cogsPerDept * index
                 cog = CogDNA.cogHeadTypes[cogIndex]
-                self.putOnSuit(cog)
+                self.putOnDisguise(cog)
             else:
-                self.putOnSuit(index, rental=True)
+                self.putOnDisguise(index, rental=True)
 
     def isCog(self):
         if self.cogIndex == -1:

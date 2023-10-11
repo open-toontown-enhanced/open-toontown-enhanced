@@ -6,7 +6,7 @@ from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 from toontown.toonbase import ToontownGlobals
 from toontown.cog import CogDNA
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.battle import CogBattleGlobals
 from toontown.toon import NPCToons
 TTL = TTLocalizer
@@ -40,7 +40,7 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
         self.isLoaded = 1
         gui = loader.loadModel('phase_3/models/gui/dialog_box_buttons_gui')
         guiButton = loader.loadModel('phase_3/models/gui/quit_button')
-        self.head = Suit.attachSuitHead(self, self.cogName)
+        self.head = Cog.attachCogHead(self, self.cogName)
         z = self.head.getZ()
         self.head.setPos(-0.4, -0.1, z + 0.2)
         self.cogLabel = DirectLabel(parent=self, relief=None, text=self.cogFullName, text_font=ToontownGlobals.getCogFont(), pos=(-0.4, 0, 0), scale=0.07)

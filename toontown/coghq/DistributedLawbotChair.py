@@ -10,7 +10,7 @@ from direct.task import Task
 from toontown.toonbase import ToontownGlobals
 from otp.otpbase import OTPGlobals
 from direct.actor import Actor
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 import random
 from toontown.battle import BattleProps
@@ -114,10 +114,10 @@ class DistributedLawbotChair(DistributedObject.DistributedObject, FSM.FSM):
 
     def loadCogJuror(self):
         self.cleanupCogJuror()
-        self.cogJuror = Suit.Suit()
+        self.cogJuror = Cog.Cog()
         level = self.randomGenerator.randrange(len(CogDNA.cogsPerLevel))
         self.cogJuror.dna = CogDNA.CogDNA()
-        self.cogJuror.dna.newSuitRandom(level=level, dept='l')
+        self.cogJuror.dna.newCogRandom(level=level, dept='l')
         self.cogJuror.setDNA(self.cogJuror.dna)
         self.cogJuror.pose('landing', 0)
         self.cogJuror.reparentTo(self.nodePath)
@@ -264,7 +264,7 @@ class DistributedLawbotChair(DistributedObject.DistributedObject, FSM.FSM):
         elif state == 'T':
             self.demand('ToonJuror')
         elif state == 'S':
-            self.demand('SuitJuror')
+            self.demand('CogJuror')
         elif state == 'E':
             self.demand('EmptyJuror')
         elif state == 'E':
@@ -288,7 +288,7 @@ class DistributedLawbotChair(DistributedObject.DistributedObject, FSM.FSM):
             self.cogJuror.stash()
         self.putToonJurorOnSeat()
 
-    def enterSuitJuror(self):
+    def enterCogJuror(self):
         self.chair.setColorScale(0.5, 0.5, 0.5, 1.0)
         self.boss.countToonJurors()
         if self.toonJuror:

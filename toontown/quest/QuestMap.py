@@ -43,7 +43,7 @@ class QuestMap(DirectFrame):
         self.hoodId = None
         self.zoneId = None
         self.cogPercentage = {}
-        for currHoodInfo in CogPlannerBase.CogPlannerBase.SuitHoodInfo:
+        for currHoodInfo in CogPlannerBase.CogPlannerBase.CogHoodInfo:
             tracks = currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_TRACK]
             self.cogPercentage[currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_ZONE]] = tracks
 

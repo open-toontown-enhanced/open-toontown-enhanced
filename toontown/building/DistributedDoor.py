@@ -28,7 +28,7 @@ from toontown.building import FADoorCodes
 from toontown.distributed.DelayDeletable import DelayDeletable
 from toontown.distributed.DelayDelete import DelayDelete, cleanupDelayDeletes
 from toontown.hood import ZoneUtil
-from toontown.cog.Suit import Suit
+from toontown.cog.Cog import Cog
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToonBaseGlobal import base
@@ -289,7 +289,7 @@ class DistributedDoor(DistributedObject, DelayDeletable):
         return track
 
     def getAnimStateInterval(self, avatar, animName):
-        isCog = isinstance(avatar, Suit)
+        isCog = isinstance(avatar, Cog)
         if isCog:
             return Func(avatar.loop, animName, 0)
         else:

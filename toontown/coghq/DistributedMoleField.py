@@ -363,7 +363,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
             if node and not node.isEmpty():
                 node.setHpr(hpr)
 
-        flyTrack = Sequence(LerpFunctionInterval(flyFunc, fromData=0.0, toData=flyDur, duration=flyDur, extraArgs=[trajectory]), name=toon.uniqueName('hitBySuit-fly'))
+        flyTrack = Sequence(LerpFunctionInterval(flyFunc, fromData=0.0, toData=flyDur, duration=flyDur, extraArgs=[trajectory]), name=toon.uniqueName('hitByCog-fly'))
         if avId != localAvatar.doId:
             cameraTrack = Sequence()
         else:
@@ -397,7 +397,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 base.localAvatar.startUpdateSmartCamera()
                 self.setUpCamera()
 
-            cameraTrack = Sequence(Wait(flyDur), Func(cleanupCamTask), name='hitBySuit-cameraLerp')
+            cameraTrack = Sequence(Wait(flyDur), Func(cleanupCamTask), name='hitByCog-cameraLerp')
         geomNode = toon.getGeomNode()
         startHpr = geomNode.getHpr()
         destHpr = Point3(startHpr)
@@ -405,7 +405,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         if rng.choice([0, 1]):
             hRot = -hRot
         destHpr.setX(destHpr[0] + hRot * 360)
-        spinHTrack = Sequence(LerpHprInterval(geomNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, geomNode, startHpr), name=toon.uniqueName('hitBySuit-spinH'))
+        spinHTrack = Sequence(LerpHprInterval(geomNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, geomNode, startHpr), name=toon.uniqueName('hitByCog-spinH'))
         parent = geomNode.getParent()
         rotNode = parent.attachNewNode('rotNode')
         geomNode.reparentTo(rotNode)
@@ -418,7 +418,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
         if rng.choice([0, 1]):
             pRot = -pRot
         destHpr.setY(destHpr[1] + pRot * 360)
-        spinPTrack = Sequence(LerpHprInterval(rotNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, rotNode, startHpr), name=toon.uniqueName('hitBySuit-spinP'))
+        spinPTrack = Sequence(LerpHprInterval(rotNode, flyDur, destHpr, startHpr=startHpr), Func(safeSetHpr, rotNode, startHpr), name=toon.uniqueName('hitByCog-spinP'))
         soundTrack = Sequence()
 
         def preFunc(self = self, avId = avId, toon = toon, dropShadow = dropShadow):
@@ -462,7 +462,7 @@ class DistributedMoleField(DistributedNodePathEntity, MoleFieldBase.MoleFieldBas
                 toon.startSmooth()
 
         preFunc()
-        hitTrack = Sequence(Func(toon.setPos, Point3(0.0, 0.0, 0.0)), Wait(0.25), Parallel(flyTrack, cameraTrack, self.soundIUpDown, spinHTrack, spinPTrack, soundTrack), Func(postFunc), name=toon.uniqueName('hitBySuit'))
+        hitTrack = Sequence(Func(toon.setPos, Point3(0.0, 0.0, 0.0)), Wait(0.25), Parallel(flyTrack, cameraTrack, self.soundIUpDown, spinHTrack, spinPTrack, soundTrack), Func(postFunc), name=toon.uniqueName('hitByCog'))
         self.toonHitTracks[avId] = hitTrack
         hitTrack.start()
         posM = moleHill.getPos(render)

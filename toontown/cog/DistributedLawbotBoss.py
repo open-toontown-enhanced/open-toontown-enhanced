@@ -264,11 +264,11 @@ class DistributedLawbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             track.append(ival)
             delayDeletes.append(DelayDelete.DelayDelete(toon, 'LawbotBoss.__walkToonToPromotion'))
 
-    def __walkSuitToPoint(self, node, fromPos, toPos):
-        self.notify.debug('----- __walkSuitToPoint')
+    def __walkCogToPoint(self, node, fromPos, toPos):
+        self.notify.debug('----- __walkCogToPoint')
         vector = Vec3(toPos - fromPos)
         distance = vector.length()
-        time = distance / (ToontownGlobals.SuitWalkSpeed * 1.8)
+        time = distance / (ToontownGlobals.CogWalkSpeed * 1.8)
         return Sequence(Func(node.setPos, fromPos), Func(node.headsUp, toPos), node.posInterval(time, toPos))
 
     def __makeRollToBattleTwoMovie(self):

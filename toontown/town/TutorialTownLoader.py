@@ -1,7 +1,7 @@
 from . import TownLoader
 from . import TTTownLoader
 from . import TutorialStreet
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.toon import Toon
 from toontown.hood import ZoneUtil
 
@@ -13,7 +13,7 @@ class TutorialTownLoader(TTTownLoader.TTTownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadTutorialSuit()
+        Cog.loadTutorialCog()
         dnaFile = 'phase_3.5/dna/tutorial_street.dna'
         self.createHood(dnaFile, loadStorage=0)
         self.alterDictionaries()

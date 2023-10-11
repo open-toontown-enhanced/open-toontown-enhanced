@@ -12,7 +12,7 @@ from panda3d.core import Point3, Vec3
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownTimer
 from .DistributedMinigame import DistributedMinigame
-from .MazeSuit import MazeSuit
+from .MazeCog import MazeCog
 from .OrthoWalk import OrthoWalk
 from .OrthoDrive import OrthoDrive
 from . import MazeGameGlobals
@@ -51,11 +51,11 @@ class DistributedMazeGame(DistributedMinigame):
     def __defineConstants(self):
         self.TOON_SPEED = 8.0
         self.TOON_Z = 0
-        self.MinSuitSpeedRange = [0.8 * self.TOON_SPEED, 0.6 * self.TOON_SPEED]
-        self.MaxSuitSpeedRange = [1.1 * self.TOON_SPEED, 2.0 * self.TOON_SPEED]
+        self.MinCogSpeedRange = [0.8 * self.TOON_SPEED, 0.6 * self.TOON_SPEED]
+        self.MaxCogSpeedRange = [1.1 * self.TOON_SPEED, 2.0 * self.TOON_SPEED]
         self.FASTER_COG_CURVE = 1
         self.SLOWER_COG_CURVE = self.getDifficulty() < 0.5
-        self.slowerSuitPeriods = {2000: {4: [128, 76],
+        self.slowerCogPeriods = {2000: {4: [128, 76],
                 8: [128,
                     99,
                     81,
@@ -169,7 +169,7 @@ class DistributedMazeGame(DistributedMinigame):
                      50,
                      47,
                      45]}}
-        self.slowerSuitPeriodsCurve = {2000: {4: [128, 65],
+        self.slowerCogPeriodsCurve = {2000: {4: [128, 65],
                 8: [128,
                     78,
                     66,
@@ -283,7 +283,7 @@ class DistributedMazeGame(DistributedMinigame):
                      44,
                      44,
                      44]}}
-        self.fasterSuitPeriods = {2000: {4: [54, 42],
+        self.fasterCogPeriods = {2000: {4: [54, 42],
                 8: [59,
                     52,
                     47,
@@ -397,7 +397,7 @@ class DistributedMazeGame(DistributedMinigame):
                      34,
                      33,
                      32]}}
-        self.fasterSuitPeriodsCurve = {2000: {4: [62, 42],
+        self.fasterCogPeriodsCurve = {2000: {4: [62, 42],
                 8: [63,
                     61,
                     54,
@@ -577,10 +577,10 @@ class DistributedMazeGame(DistributedMinigame):
         for cog in self.cogs:
             cog.onstage()
 
-        self.sndTable = {'hitBySuit': [None] * self.numPlayers,
+        self.sndTable = {'hitByCog': [None] * self.numPlayers,
          'falling': [None] * self.numPlayers}
         for i in range(self.numPlayers):
-            self.sndTable['hitBySuit'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
+            self.sndTable['hitByCog'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_Tag_C.ogg')
             self.sndTable['falling'][i] = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_whizz.ogg')
 
         self.grabSounds = []
@@ -705,7 +705,7 @@ class DistributedMazeGame(DistributedMinigame):
         orthoDrive = OrthoDrive(self.TOON_SPEED, maxFrameMove=self.MAX_FRAME_MOVE, customCollisionCallback=self.__doMazeCollisions, priority=1)
         self.orthoWalk = OrthoWalk(orthoDrive, broadcast=not self.isSinglePlayer())
         self.orthoWalk.start()
-        self.accept(MazeSuit.COLLISION_EVENT_NAME, self.__hitBySuit)
+        self.accept(MazeCog.COLLISION_EVENT_NAME, self.__hitByCog)
         self.accept(self.TREASURE_GRAB_EVENT_NAME, self.__treasureGrabbed)
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
@@ -717,7 +717,7 @@ class DistributedMazeGame(DistributedMinigame):
     def exitPlay(self):
         self.notify.debug('exitPlay')
         self.ignore('resetClock')
-        self.ignore(MazeSuit.COLLISION_EVENT_NAME)
+        self.ignore(MazeCog.COLLISION_EVENT_NAME)
         self.ignore(self.TREASURE_GRAB_EVENT_NAME)
         self.orthoWalk.stop()
         self.orthoWalk.destroy()
@@ -756,13 +756,13 @@ class DistributedMazeGame(DistributedMinigame):
 
         self.goalBar['value'] = 100.0 * (float(total) / float(self.maze.numTreasures))
 
-    def __hitBySuit(self, cogNum):
-        self.notify.debug('hitBySuit')
+    def __hitByCog(self, cogNum):
+        self.notify.debug('hitByCog')
         timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
-        self.sendUpdate('hitBySuit', [self.localAvId, timestamp])
-        self.__showToonHitBySuit(self.localAvId, timestamp)
+        self.sendUpdate('hitByCog', [self.localAvId, timestamp])
+        self.__showToonHitByCog(self.localAvId, timestamp)
 
-    def hitBySuit(self, avId, timestamp):
+    def hitByCog(self, avId, timestamp):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() not in ['play', 'showScores']:
@@ -770,9 +770,9 @@ class DistributedMazeGame(DistributedMinigame):
             return
         self.notify.debug('avatar ' + repr(avId) + ' hit by a cog')
         if avId != self.localAvId:
-            self.__showToonHitBySuit(avId, timestamp)
+            self.__showToonHitByCog(avId, timestamp)
 
-    def __showToonHitBySuit(self, avId, timestamp):
+    def __showToonHitByCog(self, avId, timestamp):
         toon = self.getAvatar(avId)
         if toon == None:
             return
@@ -809,7 +809,7 @@ class DistributedMazeGame(DistributedMinigame):
             flyNode.setPos(trajectory.getPos(t))
         flyTrack = Sequence(
             LerpFunctionInterval(flyFunc, fromData=0.0, toData=flyDur, duration=flyDur, extraArgs=[trajectory]),
-            name=toon.uniqueName('hitBySuit-fly'))
+            name=toon.uniqueName('hitByCog-fly'))
         if avId != self.localAvId:
             cameraTrack = Sequence()
         else:
@@ -835,7 +835,7 @@ class DistributedMazeGame(DistributedMinigame):
             cameraTrack = Sequence(
                 Wait(flyDur),
                 Func(cleanupCamTask),
-                name='hitBySuit-cameraLerp')
+                name='hitByCog-cameraLerp')
 
         geomNode = toon.getGeomNode()
         startHpr = geomNode.getHpr()
@@ -847,7 +847,7 @@ class DistributedMazeGame(DistributedMinigame):
         spinHTrack = Sequence(
             LerpHprInterval(geomNode, flyDur, destHpr, startHpr=startHpr),
             Func(geomNode.setHpr, startHpr),
-            name=toon.uniqueName('hitBySuit-spinH'))
+            name=toon.uniqueName('hitByCog-spinH'))
         parent = geomNode.getParent()
         rotNode = parent.attachNewNode('rotNode')
         geomNode.reparentTo(rotNode)
@@ -863,14 +863,14 @@ class DistributedMazeGame(DistributedMinigame):
         spinPTrack = Sequence(
             LerpHprInterval(rotNode, flyDur, destHpr, startHpr=startHpr),
             Func(rotNode.setHpr, startHpr),
-            name=toon.uniqueName('hitBySuit-spinP'))
+            name=toon.uniqueName('hitByCog-spinP'))
         i = self.avIdList.index(avId)
         soundTrack = Sequence(
-            Func(base.playSfx, self.sndTable['hitBySuit'][i]),
+            Func(base.playSfx, self.sndTable['hitByCog'][i]),
             Wait(flyDur * (2.0/3.0)),
             SoundInterval(self.sndTable['falling'][i],
                           duration=flyDur * (1.0/3.0)),
-            name=toon.uniqueName('hitBySuit-soundTrack'))
+            name=toon.uniqueName('hitByCog-soundTrack'))
 
         def preFunc(self = self, avId = avId, toon = toon, dropShadow = dropShadow):
             forwardSpeed = toon.forwardSpeed
@@ -911,7 +911,7 @@ class DistributedMazeGame(DistributedMinigame):
         hitTrack = Sequence(Parallel(flyTrack, cameraTrack,
                                      spinHTrack, spinPTrack, soundTrack),
                             Func(postFunc),
-                            name=toon.uniqueName('hitBySuit'))
+                            name=toon.uniqueName('hitByCog'))
 
         self.toonHitTracks[avId] = hitTrack
 
@@ -996,19 +996,19 @@ class DistributedMazeGame(DistributedMinigame):
         self.cogs = []
         self.numCogs = 4 * self.numPlayers
         safeZone = self.getSafezoneId()
-        slowerTable = self.slowerSuitPeriods
+        slowerTable = self.slowerCogPeriods
         if self.SLOWER_COG_CURVE:
-            slowerTable = self.slowerSuitPeriodsCurve
+            slowerTable = self.slowerCogPeriodsCurve
         slowerPeriods = slowerTable[safeZone][self.numCogs]
-        fasterTable = self.fasterSuitPeriods
+        fasterTable = self.fasterCogPeriods
         if self.FASTER_COG_CURVE:
-            fasterTable = self.fasterSuitPeriodsCurve
+            fasterTable = self.fasterCogPeriodsCurve
         fasterPeriods = fasterTable[safeZone][self.numCogs]
         cogPeriods = slowerPeriods + fasterPeriods
         self.notify.debug('cog periods: ' + repr(cogPeriods))
         self.randomNumGen.shuffle(cogPeriods)
         for i in range(self.numCogs):
-            self.cogs.append(MazeSuit(i, self.maze, self.randomNumGen, cogPeriods[i], self.getDifficulty()))
+            self.cogs.append(MazeCog(i, self.maze, self.randomNumGen, cogPeriods[i], self.getDifficulty()))
 
     def __unloadCogs(self):
         self.notify.debug('unloadCogs')

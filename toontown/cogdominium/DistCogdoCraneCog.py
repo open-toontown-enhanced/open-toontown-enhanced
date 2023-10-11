@@ -3,13 +3,13 @@ from direct.distributed.ClockDelta import globalClockDelta
 from direct.distributed.DistributedObject import DistributedObject
 from direct.interval import IntervalGlobal as IG
 from toontown.cogdominium import CogdoCraneGameConsts as GameConsts
-from toontown.cog.Suit import Suit
+from toontown.cog.Cog import Cog
 
-class DistCogdoCraneCog(Suit, DistributedObject):
+class DistCogdoCraneCog(Cog, DistributedObject):
 
     def __init__(self, cr):
         DistributedObject.__init__(self, cr)
-        Suit.__init__(self)
+        Cog.__init__(self)
         self._moveIval = None
         return
 
@@ -54,8 +54,8 @@ class DistCogdoCraneCog(Suit, DistributedObject):
         DistributedObject.disable(self)
 
     def delete(self):
-        Suit.delete(self)
+        Cog.delete(self)
         DistributedObject.delete(self)
 
     def setDNAString(self, dnaString):
-        Suit.setDNAString(self, dnaString)
+        Cog.setDNAString(self, dnaString)

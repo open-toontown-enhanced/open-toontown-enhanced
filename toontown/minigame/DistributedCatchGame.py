@@ -10,7 +10,7 @@ from toontown.toonbase import TTLocalizer
 from . import CatchGameGlobals
 from direct.task.Task import Task
 from toontown.toon import Toon
-from toontown.cog import Suit
+from toontown.cog import Cog
 from . import MinigameAvatarScorePanel
 from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
@@ -31,7 +31,7 @@ from functools import reduce
 class DistributedCatchGame(DistributedMinigame):
     DropTaskName = 'dropSomething'
     EndGameTaskName = 'endCatchGame'
-    SuitWalkTaskName = 'catchGameSuitWalk'
+    CogWalkTaskName = 'catchGameCogWalk'
     DropObjectPlurals = {'apple': TTLocalizer.CatchGameApples,
      'orange': TTLocalizer.CatchGameOranges,
      'pear': TTLocalizer.CatchGamePears,
@@ -113,9 +113,9 @@ class DistributedCatchGame(DistributedMinigame):
              'double_talker']
             self.cogs = []
             for type in cogTypes:
-                cog = Suit.Suit()
+                cog = Cog.Cog()
                 d = CogDNA.CogDNA()
-                d.newSuit(type)
+                d.newCog(type)
                 cog.setDNA(d)
                 cog.pose('walk', 0)
                 self.cogs.append(cog)
@@ -167,8 +167,8 @@ class DistributedCatchGame(DistributedMinigame):
     def calcDifficultyConstants(self, difficulty, numPlayers):
         ToonSpeedRange = [16.0, 25.0]
         self.ToonSpeed = lerp(ToonSpeedRange[0], ToonSpeedRange[1], difficulty)
-        self.SuitSpeed = self.ToonSpeed / 2.0
-        self.SuitPeriodRange = [lerp(5.0, 3.0, self.getDifficulty()), lerp(15.0, 8.0, self.getDifficulty())]
+        self.CogSpeed = self.ToonSpeed / 2.0
+        self.CogPeriodRange = [lerp(5.0, 3.0, self.getDifficulty()), lerp(15.0, 8.0, self.getDifficulty())]
 
         def scaledDimensions(widthHeight, scale):
             w, h = widthHeight
@@ -234,7 +234,7 @@ class DistributedCatchGame(DistributedMinigame):
         self.fruitName = fruits[self.getSafezoneId()]
         self.ShowObjSpheres = 0
         self.ShowToonSpheres = 0
-        self.ShowSuitSpheres = 0
+        self.ShowCogSpheres = 0
         self.PredictiveSmoothing = 1
         self.UseGravity = 1
         self.TrickShadows = 1
@@ -473,9 +473,9 @@ class DistributedCatchGame(DistributedMinigame):
             cogCollNode.addSolid(cogCollSphere)
             cog.collNodePath = cog.attachNewNode(cogCollNode)
             cog.collNodePath.hide()
-            if self.ShowSuitSpheres:
+            if self.ShowCogSpheres:
                 cog.collNodePath.show()
-            self.accept(self.uniqueName('enter' + cog.collSphereName), self.handleSuitCollision)
+            self.accept(self.uniqueName('enter' + cog.collSphereName), self.handleCogCollision)
 
         self.scores = [0] * self.numPlayers
         spacing = 0.4
@@ -497,7 +497,7 @@ class DistributedCatchGame(DistributedMinigame):
         self.scheduleDrops()
         self.startDropTask()
         if self.WantCogs:
-            self.startSuitWalkTask()
+            self.startCogWalkTask()
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
         self.timer.setTime(CatchGameGlobals.GameDuration)
@@ -508,7 +508,7 @@ class DistributedCatchGame(DistributedMinigame):
 
     def exitPlay(self):
         self.stopDropTask()
-        self.stopSuitWalkTask()
+        self.stopCogWalkTask()
         if hasattr(self, 'perfectIval'):
             self.perfectIval.pause()
             del self.perfectIval
@@ -731,13 +731,13 @@ class DistributedCatchGame(DistributedMinigame):
             ival.append(SoundInterval(landSound))
         return ival
 
-    def startSuitWalkTask(self):
-        ival = Parallel(name='catchGameMetaSuitWalk')
+    def startCogWalkTask(self):
+        ival = Parallel(name='catchGameMetaCogWalk')
         rng = RandomNumGen(self.randomNumGen)
         delay = 0.0
         while delay < CatchGameGlobals.GameDuration:
-            delay += lerp(self.SuitPeriodRange[0], self.SuitPeriodRange[0], rng.random())
-            walkIval = Sequence(name='catchGameSuitWalk')
+            delay += lerp(self.CogPeriodRange[0], self.CogPeriodRange[0], rng.random())
+            walkIval = Sequence(name='catchGameCogWalk')
             walkIval.append(Wait(delay))
 
             def pickY(self = self, rng = rng):
@@ -757,13 +757,13 @@ class DistributedCatchGame(DistributedMinigame):
         ival.start()
         self.cogWalkIval = ival
 
-    def stopSuitWalkTask(self):
+    def stopCogWalkTask(self):
         self.cogWalkIval.finish()
         del self.cogWalkIval
 
     def getCogWalkIval(self, startPos, stopPos, rng):
         data = {}
-        lerpNP = render.attachNewNode('catchGameSuitParent')
+        lerpNP = render.attachNewNode('catchGameCogParent')
 
         def setup(self = self, startPos = startPos, stopPos = stopPos, data = data, lerpNP = lerpNP, rng = rng):
             if len(self.cogs) == 0:
@@ -773,7 +773,7 @@ class DistributedCatchGame(DistributedMinigame):
             self.cogs.remove(cog)
             cog.reparentTo(lerpNP)
             cog.loop('walk')
-            cog.setPlayRate(self.SuitSpeed / ToontownGlobals.SuitWalkSpeed, 'walk')
+            cog.setPlayRate(self.CogSpeed / ToontownGlobals.CogWalkSpeed, 'walk')
             cog.setPos(0, 0, 0)
             lerpNP.setPos(startPos)
             cog.lookAt(stopPos)
@@ -786,16 +786,16 @@ class DistributedCatchGame(DistributedMinigame):
             lerpNP.removeNode()
 
         distance = Vec3(stopPos - startPos).length()
-        duration = distance / self.SuitSpeed
+        duration = distance / self.CogSpeed
         ival = Sequence(FunctionInterval(setup), LerpPosInterval(lerpNP, duration, stopPos), FunctionInterval(cleanup))
         return ival
 
-    def handleSuitCollision(self, collEntry):
+    def handleCogCollision(self, collEntry):
         self.toonSDs[self.localAvId].fsm.request('fallBack')
         timestamp = globalClockDelta.localToNetworkTime(globalClock.getFrameTime())
-        self.sendUpdate('hitBySuit', [self.localAvId, timestamp])
+        self.sendUpdate('hitByCog', [self.localAvId, timestamp])
 
-    def hitBySuit(self, avId, timestamp):
+    def hitByCog(self, avId, timestamp):
         if not self.hasLocalToon:
             return
         if self.gameFSM.getCurrentState().getName() != 'play':
@@ -849,7 +849,7 @@ class DistributedCatchGame(DistributedMinigame):
          0.0)
         cogViewCamPosHpr = (0, -11.5, 13, 0, -35, 0)
         finalCamPosHpr = self.CameraPosHpr
-        cameraIval = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, treeNode, *initialCamPosHpr), WaitInterval(4.0), LerpPosHprInterval(camera, 2.0, Point3(*cogViewCamPosHpr[:3]), Point3(*cogViewCamPosHpr[3:]), blendType='easeInOut', name='lerpToSuitView'), WaitInterval(4.0), LerpPosHprInterval(camera, 3.0, Point3(*finalCamPosHpr[:3]), Point3(*finalCamPosHpr[3:]), blendType='easeInOut', name='lerpToPlayView'))
+        cameraIval = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, treeNode, *initialCamPosHpr), WaitInterval(4.0), LerpPosHprInterval(camera, 2.0, Point3(*cogViewCamPosHpr[:3]), Point3(*cogViewCamPosHpr[3:]), blendType='easeInOut', name='lerpToCogView'), WaitInterval(4.0), LerpPosHprInterval(camera, 3.0, Point3(*finalCamPosHpr[:3]), Point3(*finalCamPosHpr[3:]), blendType='easeInOut', name='lerpToPlayView'))
 
         def getIntroToon(toonProperties, parent, pos):
             toon = Toon.Toon()

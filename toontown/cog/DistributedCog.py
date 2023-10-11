@@ -6,7 +6,7 @@ from direct.distributed.ClockDelta import *
 from direct.directtools.DirectGeometry import CLAMP
 from direct.task import Task
 from otp.avatar import DistributedAvatar
-from . import Suit
+from . import Cog
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import DistributedBattle
 from direct.fsm import ClassicFSM, State
@@ -56,7 +56,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.legList = None
         self.initState = None
         self.finalState = None
-        self.buildingSuit = 0
+        self.buildingCog = 0
         self.fsm = ClassicFSM.ClassicFSM('DistributedCog', [
             State.State('Off',
                         self.enterOff,
@@ -230,7 +230,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def verifyCogPlanner(self):
         if self.sp == None and self.spDoId != 0:
-            self.notify.warning('Suit %d does not have a cog planner!  Expected SP doId %s.' % (self.doId, self.spDoId))
+            self.notify.warning('Cog %d does not have a cog planner!  Expected SP doId %s.' % (self.doId, self.spDoId))
             self.sp = self.cr.doId2do.get(self.spDoId, None)
         if self.sp == None:
             return 0
@@ -321,7 +321,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
 
     def moveToNextLeg(self, task):
         if self.legList == None:
-            self.notify.warning('Suit %d does not have a path!' % self.getDoId())
+            self.notify.warning('Cog %d does not have a path!' % self.getDoId())
             return Task.done
         now = globalClock.getFrameTime()
         elapsed = now - self.pathStartTime
@@ -394,7 +394,7 @@ class DistributedCog(DistributedCogBase.DistributedCogBase, DelayDeletable):
         self.spDoId = doId
         self.sp = self.cr.doId2do.get(doId, None)
         if self.sp == None and self.spDoId != 0:
-            self.notify.warning('Suit %s created before its cog planner, %d' % (self.doId, self.spDoId))
+            self.notify.warning('Cog %s created before its cog planner, %d' % (self.doId, self.spDoId))
         return
 
     def d_requestBattle(self, pos, hpr):

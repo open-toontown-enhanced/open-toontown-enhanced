@@ -337,7 +337,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         DistributedAvatarAI.DistributedAvatarAI.handleLogicalZoneChange(self, newZoneId, oldZoneId)
         if self.isPlayerControlled() and self.WantTpTrack:
             messenger.send(self.staticGetLogicalZoneChangeAllEvent(), [newZoneId, oldZoneId, self])
-        if self.cogIndex != -1 and not ToontownAccessAI.canWearSuit(self.doId, newZoneId):
+        if self.cogIndex != -1 and not ToontownAccessAI.canWearDisguise(self.doId, newZoneId):
             if simbase.config.GetBool('cogsuit-hack-prevent', False):
                 self.b_setCogIndex(-1)
             if not simbase.air.cogDisguiseMessageSent:
@@ -1432,7 +1432,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             self.d_setCogIndex(index)
 
     def setCogIndex(self, index):
-        if index != -1 and not ToontownAccessAI.canWearSuit(self.doId, self.zoneId):
+        if index != -1 and not ToontownAccessAI.canWearDisguise(self.doId, self.zoneId):
             if not simbase.air.cogDisguiseMessageSent:
                 self.notify.warning('%s setCogIndex invalid: %s' % (self.doId, index))
                 if simbase.config.GetBool('want-ban-wrong-cog-place', False):
@@ -3197,7 +3197,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         for zoneId in zones:
             if zoneId in map:
                 points = map[zoneId][:]
-                cog = sp.createNewSuit([], points, cogName=cogName)
+                cog = sp.createNewCog([], points, cogName=cogName)
                 if cog:
                     return ['success', cogIndex, 0]
 
@@ -3259,8 +3259,8 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
 
     def restockAllCogSummons(self):
         numCogs = len(CogDNA.cogHeadTypes)
-        fullSetForSuit = 1 | 2 | 4
-        allSummons = numCogs * [fullSetForSuit]
+        fullSetForCog = 1 | 2 | 4
+        allSummons = numCogs * [fullSetForCog]
         self.b_setCogSummonsEarned(allSummons)
 
     def addCogSummonsEarned(self, cogIndex, type):

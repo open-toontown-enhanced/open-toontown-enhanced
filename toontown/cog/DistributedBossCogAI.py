@@ -148,9 +148,9 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
     def isToonKnown(self, toonId):
         return toonId in self.involvedToons or toonId in self.looseToons
 
-    def isToonWearingRentalSuit(self, toonId):
+    def isToonWearingRentalCog(self, toonId):
         if not self.isToonKnown(toonId):
-            self.notify.warning('isToonWearingRentalSuit: unknown toonId %s' % toonId)
+            self.notify.warning('isToonWearingRentalCog: unknown toonId %s' % toonId)
             return False
         toon = self.air.doId2do.get(toonId)
         if toon:
@@ -159,7 +159,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             else:
                 return not CogDisguiseGlobals.isPaidDisguiseComplete(toon, toon.getCogParts(), self.dept)
         else:
-            self.notify.warning('isToonWearingRentalSuit: toonId %s does not exist' % toonId)
+            self.notify.warning('isToonWearingRentalCog: toonId %s does not exist' % toonId)
             return False
 
     def __countNormalDisguiseToons(self):
@@ -168,7 +168,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
     def __countRentalDisguiseToons(self):
         count = 0
         for toonId in self.involvedToons + self.looseToons:
-            if self.isToonWearingRentalSuit(toonId):
+            if self.isToonWearingRentalCog(toonId):
                 count += 1
 
         return count
@@ -224,7 +224,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         self.demand(state)
         if self.air:
             if state in self.keyStates:
-                self.air.writeServerEvent('bossBattle', self.doId, '%s|%s|%s|%s|%s|%s' % (self.dept, state, self.involvedToons, self.formatReward(), self.formatLaffLevels(), self.formatSuitType()))
+                self.air.writeServerEvent('bossBattle', self.doId, '%s|%s|%s|%s|%s|%s' % (self.dept, state, self.involvedToons, self.formatReward(), self.formatLaffLevels(), self.formatCogType()))
 
     def getState(self):
         return self.state
@@ -239,16 +239,16 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             self.notify.warning(e)
             return []
 
-    def formatSuitType(self):
+    def formatCogType(self):
         try:
 
-            def hasSuit(id):
-                if not self.isToonWearingRentalSuit(id):
+            def hasCog(id):
+                if not self.isToonWearingRentalCog(id):
                     return 1
                 else:
                     return 0
 
-            return list(map(hasSuit, self.involvedToons))
+            return list(map(hasCog, self.involvedToons))
         except Exception as e:
             self.notify.warning(e)
             return []
@@ -416,7 +416,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         toons = self.involvedToons[:]
         random.shuffle(toons)
         teamA, teamB, loose = [], [], []
-        for i, toon in enumerate(sorted(toons, key=self.isToonWearingRentalSuit)):
+        for i, toon in enumerate(sorted(toons, key=self.isToonWearingRentalCog)):
             if i < 8:
                 if i % 2 == 0:
                     teamA.append(toon)

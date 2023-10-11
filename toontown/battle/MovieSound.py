@@ -14,7 +14,7 @@ soundFiles = ('AA_sound_bikehorn.ogg', 'AA_sound_whistle.ogg', 'AA_sound_bugle.o
 appearSoundFiles = ('MG_tag_1.ogg', 'LB_receive_evidence.ogg', 'm_match_trumpet.ogg', 'TL_step_on_rake.ogg', 'toonbldg_grow.ogg', 'mailbox_full_wobble.ogg', 'mailbox_full_wobble.ogg')
 hitSoundFiles = ('AA_sound_Opera_Singer_Cog_Glass.ogg',)
 tSound = 2.45
-tSuitReact = 2.8
+tCogReact = 2.8
 DISTANCE_TO_WALK_BACK = MovieUtil.COG_LURE_DISTANCE * 0.75
 TIME_TO_WALK_BACK = 0.5
 if DISTANCE_TO_WALK_BACK == 0:
@@ -84,7 +84,7 @@ def __getCogTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamage
                 breakEffect.setDepthTest(0)
                 breakEffect.setTwoSided(1)
                 soundEffect = globalBattleSoundCache.getSound(hitSoundFiles[0])
-            cogTrack.append(Wait(delay + tSuitReact))
+            cogTrack.append(Wait(delay + tCogReact))
             if isUber:
                 delayTime = random.random()
                 cogTrack.append(Wait(delayTime + 2.0))
@@ -94,15 +94,15 @@ def __getCogTrack(sound, lastSoundThatHit, delay, hitCount, targets, totalDamage
                 cogTrack.append(showDamage)
                 cogTrack.append(updateHealthBar)
             if hitCount == 1:
-                cogTrack.append(Parallel(ActorInterval(cog, 'squirt-small-react'), MovieUtil.createSuitStunInterval(cog, 0.5, 1.8)))
+                cogTrack.append(Parallel(ActorInterval(cog, 'squirt-small-react'), MovieUtil.createCogStunInterval(cog, 0.5, 1.8)))
             else:
                 cogTrack.append(ActorInterval(cog, 'squirt-small-react'))
             if kbbonus == 0:
-                cogTrack.append(__createSuitResetPosTrack(cog, battle))
-                cogTrack.append(Func(battle.unlureSuit, cog))
+                cogTrack.append(__createCogResetPosTrack(cog, battle))
+                cogTrack.append(Func(battle.unlureCog, cog))
             bonusTrack = None
             if hpbonus > 0:
-                bonusTrack = Sequence(Wait(delay + tSuitReact + delay + 0.75 + uberDelay), Func(cog.showHpText, -hpbonus, 1, openEnded=0))
+                bonusTrack = Sequence(Wait(delay + tCogReact + delay + 0.75 + uberDelay), Func(cog.showHpText, -hpbonus, 1, openEnded=0))
             cogTrack.append(Func(cog.loop, 'neutral'))
             if bonusTrack == None:
                 tracks.append(cogTrack)
@@ -143,16 +143,16 @@ def __doSoundsLevel(sounds, delay, hitCount, npcs):
             died = target['died']
             revived = target['revived']
             if revived:
-                deathTracks.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
+                deathTracks.append(MovieUtil.createCogReviveTrack(cog, toon, battle, npcs))
             elif died:
-                deathTracks.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
+                deathTracks.append(MovieUtil.createCogDeathTrack(cog, toon, battle, npcs))
 
     mainTrack.append(tracks)
     mainTrack.append(deathTracks)
     return mainTrack
 
 
-def __createSuitResetPosTrack(cog, battle):
+def __createCogResetPosTrack(cog, battle):
     resetPos, resetHpr = battle.getActorPosHpr(cog)
     moveDist = Vec3(cog.getPos(battle) - resetPos).length()
     moveDuration = 0.5
@@ -161,8 +161,8 @@ def __createSuitResetPosTrack(cog, battle):
     return Parallel(walkTrack, moveTrack)
 
 
-def createSuitResetPosTrack(cog, battle):
-    return __createSuitResetPosTrack(cog, battle)
+def createCogResetPosTrack(cog, battle):
+    return __createCogResetPosTrack(cog, battle)
 
 
 def __createToonInterval(sound, delay, toon, operaInstrument = None):

@@ -14,8 +14,8 @@ from .MovieUtil import calcAvgCogPos
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieThrow')
 hitSoundFiles = ('AA_tart_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_slice_only.ogg', 'AA_wholepie_only.ogg', 'AA_wholepie_only.ogg')
 tPieLeavesHand = 2.7
-tPieHitsSuit = 3.0
-tSuitDodges = 2.45
+tPieHitsCog = 3.0
+tCogDodges = 2.45
 ratioMissToHit = 1.5
 tPieShrink = 0.7
 pieFlyTaskName = 'MovieThrow-pieFly'
@@ -82,7 +82,7 @@ def doThrows(throws):
     mtrack = Parallel()
     for st in cogThrows:
         if len(st) > 0:
-            ival = __doSuitThrows(st)
+            ival = __doCogThrows(st)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
             delay = delay + TOON_THROW_COG_DELAY
@@ -108,7 +108,7 @@ def doThrows(throws):
     return (retTrack, camTrack)
 
 
-def __doSuitThrows(throws):
+def __doCogThrows(throws):
     toonTracks = Parallel()
     delay = 0.0
     hitCount = 0
@@ -231,31 +231,31 @@ def __pieMissGroupLerpCallback(t, missDict):
         pie.setScale(newScale)
 
 
-def __getWeddingCakeSoundTrack(level, hitSuit, node = None):
+def __getWeddingCakeSoundTrack(level, hitCog, node = None):
     throwTrack = Sequence()
-    if hitSuit:
+    if hitCog:
         throwSound = globalBattleSoundCache.getSound('AA_throw_wedding_cake.ogg')
         songTrack = Sequence()
         songTrack.append(Wait(1.0))
         songTrack.append(SoundInterval(throwSound, node=node))
         splatSound = globalBattleSoundCache.getSound('AA_throw_wedding_cake_cog.ogg')
         splatTrack = Sequence()
-        splatTrack.append(Wait(tPieHitsSuit))
+        splatTrack.append(Wait(tPieHitsCog))
         splatTrack.append(SoundInterval(splatSound, node=node))
         throwTrack.append(Parallel(songTrack, splatTrack))
     else:
         throwSound = globalBattleSoundCache.getSound('AA_throw_wedding_cake_miss.ogg')
-        throwTrack.append(Wait(tSuitDodges))
+        throwTrack.append(Wait(tCogDodges))
         throwTrack.append(SoundInterval(throwSound, node=node))
     return throwTrack
 
 
-def __getSoundTrack(level, hitSuit, node = None):
+def __getSoundTrack(level, hitCog, node = None):
     if level == UBER_GAG_LEVEL_INDEX:
-        return __getWeddingCakeSoundTrack(level, hitSuit, node)
+        return __getWeddingCakeSoundTrack(level, hitCog, node)
     throwSound = globalBattleSoundCache.getSound('AA_pie_throw_only.ogg')
     throwTrack = Sequence(Wait(2.6), SoundInterval(throwSound, node=node))
-    if hitSuit:
+    if hitCog:
         hitSound = globalBattleSoundCache.getSound(hitSoundFiles[level])
         hitTrack = Sequence(Wait(tPieLeavesHand), SoundInterval(hitSound, node=node))
         return Parallel(throwTrack, hitTrack)
@@ -284,7 +284,7 @@ def __throwPie(throw, delay, hitCount):
      hp,
      died))
     pieName = pieNames[level]
-    hitSuit = hp > 0
+    hitCog = hp > 0
     pie = globalPropPool.getProp(pieName)
     pieType = globalPropPool.getPropType(pieName)
     pie2 = MovieUtil.copyProp(pie)
@@ -309,9 +309,9 @@ def __throwPie(throw, delay, hitCount):
     pieScale = Parallel(pieScale1, pieScale2)
     piePreflight = Func(__propPreflight, pies, cog, toon, battle)
     pieTrack = Sequence(Wait(delay), pieShow, pieAnim, pieScale, Func(battle.movie.needRestoreRenderProp, pies[0]), Wait(tPieLeavesHand - 1.0), piePreflight)
-    soundTrack = __getSoundTrack(level, hitSuit, toon)
-    if hitSuit:
-        pieFly = LerpPosInterval(pie, tPieHitsSuit - tPieLeavesHand, pos=MovieUtil.avatarFacePoint(cog, other=battle), name=pieFlyTaskName, other=battle)
+    soundTrack = __getSoundTrack(level, hitCog, toon)
+    if hitCog:
+        pieFly = LerpPosInterval(pie, tPieHitsCog - tPieLeavesHand, pos=MovieUtil.avatarFacePoint(cog, other=battle), name=pieFlyTaskName, other=battle)
         pieHide = Func(MovieUtil.removeProps, pies)
         splatShow = Func(__showProp, splat, cog, Point3(0, 0, cog.getHeight()))
         splatBillboard = Func(__billboardProp, splat)
@@ -331,13 +331,13 @@ def __throwPie(throw, delay, hitCount):
         else:
             cogPoint = __cogMissPoint(cog, other=battle)
         piePreMiss = Func(__piePreMiss, missDict, pie, cogPoint, battle)
-        pieMiss = LerpFunctionInterval(__pieMissLerpCallback, extraArgs=[missDict], duration=(tPieHitsSuit - tPieLeavesHand) * ratioMissToHit)
+        pieMiss = LerpFunctionInterval(__pieMissLerpCallback, extraArgs=[missDict], duration=(tPieHitsCog - tPieLeavesHand) * ratioMissToHit)
         pieHide = Func(MovieUtil.removeProps, pies)
         pieTrack.append(piePreMiss)
         pieTrack.append(pieMiss)
         pieTrack.append(pieHide)
         pieTrack.append(Func(battle.movie.clearRenderProp, pies[0]))
-    if hitSuit:
+    if hitCog:
         cogResponseTrack = Sequence()
         showDamage = Func(cog.showHpText, -hp, openEnded=0, attackTrack=THROW_TRACK)
         updateHealthBar = Func(cog.updateHealthBar, hp)
@@ -353,18 +353,18 @@ def __throwPie(throw, delay, hitCount):
                 animTrack.append(ActorInterval(cog, 'slip-forward', startTime=1.94))
             elif cogType == 'c':
                 animTrack.append(ActorInterval(cog, 'slip-forward', startTime=2.58))
-            animTrack.append(Func(battle.unlureSuit, cog))
+            animTrack.append(Func(battle.unlureCog, cog))
             moveTrack = Sequence(Wait(0.2), LerpPosInterval(cog, 0.6, pos=cogPos, other=battle))
             sival = Parallel(animTrack, moveTrack)
         elif hitCount == 1:
-            sival = Parallel(ActorInterval(cog, 'pie-small-react'), MovieUtil.createSuitStunInterval(cog, 0.3, 1.3))
+            sival = Parallel(ActorInterval(cog, 'pie-small-react'), MovieUtil.createCogStunInterval(cog, 0.3, 1.3))
         else:
             sival = ActorInterval(cog, 'pie-small-react')
-        cogResponseTrack.append(Wait(delay + tPieHitsSuit))
+        cogResponseTrack.append(Wait(delay + tPieHitsCog))
         cogResponseTrack.append(showDamage)
         cogResponseTrack.append(updateHealthBar)
         cogResponseTrack.append(sival)
-        bonusTrack = Sequence(Wait(delay + tPieHitsSuit))
+        bonusTrack = Sequence(Wait(delay + tPieHitsCog))
         if kbbonus > 0:
             bonusTrack.append(Wait(0.75))
             bonusTrack.append(Func(cog.showHpText, -kbbonus, 2, openEnded=0, attackTrack=THROW_TRACK))
@@ -372,15 +372,15 @@ def __throwPie(throw, delay, hitCount):
             bonusTrack.append(Wait(0.75))
             bonusTrack.append(Func(cog.showHpText, -hpbonus, 1, openEnded=0, attackTrack=THROW_TRACK))
         if revived != 0:
-            cogResponseTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle))
+            cogResponseTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle))
         elif died != 0:
-            cogResponseTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle))
+            cogResponseTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle))
         else:
             cogResponseTrack.append(Func(cog.loop, 'neutral'))
         cogResponseTrack = Parallel(cogResponseTrack, bonusTrack)
     else:
-        cogResponseTrack = MovieUtil.createSuitDodgeMultitrack(delay + tSuitDodges, cog, leftCogs, rightCogs)
-    if not hitSuit and delay > 0:
+        cogResponseTrack = MovieUtil.createCogDodgeMultitrack(delay + tCogDodges, cog, leftCogs, rightCogs)
+    if not hitCog and delay > 0:
         return [toonTrack, soundTrack, pieTrack]
     else:
         return [toonTrack,
@@ -430,14 +430,14 @@ def __createWeddingCakeFlight(throw, groupHitDict, pie, pies):
     for i in range(numTargets):
         target = throw['target'][i]
         cog = target['cog']
-        hitSuit = target['hp'] > 0
+        hitCog = target['hp'] > 0
         singlePieTrack = Sequence()
-        if hitSuit:
+        if hitCog:
             piePartReparent = Func(reparentCakePart, pie, cakePartDivToUse[i])
             singlePieTrack.append(piePartReparent)
             cakePartTrack = Parallel()
             for cakePart in cakePartDivToUse[i]:
-                pieFly = LerpPosInterval(cakePart, tPieHitsSuit - tPieLeavesHand, pos=MovieUtil.avatarFacePoint(cog, other=battle), name=pieFlyTaskName, other=battle)
+                pieFly = LerpPosInterval(cakePart, tPieHitsCog - tPieLeavesHand, pos=MovieUtil.avatarFacePoint(cog, other=battle), name=pieFlyTaskName, other=battle)
                 cakePartTrack.append(pieFly)
 
             singlePieTrack.append(cakePartTrack)
@@ -462,7 +462,7 @@ def __createWeddingCakeFlight(throw, groupHitDict, pie, pies):
                 cogPoint = __cogMissPoint(cog, other=battle)
             piePartReparent = Func(reparentCakePart, pie, cakePartDivToUse[i])
             piePreMiss = Func(__piePreMissGroup, missDict, cakePartDivToUse[i], cogPoint, battle)
-            pieMiss = LerpFunctionInterval(__pieMissGroupLerpCallback, extraArgs=[missDict], duration=(tPieHitsSuit - tPieLeavesHand) * ratioMissToHit)
+            pieMiss = LerpFunctionInterval(__pieMissGroupLerpCallback, extraArgs=[missDict], duration=(tPieHitsCog - tPieLeavesHand) * ratioMissToHit)
             pieHide = Func(MovieUtil.removeProps, pies)
             pieRemoveCakeParts = Func(MovieUtil.removeProps, cakePartDivToUse[i])
             singlePieTrack.append(piePartReparent)
@@ -517,24 +517,24 @@ def __throwGroupPie(throw, delay, groupHitDict):
     didThrowHitAnyone = False
     for i in range(numTargets):
         target = throw['target'][i]
-        hitSuit = target['hp'] > 0
-        if hitSuit:
+        hitCog = target['hp'] > 0
+        if hitCog:
             didThrowHitAnyone = True
 
     soundTrack = __getSoundTrack(level, didThrowHitAnyone, toon)
-    groupSuitResponseTrack = Parallel()
+    groupCogResponseTrack = Parallel()
     for i in range(numTargets):
         target = throw['target'][i]
         cog = target['cog']
-        hitSuit = target['hp'] > 0
+        hitCog = target['hp'] > 0
         leftCogs = target['leftCogs']
         rightCogs = target['rightCogs']
         hp = target['hp']
         kbbonus = target['kbbonus']
         died = target['died']
         revived = target['revived']
-        if hitSuit:
-            singleSuitResponseTrack = Sequence()
+        if hitCog:
+            singleCogResponseTrack = Sequence()
             showDamage = Func(cog.showHpText, -hp, openEnded=0, attackTrack=THROW_TRACK)
             updateHealthBar = Func(cog.updateHealthBar, hp)
             sival = []
@@ -549,18 +549,18 @@ def __throwGroupPie(throw, delay, groupHitDict):
                     animTrack.append(ActorInterval(cog, 'slip-forward', startTime=1.94))
                 elif cogType == 'c':
                     animTrack.append(ActorInterval(cog, 'slip-forward', startTime=2.58))
-                animTrack.append(Func(battle.unlureSuit, cog))
+                animTrack.append(Func(battle.unlureCog, cog))
                 moveTrack = Sequence(Wait(0.2), LerpPosInterval(cog, 0.6, pos=cogPos, other=battle))
                 sival = Parallel(animTrack, moveTrack)
             elif groupHitDict[cog.doId] == 1:
-                sival = Parallel(ActorInterval(cog, 'pie-small-react'), MovieUtil.createSuitStunInterval(cog, 0.3, 1.3))
+                sival = Parallel(ActorInterval(cog, 'pie-small-react'), MovieUtil.createCogStunInterval(cog, 0.3, 1.3))
             else:
                 sival = ActorInterval(cog, 'pie-small-react')
-            singleSuitResponseTrack.append(Wait(delay + tPieHitsSuit))
-            singleSuitResponseTrack.append(showDamage)
-            singleSuitResponseTrack.append(updateHealthBar)
-            singleSuitResponseTrack.append(sival)
-            bonusTrack = Sequence(Wait(delay + tPieHitsSuit))
+            singleCogResponseTrack.append(Wait(delay + tPieHitsCog))
+            singleCogResponseTrack.append(showDamage)
+            singleCogResponseTrack.append(updateHealthBar)
+            singleCogResponseTrack.append(sival)
+            bonusTrack = Sequence(Wait(delay + tPieHitsCog))
             if kbbonus > 0:
                 bonusTrack.append(Wait(0.75))
                 bonusTrack.append(Func(cog.showHpText, -kbbonus, 2, openEnded=0, attackTrack=THROW_TRACK))
@@ -568,24 +568,24 @@ def __throwGroupPie(throw, delay, groupHitDict):
                 bonusTrack.append(Wait(0.75))
                 bonusTrack.append(Func(cog.showHpText, -hpbonus, 1, openEnded=0, attackTrack=THROW_TRACK))
             if revived != 0:
-                singleSuitResponseTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle))
+                singleCogResponseTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle))
             elif died != 0:
-                singleSuitResponseTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle))
+                singleCogResponseTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle))
             else:
-                singleSuitResponseTrack.append(Func(cog.loop, 'neutral'))
-            singleSuitResponseTrack = Parallel(singleSuitResponseTrack, bonusTrack)
+                singleCogResponseTrack.append(Func(cog.loop, 'neutral'))
+            singleCogResponseTrack = Parallel(singleCogResponseTrack, bonusTrack)
         else:
             groupHitValues = list(groupHitDict.values())
             if groupHitValues.count(0) == len(groupHitValues):
-                singleSuitResponseTrack = MovieUtil.createSuitDodgeMultitrack(delay + tSuitDodges, cog, leftCogs, rightCogs)
+                singleCogResponseTrack = MovieUtil.createCogDodgeMultitrack(delay + tCogDodges, cog, leftCogs, rightCogs)
             else:
-                singleSuitResponseTrack = Sequence(Wait(tPieHitsSuit - 0.1), Func(MovieUtil.indicateMissed, cog, 1.0))
-        groupSuitResponseTrack.append(singleSuitResponseTrack)
+                singleCogResponseTrack = Sequence(Wait(tPieHitsCog - 0.1), Func(MovieUtil.indicateMissed, cog, 1.0))
+        groupCogResponseTrack.append(singleCogResponseTrack)
 
     return [toonTrack,
      pieTrack,
      soundTrack,
-     groupSuitResponseTrack]
+     groupCogResponseTrack]
 
 
 def reparentCakePart(pie, cakeParts):

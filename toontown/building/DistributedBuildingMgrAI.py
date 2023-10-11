@@ -62,10 +62,10 @@ class DistributedBuildingMgrAI:
 
         return blocks
 
-    def getEstablishedSuitBlocks(self):
+    def getEstablishedCogBlocks(self):
         blocks = []
         for i in list(self.__buildings.values()):
-            if i.isEstablishedSuitBlock():
+            if i.isEstablishedCogBlock():
                 blocks.append(i.getBlock()[0])
 
         return blocks
@@ -158,7 +158,7 @@ class DistributedBuildingMgrAI:
                 building.updateSavedBy(blockData.get('savedBy'))
             else:
                 self.notify.warning('we had a cog building in welcome valley %d' % building.zoneId)
-            building.becameSuitTime = blockData.get('becameSuitTime', time.time())
+            building.becameCogTime = blockData.get('becameCogTime', time.time())
             if blockData['state'] == 'cog':
                 building.setState('cog')
             elif blockData['state'] == 'cogdo':
@@ -183,7 +183,7 @@ class DistributedBuildingMgrAI:
                 building.updateSavedBy(blockData.get('savedBy'))
             else:
                 self.notify.warning('we had a cog building in welcome valley %d' % building.zoneId)
-            building.becameSuitTime = blockData.get('becameSuitTime', time.time())
+            building.becameCogTime = blockData.get('becameCogTime', time.time())
             if blockData['state'] == 'cog':
                 building.setState('cog')
             else:

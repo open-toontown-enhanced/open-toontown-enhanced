@@ -19,7 +19,7 @@ class LevelCogPlannerAI(DirectObject.DirectObject):
         else:
             self.reserveCogSpecs = []
         self.battleCellSpecs = battleCellSpecs
-        self.__genSuitInfos(self.level.getCogLevel(), self.level.getCogTrack())
+        self.__genCogInfos(self.level.getCogLevel(), self.level.getCogTrack())
         self.battleMgr = LevelBattleManagerAI.LevelBattleManagerAI(self.air, self.level, battleCtor, battleExpAggreg)
         self.battleCellId2cogs = {}
         for id in list(self.battleCellSpecs.keys()):
@@ -43,7 +43,7 @@ class LevelCogPlannerAI(DirectObject.DirectObject):
         joinChances.sort(key=functools.cmp_to_key(cmp))
         return joinChances
 
-    def __genSuitInfos(self, level, track):
+    def __genCogInfos(self, level, track):
         if __dev__:
             pass
 
@@ -71,10 +71,10 @@ class LevelCogPlannerAI(DirectObject.DirectObject):
             cogDict['joinChance'] = joinChances[i]
             self.cogInfos['reserveCogs'].append(cogDict)
 
-    def __genSuitObject(self, cogDict, reserve):
+    def __genCogObject(self, cogDict, reserve):
         cog = self.cogCtor(simbase.air, self)
         dna = CogDNA.CogDNA()
-        dna.newSuitRandom(level=CogDNA.getRandomSuitType(cogDict['level']), dept=cogDict['track'])
+        dna.newCogRandom(level=CogDNA.getRandomCogType(cogDict['level']), dept=cogDict['track'])
         cog.dna = dna
         cog.setLevel(cogDict['level'])
         cog.setSkeleRevives(cogDict.get('revives'))
@@ -90,16 +90,16 @@ class LevelCogPlannerAI(DirectObject.DirectObject):
     def genCogs(self):
         cogHandles = {}
         activeCogs = []
-        for activeSuitInfo in self.cogInfos['activeCogs']:
-            cog = self.__genSuitObject(activeSuitInfo, 0)
-            cog.setBattleCellIndex(activeSuitInfo['battleCell'])
+        for activeCogInfo in self.cogInfos['activeCogs']:
+            cog = self.__genCogObject(activeCogInfo, 0)
+            cog.setBattleCellIndex(activeCogInfo['battleCell'])
             activeCogs.append(cog)
 
         cogHandles['activeCogs'] = activeCogs
         reserveCogs = []
-        for reserveSuitInfo in self.cogInfos['reserveCogs']:
-            cog = self.__genSuitObject(reserveSuitInfo, 1)
-            reserveCogs.append([cog, reserveSuitInfo['joinChance'], reserveSuitInfo['battleCell']])
+        for reserveCogInfo in self.cogInfos['reserveCogs']:
+            cog = self.__genCogObject(reserveCogInfo, 1)
+            reserveCogs.append([cog, reserveCogInfo['joinChance'], reserveCogInfo['battleCell']])
 
         cogHandles['reserveCogs'] = reserveCogs
         return cogHandles
@@ -117,10 +117,10 @@ class LevelCogPlannerAI(DirectObject.DirectObject):
         zone = self.level.getZoneId(self.level.getEntityZoneEntId(cellSpec['parentEntId']))
         maxCogs = 4
         self.battleMgr.newBattle(cellIndex, zone, pos, cog, toonId, self.__handleRoundFinished, self.__handleBattleFinished, maxCogs)
-        for otherSuit in self.battleCellId2cogs[cellIndex]:
-            if otherSuit is not cog:
+        for otherCog in self.battleCellId2cogs[cellIndex]:
+            if otherCog is not cog:
                 if self.__cogCanJoinBattle(cellIndex):
-                    self.battleMgr.requestBattleAddSuit(cellIndex, otherSuit)
+                    self.battleMgr.requestBattleAddCog(cellIndex, otherCog)
                 else:
                     battle = self.battleMgr.getBattle(cellIndex)
                     if battle:

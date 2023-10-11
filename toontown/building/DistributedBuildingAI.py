@@ -27,7 +27,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.victorResponses = None
         self.fsm = ClassicFSM.ClassicFSM('DistributedBuildingAI', [
          State.State('off', self.enterOff, self.exitOff, [
-          'waitForVictors', 'becomingToon', 'toon', 'clearOutToonInterior', 'becomingSuit', 'cog', 'clearOutToonInteriorForCogdo', 'becomingCogdo', 'becomingCogdoFromCogdo', 'cogdo']),
+          'waitForVictors', 'becomingToon', 'toon', 'clearOutToonInterior', 'becomingCog', 'cog', 'clearOutToonInteriorForCogdo', 'becomingCogdo', 'becomingCogdoFromCogdo', 'cogdo']),
          State.State('waitForVictors', self.enterWaitForVictors, self.exitWaitForVictors, [
           'becomingToon']),
          State.State('waitForVictorsFromCogdo', self.enterWaitForVictorsFromCogdo, self.exitWaitForVictorsFromCogdo, [
@@ -39,10 +39,10 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
          State.State('toon', self.enterToon, self.exitToon, [
           'clearOutToonInterior', 'clearOutToonInteriorForCogdo']),
          State.State('clearOutToonInterior', self.enterClearOutToonInterior, self.exitClearOutToonInterior, [
-          'becomingSuit']),
-         State.State('becomingSuit', self.enterBecomingSuit, self.exitBecomingSuit, [
+          'becomingCog']),
+         State.State('becomingCog', self.enterBecomingCog, self.exitBecomingCog, [
           'cog']),
-         State.State('cog', self.enterSuit, self.exitSuit, [
+         State.State('cog', self.enterCog, self.exitCog, [
           'waitForVictors', 'becomingToon']),
          State.State('clearOutToonInteriorForCogdo', self.enterClearOutToonInteriorForCogdo, self.exitClearOutToonInteriorForCogdo, [
           'becomingCogdo']),
@@ -57,7 +57,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.difficulty = 1
         self.numFloors = 0
         self.savedBy = []
-        self.becameSuitTime = 0
+        self.becameCogTime = 0
         self.frontDoorPoint = None
         self.cogPlannerExt = None
         self.fSkipElevatorOpening = False
@@ -85,7 +85,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
     def delete(self):
         taskMgr.remove(self.taskName('cogbldg-time-out'))
         taskMgr.remove(self.taskName(str(self.block) + '_becomingToon-timer'))
-        taskMgr.remove(self.taskName(str(self.block) + '_becomingSuit-timer'))
+        taskMgr.remove(self.taskName(str(self.block) + '_becomingCog-timer'))
         DistributedObjectAI.DistributedObjectAI.delete(self)
         del self.fsm
 
@@ -97,7 +97,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
             'difficulty': str(self.difficulty),
             'numFloors': str(self.numFloors),
             'savedBy': self.savedBy,
-            'becameSuitTime': self.becameSuitTime
+            'becameCogTime': self.becameCogTime
             }
         return buildingData
 
@@ -119,7 +119,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.track = cogTrack
         self.difficulty = difficulty
         self.numFloors = numFloors
-        self.becameSuitTime = time.time()
+        self.becameCogTime = time.time()
         self.fsm.request('clearOutToonInterior')
         return
 
@@ -131,7 +131,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.track = cogTrack
         self.difficulty = difficulty
         self.numFloors = numFloors
-        self.becameSuitTime = time.time()
+        self.becameCogTime = time.time()
         self.fsm.request('clearOutToonInteriorForCogdo')
         return
 
@@ -176,7 +176,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
 
     def isCogBuilding(self):
         state = self.fsm.getCurrentState().getName()
-        return state == 'cog' or state == 'becomingSuit' or state == 'clearOutToonInterior'
+        return state == 'cog' or state == 'becomingCog' or state == 'clearOutToonInterior'
 
     def isCogdo(self):
         state = self.fsm.getCurrentState().getName()
@@ -186,7 +186,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         state = self.fsm.getCurrentState().getName()
         return self.isCogBuilding() or self.isCogdo()
 
-    def isEstablishedSuitBlock(self):
+    def isEstablishedCogBlock(self):
         state = self.fsm.getCurrentState().getName()
         return state == 'cog'
 
@@ -427,7 +427,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         insideDoor.generateWithRequired(interiorZoneId)
         self.door = door
         self.insideDoor = insideDoor
-        self.becameSuitTime = 0
+        self.becameCogTime = 0
         self.knockKnock = DistributedKnockKnockDoorAI.DistributedKnockKnockDoorAI(self.air, self.block)
         self.knockKnock.generateWithRequired(exteriorZoneId)
         self.air.writeServerEvent('building-toon', self.doId, '%s|%s' % (self.zoneId, self.block))
@@ -451,18 +451,18 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         taskMgr.remove(name)
 
     def clearOutToonInteriorTask(self, task):
-        self.fsm.request('becomingSuit')
+        self.fsm.request('becomingCog')
         return Task.done
 
-    def enterBecomingSuit(self):
+    def enterBecomingCog(self):
         self.sendUpdate('setCogData', [
          ord(self.track), self.difficulty, self.numFloors])
-        self.d_setState('becomingSuit')
-        name = self.taskName(str(self.block) + '_becomingSuit-timer')
-        taskMgr.doMethodLater(CogBuildingGlobals.TO_COG_BLDG_TIME, self.becomingSuitTask, name)
+        self.d_setState('becomingCog')
+        name = self.taskName(str(self.block) + '_becomingCog-timer')
+        taskMgr.doMethodLater(CogBuildingGlobals.TO_COG_BLDG_TIME, self.becomingCogTask, name)
 
-    def exitBecomingSuit(self):
-        name = self.taskName(str(self.block) + '_becomingSuit-timer')
+    def exitBecomingCog(self):
+        name = self.taskName(str(self.block) + '_becomingCog-timer')
         taskMgr.remove(name)
         if hasattr(self, 'interior'):
             self.interior.requestDelete()
@@ -474,12 +474,12 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
             self.knockKnock.requestDelete()
             del self.knockKnock
 
-    def becomingSuitTask(self, task):
+    def becomingCogTask(self, task):
         self.fsm.request('cog')
         self.cogPlannerExt.buildingMgr.save()
         return Task.done
 
-    def enterSuit(self):
+    def enterCog(self):
         self.sendUpdate('setCogData', [
          ord(self.track), self.difficulty, self.numFloors])
         zoneId, interiorZoneId = self.getExteriorAndInteriorZoneId()
@@ -490,7 +490,7 @@ class DistributedBuildingAI(DistributedObjectAI.DistributedObjectAI):
         self.elevator.generateWithRequired(exteriorZoneId)
         self.air.writeServerEvent('building-cog', self.doId, '%s|%s|%s|%s' % (self.zoneId, self.block, self.track, self.numFloors))
 
-    def exitSuit(self):
+    def exitCog(self):
         del self.planner
         if hasattr(self, 'elevator'):
             self.elevator.requestDelete()

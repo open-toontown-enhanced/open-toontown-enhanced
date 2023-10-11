@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.fsm import StateData
-from . import Suit
+from . import Cog
 from . import CogDNA
 from toontown.toonbase import ToontownGlobals
 import random
@@ -26,17 +26,17 @@ class RoguesGallery(StateData.StateData):
             self.width = self.right - self.left - self.sideMargins * 2.0
             self.height = self.top - self.bottom - self.topMargins * 2.0
             if self.rognamestr == None:
-                self.numSuitTypes = CogDNA.cogsPerDept
-                self.numSuitDepts = len(CogDNA.cogDepts)
+                self.numCogTypes = CogDNA.cogsPerDept
+                self.numCogDepts = len(CogDNA.cogDepts)
             else:
-                self.numSuitTypes = 1
-                self.numSuitDepts = 1
+                self.numCogTypes = 1
+                self.numCogDepts = 1
                 self.xSpaceBetweenDifferentCogs = 0.0
                 self.xSpaceBetweenSameCogs = 0.0
                 self.ySpaceBetweenCogs = 0.0
-            self.ySuitInc = (self.height + self.ySpaceBetweenCogs) / self.numSuitDepts
-            self.ySuitMaxAllowed = self.ySuitInc - self.ySpaceBetweenCogs
-            self.xRowSpace = self.width - (self.numSuitTypes - 1) * self.xSpaceBetweenDifferentCogs - self.numSuitTypes * self.xSpaceBetweenSameCogs
+            self.yCogInc = (self.height + self.ySpaceBetweenCogs) / self.numCogDepts
+            self.yCogMaxAllowed = self.yCogInc - self.ySpaceBetweenCogs
+            self.xRowSpace = self.width - (self.numCogTypes - 1) * self.xSpaceBetweenDifferentCogs - self.numCogTypes * self.xSpaceBetweenSameCogs
             self.__makeGallery()
         return
 
@@ -99,7 +99,7 @@ class RoguesGallery(StateData.StateData):
         else:
             self.cogRow = []
             self.rowWidth = 0.0
-            self.__makeSuit(None, None, self.rognamestr)
+            self.__makeCog(None, None, self.rognamestr)
             self.minXScale = self.xRowSpace / self.rowWidth
             self.cogs.append((self.rowWidth, self.cogRow))
             del self.cogRow
@@ -109,8 +109,8 @@ class RoguesGallery(StateData.StateData):
     def __makeDept(self, dept):
         self.cogRow = []
         self.rowWidth = 0.0
-        for type in range(self.numSuitTypes):
-            self.__makeSuit(dept, type)
+        for type in range(self.numCogTypes):
+            self.__makeCog(dept, type)
 
         xScale = self.xRowSpace / self.rowWidth
         if self.minXScale == None or self.minXScale > xScale:
@@ -119,15 +119,15 @@ class RoguesGallery(StateData.StateData):
         del self.cogRow
         return
 
-    def __makeSuit(self, dept, type, name = None):
+    def __makeCog(self, dept, type, name = None):
         dna = CogDNA.CogDNA()
         if name != None:
-            dna.newSuit(name)
+            dna.newCog(name)
         else:
-            dna.newSuitRandom(type + 1, dept)
-        cog = Suit.Suit()
+            dna.newCogRandom(type + 1, dept)
+        cog = Cog.Cog()
         cog.setStyle(dna)
-        cog.generateSuit()
+        cog.generateCog()
         cog.pose('neutral', 30)
         ll = Point3()
         ur = Point3()
@@ -140,9 +140,9 @@ class RoguesGallery(StateData.StateData):
         self.rowHeight = max(self.rowHeight, cogHeight)
         cog.reparentTo(self.gallery)
         cog.setHpr(180.0, 0.0, 0.0)
-        profile = Suit.Suit()
+        profile = Cog.Cog()
         profile.setStyle(dna)
-        profile.generateSuit()
+        profile.generateCog()
         profile.pose('neutral', 30)
         profile.reparentTo(self.gallery)
         profile.setHpr(90.0, 0.0, 0.0)
@@ -156,15 +156,15 @@ class RoguesGallery(StateData.StateData):
         return
 
     def __rescaleCogs(self):
-        yScale = self.ySuitMaxAllowed / self.rowHeight
+        yScale = self.yCogMaxAllowed / self.rowHeight
         scale = min(self.minXScale, yScale)
         y = self.top - self.topMargins + self.ySpaceBetweenCogs
         for rowWidth, cogRow in self.cogs:
             rowWidth *= scale
             extraSpace = self.xRowSpace - rowWidth
-            extraSpacePerCog = extraSpace / (self.numSuitTypes * 2 - 1)
+            extraSpacePerCog = extraSpace / (self.numCogTypes * 2 - 1)
             x = self.left + self.sideMargins
-            y -= self.ySuitInc
+            y -= self.yCogInc
             for type, width, cog, depth, profile in cogRow:
                 left = x
                 width *= scale

@@ -66,5 +66,5 @@ class HQBuildingAI:
     def isCogdo(self):
         return 0
 
-    def isEstablishedSuitBlock(self):
+    def isEstablishedCogBlock(self):
         return 0

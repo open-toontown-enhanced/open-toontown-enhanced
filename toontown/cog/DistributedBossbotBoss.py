@@ -23,7 +23,7 @@ from toontown.toonbase import ToontownBattleGlobals
 from toontown.battle import RewardPanel
 from toontown.battle import MovieToonVictory
 from toontown.coghq import CogDisguiseGlobals
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.effects import DustCloud
 OneBossCog = None
@@ -98,9 +98,9 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.accept('closeEnter', self.closeEnter)
         self.accept('closeExit', self.closeExit)
         self.treads = self.find('**/treads')
-        demotedCeo = Suit.Suit()
+        demotedCeo = Cog.Cog()
         demotedCeo.dna = CogDNA.CogDNA()
-        demotedCeo.dna.newSuit('flunky')
+        demotedCeo.dna.newCog('flunky')
         demotedCeo.setDNA(demotedCeo.dna)
         demotedCeo.reparentTo(self.geom)
         demotedCeo.loop('neutral')
@@ -204,28 +204,28 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.resistanceToon.setPosHpr(*ToontownGlobals.BossbotRTIntroStartPosHpr)
         state = random.getstate()
         random.seed(self.doId)
-        self.resistanceToon.cogType = CogDNA.getRandomSuitByDept('c')
+        self.resistanceToon.cogType = CogDNA.getRandomCogByDept('c')
         random.setstate(state)
 
     def __cleanupResistanceToon(self):
         self.__hideResistanceToon()
         if self.resistanceToon:
-            self.resistanceToon.takeOffSuit()
+            self.resistanceToon.takeOffDisguise()
             self.resistanceToon.removeActive()
             self.resistanceToon.delete()
             self.resistanceToon = None
         return
 
-    def __showResistanceToon(self, withSuit):
+    def __showResistanceToon(self, withCog):
         if not self.resistanceToonOnstage:
             self.resistanceToon.addActive()
             self.resistanceToon.reparentTo(self.geom)
             self.resistanceToonOnstage = 1
-        if withSuit:
+        if withCog:
             cog = self.resistanceToon.cogType
-            self.resistanceToon.putOnSuit(cog, False)
+            self.resistanceToon.putOnDisguise(cog, False)
         else:
-            self.resistanceToon.takeOffSuit()
+            self.resistanceToon.takeOffDisguise()
 
     def __hideResistanceToon(self):
         if self.resistanceToonOnstage:
@@ -264,18 +264,18 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         closeUpRTCamPos.setY(closeUpRTCamPos.getY() + 20)
         closeUpRTCamPos.setZ(closeUpRTCamPos.getZ() + -2)
         closeUpRTCamHpr = Point3(0, 5, 0)
-        loseSuitCamPos = Point3(rToonStartPos)
-        loseSuitCamPos += Point3(0, -5, 4)
-        loseSuitCamHpr = Point3(180, 0, 0)
+        loseCogCamPos = Point3(rToonStartPos)
+        loseCogCamPos += Point3(0, -5, 4)
+        loseCogCamHpr = Point3(180, 0, 0)
         waiterCamPos = Point3(rToonStartPos)
         waiterCamPos += Point3(-5, -10, 5)
         waiterCamHpr = Point3(-30, 0, 0)
-        track = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, *elevCamPosHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTWelcome, CFSpeech), LerpPosHprInterval(camera, 3, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTRemoveSuit, CFSpeech), Wait(3), Func(self.clearChat), self.loseCogCogs(self.toonsA + self.toonsB, render, (loseSuitCamPos[0],
-         loseSuitCamPos[1],
-         loseSuitCamPos[2],
-         loseSuitCamHpr[0],
-         loseSuitCamHpr[1],
-         loseSuitCamHpr[2])), self.toonNormalEyes(self.involvedToons), Wait(2), Func(camera.setPosHpr, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTFightWaiter, CFSpeech), Wait(1), LerpHprInterval(camera, 2, Point3(-15, 5, 0)), Sequence(Func(rToon.cog.loop, 'walk'), rToon.hprInterval(1, VBase3(270, 0, 0)), rToon.posInterval(2.5, rToonEndPos), Func(rToon.cog.loop, 'neutral')), Wait(3), Func(rToon.clearChat), Func(self.__hideResistanceToon))
+        track = Sequence(Func(camera.reparentTo, render), Func(camera.setPosHpr, *elevCamPosHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTWelcome, CFSpeech), LerpPosHprInterval(camera, 3, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTRemoveCog, CFSpeech), Wait(3), Func(self.clearChat), self.loseCogCogs(self.toonsA + self.toonsB, render, (loseCogCamPos[0],
+         loseCogCamPos[1],
+         loseCogCamPos[2],
+         loseCogCamHpr[0],
+         loseCogCamHpr[1],
+         loseCogCamHpr[2])), self.toonNormalEyes(self.involvedToons), Wait(2), Func(camera.setPosHpr, closeUpRTCamPos, closeUpRTCamHpr), Func(rToon.setChatAbsolute, TTL.BossbotRTFightWaiter, CFSpeech), Wait(1), LerpHprInterval(camera, 2, Point3(-15, 5, 0)), Sequence(Func(rToon.cog.loop, 'walk'), rToon.hprInterval(1, VBase3(270, 0, 0)), rToon.posInterval(2.5, rToonEndPos), Func(rToon.cog.loop, 'neutral')), Wait(3), Func(rToon.clearChat), Func(self.__hideResistanceToon))
         return track
 
     def enterFrolic(self):
@@ -290,7 +290,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         for toonId in self.involvedToons:
             toon = self.cr.doId2do.get(toonId)
             if toon:
-                toon.takeOffSuit()
+                toon.takeOffDisguise()
 
         self.__showResistanceToon(True)
         self.resistanceToon.setPosHpr(*ToontownGlobals.BossbotRTPreTwoPosHpr)
@@ -556,7 +556,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.doneBarrier('PrepareBattleThree')
 
     def makePrepareBattleThreeMovie(self):
-        loseSuitCamAngle = (0, 19, 6, -180, -5, 0)
+        loseCogCamAngle = (0, 19, 6, -180, -5, 0)
         track = Sequence(
             Func(camera.reparentTo, self),
             Func(camera.setPos, Point3(0, -45, 5)),
@@ -565,9 +565,9 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
             Wait(3.0),
             Func(self.setChatAbsolute, TTL.BossbotPhase3Speech2, CFSpeech),
             Wait(3.0),
-            Func(camera.setPosHpr, base.localAvatar, *loseSuitCamAngle),
+            Func(camera.setPosHpr, base.localAvatar, *loseCogCamAngle),
             Wait(1.0),
-            self.loseCogCogs(self.toonsA + self.toonsB, base.localAvatar, loseSuitCamAngle),
+            self.loseCogCogs(self.toonsA + self.toonsB, base.localAvatar, loseCogCamAngle),
             self.toonNormalEyes(self.involvedToons),
             Wait(2),
             Func(camera.reparentTo, self),
@@ -590,7 +590,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         for toonId in self.involvedToons:
             toon = self.cr.doId2do.get(toonId)
             if toon:
-                toon.takeOffSuit()
+                toon.takeOffDisguise()
 
         mult = 1
         localAvatar.inventory.setBattleCreditMultiplier(mult)
@@ -661,7 +661,7 @@ class DistributedBossbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         for toonId in self.involvedToons:
             toon = self.cr.doId2do.get(toonId)
             if toon:
-                toon.takeOffSuit()
+                toon.takeOffDisguise()
 
         self.bossClub.reparentTo(self.rightHandJoint)
         self.generateHealthBar()

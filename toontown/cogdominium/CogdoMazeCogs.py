@@ -4,34 +4,34 @@ from direct.interval.IntervalGlobal import Sequence, Parallel, ActorInterval, Fu
 from direct.task.Task import Task
 from toontown.battle import BattleParticles
 from toontown.battle import MovieUtil
-from toontown.minigame.MazeSuit import MazeSuit
+from toontown.minigame.MazeCog import MazeCog
 from .CogdoMazeGameObjects import CogdoMazeSplattable
 from . import CogdoMazeGameGlobals as Globals
 import random
 
-class CogdoMazeSuit(MazeSuit, FSM, CogdoMazeSplattable):
-    GagHitEventName = 'CogdoMazeSuit_GagHit'
-    DeathEventName = 'CogdoMazeSuit_Death'
-    ThinkEventName = 'CogdoMazeSuit_Think'
+class CogdoMazeCog(MazeCog, FSM, CogdoMazeSplattable):
+    GagHitEventName = 'CogdoMazeCog_GagHit'
+    DeathEventName = 'CogdoMazeCog_Death'
+    ThinkEventName = 'CogdoMazeCog_Think'
 
-    def __init__(self, serialNum, maze, randomNumGen, difficulty, startTile, cogdoSuitType, walkAnimName = None):
-        data = Globals.SuitData[cogdoSuitType]
-        MazeSuit.__init__(self, serialNum, maze, randomNumGen, data['cellWalkPeriod'], difficulty, data['dnaName'], startTile=startTile, walkSameDirectionProb=Globals.SuitWalkSameDirectionProb, walkTurnAroundProb=Globals.SuitWalkTurnAroundProb, uniqueRandomNumGen=False, walkAnimName=walkAnimName)
-        FSM.__init__(self, 'CogdoMazeSuit')
-        CogdoMazeSplattable.__init__(self, self.cog, '%s-%i' % (Globals.SuitCollisionName, self.serialNum), 1.5)
+    def __init__(self, serialNum, maze, randomNumGen, difficulty, startTile, cogdoCogType, walkAnimName = None):
+        data = Globals.CogData[cogdoCogType]
+        MazeCog.__init__(self, serialNum, maze, randomNumGen, data['cellWalkPeriod'], difficulty, data['dnaName'], startTile=startTile, walkSameDirectionProb=Globals.CogWalkSameDirectionProb, walkTurnAroundProb=Globals.CogWalkTurnAroundProb, uniqueRandomNumGen=False, walkAnimName=walkAnimName)
+        FSM.__init__(self, 'CogdoMazeCog')
+        CogdoMazeSplattable.__init__(self, self.cog, '%s-%i' % (Globals.CogCollisionName, self.serialNum), 1.5)
         if 'scale' in data:
             self.cog.setScale(data['scale'])
         self.hp = data['hp']
-        self.type = cogdoSuitType
+        self.type = cogdoCogType
         self.memos = data['memos']
-        self.deathSuit = self.cog.getLoseActor()
-        self.deathSuit.pose('lose', 0)
+        self.deathCog = self.cog.getLoseActor()
+        self.deathCog.pose('lose', 0)
         BattleParticles.loadParticles()
         self._initSfx()
 
     def _initSfx(self):
         audioMgr = base.cogdoGameAudioMgr
-        self._deathSoundIval = Sequence(audioMgr.createSfxIval('cogSpin', duration=1.6, startTime=0.6, volume=0.8, source=self.deathSuit), audioMgr.createSfxIval('cogDeath', volume=0.32, source=self.deathSuit))
+        self._deathSoundIval = Sequence(audioMgr.createSfxIval('cogSpin', duration=1.6, startTime=0.6, volume=0.8, source=self.deathCog), audioMgr.createSfxIval('cogDeath', volume=0.32, source=self.deathCog))
 
     def _destroySfx(self):
         if self._deathSoundIval.isPlaying():
@@ -43,23 +43,23 @@ class CogdoMazeSuit(MazeSuit, FSM, CogdoMazeSplattable):
         self.ignoreAll()
         self._destroySfx()
         CogdoMazeSplattable.destroy(self)
-        MazeSuit.destroy(self)
+        MazeCog.destroy(self)
 
     def handleEnterSphere(self, collEntry):
         messenger.send(self.COLLISION_EVENT_NAME, [self.type, self.serialNum])
 
     def gameStart(self, gameStartTime):
-        MazeSuit.gameStart(self, gameStartTime)
+        MazeCog.gameStart(self, gameStartTime)
         self.accept(Globals.GagCollisionName + '-into-' + self.gagCollisionName, self.handleGagHit)
         messenger.send(self.ThinkEventName, [self, self.TX, self.TY])
 
     def initCollisions(self):
-        MazeSuit.initCollisions(self)
+        MazeCog.initCollisions(self)
         self.collNodePath.setScale(0.75)
         self.accept(self.uniqueName('again' + self.COLL_SPHERE_NAME), self.handleEnterSphere)
 
     def think(self, curTic, curT, unwalkables):
-        MazeSuit.think(self, curTic, curT, unwalkables)
+        MazeCog.think(self, curTic, curT, unwalkables)
         messenger.send(self.ThinkEventName, [self, self.TX, self.TY])
 
     def handleGagHit(self, collEntry):
@@ -93,17 +93,17 @@ class CogdoMazeSuit(MazeSuit, FSM, CogdoMazeSplattable):
 
     def doDeathTrack(self):
 
-        def removeDeathSuit(cog, deathSuit):
-            if not deathSuit.isEmpty():
-                deathSuit.detachNode()
+        def removeDeathCog(cog, deathCog):
+            if not deathCog.isEmpty():
+                deathCog.detachNode()
                 cog.cleanupLoseActor()
 
-        self.deathSuit.reparentTo(self.cog.getParent())
-        self.deathSuit.setScale(self.cog.getScale())
-        self.deathSuit.setPos(render, self.cog.getPos(render))
-        self.deathSuit.setHpr(render, self.cog.getHpr(render))
+        self.deathCog.reparentTo(self.cog.getParent())
+        self.deathCog.setScale(self.cog.getScale())
+        self.deathCog.setPos(render, self.cog.getPos(render))
+        self.deathCog.setHpr(render, self.cog.getHpr(render))
         self.cog.hide()
-        self.collNodePath.reparentTo(self.deathSuit)
+        self.collNodePath.reparentTo(self.deathCog)
         gearPoint = Point3(0, 0, self.cog.height / 2.0 + 2.0)
         smallGears = BattleParticles.createParticleEffect(file='gearExplosionSmall')
         singleGear = BattleParticles.createParticleEffect('GearExplosion', numParticles=1)
@@ -117,10 +117,10 @@ class CogdoMazeSuit(MazeSuit, FSM, CogdoMazeSplattable):
         singleGear.setDepthWrite(False)
         smallGearExplosion.setDepthWrite(False)
         bigGearExplosion.setDepthWrite(False)
-        cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.cog, self.deathSuit, name='remove-death-cog'))
-        explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
-        gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
-        gears2MTrack = Track((0.0, explosionTrack), (0.7, ParticleInterval(singleGear, self.deathSuit, worldRelative=0, duration=5.7, cleanup=True)), (5.2, ParticleInterval(smallGearExplosion, self.deathSuit, worldRelative=0, duration=1.2, cleanup=True)), (5.4, ParticleInterval(bigGearExplosion, self.deathSuit, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
+        cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathCog, 'lose', startFrame=80, endFrame=140), Func(removeDeathCog, self.cog, self.deathCog, name='remove-death-cog'))
+        explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathCog, explosionPoint=gearPoint))
+        gears1Track = Sequence(ParticleInterval(smallGears, self.deathCog, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
+        gears2MTrack = Track((0.0, explosionTrack), (0.7, ParticleInterval(singleGear, self.deathCog, worldRelative=0, duration=5.7, cleanup=True)), (5.2, ParticleInterval(smallGearExplosion, self.deathCog, worldRelative=0, duration=1.2, cleanup=True)), (5.4, ParticleInterval(bigGearExplosion, self.deathCog, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
 
         def removeParticle(particle):
             if particle and hasattr(particle, 'renderParent'):
@@ -132,16 +132,16 @@ class CogdoMazeSuit(MazeSuit, FSM, CogdoMazeSplattable):
         self.deathTrack.start()
 
 
-class CogdoMazeSlowMinionSuit(CogdoMazeSuit):
+class CogdoMazeSlowMinionCog(CogdoMazeCog):
 
     def __init__(self, serialNum, maze, randomNumGen, difficulty, startTile = None):
-        CogdoMazeSuit.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.SuitTypes.SlowMinion)
+        CogdoMazeCog.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.CogTypes.SlowMinion)
         self.defaultTransitions = {'Off': ['Normal'],
          'Normal': ['Attack', 'Off'],
          'Attack': ['Normal']}
 
     def gameStart(self, gameStartTime):
-        CogdoMazeSuit.gameStart(self, gameStartTime)
+        CogdoMazeCog.gameStart(self, gameStartTime)
         self.request('Normal')
 
     def enterNormal(self):
@@ -166,25 +166,25 @@ class CogdoMazeSlowMinionSuit(CogdoMazeSuit):
         del self._attackIval
 
 
-class CogdoMazeFastMinionSuit(CogdoMazeSuit):
+class CogdoMazeFastMinionCog(CogdoMazeCog):
 
     def __init__(self, serialNum, maze, randomNumGen, difficulty, startTile = None):
-        CogdoMazeSuit.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.SuitTypes.FastMinion)
+        CogdoMazeCog.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.CogTypes.FastMinion)
 
 
-class CogdoMazeBossSuit(CogdoMazeSuit):
+class CogdoMazeBossCog(CogdoMazeCog):
     BlinkTaskName = 'CogdoMazeBossBlinkTask'
     ShakeTaskName = 'CogdoMazeBossShakeTask'
     StartWalkTaskName = 'CogdoMazeBossStartWalkTask'
-    ShakeEventName = 'CogdoMazeSuitShake'
+    ShakeEventName = 'CogdoMazeCogShake'
 
     def __init__(self, serialNum, maze, randomNumGen, difficulty, startTile = None):
-        CogdoMazeSuit.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.SuitTypes.Boss, walkAnimName='stomp')
+        CogdoMazeCog.__init__(self, serialNum, maze, randomNumGen, difficulty, startTile, Globals.CogTypes.Boss, walkAnimName='stomp')
         self.dropTimer = 0
         self._walkSpeed = float(self.maze.cellWidth) / self.cellWalkDuration * 0.5
 
     def _initSfx(self):
-        CogdoMazeSuit._initSfx(self)
+        CogdoMazeCog._initSfx(self)
         audioMgr = base.cogdoGameAudioMgr
         self._stompSfxIval = audioMgr.createSfxIval('cogStomp', source=self.cog, cutoff=Globals.BossStompSfxCutoff, volume=0.3)
         self._hitSfx = audioMgr.createSfx('bossCogAngry', self.cog)
@@ -194,7 +194,7 @@ class CogdoMazeBossSuit(CogdoMazeSuit):
         if self._stompSfxIval.isPlaying():
             self._stompSfxIval.finish()
         del self._stompSfxIval
-        CogdoMazeSuit._destroySfx(self)
+        CogdoMazeCog._destroySfx(self)
 
     def spin(self):
         part = self.cog
@@ -211,10 +211,10 @@ class CogdoMazeBossSuit(CogdoMazeSuit):
             self.__startBlinkTask()
         elif self.hp == 1:
             self.__stopBlinkTask()
-        CogdoMazeSuit.hitByGag(self)
+        CogdoMazeCog.hitByGag(self)
 
     def gameStart(self, gameStartTime):
-        CogdoMazeSuit.gameStart(self, gameStartTime)
+        CogdoMazeCog.gameStart(self, gameStartTime)
 
     def startWalkAnim(self):
         self.cog.loop(self._walkAnimName, fromFrame=43, toFrame=81)
@@ -222,7 +222,7 @@ class CogdoMazeBossSuit(CogdoMazeSuit):
         self.__startShakeTask()
 
     def destroy(self):
-        CogdoMazeSuit.destroy(self)
+        CogdoMazeCog.destroy(self)
         self.__stopShakeTask()
         self.__stopBlinkTask()
 
@@ -237,11 +237,11 @@ class CogdoMazeBossSuit(CogdoMazeSuit):
 
     def __startShakeTask(self):
         self.__stopShakeTask()
-        taskMgr.doMethodLater(Globals.BossShakeTime, self.__shake, self.uniqueName(CogdoMazeBossSuit.ShakeTaskName))
+        taskMgr.doMethodLater(Globals.BossShakeTime, self.__shake, self.uniqueName(CogdoMazeBossCog.ShakeTaskName))
         self.bossShakeLastTime = 0
 
     def __stopShakeTask(self):
-        taskMgr.remove(self.uniqueName(CogdoMazeBossSuit.ShakeTaskName))
+        taskMgr.remove(self.uniqueName(CogdoMazeBossCog.ShakeTaskName))
 
     def __shake(self, task):
         if task.time - self.bossShakeLastTime > Globals.BossShakeTime:
@@ -253,10 +253,10 @@ class CogdoMazeBossSuit(CogdoMazeSuit):
 
     def __startBlinkTask(self):
         self.__stopBlinkTask()
-        taskMgr.doMethodLater(Globals.BlinkFrequency, self.__blink, CogdoMazeBossSuit.BlinkTaskName)
+        taskMgr.doMethodLater(Globals.BlinkFrequency, self.__blink, CogdoMazeBossCog.BlinkTaskName)
 
     def __stopBlinkTask(self):
-        taskMgr.remove(CogdoMazeBossSuit.BlinkTaskName)
+        taskMgr.remove(CogdoMazeBossCog.BlinkTaskName)
 
     def __blink(self, task):
         blink = Sequence(LerpColorScaleInterval(self.cog, Globals.BlinkSpeed, VBase4(1.0, 1.0, 1.0, 1.0)), LerpColorScaleInterval(self.cog, Globals.BlinkSpeed, Globals.BlinkColor))

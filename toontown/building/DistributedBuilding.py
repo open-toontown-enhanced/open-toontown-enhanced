@@ -38,7 +38,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
           'becomingToonFromCogdo',
           'toon',
           'clearOutToonInterior',
-          'becomingSuit',
+          'becomingCog',
           'cog',
           'clearOutToonInteriorForCogdo',
           'becomingCogdo',
@@ -49,9 +49,9 @@ class DistributedBuilding(DistributedObject.DistributedObject):
          State.State('becomingToon', self.enterBecomingToon, self.exitBecomingToon, ['toon']),
          State.State('becomingToonFromCogdo', self.enterBecomingToonFromCogdo, self.exitBecomingToonFromCogdo, ['toon']),
          State.State('toon', self.enterToon, self.exitToon, ['clearOutToonInterior', 'clearOutToonInteriorForCogdo']),
-         State.State('clearOutToonInterior', self.enterClearOutToonInterior, self.exitClearOutToonInterior, ['becomingSuit']),
-         State.State('becomingSuit', self.enterBecomingSuit, self.exitBecomingSuit, ['cog']),
-         State.State('cog', self.enterSuit, self.exitSuit, ['waitForVictors', 'becomingToon']),
+         State.State('clearOutToonInterior', self.enterClearOutToonInterior, self.exitClearOutToonInterior, ['becomingCog']),
+         State.State('becomingCog', self.enterBecomingCog, self.exitBecomingCog, ['cog']),
+         State.State('cog', self.enterCog, self.exitCog, ['waitForVictors', 'becomingToon']),
          State.State('clearOutToonInteriorForCogdo', self.enterClearOutToonInteriorForCogdo, self.exitClearOutToonInteriorForCogdo, ['becomingCogdo']),
          State.State('becomingCogdo', self.enterBecomingCogdo, self.exitBecomingCogdo, ['cogdo']),
          State.State('becomingCogdoFromCogdo', self.enterBecomingCogdoFromCogdo, self.exitBecomingCogdoFromCogdo, ['cogdo']),
@@ -113,7 +113,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
 
     def getCogElevatorNodePath(self):
         if self.mode != 'cog':
-            self.setToSuit()
+            self.setToCog()
         return self.elevatorNodePath
 
     def getCogdoElevatorNodePath(self):
@@ -123,7 +123,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
 
     def getCogDoorOrigin(self):
         if self.mode != 'cog':
-            self.setToSuit()
+            self.setToCog()
         return self.cogDoorOrigin
 
     def getCogdoDoorOrigin(self):
@@ -148,7 +148,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
 
     def enterWaitForVictors(self, ts):
         if self.mode != 'cog':
-            self.setToSuit()
+            self.setToCog()
         victorCount = self.victorList.count(base.localAvatar.doId)
         if victorCount == 1:
             self.acceptOnce('insideVictorElevator', self.handleInsideVictorElevator)
@@ -247,17 +247,17 @@ class DistributedBuilding(DistributedObject.DistributedObject):
     def exitClearOutToonInterior(self):
         pass
 
-    def enterBecomingSuit(self, ts):
-        self.animToSuit(ts)
+    def enterBecomingCog(self, ts):
+        self.animToCog(ts)
 
-    def exitBecomingSuit(self):
+    def exitBecomingCog(self):
         pass
 
-    def enterSuit(self, ts):
+    def enterCog(self, ts):
         self.makePropSad()
-        self.setToSuit()
+        self.setToCog()
 
-    def exitSuit(self):
+    def exitCog(self):
         pass
 
     def enterClearOutToonInteriorForCogdo(self, ts):
@@ -328,8 +328,8 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                 corpIcon = cogIcons.find('**/MoneyIcon').copyTo(self.cab)
             corpIcon.setPos(0, 6.79, 6.8)
             corpIcon.setScale(3)
-            from toontown.cog import Suit
-            corpIcon.setColor(Suit.Suit.medallionColors[dept])
+            from toontown.cog import Cog
+            corpIcon.setColor(Cog.Cog.medallionColors[dept])
             cogIcons.removeNode()
         self.leftDoor = self.elevatorModel.find('**/left-door')
         if self.leftDoor.isEmpty():
@@ -342,7 +342,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.normalizeElevator()
         return
 
-    def loadAnimToSuitSfx(self):
+    def loadAnimToCogSfx(self):
         if base.config.GetBool('want-qa-regression', 0):
             self.notify.info('QA-REGRESSION: COGBUILDING: Cog Take Over')
         if self.cogDropSound == None:
@@ -381,11 +381,11 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             self.transitionTrack = None
         return
 
-    def animToSuit(self, timeStamp):
+    def animToCog(self, timeStamp):
         self.stopTransition()
         if self.mode != 'toon':
             self.setToToon()
-        self.loadAnimToSuitSfx()
+        self.loadAnimToCogSfx()
         sideBldgNodes = self.getNodePaths()
         nodePath = hidden.find(self.getSbSearchString())
         newNP = self.setupCogBuilding(nodePath)
@@ -398,7 +398,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             name = i.getName()
             timeForDrop = TO_COG_BLDG_TIME * 0.85
             if name[0] == 's':
-                showTrack = Sequence(name=self.taskName('ToSuitFlatsTrack') + '-' + str(sideBldgNodes.index(i)))
+                showTrack = Sequence(name=self.taskName('ToCogFlatsTrack') + '-' + str(sideBldgNodes.index(i)))
                 initPos = Point3(0, 0, self.COG_INIT_HEIGHT) + i.getPos()
                 showTrack.append(Func(i.setPos, initPos))
                 showTrack.append(Func(i.unstash))
@@ -406,7 +406,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                     showTrack.append(Func(self.normalizeElevator))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogDropSound, 0, 1, None, 0.0))
-                showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name=self.taskName('ToSuitAnim') + '-' + str(sideBldgNodes.index(i))))
+                showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name=self.taskName('ToCogAnim') + '-' + str(sideBldgNodes.index(i))))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogLandSound, 0, 1, None, 0.0))
                 showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_COG_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
@@ -416,7 +416,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                 if not soundPlayed:
                     soundPlayed = 1
             elif name[0] == 't':
-                hideTrack = Sequence(name=self.taskName('ToSuitToonFlatsTrack'))
+                hideTrack = Sequence(name=self.taskName('ToCogToonFlatsTrack'))
                 timeTillSquish = (self.COG_INIT_HEIGHT - 20.0) / self.COG_INIT_HEIGHT
                 timeTillSquish *= timeForDrop
                 hideTrack.append(LerpFunctionInterval(self.adjustColorScale, fromData=1, toData=0.25, duration=timeTillSquish, extraArgs=[i]))
@@ -482,7 +482,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.stopTransition()
         if self.mode != 'toon':
             self.setToToon()
-        self.loadAnimToSuitSfx()
+        self.loadAnimToCogSfx()
         sideBldgNodes = self.getNodePaths()
         nodePath = hidden.find(self.getSbSearchString())
         newNP = self.setupCogdo(nodePath)
@@ -575,7 +575,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
     def animToToon(self, timeStamp):
         self.stopTransition()
         if self.mode != 'cog':
-            self.setToSuit()
+            self.setToCog()
         self.loadAnimToToonSfx()
         cogSoundPlayed = 0
         toonSoundPlayed = 0
@@ -584,7 +584,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         for i in bldgNodes:
             name = i.getName()
             if name[0] == 's':
-                hideTrack = Sequence(name=self.taskName('ToToonSuitFlatsTrack'))
+                hideTrack = Sequence(name=self.taskName('ToToonCogFlatsTrack'))
                 landmark = name.find('_landmark_') != -1
                 if not cogSoundPlayed:
                     hideTrack.append(Func(base.playSfx, self.cogWeakenSound, 0, 1, None, 0.0))
@@ -828,7 +828,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             self.transitionTrack.finish()
             self._deleteTransitionTrack()
 
-    def setToSuit(self):
+    def setToCog(self):
         self.stopTransition()
         if self.mode == 'cog':
             return

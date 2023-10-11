@@ -78,24 +78,24 @@ CamCutoffFactor = 1.34
 ToonAnimationInfo = {'hit': ('slip-backward', 2.25, 12)}
 NumPickups = 256
 PickupsUntilDoorOpens = int(NumPickups * 0.6)
-SuitCollisionName = 'CogdoMazeSuit_Collision'
-SuitWalkSameDirectionProb = 1
-SuitWalkTurnAroundProb = 100
-SuitTypes = IntEnum('SuitTypes', ('Boss', 'FastMinion', 'SlowMinion'), start=0)
-SuitData = {}
-SuitData[SuitTypes.Boss] = {'dnaName': 'mover_and_shaker',
+CogCollisionName = 'CogdoMazeCog_Collision'
+CogWalkSameDirectionProb = 1
+CogWalkTurnAroundProb = 100
+CogTypes = IntEnum('CogTypes', ('Boss', 'FastMinion', 'SlowMinion'), start=0)
+CogData = {}
+CogData[CogTypes.Boss] = {'dnaName': 'mover_and_shaker',
  'cellWalkPeriod': 192,
  'toonDamage': 3.0,
  'scale': 2.5,
  'hp': 2,
  'memos': 0}
-SuitData[SuitTypes.FastMinion] = {'dnaName': 'name_dropper',
+CogData[CogTypes.FastMinion] = {'dnaName': 'name_dropper',
  'cellWalkPeriod': 64,
  'toonDamage': 1.0,
  'scale': 1.3,
  'hp': 1,
  'memos': 3}
-SuitData[SuitTypes.SlowMinion] = {'dnaName': 'cold_caller',
+CogData[CogTypes.SlowMinion] = {'dnaName': 'cold_caller',
  'cellWalkPeriod': 160,
  'toonDamage': 2.0,
  'scale': 1.33,
@@ -203,8 +203,8 @@ MapGuiFgColor = (0.5,
  1)
 MapGuiPos = (1.05, 0.0, -0.71)
 MapGuiScale = 0.225
-MapGuiSuitMarkerFlashColor = (1.0, 0.0, 0.0)
-MapGuiSuitMarkerSize = 0.075
+MapGuiCogMarkerFlashColor = (1.0, 0.0, 0.0)
+MapGuiCogMarkerSize = 0.075
 MapGuiWaterCoolerMarkerSize = 0.08
 QuestArrowScale = 5
 QuestArrowColor = (1,

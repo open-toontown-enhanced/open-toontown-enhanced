@@ -20,7 +20,7 @@ class BattleManagerAI:
     def newBattle(self, cellId, zoneId, pos, cog, toonId, finishCallback=None, maxCogs=4, interactivePropTrackBonus=-1):
         if cellId in self.cellId2battle:
             self.notify.info("A battle is already present in the cog's zone!")
-            if not self.requestBattleAddSuit(cellId, cog):
+            if not self.requestBattleAddCog(cellId, cog):
                 cog.flyAwayNow()
             battle = self.cellId2battle[cellId]
             battle.signupToon(toonId, pos[0], pos[1], pos[2])
@@ -31,7 +31,7 @@ class BattleManagerAI:
             self.cellId2battle[cellId] = battle
         return battle
 
-    def requestBattleAddSuit(self, cellId, cog):
+    def requestBattleAddCog(self, cellId, cog):
         return self.cellId2battle[cellId].cogRequestJoin(cog)
 
     def destroy(self, battle):

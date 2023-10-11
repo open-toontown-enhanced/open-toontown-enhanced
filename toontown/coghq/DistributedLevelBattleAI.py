@@ -44,12 +44,12 @@ class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
     def getTaskZoneId(self):
         pass
 
-    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveSuitDied):
+    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveCogDied):
         self.timer.stop()
         self.resumeNeedUpdate = needUpdate
         self.resumeDeadToons = deadToons
         self.resumeDeadCogs = deadCogs
-        self.resumeLastActiveSuitDied = lastActiveSuitDied
+        self.resumeLastActiveCogDied = lastActiveCogDied
         if len(self.toons) == 0:
             self.d_setMembers()
             self.b_setState('Resume')
@@ -86,13 +86,13 @@ class DistributedLevelBattleAI(DistributedBattleAI.DistributedBattleAI):
         else:
             if self.resumeNeedUpdate == 1:
                 self.d_setMembers()
-                if len(self.resumeDeadCogs) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
+                if len(self.resumeDeadCogs) > 0 and self.resumeLastActiveCogDied == 0 or len(self.resumeDeadToons) > 0:
                     self.needAdjust = 1
             self.setState('WaitForJoin')
         self.resumeNeedUpdate = 0
         self.resumeDeadToons = []
         self.resumeDeadCogs = []
-        self.resumeLastActiveSuitDied = 0
+        self.resumeLastActiveCogDied = 0
 
     def handleToonsWon(self, toons):
         pass

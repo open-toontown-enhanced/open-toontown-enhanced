@@ -65,7 +65,7 @@ def doSquirts(squirts):
     mtrack = Parallel()
     for st in cogSquirts:
         if len(st) > 0:
-            ival = __doSuitSquirts(st)
+            ival = __doCogSquirts(st)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
             delay = delay + TOON_SQUIRT_COG_DELAY
@@ -75,7 +75,7 @@ def doSquirts(squirts):
     return (mtrack, camTrack)
 
 
-def __doSuitSquirts(squirts):
+def __doCogSquirts(squirts):
     uberClone = 0
     toonTracks = Parallel()
     delay = 0.0
@@ -166,7 +166,7 @@ def __getCogTrack(cog, tContact, tDodge, hp, hpbonus, kbbonus, anim, died, leftC
                 animTrack.append(ActorInterval(cog, 'slip-forward', startTime=1.94))
             elif cogType == 'c':
                 animTrack.append(ActorInterval(cog, 'slip-forward', startTime=2.58))
-            animTrack.append(Func(battle.unlureSuit, cog))
+            animTrack.append(Func(battle.unlureCog, cog))
             moveTrack = Sequence(Wait(0.2), LerpPosInterval(cog, 0.6, pos=cogPos, other=battle))
             sival = Parallel(animTrack, moveTrack)
         elif geyser:
@@ -187,7 +187,7 @@ def __getCogTrack(cog, tContact, tDodge, hp, hpbonus, kbbonus, anim, died, leftC
             sUp = LerpPosInterval(cog, 1.1, cogEndPos, startPos=cogStartPos, fluid=1)
             sDown = LerpPosInterval(cog, 0.6, cogStartPos, startPos=cogEndPos, fluid=1)
         elif fShowStun == 1:
-            sival = Parallel(ActorInterval(cog, anim), MovieUtil.createSuitStunInterval(cog, beforeStun, afterStun))
+            sival = Parallel(ActorInterval(cog, anim), MovieUtil.createCogStunInterval(cog, beforeStun, afterStun))
         else:
             sival = ActorInterval(cog, anim)
         showDamage = Func(cog.showHpText, -hp, openEnded=0, attackTrack=SQUIRT_TRACK)
@@ -211,22 +211,22 @@ def __getCogTrack(cog, tContact, tDodge, hp, hpbonus, kbbonus, anim, died, leftC
             bonusTrack.append(Wait(0.75))
             bonusTrack.append(Func(cog.showHpText, -hpbonus, 1, openEnded=0, attackTrack=SQUIRT_TRACK))
         if died != 0:
-            cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle))
+            cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle))
         else:
             cogTrack.append(Func(cog.loop, 'neutral'))
         if revived != 0:
-            cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle))
+            cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle))
         return Parallel(cogTrack, bonusTrack)
     else:
-        return MovieUtil.createSuitDodgeMultitrack(tDodge, cog, leftCogs, rightCogs)
+        return MovieUtil.createCogDodgeMultitrack(tDodge, cog, leftCogs, rightCogs)
 
 
 def say(statement):
     print(statement)
 
 
-def __getSoundTrack(level, hitSuit, delay, node = None):
-    if hitSuit:
+def __getSoundTrack(level, hitCog, delay, node = None):
+    if hitCog:
         soundEffect = globalBattleSoundCache.getSound(hitSoundFiles[level])
     else:
         soundEffect = globalBattleSoundCache.getSound(missSoundFiles[level])
@@ -252,7 +252,7 @@ def __doFlower(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = sprayScales[level]
     tTotalFlowerToonAnimationTime = 2.5
     tFlowerFirstAppears = 1.0
@@ -261,7 +261,7 @@ def __doFlower(squirt, delay, fShowStun):
     dSprayScale = 0.2
     dSprayHold = 0.1
     tContact = tSprayStarts + dSprayScale
-    tSuitDodges = tTotalFlowerToonAnimationTime
+    tCogDodges = tTotalFlowerToonAnimationTime
     tracks = Parallel()
     button = globalPropPool.getProp('button')
     button2 = MovieUtil.copyProp(button)
@@ -269,7 +269,7 @@ def __doFlower(squirt, delay, fShowStun):
     hands = toon.getLeftHands()
     toonTrack = Sequence(Func(MovieUtil.showProps, buttons, hands), Func(toon.headsUp, battle, cogPos), ActorInterval(toon, 'pushbutton'), Func(MovieUtil.removeProps, buttons), Func(toon.loop, 'neutral'), Func(toon.setHpr, battle, origHpr))
     tracks.append(toonTrack)
-    tracks.append(__getSoundTrack(level, hitSuit, tTotalFlowerToonAnimationTime - 0.4, toon))
+    tracks.append(__getSoundTrack(level, hitCog, tTotalFlowerToonAnimationTime - 0.4, toon))
     flower = globalPropPool.getProp('squirting-flower')
     flower.setScale(1.5, 1.5, 1.5)
     targetPoint = lambda cog = cog: __cogTargetPoint(cog)
@@ -306,7 +306,7 @@ def __doFlower(squirt, delay, fShowStun):
     if hp > 0:
         tracks.append(__getSplashTrack(targetPoint, scale, tSprayStarts + dSprayScale, battle))
     if hp > 0 or delay <= 0:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
     return tracks
 
 
@@ -325,7 +325,7 @@ def __doWaterGlass(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = sprayScales[level]
     dGlassHold = 5.0
     dGlassScale = 0.5
@@ -334,10 +334,10 @@ def __doWaterGlass(squirt, delay, fShowStun):
     dSprayScale = 0.1
     dSprayHold = 0.1
     tContact = tSpray + dSprayScale
-    tSuitDodges = max(tSpray - 0.5, 0.0)
+    tCogDodges = max(tSpray - 0.5, 0.0)
     tracks = Parallel()
     tracks.append(ActorInterval(toon, 'spit'))
-    soundTrack = __getSoundTrack(level, hitSuit, 1.7, toon)
+    soundTrack = __getSoundTrack(level, hitCog, 1.7, toon)
     tracks.append(soundTrack)
     glass = globalPropPool.getProp('glass')
     hands = toon.getRightHands()
@@ -370,7 +370,7 @@ def __doWaterGlass(squirt, delay, fShowStun):
     if hp > 0:
         tracks.append(__getSplashTrack(targetPoint, scale, tSpray + dSprayScale, battle))
     if hp > 0 or delay <= 0:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
     return tracks
 
 
@@ -389,7 +389,7 @@ def __doWaterGun(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = sprayScales[level]
     tPistol = 0.0
     dPistolScale = 0.5
@@ -399,11 +399,11 @@ def __doWaterGun(squirt, delay, fShowStun):
     dSprayScale = 0.1
     dSprayHold = 0.3
     tContact = tSpray + dSprayScale
-    tSuitDodges = 1.1
+    tCogDodges = 1.1
     tracks = Parallel()
     toonTrack = Sequence(Func(toon.headsUp, battle, cogPos), ActorInterval(toon, 'water-gun'), Func(toon.loop, 'neutral'), Func(toon.setHpr, battle, origHpr))
     tracks.append(toonTrack)
-    soundTrack = __getSoundTrack(level, hitSuit, 1.8, toon)
+    soundTrack = __getSoundTrack(level, hitCog, 1.8, toon)
     tracks.append(soundTrack)
     pistol = globalPropPool.getProp('water-gun')
     hands = toon.getRightHands()
@@ -431,7 +431,7 @@ def __doWaterGun(squirt, delay, fShowStun):
     if hp > 0:
         tracks.append(__getSplashTrack(targetPoint, 0.3, tSpray + dSprayScale, battle))
     if hp > 0 or delay <= 0:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
     return tracks
 
 
@@ -450,7 +450,7 @@ def __doSeltzerBottle(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = sprayScales[level]
     tBottle = 0.0
     dBottleScale = 0.5
@@ -459,11 +459,11 @@ def __doSeltzerBottle(squirt, delay, fShowStun):
     dSprayScale = 0.2
     dSprayHold = 0.1
     tContact = tSpray + dSprayScale
-    tSuitDodges = max(tContact - 0.7, 0.0)
+    tCogDodges = max(tContact - 0.7, 0.0)
     tracks = Parallel()
     toonTrack = Sequence(Func(toon.headsUp, battle, cogPos), ActorInterval(toon, 'hold-bottle'), Func(toon.loop, 'neutral'), Func(toon.setHpr, battle, origHpr))
     tracks.append(toonTrack)
-    soundTrack = __getSoundTrack(level, hitSuit, tSpray - 0.1, toon)
+    soundTrack = __getSoundTrack(level, hitCog, tSpray - 0.1, toon)
     tracks.append(soundTrack)
     bottle = globalPropPool.getProp('bottle')
     hands = toon.getRightHands()
@@ -494,7 +494,7 @@ def __doSeltzerBottle(squirt, delay, fShowStun):
     if hp > 0:
         tracks.append(__getSplashTrack(targetPoint, scale, tSpray + dSprayScale, battle))
     if (hp > 0 or delay <= 0) and cog:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
     return tracks
 
 
@@ -513,7 +513,7 @@ def __doFireHose(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = 0.3
     tAppearDelay = 0.7
     dHoseHold = 0.7
@@ -523,11 +523,11 @@ def __doFireHose(squirt, delay, fShowStun):
     dSprayScale = 0.1
     dSprayHold = 1.8
     tContact = 2.9
-    tSuitDodges = 2.1
+    tCogDodges = 2.1
     tracks = Parallel()
     toonTrack = Sequence(Wait(tAppearDelay), Func(toon.headsUp, battle, cogPos), ActorInterval(toon, 'firehose'), Func(toon.loop, 'neutral'), Func(toon.setHpr, battle, origHpr))
     tracks.append(toonTrack)
-    soundTrack = __getSoundTrack(level, hitSuit, tSprayDelay, toon)
+    soundTrack = __getSoundTrack(level, hitCog, tSprayDelay, toon)
     tracks.append(soundTrack)
     hose = globalPropPool.getProp('firehose')
     hydrant = globalPropPool.getProp('hydrant')
@@ -577,7 +577,7 @@ def __doFireHose(squirt, delay, fShowStun):
     if hp > 0:
         tracks.append(__getSplashTrack(targetPoint, 0.4, 2.7, battle, splashHold=1.5))
     if hp > 0 or delay <= 0:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'squirt-small-react', died, leftCogs, rightCogs, battle, toon, fShowStun, revived=revived))
     return tracks
 
 
@@ -596,17 +596,17 @@ def __doStormCloud(squirt, delay, fShowStun):
     battle = squirt['battle']
     cogPos = cog.getPos(battle)
     origHpr = toon.getHpr(battle)
-    hitSuit = hp > 0
+    hitCog = hp > 0
     scale = sprayScales[level]
     tButton = 0.0
     dButtonScale = 0.5
     dButtonHold = 3.0
     tContact = 2.9
     tSpray = 1
-    tSuitDodges = 1.8
+    tCogDodges = 1.8
     tracks = Parallel()
-    soundTrack = __getSoundTrack(level, hitSuit, 2.3, toon)
-    soundTrack2 = __getSoundTrack(level, hitSuit, 4.6, toon)
+    soundTrack = __getSoundTrack(level, hitCog, 2.3, toon)
+    soundTrack2 = __getSoundTrack(level, hitCog, 4.6, toon)
     tracks.append(soundTrack)
     tracks.append(soundTrack2)
     button = globalPropPool.getProp('button')
@@ -656,7 +656,7 @@ def __doStormCloud(squirt, delay, fShowStun):
     tracks.append(getCloudTrack(cloud, cog, cloudPosPoint, scaleUpPoint, rainEffects, rainDelay, effectDelay, cloudHold, useEffect=1))
     tracks.append(getCloudTrack(cloud2, cog, cloudPosPoint, scaleUpPoint, rainEffects, rainDelay, effectDelay, cloudHold, useEffect=0))
     if hp > 0 or delay <= 0:
-        tracks.append(__getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'soak', died, leftCogs, rightCogs, battle, toon, fShowStun, beforeStun=2.6, afterStun=2.3, revived=revived))
+        tracks.append(__getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'soak', died, leftCogs, rightCogs, battle, toon, fShowStun, beforeStun=2.6, afterStun=2.3, revived=revived))
     return tracks
 
 
@@ -670,7 +670,7 @@ def __doGeyser(squirt, delay, fShowStun, uberClone = 0):
     dButtonHold = 3.0
     tContact = 2.9
     tSpray = 1
-    tSuitDodges = 1.8
+    tCogDodges = 1.8
     button = globalPropPool.getProp('button')
     button2 = MovieUtil.copyProp(button)
     buttons = [button, button2]
@@ -690,9 +690,9 @@ def __doGeyser(squirt, delay, fShowStun, uberClone = 0):
         leftCogs = target['leftCogs']
         rightCogs = target['rightCogs']
         cogPos = cog.getPos(battle)
-        hitSuit = hp > 0
+        hitCog = hp > 0
         scale = sprayScales[level]
-        soundTrack = __getSoundTrack(level, hitSuit, 1.8, toon)
+        soundTrack = __getSoundTrack(level, hitCog, 1.8, toon)
         delayTime = random.random()
         tracks.append(Wait(delayTime))
         tracks.append(soundTrack)
@@ -733,7 +733,7 @@ def __doGeyser(squirt, delay, fShowStun, uberClone = 0):
         if not uberClone:
             tracks.append(Sequence(Wait(delayTime), getGeyserTrack(cloud, cog, geyserPosPoint, scaleUpPoint, rainEffects, rainDelay, effectDelay, geyserHold, useEffect=1)))
         if hp > 0 or delay <= 0:
-            tracks.append(Sequence(Wait(delayTime), __getCogTrack(cog, tContact, tSuitDodges, hp, hpbonus, kbbonus, 'soak', died, leftCogs, rightCogs, battle, toon, fShowStun, beforeStun=2.6, afterStun=2.3, geyser=1, uberRepeat=uberClone, revived=revived)))
+            tracks.append(Sequence(Wait(delayTime), __getCogTrack(cog, tContact, tCogDodges, hp, hpbonus, kbbonus, 'soak', died, leftCogs, rightCogs, battle, toon, fShowStun, beforeStun=2.6, afterStun=2.3, geyser=1, uberRepeat=uberClone, revived=revived)))
 
     return tracks
 

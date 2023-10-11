@@ -7,7 +7,7 @@ from toontown.distributed import DelayDelete
 from direct.directnotify import DirectNotifyGlobal
 from . import DistributedBattleBase
 from . import MovieUtil
-from toontown.cog import Suit
+from toontown.cog import Cog
 from . import CogBattleGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
@@ -81,8 +81,8 @@ class DistributedBattleFinal(DistributedBattleBase.DistributedBattleBase):
         elif len(self.toons) < 4 and len(oldtoons) == 4:
             self.openBattleCollision()
 
-    def makeSuitJoin(self, cog, ts):
-        self.notify.debug('makeSuitJoin(%d)' % cog.doId)
+    def makeCogJoin(self, cog, ts):
+        self.notify.debug('makeCogJoin(%d)' % cog.doId)
         self.joiningCogs.append(cog)
         if self.hasLocalToon():
             self.d_joinDone(base.localAvatar.doId, cog.doId)

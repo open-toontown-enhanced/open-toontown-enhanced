@@ -5,10 +5,10 @@ from toontown.toonbase import TTLocalizer
 notify = DirectNotifyGlobal.directNotify.newCategory('CogDialog')
 
 def getBrushOffIndex(cogName):
-    if cogName in SuitBrushOffs:
-        brushoffs = SuitBrushOffs[cogName]
+    if cogName in CogBrushOffs:
+        brushoffs = CogBrushOffs[cogName]
     else:
-        brushoffs = SuitBrushOffs[None]
+        brushoffs = CogBrushOffs[None]
     num = len(brushoffs)
     chunk = 100 / num
     randNum = random.randint(0, 99)
@@ -23,11 +23,11 @@ def getBrushOffIndex(cogName):
 
 
 def getBrushOffText(cogName, index):
-    if cogName in SuitBrushOffs:
-        brushoffs = SuitBrushOffs[cogName]
+    if cogName in CogBrushOffs:
+        brushoffs = CogBrushOffs[cogName]
     else:
-        brushoffs = SuitBrushOffs[None]
+        brushoffs = CogBrushOffs[None]
     return brushoffs[index]
 
 
-SuitBrushOffs = OTPLocalizer.SuitBrushOffs
+CogBrushOffs = OTPLocalizer.CogBrushOffs

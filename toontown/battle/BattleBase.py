@@ -256,7 +256,7 @@ class BattleBase:
         dist = Vec3(cogdest - cogpos).length()
         return dist / BattleBase.cogSpeed
 
-    def calcSuitMoveTime(self, pos0, pos1):
+    def calcCogMoveTime(self, pos0, pos1):
         dist = Vec3(pos0 - pos1).length()
         return dist / BattleBase.cogSpeed
 

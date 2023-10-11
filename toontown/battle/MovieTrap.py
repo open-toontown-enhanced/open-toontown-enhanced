@@ -11,7 +11,7 @@ from direct.particles import ParticleEffect
 from . import BattleParticles
 from . import BattleProps
 from . import MovieNPCSOS
-from .MovieSound import createSuitResetPosTrack
+from .MovieSound import createCogResetPosTrack
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieTrap')
 
 def doTraps(traps):
@@ -169,7 +169,7 @@ def __createThrownTrapMultiTrack(trap, propList, propName, propPos = None, propH
     throwTrack.append(Func(unthrownProp.reparentTo, hidden))
     throwTrack.append(Func(toon.update))
     if cog.battleTrap != NO_TRAP:
-        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+        notify.debug('trapCog() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
         battle.removeTrap(cog)
     if trapName == 'rake':
         trapProp = globalPropPool.getProp('rake-react')
@@ -325,7 +325,7 @@ def __createPlacedTrapMultiTrack(trap, prop, propName, propPos = None, propHpr =
             trapTrack.append(Func(battle.removeTrap, cog))
         else:
             if cog.battleTrap != NO_TRAP:
-                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+                notify.debug('trapCog() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
                 battle.removeTrap(cog)
             cog.battleTrapProp = trapProp
             cog.battleTrap = level
@@ -413,7 +413,7 @@ def __trapTrain(trap, trapProps, explode):
     targets = trap['target']
     battle = trap['battle']
     visibleOnlyForThisCogId = 0
-    centerSuit = None
+    centerCog = None
     closestXDistance = 10000
     for target in targets:
         cog = target['cog']
@@ -422,11 +422,11 @@ def __trapTrain(trap, trapProps, explode):
         if xDistance < closestXDistance:
             visibleOnlyForThisCogId = cog.doId
             closestXDistance = xDistance
-            centerSuit = cog
+            centerCog = cog
         notify.debug('toon: %s doing traintrack in front of cog: %d' % (toon.getName(), cog.doId))
 
     traintrack = trapProps[0]
-    return __createPlacedGroupTrapTrack(trap, traintrack, 'traintrack', centerSuit, explode=explode)
+    return __createPlacedGroupTrapTrack(trap, traintrack, 'traintrack', centerCog, explode=explode)
 
 
 def createThrowingTrack(object, target, duration = 1.0, parent = render, gravity = -32.144):
@@ -475,7 +475,7 @@ def createCartoonExplosionTrack(parent, animName, explosionPoint = None):
     return explosionTrack
 
 
-def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = None, propHpr = None, explode = 0):
+def __createPlacedGroupTrapTrack(trap, prop, propName, centerCog, propPos = None, propHpr = None, explode = 0):
     toon = trap['toon']
     if 'npc' in trap:
         toon = trap['npc']
@@ -494,7 +494,7 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
     firstTime = 1
     targets = trap['target']
     if True:
-        cog = centerSuit
+        cog = centerCog
         cogPos = cog.getPos(battle)
         targetPos = cogPos
         trapProp = MovieUtil.copyProp(prop)
@@ -522,20 +522,20 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
             oneTrapTrack.append(Func(MovieUtil.removeProp, trapProp))
             removeTrapsParallel.append(oneTrapTrack)
             for target in trap['target']:
-                otherSuit = target['cog']
-                if otherSuit.battleTrapProp:
-                    otherDustNode = hidden.attachNewNode('DustNodeOtherSuit')
+                otherCog = target['cog']
+                if otherCog.battleTrapProp:
+                    otherDustNode = hidden.attachNewNode('DustNodeOtherCog')
                     otherTrapTrack = Sequence()
-                    otherTrapTrack.append(Func(otherSuit.battleTrapProp.wrtReparentTo, hidden))
-                    otherTrapTrack.append(Func(placeDustExplosion, dustNode, otherSuit.battleTrapProp, battle))
+                    otherTrapTrack.append(Func(otherCog.battleTrapProp.wrtReparentTo, hidden))
+                    otherTrapTrack.append(Func(placeDustExplosion, dustNode, otherCog.battleTrapProp, battle))
                     otherTrapTrack.append(createCartoonExplosionTrack(otherDustNode, 'dust', explosionPoint=Point3(0, 0, 0)))
-                    otherTrapTrack.append(Func(battle.removeTrap, otherSuit))
+                    otherTrapTrack.append(Func(battle.removeTrap, otherCog))
                     removeTrapsParallel.append(otherTrapTrack)
 
             trapTrack.append(removeTrapsParallel)
         else:
             if cog.battleTrap != NO_TRAP:
-                notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+                notify.debug('trapCog() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
                 battle.removeTrap(cog)
             cog.battleTrapProp = trapProp
             cog.battleTrap = level
@@ -544,21 +544,21 @@ def __createPlacedGroupTrapTrack(trap, prop, propName, centerSuit, propPos = Non
             for target in targets:
                 kbbonus = target['kbbonus']
                 if kbbonus == 0:
-                    unluredSuit = target['cog']
+                    unluredCog = target['cog']
                     cogTrack = Sequence()
-                    cogTrack.append(createSuitResetPosTrack(unluredSuit, battle))
-                    cogTrack.append(Func(battle.unlureSuit, unluredSuit))
+                    cogTrack.append(createCogResetPosTrack(unluredCog, battle))
+                    cogTrack.append(Func(battle.unlureCog, unluredCog))
                     unlureCogs.append(cogTrack)
 
             trapTrack.append(unlureCogs)
-            for otherSuit in battle.cogs:
-                if not otherSuit == cog:
-                    if otherSuit.battleTrap != NO_TRAP:
-                        notify.debug('trapSuit() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
-                        battle.removeTrap(otherSuit)
-                    otherSuit.battleTrapProp = trapProp
-                    otherSuit.battleTrap = level
-                    otherSuit.battleTrapIsFresh = 1
+            for otherCog in battle.cogs:
+                if not otherCog == cog:
+                    if otherCog.battleTrap != NO_TRAP:
+                        notify.debug('trapCog() - trap: %d destroyed existing trap: %d' % (level, cog.battleTrap))
+                        battle.removeTrap(otherCog)
+                    otherCog.battleTrapProp = trapProp
+                    otherCog.battleTrap = level
+                    otherCog.battleTrapIsFresh = 1
 
         trapTracks.append(trapTrack)
     button = globalPropPool.getProp('button')

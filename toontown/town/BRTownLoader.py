@@ -1,6 +1,6 @@
 from . import TownLoader
 from . import BRStreet
-from toontown.cog import Suit
+from toontown.cog import Cog
 
 class BRTownLoader(TownLoader.TownLoader):
 
@@ -13,10 +13,10 @@ class BRTownLoader(TownLoader.TownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadCogs(3)
+        Cog.loadCogs(3)
         dnaFile = 'phase_8/dna/the_burrrgh_' + str(self.canonicalBranchZone) + '.dna'
         self.createHood(dnaFile)
 
     def unload(self):
-        Suit.unloadCogs(3)
+        Cog.unloadCogs(3)
         TownLoader.TownLoader.unload(self)

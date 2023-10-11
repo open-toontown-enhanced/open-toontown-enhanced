@@ -1088,7 +1088,7 @@ dclass DistributedMazeGame : DistributedMinigame {
   claimTreasure(uint32) airecv clsend;
   setTreasureGrabbed(uint32, uint32) broadcast;
   allTreasuresTaken() broadcast;
-  hitBySuit(uint32, int16) clsend broadcast;
+  hitByCog(uint32, int16) clsend broadcast;
 };
 
 dclass DistributedTugOfWarGame : DistributedMinigame {
@@ -1107,7 +1107,7 @@ dclass DistributedTugOfWarGame : DistributedMinigame {
 dclass DistributedCatchGame : DistributedMinigame {
   claimCatch(uint32, uint32) airecv clsend;
   setObjectCaught(uint32, uint32) broadcast;
-  hitBySuit(uint32, int16) clsend broadcast;
+  hitByCog(uint32, int16) clsend broadcast;
   reportDone() airecv clsend;
   setEveryoneDone() broadcast;
 };
@@ -1682,13 +1682,13 @@ dclass DistCogdoLevelGame : DistCogdoGame, DistributedLevel {
 dclass DistCogdoMazeGame : DistCogdoGame {
   requestAction(uint8, uint32) airecv clsend;
   doAction(uint8, uint32, int16) broadcast;
-  setNumSuits(uint8 [3]) required broadcast;
+  setNumCogs(uint8 [3]) required broadcast;
   requestUseGag(int16/10, int16/10, int16/10, int16) clsend airecv;
   toonUsedGag(uint32, int16/10, int16/10, int16/10, int16) broadcast;
-  requestSuitHitByGag(uint8, uint8) clsend airecv;
+  requestCogHitByGag(uint8, uint8) clsend airecv;
   cogHitByGag(uint32, uint8, uint8) broadcast;
-  requestHitBySuit(uint8, uint8, int16) clsend airecv;
-  toonHitBySuit(uint32, uint8, uint8, int16) broadcast;
+  requestHitByCog(uint8, uint8, int16) clsend airecv;
+  toonHitByCog(uint32, uint8, uint8, int16) broadcast;
   requestHitByDrop() clsend airecv;
   toonHitByDrop(uint32) broadcast;
   requestPickUp(uint8) clsend airecv;
@@ -2356,8 +2356,8 @@ dclass DistributedLaserField : BattleBlocker {
   hit(int8, int8, int8, int8) airecv clsend;
   trapFire() airecv clsend;
   setActiveLF(uint8) broadcast ram;
-  hideSuit(uint32[]) broadcast ram;
-  showSuit(uint32[]) broadcast ram;
+  hideCog(uint32[]) broadcast ram;
+  showCog(uint32[]) broadcast ram;
   setGridGame(string) broadcast ram;
 };
 
@@ -3043,11 +3043,11 @@ dclass DistributedIceGame : DistributedMinigame {
 
 dclass DistributedCogThiefGame : DistributedMinigame {
   throwingPie(uint32, int32, int32/100, int32/100, int32/100, int32/100) clsend broadcast;
-  hitBySuit(uint32, int32, int8, int32/100, int32/100, int32/100) clsend broadcast airecv;
-  pieHitSuit(uint32, int32, int8, int32/100, int32/100, int32/100) clsend broadcast airecv;
+  hitByCog(uint32, int32, int8, int32/100, int32/100, int32/100) clsend broadcast airecv;
+  pieHitCog(uint32, int32, int8, int32/100, int32/100, int32/100) clsend broadcast airecv;
   cogHitBarrel(int32, int8, int8, int32/100, int32/100, int32/100) clsend airecv;
   cogAtReturnPos(int32, int8, int8) clsend airecv;
-  updateSuitGoal(int32, int32, int8, int8, int64, int32/100, int32/100, int32/100) broadcast;
+  updateCogGoal(int32, int32, int8, int8, int64, int32/100, int32/100, int32/100) broadcast;
   makeCogCarryBarrel(int32, int32, int8, int8, int32/100, int32/100, int32/100) broadcast;
   makeCogDropBarrel(int32, int32, int8, int8, int32/100, int32/100, int32/100) broadcast;
   markBarrelStolen(int32, int32, int8) broadcast;

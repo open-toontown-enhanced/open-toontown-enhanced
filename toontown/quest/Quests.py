@@ -40,9 +40,9 @@ Anywhere = 1
 NA = 2
 Same = 3
 AnyFish = 4
-AnyCashbotSuitPart = 5
-AnyLawbotSuitPart = 6
-AnyBossbotSuitPart = 7
+AnyCashbotCogPart = 5
+AnyLawbotCogPart = 6
+AnyBossbotCogPart = 7
 ToonTailor = 999
 ToonHQ = 1000
 QuestDictTierIndex = 0
@@ -17689,11 +17689,11 @@ Tier2Reward2QuestsDict = {}
 Quest2RemainingStepsDict = {}
 
 def getAllRewardIdsForReward(rewardId):
-    if rewardId is AnyCashbotSuitPart:
+    if rewardId is AnyCashbotCogPart:
         return list(range(4000, 4011 + 1))
-    if rewardId is AnyLawbotSuitPart:
+    if rewardId is AnyLawbotCogPart:
         return list(range(4100, 4113 + 1))
-    if rewardId is AnyBossbotSuitPart:
+    if rewardId is AnyBossbotCogPart:
         return list(range(4200, 4216 + 1))
     return (rewardId,)
 
@@ -17944,22 +17944,22 @@ def chooseMatchingQuest(tier, validQuestPool, rewardId, npc, av):
         if validQuestsMatchingReward:
             bestQuest = seededRandomChoice(validQuestsMatchingReward)
         else:
-            questsMatchingReward = Tier2Reward2QuestsDict[tier].get(AnyCashbotSuitPart, [])
+            questsMatchingReward = Tier2Reward2QuestsDict[tier].get(AnyCashbotCogPart, [])
             if notify.getDebug():
-                notify.debug('questsMatchingReward: AnyCashbotSuitPart tier: %s = %s' % (tier, questsMatchingReward))
+                notify.debug('questsMatchingReward: AnyCashbotCogPart tier: %s = %s' % (tier, questsMatchingReward))
             validQuestsMatchingReward = PythonUtil.intersection(questsMatchingReward, validQuestPool)
             if validQuestsMatchingReward:
                 if notify.getDebug():
-                    notify.debug('validQuestsMatchingReward: AnyCashbotSuitPart tier: %s = %s' % (tier, validQuestsMatchingReward))
+                    notify.debug('validQuestsMatchingReward: AnyCashbotCogPart tier: %s = %s' % (tier, validQuestsMatchingReward))
                 bestQuest = seededRandomChoice(validQuestsMatchingReward)
             else:
-                questsMatchingReward = Tier2Reward2QuestsDict[tier].get(AnyLawbotSuitPart, [])
+                questsMatchingReward = Tier2Reward2QuestsDict[tier].get(AnyLawbotCogPart, [])
                 if notify.getDebug():
-                    notify.debug('questsMatchingReward: AnyLawbotSuitPart tier: %s = %s' % (tier, questsMatchingReward))
+                    notify.debug('questsMatchingReward: AnyLawbotCogPart tier: %s = %s' % (tier, questsMatchingReward))
                 validQuestsMatchingReward = PythonUtil.intersection(questsMatchingReward, validQuestPool)
                 if validQuestsMatchingReward:
                     if notify.getDebug():
-                        notify.debug('validQuestsMatchingReward: AnyLawbotSuitPart tier: %s = %s' % (tier, validQuestsMatchingReward))
+                        notify.debug('validQuestsMatchingReward: AnyLawbotCogPart tier: %s = %s' % (tier, validQuestsMatchingReward))
                     bestQuest = seededRandomChoice(validQuestsMatchingReward)
                 else:
                     questsMatchingReward = Tier2Reward2QuestsDict[tier].get(Any, [])
@@ -19828,8 +19828,8 @@ def checkReward(questId, forked = 0):
     nextQuests = nextQuestList(quest[6])
     if nextQuests is None:
         validRewards = list(RewardDict.keys()) + [Any,
-         AnyCashbotSuitPart,
-         AnyLawbotSuitPart,
+         AnyCashbotCogPart,
+         AnyLawbotCogPart,
          OBSOLETE]
         if reward is OBSOLETE:
             print('warning: quest %s is obsolete' % questId)

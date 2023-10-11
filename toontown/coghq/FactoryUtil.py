@@ -4,7 +4,7 @@ from direct.interval.IntervalGlobal import *
 from toontown.toonbase import ToontownGlobals
 from . import MovingPlatform
 from direct.task.Task import Task
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 
 class Ouch(DirectObject.DirectObject):

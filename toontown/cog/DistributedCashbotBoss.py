@@ -111,7 +111,7 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         self.resistanceToon.setPosHpr(*ToontownGlobals.CashbotRTBattleOneStartPosHpr)
         state = random.getstate()
         random.seed(self.doId)
-        self.resistanceToon.cogType = CogDNA.getRandomSuitByDept('m')
+        self.resistanceToon.cogType = CogDNA.getRandomCogByDept('m')
         random.setstate(state)
         self.fakeGoons = []
         for i in range(self.numFakeGoons):
@@ -137,16 +137,16 @@ class DistributedCashbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
 
         return
 
-    def __showResistanceToon(self, withSuit):
+    def __showResistanceToon(self, withCog):
         if not self.resistanceToonOnstage:
             self.resistanceToon.addActive()
             self.resistanceToon.reparentTo(self.geom)
             self.resistanceToonOnstage = 1
-        if withSuit:
+        if withCog:
             cog = self.resistanceToon.cogType
-            self.resistanceToon.putOnSuit(cog, False)
+            self.resistanceToon.putOnDisguise(cog, False)
         else:
-            self.resistanceToon.takeOffSuit()
+            self.resistanceToon.takeOffDisguise()
 
     def __hideResistanceToon(self):
         if self.resistanceToonOnstage:

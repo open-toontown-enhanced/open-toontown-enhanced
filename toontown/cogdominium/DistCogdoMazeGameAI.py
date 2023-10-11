@@ -51,21 +51,21 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
 
         self.bosses = self._numCogs[0]
         for i in range(self._numCogs[0]):
-            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.Boss]['hp']
+            self.cogs[serialNum] = Globals.CogData[Globals.CogTypes.Boss]['hp']
             serialNum += 1
 
         for i in range(self._numCogs[1]):
-            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.FastMinion]['hp']
+            self.cogs[serialNum] = Globals.CogData[Globals.CogTypes.FastMinion]['hp']
             serialNum += 1
 
         for i in range(self._numCogs[2]):
-            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.SlowMinion]['hp']
+            self.cogs[serialNum] = Globals.CogData[Globals.CogTypes.SlowMinion]['hp']
             serialNum += 1
 
         self._totalCogs = serialNum
-        self.maxPickups = self._numCogs[0] * Globals.SuitData[0]['memos']
-        self.maxPickups += self._numCogs[1] * Globals.SuitData[1]['memos']
-        self.maxPickups += self._numCogs[2] * Globals.SuitData[2]['memos']
+        self.maxPickups = self._numCogs[0] * Globals.CogData[0]['memos']
+        self.maxPickups += self._numCogs[1] * Globals.CogData[1]['memos']
+        self.maxPickups += self._numCogs[2] * Globals.CogData[2]['memos']
 
     def generate(self):
         DistCogdoGameAI.generate(self)
@@ -143,7 +143,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
         return result
 
     def cogDestroyed(self, cogType, cogNum):
-        if cogType == Globals.SuitTypes.Boss:
+        if cogType == Globals.CogTypes.Boss:
             self.bosses -= 1
             if self.bosses <= 0:
                 self.openDoor()
@@ -152,7 +152,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
         del self.cogs[cogNum]
 
     def createPickups(self, cogType):
-        for i in range(Globals.SuitData[cogType]['memos']):
+        for i in range(Globals.CogData[cogType]['memos']):
             self.pickups.append(self.pickupsDropped)
             self.pickupsDropped += 1
 
@@ -233,58 +233,58 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
             h,
             networkTime])
 
-    def requestSuitHitByGag(self, cogType, cogNum):
+    def requestCogHitByGag(self, cogType, cogNum):
         senderId = self.air.getAvatarIdFromSender()
         if not self._validateSenderId(senderId):
             return False
 
         if self.fsm.getCurrentState().getName() != 'Game':
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestSuitHitByGag outside of Game state')
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestCogHitByGag outside of Game state')
             return False
 
-        if cogType not in list(Globals.SuitTypes):
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestSuitHitByGag: invalid cog type %s' % cogType)
+        if cogType not in list(Globals.CogTypes):
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestCogHitByGag: invalid cog type %s' % cogType)
             return False
 
         if cogNum not in list(self.cogs.keys()):
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestSuitHitByGag: invalid cog num %s' % cogNum)
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestCogHitByGag: invalid cog num %s' % cogNum)
             return False
 
         resultValid = self.cogHit(cogType, cogNum)
         if resultValid:
-            self.d_broadcastSuitHitByGag(senderId, cogType, cogNum)
+            self.d_broadcastCogHitByGag(senderId, cogType, cogNum)
 
-    def d_broadcastSuitHitByGag(self, toonId, cogType, cogNum):
+    def d_broadcastCogHitByGag(self, toonId, cogType, cogNum):
         self.sendUpdate('cogHitByGag', [
             toonId,
             cogType,
             cogNum])
 
-    def requestHitBySuit(self, cogType, cogNum, networkTime):
+    def requestHitByCog(self, cogType, cogNum, networkTime):
         senderId = self.air.getAvatarIdFromSender()
         if not self._validateSenderId(senderId):
             return False
 
         if self.fsm.getCurrentState().getName() != 'Game':
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitBySuit outside of Game state')
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitByCog outside of Game state')
             return False
 
-        if cogType not in list(Globals.SuitTypes):
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitBySuit: invalid cog type %s' % cogType)
+        if cogType not in list(Globals.CogTypes):
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitByCog: invalid cog type %s' % cogType)
             return False
 
         if cogNum not in list(self.cogs.keys()):
-            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitBySuit: invalid cog num %s' % cogNum)
+            self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitByCog: invalid cog num %s' % cogNum)
             return False
 
         toon = self.air.doId2do[senderId]
-        self.d_broadcastToonHitBySuit(senderId, cogType, cogNum, networkTime)
-        damage = Globals.SuitData[cogType]['toonDamage']
+        self.d_broadcastToonHitByCog(senderId, cogType, cogNum, networkTime)
+        damage = Globals.CogData[cogType]['toonDamage']
         damage += int(round(damage * Globals.DamageModifier * self.difficulty))
         toon.takeDamage(damage, quietly = 0)
 
-    def d_broadcastToonHitBySuit(self, toonId, cogType, cogNum, networkTime):
-        self.sendUpdate('toonHitBySuit', [
+    def d_broadcastToonHitByCog(self, toonId, cogType, cogNum, networkTime):
+        self.sendUpdate('toonHitByCog', [
             toonId,
             cogType,
             cogNum,

@@ -73,7 +73,7 @@ class DistributedLawbotChairAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM)
                 if state == 'ToonJuror':
                     newState = 'T'
                 else:
-                    if state == 'SuitJuror':
+                    if state == 'CogJuror':
                         newState = 'S'
                     else:
                         if state == 'EmptyJuror':
@@ -125,8 +125,8 @@ class DistributedLawbotChairAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM)
                 self.startCogFlyTask = taskMgr.doMethodLater(delayTime, self.cogFlyAndSit, self.uniqueName('startCogFlyTask'))
         return
 
-    def requestSuitJuror(self):
-        self.b_setState('SuitJuror')
+    def requestCogJuror(self):
+        self.b_setState('CogJuror')
 
     def requestEmptyJuror(self):
         self.b_setState('EmptyJuror')
@@ -143,7 +143,7 @@ class DistributedLawbotChairAI(DistributedObjectAI.DistributedObjectAI, FSM.FSM)
 
     def changeToCogJuror(self, task):
         self.notify.debug('changeToCogJuror')
-        self.requestSuitJuror()
+        self.requestCogJuror()
         self.changeToCogTask = None
         return
 

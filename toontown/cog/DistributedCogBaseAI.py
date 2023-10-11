@@ -59,7 +59,7 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
 
     def setupCogDNA(self, level, type, track):
         dna = CogDNA.CogDNA()
-        dna.newSuitRandom(type, track)
+        dna.newCogRandom(type, track)
         self.dna = dna
         self.track = track
         self.setLevel(level)

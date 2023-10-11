@@ -40,7 +40,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
          (9, 8.5),
          (4, 9)]
         self.cogForceMultiplier = 0.75
-        self.curSuitForce = 0
+        self.curCogForce = 0
         self.cogOffset = 0
         self.contestEnded = 0
         self.losingSide = -1
@@ -153,8 +153,8 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.notify.debug('enterSendGoSignal')
         taskMgr.doMethodLater(TugOfWarGameGlobals.GAME_DURATION, self.timerExpired, self.taskName('gameTimer'))
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            self.curSuitForceInd = 0
-            taskMgr.add(self.timeForNewSuitForce, self.taskName('cogForceTimer'))
+            self.curCogForceInd = 0
+            taskMgr.add(self.timeForNewCogForce, self.taskName('cogForceTimer'))
         taskMgr.doMethodLater(1, self.calcTimeBonus, self.taskName('timeBonusTimer'))
         self.sendUpdate('sendGoSignal', [[0, 1]])
         self.gameFSM.request('waitForResults')
@@ -164,13 +164,13 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.gameFSM.request('contestOver')
         return Task.done
 
-    def timeForNewSuitForce(self, task):
-        self.notify.debug('timeForNewSuitForce')
-        if self.curSuitForceInd < len(self.cogForces):
+    def timeForNewCogForce(self, task):
+        self.notify.debug('timeForNewCogForce')
+        if self.curCogForceInd < len(self.cogForces):
             randForce = random.random() - 0.5
-            self.curSuitForce = self.cogForceMultiplier * self.numPlayers * (self.cogForces[self.curSuitForceInd][1] + randForce)
-            taskMgr.doMethodLater(self.cogForces[self.curSuitForceInd][0], self.timeForNewSuitForce, self.taskName('cogForceTimer'))
-        self.curSuitForceInd += 1
+            self.curCogForce = self.cogForceMultiplier * self.numPlayers * (self.cogForces[self.curCogForceInd][1] + randForce)
+            taskMgr.doMethodLater(self.cogForces[self.curCogForceInd][0], self.timeForNewCogForce, self.taskName('cogForceTimer'))
+        self.curCogForceInd += 1
         return Task.done
 
     def calcTimeBonus(self, task):
@@ -192,7 +192,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
                 f[i] += x
 
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            f[1] += self.curSuitForce
+            f[1] += self.curCogForce
         deltaF = f[1] - f[0]
         deltaX = deltaF * self.kMovement
         for avId in self.avIdList:

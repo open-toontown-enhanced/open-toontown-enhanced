@@ -149,10 +149,10 @@ class DistributedDoorAI(DistributedObjectAI.DistributedObjectAI):
                 self.avatarsWhoAreExiting[avatarID] = 1
                 self.openDoor(self.exitDoorFSM)
 
-    def requestSuitEnter(self, avatarID):
+    def requestCogEnter(self, avatarID):
         self.enqueueAvatarIdEnter(avatarID)
 
-    def requestSuitExit(self, avatarID):
+    def requestCogExit(self, avatarID):
         self.sendUpdate('avatarExit', [avatarID])
         self.enqueueAvatarIdExit(avatarID)
 

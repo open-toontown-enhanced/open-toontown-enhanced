@@ -198,7 +198,7 @@ class DistributedLaserFieldAI(BattleBlockerAI.BattleBlockerAI, NodePath, BasicEn
             cogArray.append(cog.doId)
 
         if cogArray:
-            self.sendUpdate('hideSuit', [cogArray])
+            self.sendUpdate('hideCog', [cogArray])
 
     def showCogs(self):
         if self.hasShownCogs == 0:
@@ -209,9 +209,9 @@ class DistributedLaserFieldAI(BattleBlockerAI.BattleBlockerAI, NodePath, BasicEn
                 cogArray.append(cog.doId)
 
             if cogArray:
-                self.sendUpdate('showSuit', [cogArray])
+                self.sendUpdate('showCog', [cogArray])
         self.hasShownCogs = 1
 
     def addCog(self, cog):
-        print('Adding Suit %s' % cog.doId)
+        print('Adding Cog %s' % cog.doId)
         BattleBlockerAI.BattleBlockerAI.addCog(self, cog)

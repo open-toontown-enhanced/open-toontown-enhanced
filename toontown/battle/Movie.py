@@ -637,7 +637,7 @@ class Movie(DirectObject.DirectObject):
                     cogHandles = []
                     for s in cogs:
                         if s != -1:
-                            target = self.battle.findSuit(s)
+                            target = self.battle.findCog(s)
                             if target == None:
                                 continue
                             cogHandles.append(target)
@@ -695,7 +695,7 @@ class Movie(DirectObject.DirectObject):
                     targets = []
                     for s in cogs:
                         if s != -1:
-                            target = self.battle.findSuit(s)
+                            target = self.battle.findCog(s)
                             if ta[TOON_TRACK_COL] == NPCSOS:
                                 if track == LURE and self.battle.isCogLured(target) == 1:
                                     continue
@@ -723,7 +723,7 @@ class Movie(DirectObject.DirectObject):
                         targetGone = 1
                     else:
                         targetId = cogs[targetIndex]
-                        target = self.battle.findSuit(targetId)
+                        target = self.battle.findCog(targetId)
                         sdict = {}
                         sdict['cog'] = target
                         if self.battle.activeCogs.count(target) == 0:
@@ -813,7 +813,7 @@ class Movie(DirectObject.DirectObject):
             if attack != NO_ATTACK:
                 cogIndex = sa[COG_ID_COL]
                 cogId = cogs[cogIndex]
-                cog = self.battle.findSuit(cogId)
+                cog = self.battle.findCog(cogId)
                 if cog == None:
                     self.notify.error('cog: %d not in battle!' % cogId)
                 adict = getCogAttack(cog.getStyleName(), cog.getLevel(), attack)

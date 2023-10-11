@@ -7,7 +7,7 @@ from direct.interval.FunctionInterval import Func, Wait
 from direct.gui.DirectGui import *
 from toontown.toonbase.ToontownGlobals import *
 from toontown.toonbase import TTLocalizer
-from toontown.cog import Suit, CogDNA
+from toontown.cog import Cog, CogDNA
 from toontown.toon import Toon, ToonHead, ToonDNA
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoUtil
@@ -35,14 +35,14 @@ class CogdoExecutiveSuiteIntro(CogdoGameMovie):
         self._toonDialogueSfx.play()
         self.toonHead.setClipPlane(self.clipPlane)
 
-    def makeSuit(self, cogType):
-        self.notify.debug('makeSuit()')
-        cog = Suit.Suit()
+    def makeCog(self, cogType):
+        self.notify.debug('makeCog()')
+        cog = Cog.Cog()
         dna = CogDNA.CogDNA()
-        dna.newSuit(cogType)
+        dna.newCog(cogType)
         cog.setStyle(dna)
         cog.isDisguised = 1
-        cog.generateSuit()
+        cog.generateCog()
         cog.setScale(1, 1, 2)
         cog.setPos(0, 0, -4.4)
         cog.reparentTo(self.toonHead)
@@ -71,7 +71,7 @@ class CogdoExecutiveSuiteIntro(CogdoGameMovie):
         self.toonDNA.newToonFromProperties('dss', 'ss', 'm', 'm', 2, 0, 2, 2, 1, 8, 1, 8, 1, 14)
         self.toonHead = Toon.Toon()
         self.toonHead.setDNA(self.toonDNA)
-        self.makeSuit('sc')
+        self.makeCog('sc')
         self.toonHead.getGeomNode().setDepthWrite(1)
         self.toonHead.getGeomNode().setDepthTest(1)
         self.toonHead.loop('neutral')

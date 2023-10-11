@@ -152,10 +152,10 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         self.reserveCogs = cogHandles['reserveCogs']
         if battleNumber == 3:
             if self.toonsB:
-                movedSuit = self.cogsA.pop()
-                self.cogsB = [movedSuit]
-                self.activeCogsB = [movedSuit]
-                self.activeCogsA.remove(movedSuit)
+                movedCog = self.cogsA.pop()
+                self.cogsB = [movedCog]
+                self.activeCogsB = [movedCog]
+                self.activeCogsA.remove(movedCog)
             else:
                 self.cogsB = []
                 self.activeCogsB = []
@@ -330,39 +330,39 @@ class DistributedBossbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         diners = []
         for i in range(len(self.notDeadList)):
             if simbase.config.GetBool('bossbot-boss-cheat', 0):
-                cog = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
+                cog = self.__genCogObject(self.zoneId, 2, 'c', 2, 0)
             else:
                 info = self.notDeadList[i]
                 cogType = info[2] - 4
                 cogLevel = info[2]
-                cog = self.__genSuitObject(self.zoneId, cogType, 'c', cogLevel, 1)
+                cog = self.__genCogObject(self.zoneId, cogType, 'c', cogLevel, 1)
             diners.append((cog, 100))
 
         active = []
         for i in range(2):
             if simbase.config.GetBool('bossbot-boss-cheat', 0):
-                cog = self.__genSuitObject(self.zoneId, 2, 'c', 2, 0)
+                cog = self.__genCogObject(self.zoneId, 2, 'c', 2, 0)
             else:
                 cogType = 8
                 cogLevel = 12
-                cog = self.__genSuitObject(self.zoneId, cogType, 'c', cogLevel, 1)
+                cog = self.__genCogObject(self.zoneId, cogType, 'c', cogLevel, 1)
             active.append(cog)
 
         return {'activeCogs': active, 'reserveCogs': diners}
 
-    def __genSuitObject(self, cogZone, cogType, bldgTrack, cogLevel, revives=0):
-        newSuit = DistributedCogAI.DistributedCogAI(simbase.air, None)
-        skel = self.__setupSuitInfo(newSuit, bldgTrack, cogLevel, cogType)
+    def __genCogObject(self, cogZone, cogType, bldgTrack, cogLevel, revives=0):
+        newCog = DistributedCogAI.DistributedCogAI(simbase.air, None)
+        skel = self.__setupCogInfo(newCog, bldgTrack, cogLevel, cogType)
         if skel:
-            newSuit.setSkelecog(1)
-        newSuit.setSkeleRevives(revives)
-        newSuit.generateWithRequired(cogZone)
-        newSuit.node().setName('cog-%s' % newSuit.doId)
-        return newSuit
+            newCog.setSkelecog(1)
+        newCog.setSkeleRevives(revives)
+        newCog.generateWithRequired(cogZone)
+        newCog.node().setName('cog-%s' % newCog.doId)
+        return newCog
 
-    def __setupSuitInfo(self, cog, bldgTrack, cogLevel, cogType):
+    def __setupCogInfo(self, cog, bldgTrack, cogLevel, cogType):
         dna = CogDNA.CogDNA()
-        dna.newSuitRandom(cogType, bldgTrack)
+        dna.newCogRandom(cogType, bldgTrack)
         cog.dna = dna
         self.notify.debug('Creating cog type ' + cog.dna.name + ' of level ' + str(cogLevel) + ' from type ' + str(cogType) + ' and track ' + str(bldgTrack))
         cog.setLevel(cogLevel)

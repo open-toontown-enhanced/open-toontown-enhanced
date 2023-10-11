@@ -83,7 +83,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.d_setMembers()
         self.b_setState('WaitForInput')
 
-    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveSuitDied):
+    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveCogDied):
         if len(self.toons) == 0:
             self.d_setMembers()
             self.b_setState('Resume')
@@ -104,7 +104,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             else:
                 if needUpdate == 1:
                     self.d_setMembers()
-                    if len(deadCogs) > 0 and lastActiveSuitDied == 0 or len(deadToons) > 0:
+                    if len(deadCogs) > 0 and lastActiveCogDied == 0 or len(deadToons) > 0:
                         self.needAdjust = 1
                 self.setState('WaitForJoin')
 

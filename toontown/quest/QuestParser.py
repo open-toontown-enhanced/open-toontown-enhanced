@@ -12,7 +12,7 @@ from toontown.toon import ToonHeadFrame
 from toontown.char import CharDNA
 from toontown.cog import CogDNA
 from toontown.char import Char
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from otp.speedchat import SpeedChatGlobals
@@ -316,7 +316,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
                 elif command == 'UNLOAD_CHAR':
                     iList.append(self.parseUnloadChar(line))
                 elif command == 'LOAD_SUIT':
-                    self.parseLoadSuit(line)
+                    self.parseLoadCog(line)
                 elif command == 'SET':
                     self.parseSet(line)
                 elif command == 'LOCK_LOCALTOON':
@@ -538,11 +538,11 @@ class NPCMoviePlayer(DirectObject.DirectObject):
         track.append(Func(self.delVar, name))
         return track
 
-    def parseLoadSuit(self, line):
+    def parseLoadCog(self, line):
         token, name, cogType = line
-        cog = Suit.Suit()
+        cog = Cog.Cog()
         dna = CogDNA.CogDNA()
-        dna.newSuit(cogType)
+        dna.newCog(cogType)
         cog.setDNA(dna)
         self.setVar(name, cog)
 

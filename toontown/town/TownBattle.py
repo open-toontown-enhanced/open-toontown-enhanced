@@ -432,14 +432,14 @@ class TownBattle(StateData.StateData):
         self.notify.debug('adjustCogsAndToons() trappedIndices: %s self.trappedIndices: %s' % (trappedIndices, self.trappedIndices))
         toonIds = [toon.doId for toon in toons]
         self.notify.debug('adjustCogsAndToons() toonIds: %s self.toons: %s' % (toonIds, self.toons))
-        maxSuitLevel = 0
+        maxCogLevel = 0
         cogFireCostIndex = 0
         for cog in cogs:
-            maxSuitLevel = max(maxSuitLevel, cog.getActualLevel())
+            maxCogLevel = max(maxCogLevel, cog.getActualLevel())
             self.cogFireCosts[cogFireCostIndex] = 1
             cogFireCostIndex += 1
 
-        creditLevel = maxSuitLevel
+        creditLevel = maxCogLevel
         if numCogs == self.numCogs and creditLevel == self.creditLevel and luredIndices == self.luredIndices and trappedIndices == self.trappedIndices and toonIds == self.toons:
             resetActivateMode = 0
         else:

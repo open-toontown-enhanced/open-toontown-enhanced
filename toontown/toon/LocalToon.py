@@ -1785,7 +1785,7 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
 
     def swimTimeoutAction(self):
         self.ignore('wakeup')
-        self.takeOffSuit()
+        self.takeOffDisguise()
         base.cr.playGame.getPlace().fsm.request('final')
         self.b_setAnimState('TeleportOut', 1, self.__handleSwimExitTeleport, [0])
         return Task.done
@@ -1904,7 +1904,7 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
                 if kindOfCheat == 0:
                     for cogNum in list(maze.game.cogsById.keys()):
                         cog = maze.game.cogsById[cogNum]
-                        maze.sendUpdate('requestSuitHitByGag', [cog.type, cogNum])
+                        maze.sendUpdate('requestCogHitByGag', [cog.type, cogNum])
 
                 elif kindOfCheat == 1:
                     for joke in maze.game.pickups:

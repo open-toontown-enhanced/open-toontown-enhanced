@@ -249,14 +249,14 @@ class DistributedSellbotBoss(DistributedBossCog.DistributedBossCog, FSM.FSM):
         turnPos = Point3(*turnPos)
         turnPosDown = Point3(*ToontownGlobals.SellbotBossDooberTurnPosDown)
         flyPos = Point3(*ToontownGlobals.SellbotBossDooberFlyPos)
-        seq = Sequence(Func(cog.headsUp, turnPos), Wait(delay), Func(cog.loop, 'walk', 0), self.__walkSuitToPoint(cog, cog.getPos(), turnPos), self.__walkSuitToPoint(cog, turnPos, turnPosDown), self.__walkSuitToPoint(cog, turnPosDown, flyPos), cog.beginSupaFlyMove(flyPos, 0, 'flyAway'), Func(cog.fsm.request, 'Off'))
+        seq = Sequence(Func(cog.headsUp, turnPos), Wait(delay), Func(cog.loop, 'walk', 0), self.__walkCogToPoint(cog, cog.getPos(), turnPos), self.__walkCogToPoint(cog, turnPos, turnPosDown), self.__walkCogToPoint(cog, turnPosDown, flyPos), cog.beginSupaFlyMove(flyPos, 0, 'flyAway'), Func(cog.fsm.request, 'Off'))
         track.append(seq)
         delayDeletes.append(DelayDelete.DelayDelete(cog, 'SellbotBoss.__walkDoober'))
 
-    def __walkSuitToPoint(self, node, fromPos, toPos):
+    def __walkCogToPoint(self, node, fromPos, toPos):
         vector = Vec3(toPos - fromPos)
         distance = vector.length()
-        time = distance / (ToontownGlobals.SuitWalkSpeed * 1.8)
+        time = distance / (ToontownGlobals.CogWalkSpeed * 1.8)
         return Sequence(Func(node.setPos, fromPos), Func(node.headsUp, toPos), node.posInterval(time, toPos))
 
     def makeIntroductionMovie(self, delayDeletes):

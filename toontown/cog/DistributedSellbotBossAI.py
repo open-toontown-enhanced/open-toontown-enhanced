@@ -391,7 +391,7 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         if not toon.readyForPromotion(self.deptIndex):
             return False
         else:
-            if self.isToonWearingRentalSuit(toon.doId):
+            if self.isToonWearingRentalCog(toon.doId):
                 return False
         return True
 
@@ -414,7 +414,7 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             cog = DistributedCogAI.DistributedCogAI(self.air, None)
             level = random.randrange(len(CogDNA.cogsPerLevel))
             cog.dna = CogDNA.CogDNA()
-            cog.dna.newSuitRandom(level=level, dept=self.dna.dept)
+            cog.dna.newCogRandom(level=level, dept=self.dna.dept)
             cog.setLevel(level)
             cog.generateWithRequired(self.zoneId)
             self.doobers.append(cog)

@@ -6,7 +6,7 @@ from direct.directutil import Mopath
 from panda3d.core import *
 from panda3d.physics import *
 from toontown.toonbase import ToontownGlobals
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.battle import BattleProps
 from . import CogdoUtil
@@ -233,9 +233,9 @@ class CogdoFlyingMinion(CogdoFlyingObstacle):
 
     def __init__(self, index, collSolid, motionPath = None):
         self.prop = None
-        self.cog = Suit.Suit()
+        self.cog = Cog.Cog()
         d = CogDNA.CogDNA()
-        d.newSuit(Globals.Gameplay.MinionDnaName)
+        d.newCog(Globals.Gameplay.MinionDnaName)
         self.cog.setDNA(d)
         self.cog.setScale(Globals.Gameplay.MinionScale)
         swapAvatarShadowPlacer(self.cog, 'minion-%sShadowPlacer' % index)

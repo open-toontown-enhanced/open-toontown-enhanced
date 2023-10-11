@@ -58,7 +58,7 @@ class DistributedFactoryCog(DistributedCogBase.DistributedCogBase, DelayDeletabl
             place.setState('walk')
 
     def doReparent(self):
-        self.notify.debug('Suit requesting reparenting')
+        self.notify.debug('Cog requesting reparenting')
         if not hasattr(self, 'factory'):
             self.notify.warning('no factory, get Redmond to look at DistributedFactoryCog.announceGenerate()')
         self.factory.requestReparent(self, self.spec['parentEntId'])

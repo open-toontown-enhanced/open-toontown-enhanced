@@ -1,6 +1,6 @@
 from . import TownLoader
 from . import MMStreet
-from toontown.cog import Suit
+from toontown.cog import Cog
 
 class MMTownLoader(TownLoader.TownLoader):
 
@@ -13,10 +13,10 @@ class MMTownLoader(TownLoader.TownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadCogs(2)
+        Cog.loadCogs(2)
         dnaFile = 'phase_6/dna/minnies_melody_land_' + str(self.canonicalBranchZone) + '.dna'
         self.createHood(dnaFile)
 
     def unload(self):
-        Suit.unloadCogs(2)
+        Cog.unloadCogs(2)
         TownLoader.TownLoader.unload(self)

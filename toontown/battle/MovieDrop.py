@@ -13,7 +13,7 @@ notify = DirectNotifyGlobal.directNotify.newCategory('MovieDrop')
 hitSoundFiles = ('AA_drop_flowerpot.ogg', 'AA_drop_sandbag.ogg', 'AA_drop_anvil.ogg', 'AA_drop_bigweight.ogg', 'AA_drop_safe.ogg', 'AA_drop_piano.ogg', 'AA_drop_boat.ogg')
 missSoundFiles = ('AA_drop_flowerpot_miss.ogg', 'AA_drop_sandbag_miss.ogg', 'AA_drop_anvil_miss.ogg', 'AA_drop_bigweight_miss.ogg', 'AA_drop_safe_miss.ogg', 'AA_drop_piano_miss.ogg', 'AA_drop_boat_miss.ogg')
 tDropShadow = 1.3
-tSuitDodges = 2.45 + tDropShadow
+tCogDodges = 2.45 + tDropShadow
 tObjectAppears = 3.0 + tDropShadow
 tButtonPressed = 2.44
 dShrink = 0.3
@@ -75,7 +75,7 @@ def doDrops(drops):
     npcDrops = {}
     for st in cogDrops:
         if len(st) > 0:
-            ival = __doSuitDrops(st, npcs, npcDrops)
+            ival = __doCogDrops(st, npcs, npcDrops)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
             delay = delay + TOON_DROP_COG_DELAY
@@ -92,8 +92,8 @@ def doDrops(drops):
     return (dropTrack, camTrack)
 
 
-def __getSoundTrack(level, hitSuit, node = None):
-    if hitSuit:
+def __getSoundTrack(level, hitCog, node = None):
+    if hitCog:
         soundEffect = globalBattleSoundCache.getSound(hitSoundFiles[level])
     else:
         soundEffect = globalBattleSoundCache.getSound(missSoundFiles[level])
@@ -112,7 +112,7 @@ def __getSoundTrack(level, hitSuit, node = None):
         if not level == UBER_GAG_LEVEL_INDEX:
             soundTrack.append(SoundInterval(soundEffect, node=node))
         if level == UBER_GAG_LEVEL_INDEX:
-            if hitSuit:
+            if hitCog:
                 uberDelay = tButtonPressed
             else:
                 uberDelay = tButtonPressed - 0.1
@@ -128,7 +128,7 @@ def __getSoundTrack(level, hitSuit, node = None):
     return soundTrack
 
 
-def __doSuitDrops(dropTargetPairs, npcs, npcDrops):
+def __doCogDrops(dropTargetPairs, npcs, npcDrops):
     toonTracks = Parallel()
     delay = 0.0
     alreadyDodged = 0
@@ -230,7 +230,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
     hpbonus = drop['hpbonus']
     cog = target['cog']
     hp = target['hp']
-    hitSuit = hp > 0
+    hitCog = hp > 0
     died = target['died']
     leftCogs = target['leftCogs']
     rightCogs = target['rightCogs']
@@ -252,7 +252,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
     node = object.node()
     node.setBounds(OmniBoundingVolume())
     node.setFinal(1)
-    soundTrack = __getSoundTrack(level, hitSuit, toon)
+    soundTrack = __getSoundTrack(level, hitCog, toon)
     toonTrack = Sequence()
     if repeatNPC == 0:
         toonFace = Func(toon.headsUp, battle, cogPos)
@@ -386,7 +386,7 @@ def __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, n
     majorObject = level >= 3
     cog = target['cog']
     hp = target['hp']
-    hitSuit = hp > 0
+    hitCog = hp > 0
     died = target['died']
     revived = target['revived']
     leftCogs = target['leftCogs']
@@ -414,9 +414,9 @@ def __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, n
         if hpbonus > 0:
             bonusTrack = Sequence(Wait(delay + tObjectAppears + 0.75), Func(cog.showHpText, -hpbonus, 1, openEnded=0))
         if revived != 0:
-            cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
+            cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle, npcs))
         elif died != 0:
-            cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
+            cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle, npcs))
         else:
             cogTrack.append(Func(cog.loop, 'neutral'))
         if bonusTrack != None:
@@ -430,7 +430,7 @@ def __createCogTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, n
             if alreadyTeased > 0:
                 return
             else:
-                cogTrack = MovieUtil.createSuitTeaseMultiTrack(cog, delay=delay + tObjectAppears)
+                cogTrack = MovieUtil.createCogTeaseMultiTrack(cog, delay=delay + tObjectAppears)
         else:
-            cogTrack = MovieUtil.createSuitDodgeMultitrack(delay + tSuitDodges, cog, leftCogs, rightCogs)
+            cogTrack = MovieUtil.createCogDodgeMultitrack(delay + tCogDodges, cog, leftCogs, rightCogs)
     return cogTrack

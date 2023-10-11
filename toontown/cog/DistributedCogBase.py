@@ -7,7 +7,7 @@ from direct.controls.ControlManager import CollisionHandlerRayStart
 from direct.task import Task
 from otp.otpbase import OTPGlobals
 from otp.avatar import DistributedAvatar
-from . import Suit
+from . import Cog
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import TTLocalizer
@@ -24,7 +24,7 @@ from toontown.battle import BattleProps
 import math
 import copy
 
-class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase.CogBase):
+class DistributedCogBase(DistributedAvatar.DistributedAvatar, Cog.Cog, CogBase.CogBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedCogBase')
 
     def __init__(self, cr):
@@ -35,7 +35,7 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
             self.DistributedCogBase_initialized = 1
 
         DistributedAvatar.DistributedAvatar.__init__(self, cr)
-        Suit.Suit.__init__(self)
+        Cog.Cog.__init__(self)
         CogBase.CogBase.__init__(self)
         self.activeShadow = 0
         self.virtual = 0
@@ -110,14 +110,14 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
             del self.dna
             del self.sp
             DistributedAvatar.DistributedAvatar.delete(self)
-            Suit.Suit.delete(self)
+            Cog.Cog.delete(self)
             CogBase.CogBase.delete(self)
 
     def setDNAString(self, dnaString):
-        Suit.Suit.setDNAString(self, dnaString)
+        Cog.Cog.setDNAString(self, dnaString)
 
     def setDNA(self, dna):
-        Suit.Suit.setDNA(self, dna)
+        Cog.Cog.setDNA(self, dna)
 
     def getHP(self):
         return self.currHP
@@ -130,7 +130,7 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
         return None
 
     def getDialogueArray(self, *args):
-        return Suit.Suit.getDialogueArray(self, *args)
+        return Cog.Cog.getDialogueArray(self, *args)
 
     def __removeCollisionData(self):
         self.enableRaycast(0)
@@ -142,10 +142,10 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
         return
 
     def setHeight(self, height):
-        Suit.Suit.setHeight(self, height)
+        Cog.Cog.setHeight(self, height)
 
     def getRadius(self):
-        return Suit.Suit.getRadius(self)
+        return Cog.Cog.getRadius(self)
 
     def setLevelDist(self, level):
         if self.notify.getDebug():
@@ -182,9 +182,9 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
     def beginSupaFlyMove(self, pos, moveIn, trackName):
         skyPos = Point3(pos)
         if moveIn:
-            skyPos.setZ(pos.getZ() + CogTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
+            skyPos.setZ(pos.getZ() + CogTimings.fromSky * ToontownGlobals.CogWalkSpeed)
         else:
-            skyPos.setZ(pos.getZ() + CogTimings.toSky * ToontownGlobals.SuitWalkSpeed)
+            skyPos.setZ(pos.getZ() + CogTimings.toSky * ToontownGlobals.CogWalkSpeed)
         groundF = 28
         dur = self.getDuration('landing')
         fr = self.getFrameRate('landing')
@@ -353,7 +353,7 @@ class DistributedCogBase(DistributedAvatar.DistributedAvatar, Suit.Suit, CogBase
     def setSkelecog(self, flag):
         CogBase.CogBase.setSkelecog(self, flag)
         if flag:
-            Suit.Suit.makeSkeleton(self)
+            Cog.Cog.makeSkeleton(self)
 
     def showHpText(self, number, bonus = 0, scale = 1, attackTrack = -1):
         if self.HpTextEnabled and not self.ghostMode:

@@ -63,7 +63,7 @@ class DistributedFactoryCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         self.confrontHpr = Vec3(h, p, r)
         if self.sp.requestBattle(self, toonId):
             if self.notify.getDebug():
-                self.notify.debug('Suit %d requesting battle in zone %d with toon %d' % (self.getDoId(), self.zoneId, toonId))
+                self.notify.debug('Cog %d requesting battle in zone %d with toon %d' % (self.getDoId(), self.zoneId, toonId))
         else:
             if self.notify.getDebug():
                 self.notify.debug('requestBattle from cog %d, toon %d- denied by battle manager' % (toonId, self.getDoId()))
@@ -103,10 +103,10 @@ class DistributedFactoryCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
             self.sendUpdate('setReturn', [])
 
     def resume(self):
-        self.notify.debug('Suit %s resume' % self.doId)
+        self.notify.debug('Cog %s resume' % self.doId)
         if self.currHP <= 0:
             messenger.send(self.getDeathEvent())
-            self.notify.debug('Suit %s dead after resume' % self.doId)
+            self.notify.debug('Cog %s dead after resume' % self.doId)
             self.requestRemoval()
         else:
             self.sendUpdate('setReturn', [])

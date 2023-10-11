@@ -25,7 +25,7 @@ from toontown.minigame import TugOfWarGameGlobals
 from toontown.minigame.ArrowKeys import ArrowKeys
 from toontown.minigame.DistributedMinigame import DistributedMinigame
 from toontown.minigame.MinigamePowerMeter import MinigamePowerMeter
-from toontown.cog.Suit import Suit
+from toontown.cog.Cog import Cog
 from toontown.cog.CogDNA import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -1049,11 +1049,11 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
     def createCogs(self):
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-            self.cog = Suit()
+            self.cog = Cog()
             self.origCogPosHpr = [VBase3(6.0, 18, 0.1), VBase3(120, 0, 0)]
             self.cogOffset = 0
             d = CogDNA()
-            d.newSuit(self.cogType)
+            d.newCog(self.cogType)
             self.cog.setDNA(d)
             self.cog.reparentTo(base.render)
             self.cog.setPos(self.origCogPosHpr[0])

@@ -59,7 +59,7 @@ class DistributedLawbotBossCogAI(DistributedCogBaseAI.DistributedCogBaseAI):
         if self.sp.requestBattle(self.zoneId, self, toonId):
             self.acceptOnce(self.getDeathEvent(), self._logDeath, [toonId])
             if self.notify.getDebug():
-                self.notify.debug('Suit %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
+                self.notify.debug('Cog %d requesting battle in zone %d' % (self.getDoId(), self.zoneId))
         else:
             if self.notify.getDebug():
                 self.notify.debug('requestBattle from cog %d - denied by battle manager' % self.getDoId())

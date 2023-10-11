@@ -9,7 +9,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import Sequence, ProjectileInterval, Parallel, LerpHprInterval, ActorInterval, Func, Wait, SoundInterval, LerpPosHprInterval, LerpScaleInterval
 from direct.gui.DirectGui import DGG, DirectButton, DirectLabel, DirectWaitBar
 from direct.task import Task
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
@@ -187,11 +187,11 @@ class DistributedBanquetTable(DistributedObject.DistributedObject, FSM.FSM, Banq
             self.dinerStatus[i] = self.HUNGRY
 
     def createDiner(self, i):
-        diner = Suit.Suit()
+        diner = Cog.Cog()
         diner.dna = CogDNA.CogDNA()
         level = self.dinerInfo[i][2]
         level -= 4
-        diner.dna.newSuitRandom(level=level, dept='c')
+        diner.dna.newCogRandom(level=level, dept='c')
         diner.setDNA(diner.dna)
         if self.useNewAnimations:
             diner.loop('sit', fromFrame=i)
@@ -358,9 +358,9 @@ class DistributedBanquetTable(DistributedObject.DistributedObject, FSM.FSM, Banq
 
     def changeDinerToDead(self, chairIndex):
 
-        def removeDeathSuit(cog, deathSuit):
-            if not deathSuit.isEmpty():
-                deathSuit.detachNode()
+        def removeDeathCog(cog, deathCog):
+            if not deathCog.isEmpty():
+                deathCog.detachNode()
                 cog.cleanupLoseActor()
 
         self.removeFoodModel(chairIndex)
@@ -368,13 +368,13 @@ class DistributedBanquetTable(DistributedObject.DistributedObject, FSM.FSM, Banq
         if indicator:
             indicator.request('Dead')
         diner = self.diners[chairIndex]
-        deathSuit = diner
+        deathCog = diner
         locator = self.tableGroup.find('**/chair_%d' % (chairIndex + 1))
-        deathSuit = diner.getLoseActor()
-        ival = Sequence(Func(self.notify.debug, 'before actorinterval sit-lose'), ActorInterval(diner, 'sit-lose'), Func(self.notify.debug, 'before deathSuit.setHpr'), Func(deathSuit.setHpr, diner.getHpr()), Func(self.notify.debug, 'before diner.hide'), Func(diner.hide), Func(self.notify.debug, 'before deathSuit.reparentTo'), Func(deathSuit.reparentTo, self.chairLocators[chairIndex]), Func(self.notify.debug, 'befor ActorInterval lose'), ActorInterval(deathSuit, 'lose', duration=MovieUtil.COG_LOSE_DURATION), Func(self.notify.debug, 'before remove deathcog'), Func(removeDeathSuit, diner, deathSuit, name='remove-death-cog-%d-%d' % (chairIndex, self.index)), Func(self.notify.debug, 'diner.stash'), Func(diner.stash))
+        deathCog = diner.getLoseActor()
+        ival = Sequence(Func(self.notify.debug, 'before actorinterval sit-lose'), ActorInterval(diner, 'sit-lose'), Func(self.notify.debug, 'before deathCog.setHpr'), Func(deathCog.setHpr, diner.getHpr()), Func(self.notify.debug, 'before diner.hide'), Func(diner.hide), Func(self.notify.debug, 'before deathCog.reparentTo'), Func(deathCog.reparentTo, self.chairLocators[chairIndex]), Func(self.notify.debug, 'befor ActorInterval lose'), ActorInterval(deathCog, 'lose', duration=MovieUtil.COG_LOSE_DURATION), Func(self.notify.debug, 'before remove deathcog'), Func(removeDeathCog, diner, deathCog, name='remove-death-cog-%d-%d' % (chairIndex, self.index)), Func(self.notify.debug, 'diner.stash'), Func(diner.stash))
         spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
         deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
-        deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathSuit), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathSuit), SoundInterval(deathSound, volume=0.32, node=deathSuit))
+        deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathCog), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathCog), SoundInterval(deathSound, volume=0.32, node=deathCog))
         intervalName = 'dinerDie-%d-%d' % (self.index, chairIndex)
         deathIval = Parallel(ival, deathSoundTrack)
         deathIval.start()

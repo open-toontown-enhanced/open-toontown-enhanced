@@ -101,7 +101,7 @@ def __createFishingPoleMultiTrack(lure, dollar, dollarName):
             futurePos, futureHpr = battle.getActorPosHpr(cog)
             futurePos.setY(futurePos.getY() + MovieUtil.COG_EXTRA_REACH_DISTANCE)
             if cogName in MovieUtil.largeCogs:
-                moveTrack = lerpSuit(cog, 0.0, reachAnimDuration / 2.5, futurePos, battle, trapProp)
+                moveTrack = lerpCog(cog, 0.0, reachAnimDuration / 2.5, futurePos, battle, trapProp)
                 reachTrack = ActorInterval(cog, 'reach', duration=reachAnimDuration)
                 cogTrack.append(Parallel(moveTrack, reachTrack))
             else:
@@ -113,13 +113,13 @@ def __createFishingPoleMultiTrack(lure, dollar, dollarName):
                 cogTrack.append(Func(trapProp.wrtReparentTo, cog))
                 cog.battleTrapProp = trapProp
             cogTrack.append(Func(cog.loop, 'neutral'))
-            cogTrack.append(Func(battle.lureSuit, cog))
+            cogTrack.append(Func(battle.lureCog, cog))
             if hp > 0:
-                cogTrack.append(__createSuitDamageTrack(battle, cog, hp, lure, trapProp))
+                cogTrack.append(__createCogDamageTrack(battle, cog, hp, lure, trapProp))
             if revived != 0:
-                cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle))
+                cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle))
             if died != 0:
-                cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle))
+                cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle))
             tracks.append(cogTrack)
     else:
         tracks.append(Sequence(Wait(3.7), Func(MovieUtil.indicateMissed, cog)))
@@ -168,15 +168,15 @@ def __createMagnetMultiTrack(lure, magnet, pos, hpr, scale, isSmallMagnet = 1, n
                 cogTrack.append(ActorInterval(cog, 'landing', startTime=1.16, endTime=0.7))
                 cogTrack.append(ActorInterval(cog, 'landing', startTime=0.7, duration=1.3))
                 cogTrack.append(Func(cog.loop, 'neutral'))
-                cogTrack.append(Func(battle.lureSuit, cog))
+                cogTrack.append(Func(battle.lureCog, cog))
                 if hp > 0:
-                    cogTrack.append(__createSuitDamageTrack(battle, cog, hp, lure, trapProp))
+                    cogTrack.append(__createCogDamageTrack(battle, cog, hp, lure, trapProp))
                 if revived != 0:
-                    cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle, npcs))
                 elif died != 0:
-                    cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle, npcs))
                 tracks.append(cogTrack)
-                tracks.append(lerpSuit(cog, cogDelay + 0.55 + shakeTotalDuration, cogMoveDuration, reachPos, battle, trapProp))
+                tracks.append(lerpCog(cog, cogDelay + 0.55 + shakeTotalDuration, cogMoveDuration, reachPos, battle, trapProp))
         else:
             tracks.append(Sequence(Wait(3.7), Func(MovieUtil.indicateMissed, cog)))
 
@@ -224,15 +224,15 @@ def __createHypnoGogglesMultiTrack(lure, npcs = []):
                 cogTrack.append(ActorInterval(cog, 'hypnotized', duration=3.1))
                 cogTrack.append(Func(cog.setPos, battle, reachPos))
                 cogTrack.append(Func(cog.loop, 'neutral'))
-                cogTrack.append(Func(battle.lureSuit, cog))
+                cogTrack.append(Func(battle.lureCog, cog))
                 if hp > 0:
-                    cogTrack.append(__createSuitDamageTrack(battle, cog, hp, lure, trapProp))
+                    cogTrack.append(__createCogDamageTrack(battle, cog, hp, lure, trapProp))
                 if revived != 0:
-                    cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle, npcs))
                 elif died != 0:
-                    cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle, npcs))
                 tracks.append(cogTrack)
-                tracks.append(lerpSuit(cog, cogDelay + 1.7, 0.7, reachPos, battle, trapProp))
+                tracks.append(lerpCog(cog, cogDelay + 1.7, 0.7, reachPos, battle, trapProp))
         else:
             tracks.append(Sequence(Wait(2.3), Func(MovieUtil.indicateMissed, cog, 1.1)))
 
@@ -282,7 +282,7 @@ def __lureSlideshow(lure, npcs):
     return __createSlideshowMultiTrack(lure, npcs)
 
 
-def __createSuitDamageTrack(battle, cog, hp, lure, trapProp):
+def __createCogDamageTrack(battle, cog, hp, lure, trapProp):
     if trapProp == None or trapProp.isEmpty():
         return Func(cog.loop, 'neutral')
     trapProp.wrtReparentTo(battle)
@@ -389,15 +389,15 @@ def __createSuitDamageTrack(battle, cog, hp, lure, trapProp):
         notify.warning('unknown trapName: %s detected on cog: %s' % (trapName, cog))
     cog.battleTrapProp = trapProp
     result.append(Func(battle.removeTrap, cog, True))
-    result.append(Func(battle.unlureSuit, cog))
-    result.append(__createSuitResetPosTrack(cog, battle))
+    result.append(Func(battle.unlureCog, cog))
+    result.append(__createCogResetPosTrack(cog, battle))
     result.append(Func(cog.loop, 'neutral'))
     if trapName == 'traintrack':
         result.append(Func(MovieUtil.removeProp, trapProp))
     return result
 
 
-def __createSuitResetPosTrack(cog, battle):
+def __createCogResetPosTrack(cog, battle):
     resetPos, resetHpr = battle.getActorPosHpr(cog)
     moveDist = Vec3(cog.getPos(battle) - resetPos).length()
     moveDuration = 0.5
@@ -420,7 +420,7 @@ def getSplicedLerpAnimsTrack(object, animName, origDuration, newDuration, startT
     return track
 
 
-def lerpSuit(cog, delay, duration, reachPos, battle, trapProp):
+def lerpCog(cog, delay, duration, reachPos, battle, trapProp):
     track = Sequence()
     if trapProp:
         track.append(Func(safeWrtReparentTo, trapProp, battle))
@@ -428,7 +428,7 @@ def lerpSuit(cog, delay, duration, reachPos, battle, trapProp):
     track.append(LerpPosInterval(cog, duration, reachPos, other=battle))
     if trapProp:
         if trapProp.getName() == 'traintrack':
-            notify.debug('UBERLURE MovieLure.lerpSuit deliberately not parenting trainTrack to cog')
+            notify.debug('UBERLURE MovieLure.lerpCog deliberately not parenting trainTrack to cog')
         else:
             track.append(Func(safeWrtReparentTo, trapProp, cog))
         cog.battleTrapProp = trapProp
@@ -461,7 +461,7 @@ TRAIN_DURATION = TRAIN_TRAVEL_DISTANCE / TRAIN_SPEED
 TRAIN_MATERIALIZE_TIME = 3
 TOTAL_TRAIN_TIME = TRAIN_DURATION + TRAIN_MATERIALIZE_TIME
 
-def createSuitReactionToTrain(battle, cog, hp, lure, trapProp):
+def createCogReactionToTrain(battle, cog, hp, lure, trapProp):
     toon = lure['toon']
     retval = Sequence()
     cogPos, cogHpr = battle.getActorPosHpr(cog)
@@ -489,7 +489,7 @@ def createSuitReactionToTrain(battle, cog, hp, lure, trapProp):
 def createIncomingTrainInterval(battle, cog, hp, lure, trapProp):
     toon = lure['toon']
     retval = Parallel()
-    cogTrack = createSuitReactionToTrain(battle, cog, hp, lure, trapProp)
+    cogTrack = createCogReactionToTrain(battle, cog, hp, lure, trapProp)
     retval.append(cogTrack)
     if not trapProp.find('**/train_gag').isEmpty():
         return retval
@@ -601,15 +601,15 @@ def __createSlideshowMultiTrack(lure, npcs = []):
                 cogTrack.append(ActorInterval(cog, 'hypnotized', duration=3.1))
                 cogTrack.append(Func(cog.setPos, battle, reachPos))
                 cogTrack.append(Func(cog.loop, 'neutral'))
-                cogTrack.append(Func(battle.lureSuit, cog))
+                cogTrack.append(Func(battle.lureCog, cog))
                 if hp > 0:
-                    cogTrack.append(__createSuitDamageTrack(battle, cog, hp, lure, trapProp))
+                    cogTrack.append(__createCogDamageTrack(battle, cog, hp, lure, trapProp))
                 if revived != 0:
-                    cogTrack.append(MovieUtil.createSuitReviveTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogReviveTrack(cog, toon, battle, npcs))
                 elif died != 0:
-                    cogTrack.append(MovieUtil.createSuitDeathTrack(cog, toon, battle, npcs))
+                    cogTrack.append(MovieUtil.createCogDeathTrack(cog, toon, battle, npcs))
                 tracks.append(cogTrack)
-                tracks.append(lerpSuit(cog, cogDelay + 1.7, 0.7, reachPos, battle, trapProp))
+                tracks.append(lerpCog(cog, cogDelay + 1.7, 0.7, reachPos, battle, trapProp))
         else:
             tracks.append(Sequence(Wait(2.3), Func(MovieUtil.indicateMissed, cog, 1.1)))
 

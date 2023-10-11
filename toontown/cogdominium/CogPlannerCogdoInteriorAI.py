@@ -6,5 +6,5 @@ class CogPlannerCogdoInteriorAI(CogPlannerInteriorAI):
         self._cogdoLayout = cogdoLayout
         CogPlannerInteriorAI.__init__(self, self._cogdoLayout.getNumGameFloors(), bldgLevel, bldgTrack, zone, respectInvasions = 0)
 
-    def _genSuitInfos(self, numFloors, bldgLevel, bldgTrack):
-        CogPlannerInteriorAI._genSuitInfos(self, self._cogdoLayout.getNumFloors(), bldgLevel, bldgTrack)
+    def _genCogInfos(self, numFloors, bldgLevel, bldgTrack):
+        CogPlannerInteriorAI._genCogInfos(self, self._cogdoLayout.getNumFloors(), bldgLevel, bldgTrack)

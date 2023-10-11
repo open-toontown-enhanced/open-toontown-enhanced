@@ -5,16 +5,16 @@ from direct.showbase.RandomNumGen import RandomNumGen
 from panda3d.core import Point3
 from panda3d.core import CollisionSphere, CollisionNode
 from panda3d.direct import WaitInterval
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from . import MazeGameGlobals
 import functools
 
-class MazeSuit(DirectObject):
-    COLL_SPHERE_NAME = 'MazeSuitSphere'
-    COLLISION_EVENT_NAME = 'MazeSuitCollision'
-    MOVE_IVAL_NAME = 'moveMazeSuit'
+class MazeCog(DirectObject):
+    COLL_SPHERE_NAME = 'MazeCogSphere'
+    COLLISION_EVENT_NAME = 'MazeCogCollision'
+    MOVE_IVAL_NAME = 'moveMazeCog'
     DIR_UP = 0
     DIR_DOWN = 1
     DIR_LEFT = 2
@@ -41,9 +41,9 @@ class MazeSuit(DirectObject):
         self._walkSameDirectionProb = walkSameDirectionProb
         self._walkTurnAroundProb = walkTurnAroundProb
         self._walkAnimName = walkAnimName or 'walk'
-        self.cog = Suit.Suit()
+        self.cog = Cog.Cog()
         d = CogDNA.CogDNA()
-        d.newSuit(CogDNAName)
+        d.newCog(CogDNAName)
         self.cog.setDNA(d)
         if startTile is None:
             defaultStartPos = MazeGameGlobals.COG_START_POSITIONS[self.serialNum]
@@ -218,7 +218,7 @@ class MazeSuit(DirectObject):
                     self.fromH = 360
                 self.fromHpr.set(self.fromH, 0, 0)
                 self.toHpr.set(toH, 0, 0)
-                turnIval = LerpHprInterval(self.cog, self.turnDuration, self.toHpr, startHpr=self.fromHpr, name=self.uniqueName('turnMazeSuit'))
+                turnIval = LerpHprInterval(self.cog, self.turnDuration, self.toHpr, startHpr=self.fromHpr, name=self.uniqueName('turnMazeCog'))
                 self.moveIval = Parallel(self.moveIval, turnIval, name=self.uniqueName(self.MOVE_IVAL_NAME))
             else:
                 self.cog.setH(self.directionHs[self.direction])

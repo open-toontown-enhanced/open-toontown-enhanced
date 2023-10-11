@@ -5,7 +5,7 @@ from direct.showbase import PythonUtil
 from direct.interval.IntervalGlobal import *
 from toontown.minigame import ToonBlitzGlobals
 from toontown.toonbase import ToontownGlobals
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.cog import CogDNA
 from toontown.battle.BattleProps import *
 from toontown.battle import MovieUtil
@@ -26,7 +26,7 @@ class TwoDEnemy(DirectObject):
         self.animTrack = None
         self.shotTrack = None
         self.deathTrack = None
-        self.deathSuit = None
+        self.deathCog = None
         self.cogSound = None
         self.deleteMeCallback = None
         self.isMovingUpDown = False
@@ -59,10 +59,10 @@ class TwoDEnemy(DirectObject):
         if self.deathTrack != None:
             self.deathTrack.finish()
             self.deathTrack = None
-        if self.deathSuit:
-            self.deathSuit.detachNode()
+        if self.deathCog:
+            self.deathCog.detachNode()
             self.cog.cleanupLoseActor()
-            self.deathSuit = None
+            self.deathCog = None
         if self.moveIval:
             self.moveIval.pause()
             del self.moveIval
@@ -77,9 +77,9 @@ class TwoDEnemy(DirectObject):
 
     def setupEnemy(self, cogAttribs):
         cogType = cogAttribs[0]
-        self.cog = Suit.Suit()
+        self.cog = Cog.Cog()
         CogDNA = CogDNA.CogDNA()
-        CogDNA.newSuit(cogType)
+        CogDNA.newCog(cogType)
         self.cog.setDNA(CogDNA)
         self.cog.pose('walk', 0)
         self.cogName = 'Enemy-%s' % self.index
@@ -183,7 +183,7 @@ class TwoDEnemy(DirectObject):
         startAngle = self.cog.getH()
         startAngle = PythonUtil.fitSrcAngle2Dest(startAngle, angle)
         dur = 0.1 * abs(startAngle - angle) / 90
-        self.cogTurnIval = LerpHprInterval(self.cog, dur, Point3(angle, 0, 0), startHpr=Point3(startAngle, 0, 0), name='SuitLerpHpr')
+        self.cogTurnIval = LerpHprInterval(self.cog, dur, Point3(angle, 0, 0), startHpr=Point3(startAngle, 0, 0), name='CogLerpHpr')
         self.cogTurnIval.start()
 
     def blinkColor(self, color, duration):
@@ -214,19 +214,19 @@ class TwoDEnemy(DirectObject):
 
     def doDeathTrack(self):
 
-        def removeDeathSuit(cog, deathSuit):
-            if not deathSuit.isEmpty():
-                deathSuit.detachNode()
+        def removeDeathCog(cog, deathCog):
+            if not deathCog.isEmpty():
+                deathCog.detachNode()
                 cog.cleanupLoseActor()
 
         if self.cogSound:
             self.cogSound.stop()
-        self.deathSuit = self.cog.getLoseActor()
-        self.deathSuit.reparentTo(self.enemyMgr.enemiesNP)
-        self.deathSuit.setPos(render, self.cog.getPos(render))
-        self.deathSuit.setHpr(render, self.cog.getHpr(render))
+        self.deathCog = self.cog.getLoseActor()
+        self.deathCog.reparentTo(self.enemyMgr.enemiesNP)
+        self.deathCog.setPos(render, self.cog.getPos(render))
+        self.deathCog.setHpr(render, self.cog.getHpr(render))
         self.cog.hide()
-        self.collNodePath.reparentTo(self.deathSuit)
+        self.collNodePath.reparentTo(self.deathCog)
         treasureSpawnPoint = Point3(self.cog.getX(), self.cog.getY(), self.cog.getZ() + self.cog.height / 2.0)
         gearPoint = Point3(0, 0, self.cog.height / 2.0 + 2.0)
         spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
@@ -245,11 +245,11 @@ class TwoDEnemy(DirectObject):
         bigGearExplosion.setDepthWrite(False)
         if self.isMovingLeftRight:
             self.enterPause()
-            cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.cog, self.deathSuit, name='remove-death-cog'))
-            explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
-            soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
-            gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
-            gears2MTrack = Track((0.0, explosionTrack), (0.7, ParticleInterval(singleGear, self.deathSuit, worldRelative=0, duration=5.7, cleanup=True)), (5.2, ParticleInterval(smallGearExplosion, self.deathSuit, worldRelative=0, duration=1.2, cleanup=True)), (5.4, ParticleInterval(bigGearExplosion, self.deathSuit, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
+            cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathCog, 'lose', startFrame=80, endFrame=140), Func(removeDeathCog, self.cog, self.deathCog, name='remove-death-cog'))
+            explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathCog, explosionPoint=gearPoint))
+            soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathCog), SoundInterval(deathSound, volume=0.32, node=self.deathCog))
+            gears1Track = Sequence(ParticleInterval(smallGears, self.deathCog, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
+            gears2MTrack = Track((0.0, explosionTrack), (0.7, ParticleInterval(singleGear, self.deathCog, worldRelative=0, duration=5.7, cleanup=True)), (5.2, ParticleInterval(smallGearExplosion, self.deathCog, worldRelative=0, duration=1.2, cleanup=True)), (5.4, ParticleInterval(bigGearExplosion, self.deathCog, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
         elif self.isMovingUpDown:
 
             def getFinalPos():
@@ -257,15 +257,15 @@ class TwoDEnemy(DirectObject):
                     direction = 1.0
                 else:
                     direction = -1.0
-                pos = Point3(self.deathSuit.getX(), self.deathSuit.getY(), self.deathSuit.getZ() + 2.0 * direction)
+                pos = Point3(self.deathCog.getX(), self.deathCog.getY(), self.deathCog.getZ() + 2.0 * direction)
                 return pos
 
-            deathMoveIval = LerpPosInterval(self.deathSuit, 1.5, pos=getFinalPos(), name='%s-deathSuitMove' % self.cogName, blendType='easeInOut', fluid=1)
-            cogTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathSuit, self.cog, self.deathSuit, name='remove-death-cog'))
-            explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
-            soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
-            gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
-            gears2MTrack = Track((0.0, explosionTrack), (0.0, ParticleInterval(singleGear, self.deathSuit, worldRelative=0, duration=5.7, cleanup=True)), (2.7, ParticleInterval(smallGearExplosion, self.deathSuit, worldRelative=0, duration=1.2, cleanup=True)), (2.9, ParticleInterval(bigGearExplosion, self.deathSuit, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
+            deathMoveIval = LerpPosInterval(self.deathCog, 1.5, pos=getFinalPos(), name='%s-deathCogMove' % self.cogName, blendType='easeInOut', fluid=1)
+            cogTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathCog, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathCog, self.cog, self.deathCog, name='remove-death-cog'))
+            explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathCog, explosionPoint=gearPoint))
+            soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathCog), SoundInterval(deathSound, volume=0.32, node=self.deathCog))
+            gears1Track = Sequence(ParticleInterval(smallGears, self.deathCog, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
+            gears2MTrack = Track((0.0, explosionTrack), (0.0, ParticleInterval(singleGear, self.deathCog, worldRelative=0, duration=5.7, cleanup=True)), (2.7, ParticleInterval(smallGearExplosion, self.deathCog, worldRelative=0, duration=1.2, cleanup=True)), (2.9, ParticleInterval(bigGearExplosion, self.deathCog, worldRelative=0, duration=1.0, cleanup=True)), name='gears2MTrack')
 
         def removeParticle(particle):
             if particle and hasattr(particle, 'renderParent'):

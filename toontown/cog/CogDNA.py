@@ -142,11 +142,11 @@ def getCogType(name):
     return index % cogsPerDept + 1
 
 
-def getRandomSuitType(level, rng = random):
+def getRandomCogType(level, rng = random):
     return random.randint(max(level - 4, 1), min(level, 8))
 
 
-def getRandomSuitByDept(dept):
+def getRandomCogByDept(dept):
     deptNumber = cogDepts.index(dept)
     return cogHeadTypes[cogsPerDept * deptNumber + random.randint(0, 7)]
 
@@ -158,7 +158,7 @@ class CogDNA(AvatarDNA.AvatarDNA):
             self.makeFromNetString(str)
         elif type != None:
             if type == 's':
-                self.newSuit()
+                self.newCog()
         else:
             self.type = 'u'
         return
@@ -206,15 +206,15 @@ class CogDNA(AvatarDNA.AvatarDNA):
         self.type = 'g'
         self.name = goonTypes[0]
 
-    def __defaultSuit(self):
+    def __defaultCog(self):
         self.type = 's'
         self.name = 'downsizer'
         self.dept = getCogDept(self.name)
         self.body = getCogBodyType(self.name)
 
-    def newSuit(self, name = None):
+    def newCog(self, name = None):
         if name == None:
-            self.__defaultSuit()
+            self.__defaultCog()
         else:
             self.type = 's'
             self.name = name
@@ -226,7 +226,7 @@ class CogDNA(AvatarDNA.AvatarDNA):
         self.type = 'b'
         self.dept = dept
 
-    def newSuitRandom(self, level = None, dept = None):
+    def newCogRandom(self, level = None, dept = None):
         self.type = 's'
         if level == None:
             level = random.choice(list(range(1, len(cogsPerLevel))))

@@ -7,7 +7,7 @@ from toontown.toonbase import ToontownBattleGlobals
 from . import DistributedBattleBase
 from direct.directnotify import DirectNotifyGlobal
 from . import MovieUtil
-from toontown.cog import Suit
+from toontown.cog import Cog
 from direct.actor import Actor
 from toontown.toon import TTEmote
 from otp.avatar import Emote

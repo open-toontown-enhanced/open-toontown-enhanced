@@ -8,7 +8,7 @@ from direct.fsm import ClassicFSM, State
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import TTLocalizer
 from toontown.toon import ToonTeleportPanel
-from toontown.cog import Suit
+from toontown.cog import Cog
 from toontown.pets import Pet
 from otp.otpbase import OTPLocalizer
 from otp.otpbase import OTPGlobals
@@ -313,7 +313,7 @@ class FriendInviter(DirectFrame):
             return
         else:
             avatar = base.cr.doId2do.get(self.avId)
-        if isinstance(avatar, Suit.Suit):
+        if isinstance(avatar, Cog.Cog):
             self.fsm.request('askingCog')
             return
         if isinstance(avatar, Pet.Pet):

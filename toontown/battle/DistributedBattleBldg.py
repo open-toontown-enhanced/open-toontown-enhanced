@@ -11,7 +11,7 @@ from otp.avatar import Emote
 from toontown.toonbase import TTLocalizer
 from . import MovieUtil
 from direct.fsm import State
-from toontown.cog import Suit
+from toontown.cog import Cog
 from . import CogBattleGlobals
 import random
 from toontown.toonbase import ToontownGlobals

@@ -757,7 +757,7 @@ class DistributedLawbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FSM
             cog = DistributedLawbotBossCogAI.DistributedLawbotBossCogAI(self.air, None)
             cog.dna = CogDNA.CogDNA()
             lawCog = random.choice(lawCogChoices)
-            cog.dna.newSuit(lawCog)
+            cog.dna.newCog(lawCog)
             cog.setPosHpr(*ToontownGlobals.LawbotBossLawyerPosHprs[i])
             cog.setBoss(self)
             cog.generateWithRequired(self.zoneId)
