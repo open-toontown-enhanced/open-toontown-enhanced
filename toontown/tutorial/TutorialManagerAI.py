@@ -145,7 +145,7 @@ class TutorialManagerAI(DistributedObjectAI.DistributedObjectAI):
             building.battleOverCallback()
         
         # Create a suit planner
-        suitPlanner = SuitPlannerTutorialAI.SuitPlannerTutorialAI(
+        cogPlanner = SuitPlannerTutorialAI.SuitPlannerTutorialAI(
             self.air,
             streetZone,
             battleOverCallback)
@@ -168,7 +168,7 @@ class TutorialManagerAI(DistributedObjectAI.DistributedObjectAI):
                   "hqZone" : hqZone,
                   "building" : building,
                   "hqBuilding" : hqBuilding,
-                  "suitPlanner" : suitPlanner,
+                  "cogPlanner" : cogPlanner,
                   "blockerNPC" : blockerNPC,
                   "blackCatMgr" : blackCatMgr,
                   }
@@ -190,7 +190,7 @@ class TutorialManagerAI(DistributedObjectAI.DistributedObjectAI):
             self.air.deallocateZone(zoneDict["streetZone"])
             self.air.deallocateZone(zoneDict["shopZone"])
             self.air.deallocateZone(zoneDict["hqZone"])
-            zoneDict["suitPlanner"].cleanup()
+            zoneDict["cogPlanner"].cleanup()
             del self.playerDict[avId]
         else:
             self.notify.warning("Tried to deallocate zones for " +

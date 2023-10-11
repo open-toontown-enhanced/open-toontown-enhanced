@@ -2,7 +2,7 @@ from otp.ai.AIBase import *
 from .BattleBase import *
 from .BattleCalculatorAI import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from .SuitBattleGlobals import *
+from .CogBattleGlobals import *
 from . import DistributedBattleBaseAI
 from direct.task import Task
 from direct.directnotify import DirectNotifyGlobal
@@ -11,13 +11,13 @@ import random
 class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, finishCallback=None, maxSuits=4, tutorialFlag=0, levelFlag=0, interactivePropTrackBonus=-1):
-        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxSuits=maxSuits, tutorialFlag=tutorialFlag, interactivePropTrackBonus=interactivePropTrackBonus)
+    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, finishCallback=None, maxCogs=4, tutorialFlag=0, levelFlag=0, interactivePropTrackBonus=-1):
+        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxCogs=maxCogs, tutorialFlag=tutorialFlag, interactivePropTrackBonus=interactivePropTrackBonus)
         self.battleMgr = battleMgr
         self.pos = pos
         self.initialSuitPos = suit.getConfrontPosHpr()[0]
         self.initialToonPos = suit.getConfrontPosHpr()[0]
-        self.addSuit(suit)
+        self.addCog(suit)
         self.avId = toonId
         if levelFlag == 0:
             self.addToon(toonId)
@@ -55,7 +55,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.notify.debug('enterFaceOff()')
         self.joinableFsm.request('Joinable')
         self.runableFsm.request('Unrunable')
-        self.suits[0].releaseControl()
+        self.cogs[0].releaseControl()
         timeForFaceoff = self.calcFaceoffTime(self.pos, self.initialSuitPos) + FACEOFF_TAUNT_T + SERVER_BUFFER_TIME
         if self.interactivePropTrackBonus >= 0:
             timeForFaceoff += FACEOFF_LOOK_AT_PROP_T
@@ -73,7 +73,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
 
     def handleFaceOffDone(self):
         self.timer.stop()
-        self.activeSuits.append(self.suits[0])
+        self.activeCogs.append(self.cogs[0])
         if len(self.toons) == 0:
             self.b_setState('Resume')
         else:
@@ -83,18 +83,18 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.d_setMembers()
         self.b_setState('WaitForInput')
 
-    def localMovieDone(self, needUpdate, deadToons, deadSuits, lastActiveSuitDied):
+    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveSuitDied):
         if len(self.toons) == 0:
             self.d_setMembers()
             self.b_setState('Resume')
         else:
-            if len(self.suits) == 0:
+            if len(self.cogs) == 0:
                 for toonId in self.activeToons:
                     toon = self.getToon(toonId)
                     if toon:
-                        self.toonItems[toonId] = self.air.questManager.recoverItems(toon, self.suitsKilled, self.zoneId)
+                        self.toonItems[toonId] = self.air.questManager.recoverItems(toon, self.cogsKilled, self.zoneId)
                         if toonId in self.helpfulToons:
-                            self.toonMerits[toonId] = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.zoneId)
+                            self.toonMerits[toonId] = self.air.promotionMgr.recoverMerits(toon, self.cogsKilled, self.zoneId)
                         else:
                             self.notify.debug('toon %d not helpful, skipping merits' % toonId)
 
@@ -104,7 +104,7 @@ class DistributedBattleAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             else:
                 if needUpdate == 1:
                     self.d_setMembers()
-                    if len(deadSuits) > 0 and lastActiveSuitDied == 0 or len(deadToons) > 0:
+                    if len(deadCogs) > 0 and lastActiveSuitDied == 0 or len(deadToons) > 0:
                         self.needAdjust = 1
                 self.setState('WaitForJoin')
 

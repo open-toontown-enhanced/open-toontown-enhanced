@@ -1,6 +1,6 @@
 from . import TownLoader
 from . import DDStreet
-from toontown.suit import Suit
+from toontown.cog import Suit
 
 class DDTownLoader(TownLoader.TownLoader):
 
@@ -13,12 +13,12 @@ class DDTownLoader(TownLoader.TownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadSuits(2)
+        Suit.loadCogs(2)
         dnaFile = 'phase_6/dna/donalds_dock_' + str(self.canonicalBranchZone) + '.dna'
         self.createHood(dnaFile)
 
     def unload(self):
-        Suit.unloadSuits(2)
+        Suit.unloadCogs(2)
         TownLoader.TownLoader.unload(self)
 
     def enter(self, requestStatus):

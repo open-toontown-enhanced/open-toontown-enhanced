@@ -3,7 +3,7 @@ from direct.distributed.ClockDelta import globalClockDelta
 from direct.distributed.DistributedObject import DistributedObject
 from direct.interval import IntervalGlobal as IG
 from toontown.cogdominium import CogdoCraneGameConsts as GameConsts
-from toontown.suit.Suit import Suit
+from toontown.cog.Suit import Suit
 
 class DistCogdoCraneCog(Suit, DistributedObject):
 

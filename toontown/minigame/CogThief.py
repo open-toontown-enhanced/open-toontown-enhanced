@@ -3,8 +3,8 @@ from panda3d.core import CollisionSphere, CollisionNode, Point3, CollisionTube, 
 from direct.showbase.DirectObject import DirectObject
 from direct.distributed.ClockDelta import globalClockDelta
 from direct.interval.IntervalGlobal import Parallel, SoundInterval, Sequence, Func, LerpScaleInterval
-from toontown.suit import Suit
-from toontown.suit import SuitDNA
+from toontown.cog import Suit
+from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.minigame import CogThiefGameGlobals
 from toontown.battle.BattleProps import globalPropPool
@@ -27,7 +27,7 @@ class CogThief(DirectObject):
         self.game = game
         self.cogSpeed = cogSpeed
         suit = Suit.Suit()
-        d = SuitDNA.SuitDNA()
+        d = CogDNA.CogDNA()
         d.newSuit(suitType)
         suit.setDNA(d)
         suit.pose('walk', 0)

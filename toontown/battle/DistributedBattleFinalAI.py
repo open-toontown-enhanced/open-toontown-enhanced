@@ -2,7 +2,7 @@ from otp.ai.AIBase import *
 from .BattleBase import *
 from .BattleCalculatorAI import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from .SuitBattleGlobals import *
+from .CogBattleGlobals import *
 from . import DistributedBattleBaseAI
 from direct.task import Task
 from direct.directnotify import DirectNotifyGlobal
@@ -42,35 +42,35 @@ class DistributedBattleFinalAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
     def getBattleSide(self):
         return self.battleSide
 
-    def startBattle(self, toonIds, suits):
+    def startBattle(self, toonIds, cogs):
         self.joinableFsm.request('Joinable')
         for toonId in toonIds:
             if self.addToon(toonId):
                 self.activeToons.append(toonId)
 
         self.d_setMembers()
-        for suit in suits:
+        for suit in cogs:
             joined = self.suitRequestJoin(suit)
 
         self.d_setMembers()
         self.b_setState('ReservesJoining')
 
-    def localMovieDone(self, needUpdate, deadToons, deadSuits, lastActiveSuitDied):
+    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveSuitDied):
         self.timer.stop()
         self.resumeNeedUpdate = needUpdate
         self.resumeDeadToons = deadToons
-        self.resumeDeadSuits = deadSuits
+        self.resumeDeadCogs = deadCogs
         self.resumeLastActiveSuitDied = lastActiveSuitDied
         if len(self.toons) == 0:
             self.d_setMembers()
             self.b_setState('Resume')
         else:
             totalHp = 0
-            for suit in self.suits:
+            for suit in self.cogs:
                 if suit.currHP > 0:
                     totalHp += suit.currHP
 
-            self.roundCallback(self.activeToons, totalHp, deadSuits)
+            self.roundCallback(self.activeToons, totalHp, deadCogs)
 
     def resume(self, joinedReserves):
         if len(joinedReserves) != 0:
@@ -80,12 +80,12 @@ class DistributedBattleFinalAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             self.d_setMembers()
             self.b_setState('ReservesJoining')
         else:
-            if len(self.suits) == 0:
+            if len(self.cogs) == 0:
                 battleMultiplier = getBossBattleCreditMultiplier(self.battleNumber)
                 for toonId in self.activeToons:
                     toon = self.getToon(toonId)
                     if toon:
-                        recovered, notRecovered = self.air.questManager.recoverItems(toon, self.suitsKilledThisBattle, self.zoneId)
+                        recovered, notRecovered = self.air.questManager.recoverItems(toon, self.cogsKilledThisBattle, self.zoneId)
                         self.toonItems[toonId][0].extend(recovered)
                         self.toonItems[toonId][1].extend(notRecovered)
 
@@ -95,12 +95,12 @@ class DistributedBattleFinalAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
             else:
                 if self.resumeNeedUpdate == 1:
                     self.d_setMembers()
-                    if len(self.resumeDeadSuits) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
+                    if len(self.resumeDeadCogs) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
                         self.needAdjust = 1
                 self.setState('WaitForJoin')
         self.resumeNeedUpdate = 0
         self.resumeDeadToons = []
-        self.resumeDeadSuits = []
+        self.resumeDeadCogs = []
         self.resumeLastActiveSuitDied = 0
 
     def enterReservesJoining(self, ts=0):

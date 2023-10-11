@@ -60,7 +60,7 @@ class HQBuildingAI:
     def isSuitBlock(self):
         return 0
 
-    def isSuitBuilding(self):
+    def isCogBuilding(self):
         return 0
 
     def isCogdo(self):

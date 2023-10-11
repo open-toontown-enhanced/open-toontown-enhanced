@@ -1,7 +1,7 @@
 from otp.otpbase import OTPGlobals
 from toontown.toonbase import ToontownBattleGlobals
 from toontown.toonbase import ToontownGlobals
-from toontown.battle import SuitBattleGlobals
+from toontown.battle import CogBattleGlobals
 from toontown.coghq import CogDisguiseGlobals
 import random
 from toontown.toon import NPCToons
@@ -204,7 +204,7 @@ class Quest:
         self.check(1, 'invalid newbie level: %s' % level)
 
     def checkCogType(self, type):
-        types = [Any] + list(SuitBattleGlobals.SuitAttributes.keys())
+        types = [Any] + list(CogBattleGlobals.CogAttributes.keys())
         self.check(type in types, 'invalid cog type: %s' % type)
 
     def checkCogTrack(self, track):
@@ -283,7 +283,7 @@ class Quest:
         holderTypes = ['type', 'level', 'track']
         self.check(holderType in holderTypes, 'invalid recovery item holderType: %s' % holderType)
         if holderType == 'type':
-            holders = [Any, AnyFish] + list(SuitBattleGlobals.SuitAttributes.keys())
+            holders = [Any, AnyFish] + list(CogBattleGlobals.CogAttributes.keys())
             self.check(holder in holders, 'invalid recovery item holder: %s for holderType: %s' % (holder, holderType))
         elif holderType == 'level':
             pass
@@ -487,11 +487,11 @@ class CogQuest(LocationBasedQuest):
             if cogType == Any:
                 return TTLocalizer.Cog
             else:
-                return SuitBattleGlobals.SuitAttributes[cogType]['singularname']
+                return CogBattleGlobals.CogAttributes[cogType]['singularname']
         elif cogType == Any:
             return TTLocalizer.Cogs
         else:
-            return SuitBattleGlobals.SuitAttributes[cogType]['pluralname']
+            return CogBattleGlobals.CogAttributes[cogType]['pluralname']
 
     def getObjectiveStrings(self):
         cogName = self.getCogNameString()
@@ -1612,7 +1612,7 @@ class RecoverItemQuest(LocationBasedQuest):
         elif holder == AnyFish:
             holderName = TTLocalizer.AFish
         elif holderType == 'type':
-            holderName = SuitBattleGlobals.SuitAttributes[holder]['pluralname']
+            holderName = CogBattleGlobals.CogAttributes[holder]['pluralname']
         elif holderType == 'level':
             holderName = TTLocalizer.QuestsRecoverItemQuestHolderString % {'level': TTLocalizer.Level,
              'holder': holder,
@@ -1671,7 +1671,7 @@ class RecoverItemQuest(LocationBasedQuest):
         elif holder == AnyFish:
             holderName = TTLocalizer.TheFish
         elif holderType == 'type':
-            holderName = SuitBattleGlobals.SuitAttributes[holder]['pluralname']
+            holderName = CogBattleGlobals.CogAttributes[holder]['pluralname']
         elif holderType == 'level':
             holderName = TTLocalizer.QuestsRecoverItemQuestHolderString % {'level': TTLocalizer.Level,
              'holder': holder,

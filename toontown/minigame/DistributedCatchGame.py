@@ -10,7 +10,7 @@ from toontown.toonbase import TTLocalizer
 from . import CatchGameGlobals
 from direct.task.Task import Task
 from toontown.toon import Toon
-from toontown.suit import Suit
+from toontown.cog import Suit
 from . import MinigameAvatarScorePanel
 from toontown.toonbase import ToontownTimer
 from toontown.toonbase import ToontownGlobals
@@ -21,7 +21,7 @@ from direct.distributed import DistributedSmoothNode
 from direct.showbase.RandomNumGen import RandomNumGen
 from . import MinigameGlobals
 from toontown.toon import ToonDNA
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from .CatchGameGlobals import DropObjectTypes
 from .CatchGameGlobals import Name2DropObjectType
 from .DropPlacer import *
@@ -106,19 +106,19 @@ class DistributedCatchGame(DistributedMinigame):
         toonSD = CatchGameToonSD.CatchGameToonSD(avId, self)
         self.toonSDs[avId] = toonSD
         toonSD.load()
-        if self.WantSuits:
+        if self.WantCogs:
             suitTypes = ['flunky',
              'telemarketer',
              'penny_pincher',
              'double_talker']
-            self.suits = []
+            self.cogs = []
             for type in suitTypes:
                 suit = Suit.Suit()
-                d = SuitDNA.SuitDNA()
+                d = CogDNA.CogDNA()
                 d.newSuit(type)
                 suit.setDNA(d)
                 suit.pose('walk', 0)
-                self.suits.append(suit)
+                self.cogs.append(suit)
 
         self.__textGen = TextNode('ringGame')
         self.__textGen.setFont(ToontownGlobals.getSignFont())
@@ -138,11 +138,11 @@ class DistributedCatchGame(DistributedMinigame):
             toonSD.unload()
 
         del self.toonSDs
-        for suit in self.suits:
+        for suit in self.cogs:
             suit.reparentTo(hidden)
             suit.delete()
 
-        del self.suits
+        del self.cogs
         self.ground.removeNode()
         del self.ground
         self.dropShadow.removeNode()
@@ -238,7 +238,7 @@ class DistributedCatchGame(DistributedMinigame):
         self.PredictiveSmoothing = 1
         self.UseGravity = 1
         self.TrickShadows = 1
-        self.WantSuits = 1
+        self.WantCogs = 1
         self.FirstDropDelay = 0.5
         self.FasterDropDelay = int(2.0 / 3 * CatchGameGlobals.GameDuration)
         self.notify.debug('will start dropping fast after %s seconds' % self.FasterDropDelay)
@@ -464,9 +464,9 @@ class DistributedCatchGame(DistributedMinigame):
     def enterPlay(self):
         self.notify.debug('enterPlay')
         self.orthoWalk.start()
-        for suit in self.suits:
+        for suit in self.cogs:
             suitCollSphere = CollisionSphere(0, 0, 0, 1.0)
-            suit.collSphereName = 'suitCollSphere%s' % self.suits.index(suit)
+            suit.collSphereName = 'suitCollSphere%s' % self.cogs.index(suit)
             suitCollSphere.setTangible(0)
             suitCollNode = CollisionNode(self.uniqueName(suit.collSphereName))
             suitCollNode.setIntoCollideMask(ToontownGlobals.WallBitmask)
@@ -496,7 +496,7 @@ class DistributedCatchGame(DistributedMinigame):
         self.numItemsDropped = 0
         self.scheduleDrops()
         self.startDropTask()
-        if self.WantSuits:
+        if self.WantCogs:
             self.startSuitWalkTask()
         self.timer = ToontownTimer.ToontownTimer()
         self.timer.posInTopRightCorner()
@@ -516,7 +516,7 @@ class DistributedCatchGame(DistributedMinigame):
         self.timer.destroy()
         del self.timer
         self.music.stop()
-        for suit in self.suits:
+        for suit in self.cogs:
             self.ignore(self.uniqueName('enter' + suit.collSphereName))
             suit.collNodePath.removeNode()
 
@@ -751,7 +751,7 @@ class DistributedCatchGame(DistributedMinigame):
             stopPos = Point3(self.StageHalfWidth * m, pickY(), 0)
             if rng.choice([0, 1]):
                 startPos, stopPos = stopPos, startPos
-            walkIval.append(self.getSuitWalkIval(startPos, stopPos, rng))
+            walkIval.append(self.getCogWalkIval(startPos, stopPos, rng))
             ival.append(walkIval)
 
         ival.start()
@@ -761,16 +761,16 @@ class DistributedCatchGame(DistributedMinigame):
         self.suitWalkIval.finish()
         del self.suitWalkIval
 
-    def getSuitWalkIval(self, startPos, stopPos, rng):
+    def getCogWalkIval(self, startPos, stopPos, rng):
         data = {}
         lerpNP = render.attachNewNode('catchGameSuitParent')
 
         def setup(self = self, startPos = startPos, stopPos = stopPos, data = data, lerpNP = lerpNP, rng = rng):
-            if len(self.suits) == 0:
+            if len(self.cogs) == 0:
                 return
-            suit = rng.choice(self.suits)
+            suit = rng.choice(self.cogs)
             data['suit'] = suit
-            self.suits.remove(suit)
+            self.cogs.remove(suit)
             suit.reparentTo(lerpNP)
             suit.loop('walk')
             suit.setPlayRate(self.SuitSpeed / ToontownGlobals.SuitWalkSpeed, 'walk')
@@ -782,7 +782,7 @@ class DistributedCatchGame(DistributedMinigame):
             if 'suit' in data:
                 suit = data['suit']
                 suit.reparentTo(hidden)
-                self.suits.append(suit)
+                self.cogs.append(suit)
             lerpNP.removeNode()
 
         distance = Vec3(stopPos - startPos).length()

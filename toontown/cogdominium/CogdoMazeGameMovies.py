@@ -3,7 +3,7 @@ from direct.showbase.RandomNumGen import RandomNumGen
 from direct.interval.MetaInterval import Sequence, Parallel
 from direct.interval.FunctionInterval import Func, Wait
 from toontown.toonbase import TTLocalizer
-from toontown.suit import Suit, SuitDNA
+from toontown.cog import Suit, CogDNA
 from toontown.toon import Toon, ToonHead, ToonDNA
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoMazeGameGlobals as Globals
@@ -18,7 +18,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self._rng = RandomNumGen(rng)
         self._camTarget = None
         self._state = 0
-        self._suits = []
+        self._cogs = []
         return
 
     def _getRandomLine(self, lineList):
@@ -39,7 +39,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
 
     def makeSuit(self, suitType):
         suit = Suit.Suit()
-        dna = SuitDNA.SuitDNA()
+        dna = CogDNA.CogDNA()
         dna.newSuit(suitType)
         suit.setStyle(dna)
         suit.isDisguised = 1
@@ -64,7 +64,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self.toonHead.reparentTo(hidden)
         self.toonHead.startBlink()
         self.cogHead = Suit.Suit()
-        self.cogDNA = SuitDNA.SuitDNA()
+        self.cogDNA = CogDNA.CogDNA()
         self.cogDNA.newSuit('mover_and_shaker')
         self.cogHead.setDNA(self.cogDNA)
         self.cogHead.getGeomNode().setDepthWrite(1)
@@ -80,7 +80,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self._toonDialogueSfx = audioMgr.createSfx('toonDialogue')
         suitData = Globals.SuitData[Globals.SuitTypes.Boss]
         bossSuit = Suit.Suit()
-        d = SuitDNA.SuitDNA()
+        d = CogDNA.CogDNA()
         d.newSuit(suitData['dnaName'])
         bossSuit.setDNA(d)
         bossSuit.setScale(suitData['scale'])
@@ -88,7 +88,7 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         bossSuit.reparentTo(render)
         bossSuit.setPos(self._exit, -5, -5, 0)
         bossSuit.lookAt(self._exit)
-        self._suits.append(bossSuit)
+        self._cogs.append(bossSuit)
         self._camHelperNode = NodePath('CamHelperNode')
         self._camHelperNode.reparentTo(render)
         dialogue = TTLocalizer.CogdoMazeIntroMovieDialogue
@@ -152,12 +152,12 @@ class CogdoMazeGameIntro(CogdoGameMovie):
         self._camTarget = None
         self._camHelperNode.removeNode()
         del self._camHelperNode
-        for suit in self._suits:
+        for suit in self._cogs:
             suit.cleanup()
             suit.removeNode()
             suit.delete()
 
-        self._suits = []
+        self._cogs = []
         CogdoGameMovie.unload(self)
         del self._cogDialogueSfx
         del self._toonDialogueSfx

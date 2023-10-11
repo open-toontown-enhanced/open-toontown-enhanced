@@ -7,8 +7,8 @@ class CogPageManagerAI:
     def __init__(self, air):
         self.air = air
 
-    def toonKilledCogs(self, toon, suitsKilled, zoneId):
+    def toonKilledCogs(self, toon, cogsKilled, zoneId):
         pass  # TODO
 
-    def toonEncounteredCogs(self, toon, suitsEncountered, zoneId):
+    def toonEncounteredCogs(self, toon, cogsEncountered, zoneId):
         pass  # TODO

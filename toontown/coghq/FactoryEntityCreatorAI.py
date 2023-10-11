@@ -1,8 +1,8 @@
 from otp.level import EntityCreatorAI
 from direct.showbase.PythonUtil import Functor
 from . import DistributedBeanBarrelAI, DistributedButtonAI, DistributedCrateAI, DistributedLiftAI, DistributedDoorEntityAI, DistributedGagBarrelAI, DistributedGridAI
-from toontown.suit import DistributedGridGoonAI
-from toontown.suit import DistributedGoonAI
+from toontown.cog import DistributedGridGoonAI
+from toontown.cog import DistributedGoonAI
 from . import DistributedHealBarrelAI, DistributedStomperPairAI, DistributedTriggerAI, DistributedStomperAI, DistributedLaserFieldAI, DistributedSecurityCameraAI, DistributedMoverAI, DistributedElevatorMarkerAI, DistributedSinkingPlatformAI, ActiveCellAI, CrusherCellAI, DirectionalCellAI, FactoryLevelMgrAI, BattleBlockerAI, DistributedGolfGreenGameAI
 from toontown.coghq import DistributedMoleFieldAI
 from toontown.coghq import DistributedMazeAI

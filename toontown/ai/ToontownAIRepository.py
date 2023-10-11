@@ -47,7 +47,7 @@ from toontown.uberdog.DistributedPartyManagerAI import DistributedPartyManagerAI
 from toontown.safezone.SafeZoneManagerAI import SafeZoneManagerAI
 from toontown.shtiker.CogPageManagerAI import CogPageManagerAI
 from toontown.spellbook.ToontownMagicWordManagerAI import ToontownMagicWordManagerAI
-from toontown.suit.CogInvasionManagerAI import CogInvasionManagerAI
+from toontown.cog.CogInvasionManagerAI import CogInvasionManagerAI
 from toontown.toon import NPCToons
 from toontown.toonbase import ToontownGlobals
 from toontown.tutorial.TutorialManagerAI import TutorialManagerAI
@@ -99,7 +99,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.dnaDataMap = {}
         self.hoods = []
         self.buildingManagers = {}
-        self.suitPlanners = {}
+        self.cogPlanners = {}
 
     def handleConnected(self):
         ToontownInternalRepository.handleConnected(self)
@@ -338,8 +338,8 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.welcomeValleyManager.createWelcomeValleyZones()
 
         # Assign the initial suit buildings.
-        for suitPlanner in list(self.suitPlanners.values()):
-            suitPlanner.assignInitialSuitBuildings()
+        for cogPlanner in list(self.cogPlanners.values()):
+            cogPlanner.assignInitialCogBuildings()
 
     def genDNAFileName(self, zoneId):
         canonicalZoneId = ZoneUtil.getCanonicalZoneId(zoneId)

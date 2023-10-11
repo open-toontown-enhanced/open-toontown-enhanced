@@ -101,13 +101,13 @@ SuitData[SuitTypes.SlowMinion] = {'dnaName': 'cold_caller',
  'scale': 1.33,
  'hp': 1,
  'memos': 2}
-NumSuits = (4, 5, 5)
+NumCogs = (4, 5, 5)
 BossSpinTime = 1.0
 BossSpinCount = 2
 BlinkFrequency = 1.0
 BlinkSpeed = 0.5
 BlinkColor = VBase4(1.0, 0.4, 0.4, 1.0)
-SuitsModifier = (0, 6, 9)
+CogsModifier = (0, 6, 9)
 DamageModifier = 9.0
 DropShakeEnabled = True
 BossShakeEnabled = True

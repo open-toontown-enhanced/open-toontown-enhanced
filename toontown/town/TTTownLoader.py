@@ -1,6 +1,6 @@
 from . import TownLoader
 from . import TTStreet
-from toontown.suit import Suit
+from toontown.cog import Suit
 
 class TTTownLoader(TownLoader.TownLoader):
 
@@ -13,10 +13,10 @@ class TTTownLoader(TownLoader.TownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadSuits(1)
+        Suit.loadCogs(1)
         dnaFile = 'phase_5/dna/toontown_central_' + str(self.canonicalBranchZone) + '.dna'
         self.createHood(dnaFile)
 
     def unload(self):
-        Suit.unloadSuits(1)
+        Suit.unloadCogs(1)
         TownLoader.TownLoader.unload(self)

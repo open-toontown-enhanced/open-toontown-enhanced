@@ -1,7 +1,7 @@
 from otp.ai.AIBaseGlobal import *
 from direct.directnotify import DirectNotifyGlobal
 import random
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from . import CogDisguiseGlobals
 
 class CogSuitManagerAI:
@@ -10,11 +10,11 @@ class CogSuitManagerAI:
     def __init__(self, air):
         self.air = air
 
-    def recoverPart(self, av, factoryType, suitTrack, zoneId, avList):
+    def recoverPart(self, av, factoryType, cogTrack, zoneId, avList):
         partsRecovered = [
          0, 0, 0, 0]
-        part = av.giveGenericCogPart(factoryType, suitTrack)
+        part = av.giveGenericCogPart(factoryType, cogTrack)
         if part:
-            partsRecovered[CogDisguiseGlobals.dept2deptIndex(suitTrack)] = part
+            partsRecovered[CogDisguiseGlobals.dept2deptIndex(cogTrack)] = part
             self.air.questManager.toonRecoveredCogSuitPart(av, zoneId, avList)
         return partsRecovered

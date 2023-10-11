@@ -38,27 +38,27 @@ def doDrops(drops):
         level = drop['level']
         targets = drop['target']
         if len(targets) == 1:
-            suitId = targets[0]['suit'].doId
-            if suitId in suitDropsDict:
-                suitDropsDict[suitId].append((drop, targets[0]))
+            cogId = targets[0]['suit'].doId
+            if cogId in suitDropsDict:
+                suitDropsDict[cogId].append((drop, targets[0]))
             else:
-                suitDropsDict[suitId] = [(drop, targets[0])]
+                suitDropsDict[cogId] = [(drop, targets[0])]
         elif level <= MAX_LEVEL_INDEX and attackAffectsGroup(track, level):
             groupDrops.append(drop)
         else:
             for target in targets:
-                suitId = target['suit'].doId
-                if suitId in suitDropsDict:
-                    otherDrops = suitDropsDict[suitId]
+                cogId = target['suit'].doId
+                if cogId in suitDropsDict:
+                    otherDrops = suitDropsDict[cogId]
                     alreadyInList = 0
                     for oDrop in otherDrops:
                         if oDrop[0]['toon'] == drop['toon']:
                             alreadyInList = 1
 
                     if alreadyInList == 0:
-                        suitDropsDict[suitId].append((drop, target))
+                        suitDropsDict[cogId].append((drop, target))
                 else:
-                    suitDropsDict[suitId] = [(drop, target)]
+                    suitDropsDict[cogId] = [(drop, target)]
 
     suitDrops = list(suitDropsDict.values())
 
@@ -78,7 +78,7 @@ def doDrops(drops):
             ival = __doSuitDrops(st, npcs, npcDrops)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
-            delay = delay + TOON_DROP_SUIT_DELAY
+            delay = delay + TOON_DROP_COG_DELAY
 
     dropTrack = Sequence(npcArrivals, mtrack, npcDepartures)
     camDuration = mtrack.getDuration()
@@ -178,7 +178,7 @@ def __doGroupDrops(groupDrops):
         track = __dropGroupObject(drop, delay, closestTarget, alreadyDodged, alreadyTeased)
         if track:
             toonTracks.append(track)
-            delay = delay + TOON_DROP_SUIT_DELAY
+            delay = delay + TOON_DROP_COG_DELAY
         hp = drop['target'][closestTarget]['hp']
         if hp <= 0:
             if level >= 3:
@@ -199,18 +199,18 @@ def __dropGroupObject(drop, delay, closestTarget, alreadyDodged, alreadyTeased):
     returnedParallel = __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops)
     for i in range(len(drop['target'])):
         target = drop['target'][i]
-        suitTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
-        if suitTrack:
-            returnedParallel.append(suitTrack)
+        cogTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
+        if cogTrack:
+            returnedParallel.append(cogTrack)
 
     return returnedParallel
 
 
 def __dropObjectForSingle(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops):
     singleDropParallel = __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs, target, npcDrops)
-    suitTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
-    if suitTrack:
-        singleDropParallel.append(suitTrack)
+    cogTrack = __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, npcs)
+    if cogTrack:
+        singleDropParallel.append(cogTrack)
     return singleDropParallel
 
 
@@ -232,8 +232,8 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
     hp = target['hp']
     hitSuit = hp > 0
     died = target['died']
-    leftSuits = target['leftSuits']
-    rightSuits = target['rightSuits']
+    leftCogs = target['leftCogs']
+    rightCogs = target['rightCogs']
     kbbonus = target['kbbonus']
     suitPos = suit.getPos(battle)
     majorObject = level >= 3
@@ -389,12 +389,12 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
     hitSuit = hp > 0
     died = target['died']
     revived = target['revived']
-    leftSuits = target['leftSuits']
-    rightSuits = target['rightSuits']
+    leftCogs = target['leftCogs']
+    rightCogs = target['rightCogs']
     kbbonus = target['kbbonus']
     hpbonus = drop['hpbonus']
     if hp > 0:
-        suitTrack = Sequence()
+        cogTrack = Sequence()
         showDamage = Func(suit.showHpText, -hp, openEnded=0)
         updateHealthBar = Func(suit.updateHealthBar, hp)
         if majorObject:
@@ -402,27 +402,27 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
         else:
             anim = 'drop-react'
         suitReact = ActorInterval(suit, anim)
-        suitTrack.append(Wait(delay + tObjectAppears))
-        suitTrack.append(showDamage)
-        suitTrack.append(updateHealthBar)
+        cogTrack.append(Wait(delay + tObjectAppears))
+        cogTrack.append(showDamage)
+        cogTrack.append(updateHealthBar)
         suitGettingHit = Parallel(suitReact)
         if level == UBER_GAG_LEVEL_INDEX:
             gotHitSound = globalBattleSoundCache.getSound('AA_drop_boat_cog.ogg')
             suitGettingHit.append(SoundInterval(gotHitSound, node=toon))
-        suitTrack.append(suitGettingHit)
+        cogTrack.append(suitGettingHit)
         bonusTrack = None
         if hpbonus > 0:
             bonusTrack = Sequence(Wait(delay + tObjectAppears + 0.75), Func(suit.showHpText, -hpbonus, 1, openEnded=0))
         if revived != 0:
-            suitTrack.append(MovieUtil.createSuitReviveTrack(suit, toon, battle, npcs))
+            cogTrack.append(MovieUtil.createSuitReviveTrack(suit, toon, battle, npcs))
         elif died != 0:
-            suitTrack.append(MovieUtil.createSuitDeathTrack(suit, toon, battle, npcs))
+            cogTrack.append(MovieUtil.createSuitDeathTrack(suit, toon, battle, npcs))
         else:
-            suitTrack.append(Func(suit.loop, 'neutral'))
+            cogTrack.append(Func(suit.loop, 'neutral'))
         if bonusTrack != None:
-            suitTrack = Parallel(suitTrack, bonusTrack)
+            cogTrack = Parallel(cogTrack, bonusTrack)
     elif kbbonus == 0:
-        suitTrack = Sequence(Wait(delay + tObjectAppears), Func(MovieUtil.indicateMissed, suit, 0.6), Func(suit.loop, 'neutral'))
+        cogTrack = Sequence(Wait(delay + tObjectAppears), Func(MovieUtil.indicateMissed, suit, 0.6), Func(suit.loop, 'neutral'))
     else:
         if alreadyDodged > 0:
             return
@@ -430,7 +430,7 @@ def __createSuitTrack(drop, delay, level, alreadyDodged, alreadyTeased, target, 
             if alreadyTeased > 0:
                 return
             else:
-                suitTrack = MovieUtil.createSuitTeaseMultiTrack(suit, delay=delay + tObjectAppears)
+                cogTrack = MovieUtil.createSuitTeaseMultiTrack(suit, delay=delay + tObjectAppears)
         else:
-            suitTrack = MovieUtil.createSuitDodgeMultitrack(delay + tSuitDodges, suit, leftSuits, rightSuits)
-    return suitTrack
+            cogTrack = MovieUtil.createSuitDodgeMultitrack(delay + tSuitDodges, suit, leftCogs, rightCogs)
+    return cogTrack

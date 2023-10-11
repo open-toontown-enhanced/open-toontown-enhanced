@@ -9,7 +9,7 @@ Hearts = 0
 Diamonds = 1
 Clubs = 2
 Spades = 3
-Suits = [Hearts,
+Cogs = [Hearts,
  Diamonds,
  Clubs,
  Spades]

@@ -25,8 +25,8 @@ from toontown.minigame import TugOfWarGameGlobals
 from toontown.minigame.ArrowKeys import ArrowKeys
 from toontown.minigame.DistributedMinigame import DistributedMinigame
 from toontown.minigame.MinigamePowerMeter import MinigamePowerMeter
-from toontown.suit.Suit import Suit
-from toontown.suit.SuitDNA import SuitDNA
+from toontown.cog.Suit import Suit
+from toontown.cog.CogDNA import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase.ToonBaseGlobal import base
@@ -66,7 +66,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.addChildGameFSM(self.gameFSM)
         self.gameType = TugOfWarGameGlobals.TOON_VS_TOON
         self.suit = None
-        self.suitId = 666
+        self.cogId = 666
         self.suitType = 'flunky'
         self.suitLevel = 1
         self.sides = {}
@@ -349,8 +349,8 @@ class DistributedTugOfWarGame(DistributedMinigame):
             if avId in self.dropShadowDict:
                 self.dropShadowDict[avId].reparentTo(base.hidden)
 
-        if self.suitId in self.dropShadowDict:
-            self.dropShadowDict[self.suitId].reparentTo(base.hidden)
+        if self.cogId in self.dropShadowDict:
+            self.dropShadowDict[self.cogId].reparentTo(base.hidden)
 
     def initCamera(self):
         introPosHpr = [None] * 2
@@ -390,7 +390,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
             return
 
         self.initToons()
-        self.createSuits()
+        self.createCogs()
         self.calculatePositions()
         self.initHandycaps()
         self.initRopes()
@@ -399,7 +399,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         for avId in self.avIdList:
             self.animTracks[avId] = None
 
-        self.animTracks[self.suitId] = None
+        self.animTracks[self.cogId] = None
         self.showTrack = None
         self.setupTrack = None
         self.__initGameVars()
@@ -649,7 +649,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.sendUpdate('sendNewAvIdList', [self.avIdList])
         if self.numPlayers == 1:
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
-                self.posDict[self.suitId] = dockPositions[7]
+                self.posDict[self.cogId] = dockPositions[7]
                 self.posDict[self.avIdList[0]] = dockPositions[2]
                 self.hprDict[self.avIdList[0]] = hprPositions[0]
             else:
@@ -657,7 +657,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         elif self.numPlayers == 2:
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
                 self.arrangeByHeight(self.avIdList, self.H_TO_L, 0, 1)
-                self.posDict[self.suitId] = dockPositions[7]
+                self.posDict[self.cogId] = dockPositions[7]
                 self.posDict[self.avIdList[0]] = dockPositions[1]
                 self.posDict[self.avIdList[1]] = dockPositions[2]
                 self.hprDict[self.avIdList[0]] = hprPositions[0]
@@ -671,7 +671,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         elif self.numPlayers == 3:
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
                 self.arrangeByHeight(self.avIdList, self.H_TO_L, 0, 2)
-                self.posDict[self.suitId] = dockPositions[7]
+                self.posDict[self.cogId] = dockPositions[7]
                 self.posDict[self.avIdList[0]] = dockPositions[0]
                 self.posDict[self.avIdList[1]] = dockPositions[1]
                 self.posDict[self.avIdList[2]] = dockPositions[2]
@@ -690,7 +690,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
         elif self.numPlayers == 4:
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
                 self.arrangeByHeight(self.avIdList, self.H_TO_L, 0, 3)
-                self.posDict[self.suitId] = dockPositions[6]
+                self.posDict[self.cogId] = dockPositions[6]
                 self.posDict[self.avIdList[0]] = dockPositions[0]
                 self.posDict[self.avIdList[1]] = dockPositions[1]
                 self.posDict[self.avIdList[2]] = dockPositions[2]
@@ -968,7 +968,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
             return
 
         if self.suit:
-            if self.suitId in winners:
+            if self.cogId in winners:
                 newPos = VBase3(2.65, 18, 0.1)
                 randInt = self.randomNumGen.randrange(0, 10)
                 oopsTrack = Wait(0)
@@ -1032,7 +1032,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
             return
 
         self.suitOffset = suitOffset
-        self.moveSuits()
+        self.moveCogs()
 
     def sendCurrentPosition(self, avIdList, offsetList):
         if not self.hasLocalToon:
@@ -1047,12 +1047,12 @@ class DistributedTugOfWarGame(DistributedMinigame):
         self.moveToons()
         self.setUpRopes(0)
 
-    def createSuits(self):
+    def createCogs(self):
         if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
             self.suit = Suit()
             self.origSuitPosHpr = [VBase3(6.0, 18, 0.1), VBase3(120, 0, 0)]
             self.suitOffset = 0
-            d = SuitDNA()
+            d = CogDNA()
             d.newSuit(self.suitType)
             self.suit.setDNA(d)
             self.suit.reparentTo(base.render)
@@ -1062,9 +1062,9 @@ class DistributedTugOfWarGame(DistributedMinigame):
                 self.suit.pose(anim, 0)
 
             self.suit.pose('tug-o-war', 0)
-            self.dropShadowDict[self.suitId] = self.dropShadow.copyTo(base.hidden)
-            self.dropShadowDict[self.suitId].reparentTo(self.suit)
-            self.dropShadowDict[self.suitId].setScale(0.45)
+            self.dropShadowDict[self.cogId] = self.dropShadow.copyTo(base.hidden)
+            self.dropShadowDict[self.cogId].reparentTo(self.suit)
+            self.dropShadowDict[self.cogId].setScale(0.45)
 
     def initHandycaps(self):
         if self.numPlayers == 3 and self.gameType == TugOfWarGameGlobals.TOON_VS_TOON:
@@ -1116,21 +1116,21 @@ class DistributedTugOfWarGame(DistributedMinigame):
             toon.startLookAround()
             self.pullingDict[avId] = 0
 
-    def moveSuits(self):
+    def moveCogs(self):
         if self.gameType != TugOfWarGameGlobals.TOON_VS_COG:
             return
 
         origPos = self.origSuitPosHpr[0]
         curPos = self.suit.getPos()
         newPos = VBase3(origPos[0] + self.suitOffset, curPos[1], curPos[2])
-        if self.animTracks[self.suitId] != None:
-            if self.animTracks[self.suitId].isPlaying():
-                self.animTracks[self.suitId].finish()
+        if self.animTracks[self.cogId] != None:
+            if self.animTracks[self.cogId].isPlaying():
+                self.animTracks[self.cogId].finish()
                 self.checkIfFallen()
 
-        if self.suitId not in self.fallenList:
-            self.animTracks[self.suitId] = Sequence(LerpPosInterval(self.suit, duration=TugOfWarGameGlobals.SEND_UPDATE, pos=newPos), Func(self.checkIfFallen))
-            self.animTracks[self.suitId].start()
+        if self.cogId not in self.fallenList:
+            self.animTracks[self.cogId] = Sequence(LerpPosInterval(self.suit, duration=TugOfWarGameGlobals.SEND_UPDATE, pos=newPos), Func(self.checkIfFallen))
+            self.animTracks[self.cogId].start()
 
     def moveToons(self):
         for avId in self.avIdList:
@@ -1151,7 +1151,7 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
     def checkIfFallen(self, avId = None):
         if avId == None:
-            if self.suitId not in self.fallenList:
+            if self.cogId not in self.fallenList:
                 curPos = self.suit.getPos()
                 if curPos[0] < 0 and curPos[0] > -2 or curPos[0] > 0 and curPos[0] < 2:
                     self.hideControls()
@@ -1173,13 +1173,13 @@ class DistributedTugOfWarGame(DistributedMinigame):
 
     def throwInWater(self, avId = None):
         if avId == None:
-            self.fallenList.append(self.suitId)
+            self.fallenList.append(self.cogId)
             waterPos = self.drinkPositions.pop()
             newPos = VBase3(waterPos[0], waterPos[1], waterPos[2] - self.suit.getHeight() / 1.5)
             self.suit.loop('neutral')
-            self.dropShadowDict[self.suitId].reparentTo(base.hidden)
+            self.dropShadowDict[self.cogId].reparentTo(base.hidden)
             loser = self.suit
-            animId = self.suitId
+            animId = self.cogId
         else:
             self.fallenList.append(avId)
             toon = self.getAvatar(avId)

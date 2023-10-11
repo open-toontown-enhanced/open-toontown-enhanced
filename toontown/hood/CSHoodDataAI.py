@@ -7,7 +7,7 @@ from toontown.coghq import DistributedSellbotHQDoorAI
 from toontown.building import DoorTypes
 from toontown.coghq import LobbyManagerAI
 from toontown.building import DistributedVPElevatorAI
-from toontown.suit import DistributedSellbotBossAI
+from toontown.cog import DistributedSellbotBossAI
 from toontown.building import DistributedBoardingPartyAI
 
 class CSHoodDataAI(HoodDataAI.HoodDataAI):
@@ -48,7 +48,7 @@ class CSHoodDataAI(HoodDataAI.HoodDataAI):
         extDoor2 = DistributedSellbotHQDoorAI.DistributedSellbotHQDoorAI(self.air, 2, DoorTypes.EXT_COGHQ, destinationZone, doorIndex=2)
         extDoor3 = DistributedSellbotHQDoorAI.DistributedSellbotHQDoorAI(self.air, 3, DoorTypes.EXT_COGHQ, destinationZone, doorIndex=3)
         extDoorList = [extDoor0, extDoor1, extDoor2, extDoor3]
-        for sp in self.suitPlanners:
+        for sp in self.cogPlanners:
             if sp.zoneId == ToontownGlobals.SellbotHQ:
                 sp.cogHQDoors = extDoorList
 

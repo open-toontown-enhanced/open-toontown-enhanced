@@ -22,11 +22,11 @@ class DistributedLawOffice(DistributedObject, LawOfficeBase.LawOfficeBase):
     def __init__(self, cr):
         DistributedObject.__init__(self, cr)
         LawOfficeBase.LawOfficeBase.__init__(self)
-        self.suitIds = []
-        self.suits = []
-        self.reserveSuits = []
+        self.cogIds = []
+        self.cogs = []
+        self.reserveCogs = []
         self.joiningReserves = []
-        self.suitsInitialized = 0
+        self.cogsInitialized = 0
         self.goonClipPlanes = {}
         self.level = None
 

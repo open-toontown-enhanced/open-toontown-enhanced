@@ -79,7 +79,7 @@ def __teleportOut(attack, pet):
 
 
 def __doPet(attack, level, hp):
-    track = __doSprinkle(attack, 'suits', hp)
+    track = __doSprinkle(attack, 'cogs', hp)
     pbpText = attack['playByPlayText']
     pbpTrack = pbpText.getShowInterval(TTLocalizer.MovieNPCSOSCogsMiss, track.getDuration())
     return (track, pbpTrack)

@@ -3,7 +3,7 @@ from panda3d.core import *
 from otp.otpbase import OTPGlobals
 from direct.directnotify import DirectNotifyGlobal
 from . import ToonDNA
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from . import InventoryBase
 from . import Experience
 from otp.avatar import DistributedAvatarAI
@@ -13,7 +13,7 @@ from toontown.toonbase import ToontownGlobals
 from toontown.quest import QuestRewardCounter
 from toontown.quest import Quests
 from toontown.toonbase import ToontownBattleGlobals
-from toontown.battle import SuitBattleGlobals
+from toontown.battle import CogBattleGlobals
 from direct.task import Task
 from toontown.catalog import CatalogItemList
 from toontown.catalog import CatalogItem
@@ -1275,18 +1275,18 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
 
     def incCogLevel(self, dept):
         newLevel = self.cogLevels[dept] + 1
-        cogTypeStr = SuitDNA.suitHeadTypes[self.cogTypes[dept]]
-        lastCog = self.cogTypes[dept] >= SuitDNA.suitsPerDept - 1
+        cogTypeStr = CogDNA.suitHeadTypes[self.cogTypes[dept]]
+        lastCog = self.cogTypes[dept] >= CogDNA.cogsPerDept - 1
         if not lastCog:
-            maxLevel = SuitBattleGlobals.SuitAttributes[cogTypeStr]['level'] + 4
+            maxLevel = CogBattleGlobals.CogAttributes[cogTypeStr]['level'] + 4
         else:
             maxLevel = ToontownGlobals.MaxCogSuitLevel
         if newLevel > maxLevel:
             if not lastCog:
                 self.cogTypes[dept] += 1
                 self.d_setCogTypes(self.cogTypes)
-                cogTypeStr = SuitDNA.suitHeadTypes[self.cogTypes[dept]]
-                self.cogLevels[dept] = SuitBattleGlobals.SuitAttributes[cogTypeStr]['level']
+                cogTypeStr = CogDNA.suitHeadTypes[self.cogTypes[dept]]
+                self.cogLevels[dept] = CogBattleGlobals.CogAttributes[cogTypeStr]['level']
                 self.d_setCogLevels(self.cogLevels)
         else:
             self.cogLevels[dept] += 1
@@ -1300,13 +1300,13 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         self.air.writeServerEvent('cogSuit', self.doId, '%s|%s|%s' % (dept, self.cogTypes[dept], self.cogLevels[dept]))
 
     def getNumPromotions(self, dept):
-        if dept not in SuitDNA.suitDepts:
+        if dept not in CogDNA.suitDepts:
             self.notify.warning('getNumPromotions: Invalid parameter dept=%s' % dept)
             return 0
-        deptIndex = SuitDNA.suitDepts.index(dept)
+        deptIndex = CogDNA.suitDepts.index(dept)
         cogType = self.cogTypes[deptIndex]
-        cogTypeStr = SuitDNA.suitHeadTypes[cogType]
-        lowestCogLevel = SuitBattleGlobals.SuitAttributes[cogTypeStr]['level']
+        cogTypeStr = CogDNA.suitHeadTypes[cogType]
+        lowestCogLevel = CogBattleGlobals.CogAttributes[cogTypeStr]['level']
         multiple = 5 * cogType
         additional = self.cogLevels[deptIndex] - lowestCogLevel
         numPromotions = multiple + additional
@@ -3158,7 +3158,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
             self.air.writeServerEvent('suspicious', self.doId, 'invalid cog summons type: %s' % type)
             self.sendUpdate('cogSummonsResponse', ['fail', suitIndex, 0])
             return
-        if suitIndex >= len(SuitDNA.suitHeadTypes):
+        if suitIndex >= len(CogDNA.suitHeadTypes):
             self.air.writeServerEvent('suspicious', self.doId, 'invalid suitIndex: %s' % suitIndex)
             self.sendUpdate('cogSummonsResponse', ['fail', suitIndex, 0])
             return
@@ -3184,14 +3184,14 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         return
 
     def doSummonSingleCog(self, suitIndex):
-        if suitIndex >= len(SuitDNA.suitHeadTypes):
+        if suitIndex >= len(CogDNA.suitHeadTypes):
             self.notify.warning('Bad suit index: %s' % suitIndex)
             return ['badIndex', suitIndex, 0]
-        suitName = SuitDNA.suitHeadTypes[suitIndex]
+        suitName = CogDNA.suitHeadTypes[suitIndex]
         streetId = ZoneUtil.getBranchZone(self.zoneId)
-        if streetId not in self.air.suitPlanners:
+        if streetId not in self.air.cogPlanners:
             return ['badlocation', suitIndex, 0]
-        sp = self.air.suitPlanners[streetId]
+        sp = self.air.cogPlanners[streetId]
         map = sp.getZoneIdToPointMap()
         zones = [self.zoneId, self.zoneId - 1, self.zoneId + 1]
         for zoneId in zones:
@@ -3205,21 +3205,21 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
 
     def doBuildingTakeover(self, suitIndex):
         streetId = ZoneUtil.getBranchZone(self.zoneId)
-        if streetId not in self.air.suitPlanners:
+        if streetId not in self.air.cogPlanners:
             self.notify.warning('Street %d is not known.' % streetId)
             return ['badlocation', suitIndex, 0]
-        sp = self.air.suitPlanners[streetId]
+        sp = self.air.cogPlanners[streetId]
         bm = sp.buildingMgr
         building = self.findClosestDoor()
         if building == None:
             return ['badlocation', suitIndex, 0]
         level = None
-        if suitIndex >= len(SuitDNA.suitHeadTypes):
+        if suitIndex >= len(CogDNA.suitHeadTypes):
             self.notify.warning('Bad suit index: %s' % suitIndex)
             return ['badIndex', suitIndex, 0]
-        suitName = SuitDNA.suitHeadTypes[suitIndex]
-        track = SuitDNA.getSuitDept(suitName)
-        type = SuitDNA.getSuitType(suitName)
+        suitName = CogDNA.suitHeadTypes[suitIndex]
+        track = CogDNA.getCogDept(suitName)
+        type = CogDNA.getCogType(suitName)
         level, type, track = sp.pickLevelTypeAndTrack(None, type, track)
         building.suitTakeOver(track, level, None)
         self.notify.warning('cogTakeOver %s %s %d %d' % (track,
@@ -3233,10 +3233,10 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         if invMgr.getInvading():
             returnCode = 'busy'
         else:
-            if suitIndex >= len(SuitDNA.suitHeadTypes):
+            if suitIndex >= len(CogDNA.suitHeadTypes):
                 self.notify.warning('Bad suit index: %s' % suitIndex)
                 return ['badIndex', suitIndex, 0]
-            cogType = SuitDNA.suitHeadTypes[suitIndex]
+            cogType = CogDNA.suitHeadTypes[suitIndex]
             numCogs = 1000
             if invMgr.startInvasion(cogType, numCogs, False):
                 returnCode = 'success'
@@ -3258,9 +3258,9 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         return self.cogSummonsEarned
 
     def restockAllCogSummons(self):
-        numSuits = len(SuitDNA.suitHeadTypes)
+        numCogs = len(CogDNA.suitHeadTypes)
         fullSetForSuit = 1 | 2 | 4
-        allSummons = numSuits * [fullSetForSuit]
+        allSummons = numCogs * [fullSetForSuit]
         self.b_setCogSummonsEarned(allSummons)
 
     def addCogSummonsEarned(self, suitIndex, type):
@@ -3305,36 +3305,36 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
         return curSetting
 
     def hasParticularCogSummons(self, deptIndex, level, type):
-        if deptIndex not in list(range(len(SuitDNA.suitDepts))):
+        if deptIndex not in list(range(len(CogDNA.suitDepts))):
             self.notify.warning('invalid parameter deptIndex %s' % deptIndex)
             return False
-        if level not in list(range(SuitDNA.suitsPerDept)):
+        if level not in list(range(CogDNA.cogsPerDept)):
             self.notify.warning('invalid parameter level %s' % level)
             return False
-        suitIndex = deptIndex * SuitDNA.suitsPerDept + level
+        suitIndex = deptIndex * CogDNA.cogsPerDept + level
         retval = self.hasCogSummons(suitIndex, type)
         return retval
 
     def assignNewCogSummons(self, level = None, summonType = None, deptIndex = None):
         if level != None:
-            if deptIndex in range(len(SuitDNA.suitDepts)):
+            if deptIndex in range(len(CogDNA.suitDepts)):
                 dept = deptIndex
             else:
-                numDepts = len(SuitDNA.suitDepts)
+                numDepts = len(CogDNA.suitDepts)
                 dept = random.randrange(0, numDepts)
-            suitIndex = dept * SuitDNA.suitsPerDept + level
-        elif deptIndex in range(len(SuitDNA.suitDepts)):
-            randomLevel = random.randrange(0, SuitDNA.suitsPerDept)
-            suitIndex = deptIndex * SuitDNA.suitsPerLevel + randomLevel
+            suitIndex = dept * CogDNA.cogsPerDept + level
+        elif deptIndex in range(len(CogDNA.suitDepts)):
+            randomLevel = random.randrange(0, CogDNA.cogsPerDept)
+            suitIndex = deptIndex * CogDNA.cogsPerLevel + randomLevel
         else:
-            numSuits = len(SuitDNA.suitHeadTypes)
-            suitIndex = random.randrange(0, numSuits)
+            numCogs = len(CogDNA.suitHeadTypes)
+            suitIndex = random.randrange(0, numCogs)
         if summonType in ['single', 'building', 'invasion']:
             type = summonType
         else:
             typeWeights = ['single'] * 70 + ['building'] * 25 + ['invasion'] * 5
             type = random.choice(typeWeights)
-        if suitIndex >= len(SuitDNA.suitHeadTypes):
+        if suitIndex >= len(CogDNA.suitHeadTypes):
             self.notify.warning('Bad suit index: %s' % suitIndex)
         self.addCogSummonsEarned(suitIndex, type)
         return (suitIndex, type)
@@ -3342,7 +3342,7 @@ class DistributedToonAI(DistributedPlayerAI.DistributedPlayerAI, DistributedSmoo
     def findClosestDoor(self):
         zoneId = self.zoneId
         streetId = ZoneUtil.getBranchZone(zoneId)
-        sp = self.air.suitPlanners[streetId]
+        sp = self.air.cogPlanners[streetId]
         if not sp:
             return None
         bm = sp.buildingMgr

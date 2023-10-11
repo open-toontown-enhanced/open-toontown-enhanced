@@ -9,7 +9,7 @@ from direct.showbase.MessengerGlobal import messenger
 from direct.fsm import ClassicFSM
 from toontown.building import DistributedDoor
 from toontown.hood import ZoneUtil
-from toontown.suit import Suit
+from toontown.cog import Suit
 from toontown.building import FADoorCodes
 from toontown.building import DoorTypes
 

@@ -3,7 +3,7 @@ from panda3d.core import VBase3, Point3
 from direct.interval.IntervalGlobal import Sequence, Wait, Func, Parallel, Track, LerpPosInterval, ProjectileInterval, SoundInterval, ActorInterval
 from direct.directnotify import DirectNotifyGlobal
 from toontown.battle import DistributedBattleFinal
-from toontown.suit import SuitTimings
+from toontown.cog import CogTimings
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 
@@ -17,16 +17,16 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
 
     def announceGenerate(self):
         DistributedBattleFinal.DistributedBattleFinal.announceGenerate(self)
-        self.moveSuitsToInitialPos()
+        self.moveCogsToInitialPos()
 
-    def showSuitsJoining(self, suits, ts, name, callback):
-        if len(suits) == 0 and not self.initialReservesJoiningDone:
+    def showCogsJoining(self, cogs, ts, name, callback):
+        if len(cogs) == 0 and not self.initialReservesJoiningDone:
             self.initialReservesJoiningDone = True
-            self.doInitialSuitsJoining(ts, name, callback)
+            self.doInitialCogsJoining(ts, name, callback)
             return
-        self.showSuitsFalling(suits, ts, name, callback)
+        self.showCogsFalling(cogs, ts, name, callback)
 
-    def doInitialSuitsJoining(self, ts, name, callback):
+    def doInitialCogsJoining(self, ts, name, callback):
         done = Func(callback)
         if self.hasLocalToon():
             camera.reparentTo(self)
@@ -38,32 +38,32 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
         track.start(ts)
         self.storeInterval(track, name)
 
-    def moveSuitsToInitialPos(self):
+    def moveCogsToInitialPos(self):
         battlePts = self.suitPoints[len(self.suitPendingPoints) - 1]
-        for i in range(len(self.suits)):
-            suit = self.suits[i]
+        for i in range(len(self.cogs)):
+            suit = self.cogs[i]
             suit.reparentTo(self)
-            destPos, destHpr = self.getActorPosHpr(suit, self.suits)
+            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
             suit.setPos(destPos)
             suit.setHpr(destHpr)
 
-    def showSuitsFalling(self, suits, ts, name, callback):
+    def showCogsFalling(self, cogs, ts, name, callback):
         if self.bossCog == None:
             return
-        suitTrack = Parallel()
+        cogTrack = Parallel()
         delay = 0
-        for suit in suits:
+        for suit in cogs:
             suit.setState('Battle')
             if suit.dna.dept == 'l':
                 suit.reparentTo(self.bossCog)
                 suit.setPos(0, 0, 0)
-            if suit in self.joiningSuits:
-                i = len(self.pendingSuits) + self.joiningSuits.index(suit)
+            if suit in self.joiningCogs:
+                i = len(self.pendingCogs) + self.joiningCogs.index(suit)
                 destPos, h = self.suitPendingPoints[i]
                 destHpr = VBase3(h, 0, 0)
             else:
-                destPos, destHpr = self.getActorPosHpr(suit, self.suits)
-            startPos = destPos + Point3(0, 0, SuitTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
+                destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
+            startPos = destPos + Point3(0, 0, CogTimings.fromSky * ToontownGlobals.SuitWalkSpeed)
             self.notify.debug('startPos for %s = %s' % (suit, startPos))
             suit.reparentTo(self)
             suit.setPos(startPos)
@@ -72,7 +72,7 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
             chairInfo = self.bossCog.claimOneChair()
             if chairInfo:
                 moveIval = self.createDinerMoveIval(suit, destPos, chairInfo)
-            suitTrack.append(Track((delay, Sequence(moveIval, Func(suit.loop, 'neutral')))))
+            cogTrack.append(Track((delay, Sequence(moveIval, Func(suit.loop, 'neutral')))))
             delay += 1
 
         if self.hasLocalToon():
@@ -85,7 +85,7 @@ class DistributedBattleDiners(DistributedBattleFinal.DistributedBattleFinal):
                 camX = 4
             camera.setPosHpr(camX, -15, 7, camHeading, 0, 0)
         done = Func(callback)
-        track = Sequence(suitTrack, done, name=name)
+        track = Sequence(cogTrack, done, name=name)
         track.start(ts)
         self.storeInterval(track, name)
         return

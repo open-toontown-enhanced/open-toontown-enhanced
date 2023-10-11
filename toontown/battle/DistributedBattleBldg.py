@@ -3,7 +3,7 @@ from panda3d.otp import *
 from direct.interval.IntervalGlobal import *
 from .BattleBase import *
 from direct.actor import Actor
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from direct.directnotify import DirectNotifyGlobal
 from . import DistributedBattleBase
 from toontown.toon import TTEmote
@@ -11,8 +11,8 @@ from otp.avatar import Emote
 from toontown.toonbase import TTLocalizer
 from . import MovieUtil
 from direct.fsm import State
-from toontown.suit import Suit
-from . import SuitBattleGlobals
+from toontown.cog import Suit
+from . import CogBattleGlobals
 import random
 from toontown.toonbase import ToontownGlobals
 
@@ -57,48 +57,48 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         return []
 
     def __faceOff(self, ts, name, callback):
-        if len(self.suits) == 0:
-            self.notify.warning('__faceOff(): no suits.')
+        if len(self.cogs) == 0:
+            self.notify.warning('__faceOff(): no cogs.')
             return
         if len(self.toons) == 0:
             self.notify.warning('__faceOff(): no toons.')
             return
         elevatorPos = self.toons[0].getPos()
-        if len(self.suits) == 1:
+        if len(self.cogs) == 1:
             leaderIndex = 0
         elif self.bossBattle == 1:
             leaderIndex = 1
         else:
             maxTypeNum = -1
-            for suit in self.suits:
-                suitTypeNum = SuitDNA.getSuitType(suit.dna.name)
+            for suit in self.cogs:
+                suitTypeNum = CogDNA.getCogType(suit.dna.name)
                 if maxTypeNum < suitTypeNum:
                     maxTypeNum = suitTypeNum
-                    leaderIndex = self.suits.index(suit)
+                    leaderIndex = self.cogs.index(suit)
 
         delay = FACEOFF_TAUNT_T
-        suitTrack = Parallel()
+        cogTrack = Parallel()
         suitLeader = None
-        for suit in self.suits:
+        for suit in self.cogs:
             suit.setState('Battle')
             suitIsLeader = 0
             oneSuitTrack = Sequence()
             oneSuitTrack.append(Func(suit.loop, 'neutral'))
             oneSuitTrack.append(Func(suit.headsUp, elevatorPos))
-            if self.suits.index(suit) == leaderIndex:
+            if self.cogs.index(suit) == leaderIndex:
                 suitLeader = suit
                 suitIsLeader = 1
                 if self.bossBattle == 1:
                     taunt = self.getBossBattleTaunt()
                 else:
-                    taunt = SuitBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
+                    taunt = CogBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
                 oneSuitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
-            destPos, destHpr = self.getActorPosHpr(suit, self.suits)
+            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
             oneSuitTrack.append(Wait(delay))
             if suitIsLeader == 1:
                 oneSuitTrack.append(Func(suit.clearChat))
             oneSuitTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
-            suitTrack.append(oneSuitTrack)
+            cogTrack.append(oneSuitTrack)
 
         toonTrack = Parallel()
         for toon in self.toons:
@@ -132,7 +132,7 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         camTrack.append(Func(camera.reparentTo, base.localAvatar))
         camTrack.append(Func(setCamMinFov, ToontownGlobals.DefaultCameraMinFov))
         camTrack.append(Func(camera.setPosHpr, camPos, camHpr))
-        mtrack = Parallel(suitTrack, toonTrack, camTrack)
+        mtrack = Parallel(cogTrack, toonTrack, camTrack)
         done = Func(callback)
         track = Sequence(mtrack, done, name=name)
         track.start(ts)

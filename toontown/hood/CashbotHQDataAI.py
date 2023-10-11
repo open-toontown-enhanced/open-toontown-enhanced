@@ -6,7 +6,7 @@ from toontown.coghq import DistributedCogHQDoorAI
 from toontown.building import DoorTypes
 from toontown.coghq import LobbyManagerAI
 from toontown.building import DistributedCFOElevatorAI
-from toontown.suit import DistributedCashbotBossAI
+from toontown.cog import DistributedCashbotBossAI
 from toontown.building import FADoorCodes
 from toontown.building import DistributedBoardingPartyAI
 

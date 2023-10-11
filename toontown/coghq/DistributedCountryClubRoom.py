@@ -25,11 +25,11 @@ class DistributedCountryClubRoom(DistributedLevel.DistributedLevel, CountryClubR
         DistributedLevel.DistributedLevel.__init__(self, cr)
         CountryClubRoomBase.CountryClubRoomBase.__init__(self)
         CountryClubRoom.CountryClubRoom.__init__(self)
-        self.suitIds = []
-        self.suits = []
-        self.reserveSuits = []
+        self.cogIds = []
+        self.cogs = []
+        self.reserveCogs = []
         self.joiningReserves = []
-        self.suitsInitialized = 0
+        self.cogsInitialized = 0
         self.goonClipPlanes = {}
         self.countryClub = None
         return
@@ -174,17 +174,17 @@ class DistributedCountryClubRoom(DistributedLevel.DistributedLevel, CountryClubR
     def disable(self):
         self.notify.debug('disable')
         CountryClubRoom.CountryClubRoom.exit(self)
-        if hasattr(self, 'suits'):
-            del self.suits
+        if hasattr(self, 'cogs'):
+            del self.cogs
         if hasattr(self, 'relatedObjectMgrRequest') and self.relatedObjectMgrRequest:
             self.cr.relatedObjectMgr.abortRequest(self.relatedObjectMgrRequest)
             del self.relatedObjectMgrRequest
         bboard.remove(self.getReadyPostName())
         DistributedLevel.DistributedLevel.disable(self)
 
-    def setSuits(self, suitIds, reserveSuitIds):
-        oldSuitIds = list(self.suitIds)
-        self.suitIds = suitIds
+    def setCogs(self, cogIds, reserveSuitIds):
+        oldSuitIds = list(self.cogIds)
+        self.cogIds = cogIds
         self.reserveSuitIds = reserveSuitIds
 
     def reservesJoining(self):

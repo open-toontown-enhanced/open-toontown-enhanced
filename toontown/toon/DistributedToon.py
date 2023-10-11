@@ -25,7 +25,7 @@ from . import TTEmote
 from toontown.shtiker.OptionsPage import speedChatStyles
 from toontown.fishing import FishCollection
 from toontown.fishing import FishTank
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from toontown.coghq import CogDisguiseGlobals
 from toontown.toonbase import TTLocalizer
 from . import Experience
@@ -877,18 +877,18 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
 
     def setCogCount(self, cogCountList):
         self.cogCounts = cogCountList
-        if hasattr(self, 'suitPage'):
-            self.suitPage.updatePage()
+        if hasattr(self, 'cogPage'):
+            self.cogPage.updatePage()
 
     def setCogRadar(self, radar):
         self.cogRadar = radar
-        if hasattr(self, 'suitPage'):
-            self.suitPage.updateCogRadarButtons(radar)
+        if hasattr(self, 'cogPage'):
+            self.cogPage.updateCogRadarButtons(radar)
 
     def setBuildingRadar(self, radar):
         self.buildingRadar = radar
-        if hasattr(self, 'suitPage'):
-            self.suitPage.updateBuildingRadarButtons(radar)
+        if hasattr(self, 'cogPage'):
+            self.cogPage.updateBuildingRadarButtons(radar)
 
     def setCogTypes(self, types):
         self.cogTypes = types
@@ -932,8 +932,8 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
         else:
             parts = self.getCogParts()
             if CogDisguiseGlobals.isPaidSuitComplete(self, parts, index):
-                cogIndex = self.cogTypes[index] + SuitDNA.suitsPerDept * index
-                cog = SuitDNA.suitHeadTypes[cogIndex]
+                cogIndex = self.cogTypes[index] + CogDNA.cogsPerDept * index
+                cog = CogDNA.suitHeadTypes[cogIndex]
                 self.putOnSuit(cog)
             else:
                 self.putOnSuit(index, rental=True)

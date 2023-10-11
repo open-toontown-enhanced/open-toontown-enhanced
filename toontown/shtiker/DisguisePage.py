@@ -3,8 +3,8 @@ from direct.gui.DirectGui import *
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import TTLocalizer
-from toontown.suit import SuitDNA
-from toontown.battle import SuitBattleGlobals
+from toontown.cog import CogDNA
+from toontown.battle import CogBattleGlobals
 from toontown.minigame import MinigamePowerMeter
 from toontown.coghq import CogDisguiseGlobals
 DeptColors = (Vec4(0.647, 0.608, 0.596, 1.0),
@@ -32,7 +32,7 @@ class DisguisePage(ShtikerPage.ShtikerPage):
         self.bkgd.setTextureOff(1)
         self.tabs = []
         self.pageFrame = DirectFrame(parent=self.frame, relief=None)
-        for dept in SuitDNA.suitDepts:
+        for dept in CogDNA.suitDepts:
             if dept == 'c':
                 tabIndex = 1
                 textPos = (1.57, 0.75)
@@ -47,11 +47,11 @@ class DisguisePage(ShtikerPage.ShtikerPage):
                 textPos = (1.57, -1.05)
             pageGeom = gui.find('**/page%d' % tabIndex)
             tabGeom = gui.find('**/tab%d' % tabIndex)
-            tab = DirectButton(parent=self.pageFrame, relief=None, geom=tabGeom, geom_color=DeptColors[tabIndex - 1], text=SuitDNA.suitDeptFullnames[dept], text_font=ToontownGlobals.getSuitFont(), text_pos=textPos, text_roll=-90, text_scale=TTLocalizer.DPtab, text_align=TextNode.ACenter, text1_fg=Vec4(1, 0, 0, 1), text2_fg=Vec4(0.5, 0.4, 0.4, 1), text3_fg=Vec4(0.4, 0.4, 0.4, 1), command=self.doTab, extraArgs=[len(self.tabs)], pressEffect=0)
+            tab = DirectButton(parent=self.pageFrame, relief=None, geom=tabGeom, geom_color=DeptColors[tabIndex - 1], text=CogDNA.suitDeptFullnames[dept], text_font=ToontownGlobals.getCogFont(), text_pos=textPos, text_roll=-90, text_scale=TTLocalizer.DPtab, text_align=TextNode.ACenter, text1_fg=Vec4(1, 0, 0, 1), text2_fg=Vec4(0.5, 0.4, 0.4, 1), text3_fg=Vec4(0.4, 0.4, 0.4, 1), command=self.doTab, extraArgs=[len(self.tabs)], pressEffect=0)
             self.tabs.append(tab)
             page = DirectFrame(parent=tab, relief=None, geom=pageGeom)
 
-        self.deptLabel = DirectLabel(parent=self.frame, text='', text_font=ToontownGlobals.getSuitFont(), text_scale=TTLocalizer.DPdeptLabel, text_pos=(-0.1, 0.8))
+        self.deptLabel = DirectLabel(parent=self.frame, text='', text_font=ToontownGlobals.getCogFont(), text_scale=TTLocalizer.DPdeptLabel, text_pos=(-0.1, 0.8))
         DirectFrame(parent=self.frame, relief=None, geom=gui.find('**/pipe_frame'))
         self.tube = DirectFrame(parent=self.frame, relief=None, geom=gui.find('**/tube'))
         DirectFrame(parent=self.frame, relief=None, geom=gui.find('**/robot/face'))
@@ -66,8 +66,8 @@ class DisguisePage(ShtikerPage.ShtikerPage):
         self.stockOptionTitle.hide()
         self.progressTitle = self.meritTitle
         self.promotionTitle = DirectLabel(parent=self.frame, relief=None, geom=gui.find('**/text_ready4promotion'), geom_pos=(0, 0.1, 0))
-        self.cogName = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getSuitFont(), text_scale=TTLocalizer.DPcogName, text_align=TextNode.ACenter, pos=(-0.948, 0, -1.15))
-        self.cogLevel = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getSuitFont(), text_scale=0.09, text_align=TextNode.ACenter, pos=(-0.91, 0, -1.02))
+        self.cogName = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getCogFont(), text_scale=TTLocalizer.DPcogName, text_align=TextNode.ACenter, pos=(-0.948, 0, -1.15))
+        self.cogLevel = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getCogFont(), text_scale=0.09, text_align=TextNode.ACenter, pos=(-0.91, 0, -1.02))
         self.partFrame = DirectFrame(parent=self.frame, relief=None)
         self.parts = []
         for partNum in range(0, NumParts):
@@ -77,8 +77,8 @@ class DisguisePage(ShtikerPage.ShtikerPage):
         for partNum in range(0, NumParts):
             self.holes.append(DirectFrame(parent=self.partFrame, relief=None, geom=gui.find('**/robot_hole/' + PartNames[partNum])))
 
-        self.cogPartRatio = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getSuitFont(), text_scale=0.08, text_align=TextNode.ACenter, pos=(-0.91, 0, -0.82))
-        self.cogMeritRatio = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getSuitFont(), text_scale=0.08, text_align=TextNode.ACenter, pos=(0.45, 0, -0.36))
+        self.cogPartRatio = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getCogFont(), text_scale=0.08, text_align=TextNode.ACenter, pos=(-0.91, 0, -0.82))
+        self.cogMeritRatio = DirectLabel(parent=self.frame, relief=None, text='', text_font=ToontownGlobals.getCogFont(), text_scale=0.08, text_align=TextNode.ACenter, pos=(0.45, 0, -0.36))
         meterFace = gui.find('**/meter_face_whole')
         meterFaceHalf = gui.find('**/meter_face_half')
         self.meterFace = DirectLabel(parent=self.frame, relief=None, geom=meterFace, color=self.meterColor, pos=(0.455, 0.0, 0.04))
@@ -173,20 +173,20 @@ class DisguisePage(ShtikerPage.ShtikerPage):
                 tab['text2_fg'] = (0.5, 0.4, 0.4, 1)
 
         self.bkgd.setColor(DeptColors[index])
-        self.deptLabel['text'] = (SuitDNA.suitDeptFullnames[SuitDNA.suitDepts[index]],)
-        cogIndex = base.localAvatar.cogTypes[index] + SuitDNA.suitsPerDept * index
-        cog = SuitDNA.suitHeadTypes[cogIndex]
+        self.deptLabel['text'] = (CogDNA.suitDeptFullnames[CogDNA.suitDepts[index]],)
+        cogIndex = base.localAvatar.cogTypes[index] + CogDNA.cogsPerDept * index
+        cog = CogDNA.suitHeadTypes[cogIndex]
         self.progressTitle.hide()
-        if SuitDNA.suitDepts[index] == 'm':
+        if CogDNA.suitDepts[index] == 'm':
             self.progressTitle = self.cogbuckTitle
-        elif SuitDNA.suitDepts[index] == 'l':
+        elif CogDNA.suitDepts[index] == 'l':
             self.progressTitle = self.juryNoticeTitle
-        elif SuitDNA.suitDepts[index] == 'c':
+        elif CogDNA.suitDepts[index] == 'c':
             self.progressTitle = self.stockOptionTitle
         else:
             self.progressTitle = self.meritTitle
         self.progressTitle.show()
-        self.cogName['text'] = SuitBattleGlobals.SuitAttributes[cog]['name']
+        self.cogName['text'] = CogBattleGlobals.CogAttributes[cog]['name']
         cogLevel = base.localAvatar.cogLevels[index]
         self.cogLevel['text'] = TTLocalizer.DisguisePageCogLevel % str(cogLevel + 1)
         numParts = base.localAvatar.cogParts[index]

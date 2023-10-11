@@ -11,7 +11,7 @@ from toontown.ai import ToonBarrier
 from toontown.battle import BattleBase
 from toontown.cogdominium import DistributedCogdoBattleBldgAI
 from toontown.building.ElevatorConstants import *
-from toontown.suit.SuitDNA import SuitDNA
+from toontown.cog.CogDNA import CogDNA
 from toontown.toonbase.ToontownBattleGlobals import *
 from toontown.hood import ZoneUtil
 from toontown.minigame.MinigameGlobals import SafeZones
@@ -68,12 +68,12 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
         self.elevator = elevator
         self._game = None
         self._CogdoGameRepeat = config.GetBool('cogdo-game-repeat', 0)
-        self.suits = []
-        self.activeSuits = []
-        self.reserveSuits = []
+        self.cogs = []
+        self.activeCogs = []
+        self.reserveCogs = []
         self.joinedReserves = []
-        self.suitsKilled = []
-        self.suitsKilledPerFloor = []
+        self.cogsKilled = []
+        self.cogsKilledPerFloor = []
         self.battle = None
         self.timer = Timer.Timer()
         self._wantBarrelRoom = config.GetBool('cogdo-want-barrel-room', 0)
@@ -293,26 +293,26 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
             0]
 
     def getDroneCogDNA(self):
-        dna = SuitDNA()
+        dna = CogDNA()
         dna.newSuitRandom(level = 2)
         return dna
 
-    def d_setSuits(self):
-        self.sendUpdate('setSuits', self.getSuits())
+    def d_setCogs(self):
+        self.sendUpdate('setCogs', self.getCogs())
 
-    def getSuits(self):
-        suitIds = []
-        for suit in self.activeSuits:
-            suitIds.append(suit.doId)
+    def getCogs(self):
+        cogIds = []
+        for suit in self.activeCogs:
+            cogIds.append(suit.doId)
 
         reserveIds = []
         values = []
-        for info in self.reserveSuits:
+        for info in self.reserveCogs:
             reserveIds.append(info[0].doId)
             values.append(info[1])
 
         return [
-            suitIds,
+            cogIds,
             reserveIds,
             values]
 
@@ -434,7 +434,7 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
     def enterElevator(self):
         if self.isBossFloor(self.currentFloor):
-            self._populateFloorSuits()
+            self._populateFloorCogs()
         else:
             self.d_setToons()
         self.__resetResponses()
@@ -506,16 +506,16 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
         else:
             self._gameDone()
 
-    def _populateFloorSuits(self):
-        suitHandles = self.bldg.planner.genFloorSuits(self.currentFloor)
-        self.suits = suitHandles['activeSuits']
-        self.activeSuits = []
-        for suit in self.suits:
-            self.activeSuits.append(suit)
+    def _populateFloorCogs(self):
+        suitHandles = self.bldg.planner.genFloorCogs(self.currentFloor)
+        self.cogs = suitHandles['activeCogs']
+        self.activeCogs = []
+        for suit in self.cogs:
+            self.activeCogs.append(suit)
 
-        self.reserveSuits = suitHandles['reserveSuits']
+        self.reserveCogs = suitHandles['reserveCogs']
         self.d_setToons()
-        self.d_setSuits()
+        self.d_setCogs()
 
     def _setGameScore(self, score):
         self._gameScore = score
@@ -670,7 +670,7 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
     def __brRewardDone(self, clearedAvIds = []):
         if len(self.toons) > 0:
             if not self.isBossFloor(self.currentFloor):
-                self._populateFloorSuits()
+                self._populateFloorCogs()
                 self.b_setState('Battle')
             else:
                 self.b_setState('BattleIntro')
@@ -698,8 +698,8 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
             self.notify.info('%d toon(s) in barrel battle' % len(self.toons))
             bossBattle = 0
         self.battle = DistributedCogdoBattleBldgAI.DistributedCogdoBattleBldgAI(self.air, self.zoneId, self.__handleRoundDone, self.__handleBattleDone, bossBattle = bossBattle)
-        self.battle.suitsKilled = self.suitsKilled
-        self.battle.suitsKilledPerFloor = self.suitsKilledPerFloor
+        self.battle.cogsKilled = self.cogsKilled
+        self.battle.cogsKilledPerFloor = self.cogsKilledPerFloor
         self.battle.battleCalc.toonSkillPtsGained = self.toonSkillPtsGained
         self.battle.toonExp = self.toonExp
         self.battle.toonOrigQuests = self.toonOrigQuests
@@ -708,7 +708,7 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
         self.battle.toonMerits = self.toonMerits
         self.battle.toonParts = self.toonParts
         self.battle.helpfulToons = self.helpfulToons
-        self.battle.setInitialMembers(self.toons, self.suits)
+        self.battle.setInitialMembers(self.toons, self.cogs)
         self.battle.generateWithRequired(self.zoneId)
         mult = getCreditMultiplier(self.currentFloor)
         if self.air.cogInvasionManager.getInvading():
@@ -717,47 +717,47 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
         self.battle.battleCalc.setSkillCreditMultiplier(mult)
 
     def __cleanupFloorBattle(self):
-        for suit in self.suits:
+        for suit in self.cogs:
             self.notify.debug('cleaning up floor suit: %d' % suit.doId)
             if suit.isDeleted():
                 self.notify.debug('whoops, suit %d is deleted.' % suit.doId)
             else:
                 suit.requestDelete()
 
-        self.suits = []
-        self.reserveSuits = []
-        self.activeSuits = []
+        self.cogs = []
+        self.reserveCogs = []
+        self.activeCogs = []
         if self.battle != None:
             self.battle.requestDelete()
 
         self.battle = None
 
-    def __handleRoundDone(self, toonIds, totalHp, deadSuits):
+    def __handleRoundDone(self, toonIds, totalHp, deadCogs):
         totalMaxHp = 0
-        for suit in self.suits:
+        for suit in self.cogs:
             totalMaxHp += suit.maxHP
 
-        for suit in deadSuits:
-            self.activeSuits.remove(suit)
+        for suit in deadCogs:
+            self.activeCogs.remove(suit)
 
-        if len(self.reserveSuits) > 0 and len(self.activeSuits) < 4:
+        if len(self.reserveCogs) > 0 and len(self.activeCogs) < 4:
             self.joinedReserves = []
             hpPercent = 100 - (totalHp / totalMaxHp) * 100.0
-            for info in self.reserveSuits:
-                if info[1] <= hpPercent and len(self.activeSuits) < 4:
-                    self.suits.append(info[0])
-                    self.activeSuits.append(info[0])
+            for info in self.reserveCogs:
+                if info[1] <= hpPercent and len(self.activeCogs) < 4:
+                    self.cogs.append(info[0])
+                    self.activeCogs.append(info[0])
                     self.joinedReserves.append(info)
 
             for info in self.joinedReserves:
-                self.reserveSuits.remove(info)
+                self.reserveCogs.remove(info)
 
             if len(self.joinedReserves) > 0:
                 self.fsm.request('ReservesJoining')
-                self.d_setSuits()
+                self.d_setCogs()
                 return
 
-        if len(self.activeSuits) == 0:
+        if len(self.activeCogs) == 0:
             self.fsm.request('BattleDone', [
                 toonIds])
         else:
@@ -798,7 +798,7 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
     def enterReservesJoining(self):
         self.__resetResponses()
-        self.timer.startCallback(ElevatorData[ELEVATOR_NORMAL]['openTime'] + SUIT_HOLD_ELEVATOR_TIME + BattleBase.SERVER_BUFFER_TIME, self.__serverReserveJoinDone)
+        self.timer.startCallback(ElevatorData[ELEVATOR_NORMAL]['openTime'] + COG_HOLD_ELEVATOR_TIME + BattleBase.SERVER_BUFFER_TIME, self.__serverReserveJoinDone)
         return None
 
     def __serverReserveJoinDone(self):
@@ -837,7 +837,7 @@ class DistributedCogdoInteriorAI(DistributedObjectAI.DistributedObjectAI):
 
     def exitBattleDone(self):
         self.__cleanupFloorBattle()
-        self.d_setSuits()
+        self.d_setCogs()
         return None
 
     def __handleEnterElevator(self):

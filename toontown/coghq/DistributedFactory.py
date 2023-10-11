@@ -22,11 +22,11 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
     def __init__(self, cr):
         DistributedLevel.DistributedLevel.__init__(self, cr)
         FactoryBase.FactoryBase.__init__(self)
-        self.suitIds = []
-        self.suits = []
-        self.reserveSuits = []
+        self.cogIds = []
+        self.cogs = []
+        self.reserveCogs = []
         self.joiningReserves = []
-        self.suitsInitialized = 0
+        self.cogsInitialized = 0
         self.goonClipPlanes = {}
         base.localAvatar.physControls.setCollisionRayHeight(10.0)
 
@@ -117,26 +117,26 @@ class DistributedFactory(DistributedLevel.DistributedLevel, FactoryBase.FactoryB
     def disable(self):
         self.notify.debug('disable')
         base.localAvatar.setCameraCollisionsCanMove(0)
-        if hasattr(self, 'suits'):
-            del self.suits
+        if hasattr(self, 'cogs'):
+            del self.cogs
         if hasattr(self, 'relatedObjectMgrRequest') and self.relatedObjectMgrRequest:
             self.cr.relatedObjectMgr.abortRequest(self.relatedObjectMgrRequest)
             del self.relatedObjectMgrRequest
         DistributedLevel.DistributedLevel.disable(self)
 
-    def setSuits(self, suitIds, reserveSuitIds):
-        oldSuitIds = list(self.suitIds)
-        self.suitIds = suitIds
+    def setCogs(self, cogIds, reserveSuitIds):
+        oldSuitIds = list(self.cogIds)
+        self.cogIds = cogIds
         self.reserveSuitIds = reserveSuitIds
         newSuitIds = []
-        for suitId in self.suitIds:
-            if suitId not in oldSuitIds:
-                newSuitIds.append(suitId)
+        for cogId in self.cogIds:
+            if cogId not in oldSuitIds:
+                newSuitIds.append(cogId)
 
         if len(newSuitIds):
 
-            def bringOutOfReserve(suits):
-                for suit in suits:
+            def bringOutOfReserve(cogs):
+                for suit in cogs:
                     if suit:
                         suit.comeOutOfReserve()
 

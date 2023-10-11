@@ -1,6 +1,6 @@
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownBattleGlobals
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 BattleExperienceAINotify = DirectNotifyGlobal.directNotify.newCategory('BattleExprienceAI')
 
 def getSkillGained(toonSkillPtsGained, toonId, track):
@@ -11,7 +11,7 @@ def getSkillGained(toonSkillPtsGained, toonId, track):
     return int(exp + 0.5)
 
 
-def getBattleExperience(numToons, activeToons, toonExp, toonSkillPtsGained, toonOrigQuests, toonItems, toonOrigMerits, toonMerits, toonParts, suitsKilled, helpfulToonsList=None):
+def getBattleExperience(numToons, activeToons, toonExp, toonSkillPtsGained, toonOrigQuests, toonItems, toonOrigMerits, toonMerits, toonParts, cogsKilled, helpfulToonsList=None):
     if helpfulToonsList == None:
         BattleExperienceAINotify.warning('=============\nERROR ERROR helpfulToons=None in assignRewards , tell Red')
     p = []
@@ -56,14 +56,14 @@ def getBattleExperience(numToons, activeToons, toonExp, toonSkillPtsGained, toon
     for i in range(len(activeToons)):
         toonIndices[activeToons[i]] = i
 
-    for deathRecord in suitsKilled:
+    for deathRecord in cogsKilled:
         level = deathRecord['level']
         type = deathRecord['type']
         if deathRecord['isVP'] or deathRecord['isCFO']:
             level = 0
-            typeNum = SuitDNA.suitDepts.index(deathRecord['track'])
+            typeNum = CogDNA.suitDepts.index(deathRecord['track'])
         else:
-            typeNum = SuitDNA.suitHeadTypes.index(type)
+            typeNum = CogDNA.suitHeadTypes.index(type)
         involvedToonIds = deathRecord['activeToons']
         toonBits = 0
         for toonId in involvedToonIds:
@@ -118,7 +118,7 @@ def getToonUberStatus(toons, numToons):
     return fieldList
 
 
-def assignRewards(activeToons, toonSkillPtsGained, suitsKilled, zoneId, helpfulToons = None):
+def assignRewards(activeToons, toonSkillPtsGained, cogsKilled, zoneId, helpfulToons = None):
     if helpfulToons == None:
         BattleExperienceAINotify.warning('=============\nERROR ERROR helpfulToons=None in assignRewards , tell Red')
     activeToonList = []
@@ -154,12 +154,12 @@ def assignRewards(activeToons, toonSkillPtsGained, suitsKilled, zoneId, helpfulT
 
         if simbase.air.config.GetBool('battle-passing-no-credit', True):
             if helpfulToons and toon.doId in helpfulToons:
-                simbase.air.questManager.toonKilledCogs(toon, suitsKilled, zoneId, activeToonList)
-                simbase.air.cogPageManager.toonKilledCogs(toon, suitsKilled, zoneId)
+                simbase.air.questManager.toonKilledCogs(toon, cogsKilled, zoneId, activeToonList)
+                simbase.air.cogPageManager.toonKilledCogs(toon, cogsKilled, zoneId)
             else:
                 BattleExperienceAINotify.debug('toon=%d unhelpful not getting killed cog quest credit' % toon.doId)
         else:
-            simbase.air.questManager.toonKilledCogs(toon, suitsKilled, zoneId, activeToonList)
-            simbase.air.cogPageManager.toonKilledCogs(toon, suitsKilled, zoneId)
+            simbase.air.questManager.toonKilledCogs(toon, cogsKilled, zoneId, activeToonList)
+            simbase.air.cogPageManager.toonKilledCogs(toon, cogsKilled, zoneId)
 
     return

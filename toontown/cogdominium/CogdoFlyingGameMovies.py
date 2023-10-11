@@ -4,7 +4,7 @@ from direct.interval.MetaInterval import Sequence, Parallel
 from direct.interval.FunctionInterval import Func, Wait
 from toontown.toonbase import TTLocalizer
 from toontown.toon import Toon, ToonHead, ToonDNA
-from toontown.suit import Suit, SuitDNA
+from toontown.cog import Suit, CogDNA
 from . import CogdoFlyingGameGlobals as Globals
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoUtil
@@ -35,7 +35,7 @@ class CogdoFlyingGameIntro(CogdoGameMovie):
 
     def makeSuit(self, suitType):
         suit = Suit.Suit()
-        dna = SuitDNA.SuitDNA()
+        dna = CogDNA.CogDNA()
         dna.newSuit(suitType)
         suit.setStyle(dna)
         suit.isDisguised = 1
@@ -62,7 +62,7 @@ class CogdoFlyingGameIntro(CogdoGameMovie):
         self.toonHead.reparentTo(hidden)
         self.toonHead.startBlink()
         self.cogHead = Suit.Suit()
-        self.cogDNA = SuitDNA.SuitDNA()
+        self.cogDNA = CogDNA.CogDNA()
         self.cogDNA.newSuit('legal_eagle')
         self.cogHead.setDNA(self.cogDNA)
         self.cogHead.getGeomNode().setDepthWrite(1)

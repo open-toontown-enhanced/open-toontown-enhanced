@@ -36,7 +36,7 @@ class ShtikerBook(DirectFrame, StateData.StateData):
          TTLocalizer.InventoryPageTitle,
          TTLocalizer.QuestPageToonTasks,
          TTLocalizer.TrackPageShortTitle,
-         TTLocalizer.SuitPageTitle,
+         TTLocalizer.CogPageTitle,
          TTLocalizer.FishPageTitle,
          TTLocalizer.KartPageTitle,
          TTLocalizer.DisguisePageTitle,
@@ -243,7 +243,7 @@ class ShtikerBook(DirectFrame, StateData.StateData):
             iconScale = 1.1
             iconColor = Vec4(0.7, 0.7, 0.7, 1)
             iconModels.detachNode()
-        elif pageName == TTLocalizer.SuitPageTitle:
+        elif pageName == TTLocalizer.CogPageTitle:
             iconModels = loader.loadModel('phase_3.5/models/gui/sos_textures')
             iconGeom = iconModels.find('**/gui_gear')
             iconModels.detachNode()

@@ -1,6 +1,6 @@
 from . import TownLoader
 from . import DGStreet
-from toontown.suit import Suit
+from toontown.cog import Suit
 
 class DGTownLoader(TownLoader.TownLoader):
 
@@ -13,10 +13,10 @@ class DGTownLoader(TownLoader.TownLoader):
 
     def load(self, zoneId):
         TownLoader.TownLoader.load(self, zoneId)
-        Suit.loadSuits(3)
+        Suit.loadCogs(3)
         dnaFile = 'phase_8/dna/daisys_garden_' + str(self.canonicalBranchZone) + '.dna'
         self.createHood(dnaFile)
 
     def unload(self):
-        Suit.unloadSuits(3)
+        Suit.unloadCogs(3)
         TownLoader.TownLoader.unload(self)

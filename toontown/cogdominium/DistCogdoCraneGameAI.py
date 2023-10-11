@@ -8,7 +8,7 @@ from toontown.cogdominium.CogdoCraneGameBase import CogdoCraneGameBase
 from toontown.cogdominium import CogdoGameConsts
 from toontown.cogdominium.DistCogdoCraneMoneyBagAI import DistCogdoCraneMoneyBagAI
 from toontown.cogdominium.DistCogdoCraneCogAI import DistCogdoCraneCogAI
-from toontown.suit.SuitDNA import SuitDNA
+from toontown.cog.CogDNA import CogDNA
 import random
 
 class DistCogdoCraneGameAI(CogdoCraneGameBase, DistCogdoLevelGameAI, NodePath):

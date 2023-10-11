@@ -7,7 +7,7 @@ from direct.interval.FunctionInterval import Func, Wait
 from direct.gui.DirectGui import *
 from toontown.toonbase.ToontownGlobals import *
 from toontown.toonbase import TTLocalizer
-from toontown.suit import Suit, SuitDNA
+from toontown.cog import Suit, CogDNA
 from toontown.toon import Toon, ToonHead, ToonDNA
 from .CogdoUtil import CogdoGameMovie
 from . import CogdoUtil
@@ -38,7 +38,7 @@ class CogdoExecutiveSuiteIntro(CogdoGameMovie):
     def makeSuit(self, suitType):
         self.notify.debug('makeSuit()')
         suit = Suit.Suit()
-        dna = SuitDNA.SuitDNA()
+        dna = CogDNA.CogDNA()
         dna.newSuit(suitType)
         suit.setStyle(dna)
         suit.isDisguised = 1

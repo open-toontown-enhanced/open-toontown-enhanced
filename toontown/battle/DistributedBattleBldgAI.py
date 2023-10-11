@@ -3,7 +3,7 @@ from direct.distributed.ClockDelta import *
 from .BattleBase import *
 from .BattleCalculatorAI import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from .SuitBattleGlobals import *
+from .CogBattleGlobals import *
 from direct.showbase.PythonUtil import addListsByValue
 from . import DistributedBattleBaseAI
 from direct.task import Task
@@ -16,8 +16,8 @@ from otp.otpbase import PythonUtil
 class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedBattleBldgAI')
 
-    def __init__(self, air, zoneId, roundCallback=None, finishCallback=None, maxSuits=4, bossBattle=0):
-        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxSuits, bossBattle)
+    def __init__(self, air, zoneId, roundCallback=None, finishCallback=None, maxCogs=4, bossBattle=0):
+        DistributedBattleBaseAI.DistributedBattleBaseAI.__init__(self, air, zoneId, finishCallback, maxCogs, bossBattle)
         self.streetBattle = 0
         self.roundCallback = roundCallback
         self.fsm.addState(State.State('BuildingReward', self.enterBuildingReward, self.exitBuildingReward, [
@@ -27,9 +27,9 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.elevatorPos = Point3(0, -30, 0)
         self.resumeNeedUpdate = 0
 
-    def setInitialMembers(self, toonIds, suits):
-        for suit in suits:
-            self.addSuit(suit)
+    def setInitialMembers(self, toonIds, cogs):
+        for suit in cogs:
+            self.addCog(suit)
 
         for toonId in toonIds:
             self.addToon(toonId)
@@ -80,8 +80,8 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         return None
 
     def handleFaceOffDone(self):
-        for suit in self.suits:
-            self.activeSuits.append(suit)
+        for suit in self.cogs:
+            self.activeCogs.append(suit)
 
         for toon in self.toons:
             self.activeToons.append(toon)
@@ -90,34 +90,34 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         self.d_setMembers()
         self.b_setState('WaitForInput')
 
-    def localMovieDone(self, needUpdate, deadToons, deadSuits, lastActiveSuitDied):
+    def localMovieDone(self, needUpdate, deadToons, deadCogs, lastActiveSuitDied):
         self.timer.stop()
         self.resumeNeedUpdate = needUpdate
         self.resumeDeadToons = deadToons
-        self.resumeDeadSuits = deadSuits
+        self.resumeDeadCogs = deadCogs
         self.resumeLastActiveSuitDied = lastActiveSuitDied
         if len(self.toons) == 0:
             self.d_setMembers()
             self.b_setState('Resume')
         else:
             totalHp = 0
-            for suit in self.suits:
+            for suit in self.cogs:
                 if suit.currHP > 0:
                     totalHp += suit.currHP
 
-            self.roundCallback(self.activeToons, totalHp, deadSuits)
+            self.roundCallback(self.activeToons, totalHp, deadCogs)
 
     def __goToResumeState(self, task):
         self.b_setState('Resume')
 
     def resume(self, currentFloor=0, topFloor=0):
-        if len(self.suits) == 0:
+        if len(self.cogs) == 0:
             self.d_setMembers()
-            self.suitsKilledPerFloor.append(self.suitsKilledThisBattle)
+            self.cogsKilledPerFloor.append(self.cogsKilledThisBattle)
             if topFloor == 0:
                 self.b_setState('Reward')
             else:
-                for floorNum, cogsThisFloor in PythonUtil.enumerate(self.suitsKilledPerFloor):
+                for floorNum, cogsThisFloor in PythonUtil.enumerate(self.cogsKilledPerFloor):
                     for toonId in self.activeToons:
                         toon = self.getToon(toonId)
                         if toon:
@@ -135,12 +135,12 @@ class DistributedBattleBldgAI(DistributedBattleBaseAI.DistributedBattleBaseAI):
         else:
             if self.resumeNeedUpdate == 1:
                 self.d_setMembers()
-                if len(self.resumeDeadSuits) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
+                if len(self.resumeDeadCogs) > 0 and self.resumeLastActiveSuitDied == 0 or len(self.resumeDeadToons) > 0:
                     self.needAdjust = 1
             self.setState('WaitForJoin')
         self.resumeNeedUpdate = 0
         self.resumeDeadToons = []
-        self.resumeDeadSuits = []
+        self.resumeDeadCogs = []
         self.resumeLastActiveSuitDied = 0
 
     def enterReservesJoining(self, ts=0):

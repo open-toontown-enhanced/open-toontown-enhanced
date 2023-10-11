@@ -6,7 +6,7 @@ from toontown.toonbase import ToontownGlobals, ToontownBattleGlobals
 from toontown.coghq import FactoryEntityCreatorAI, StageRoomSpecs
 from toontown.coghq import StageRoomBase, LevelSuitPlannerAI
 from toontown.coghq import DistributedStageBattleAI
-from toontown.suit import DistributedStageSuitAI
+from toontown.cog import DistributedStageCogAI
 
 class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBase.StageRoomBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStageRoomAI')
@@ -46,23 +46,23 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
         DistributedLevelAI.DistributedLevelAI.generate(self, roomSpec)
         self.notify.debug('creating cogs')
         cogSpecModule = StageRoomSpecs.getCogSpecModule(self.roomId)
-        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedStageSuitAI.DistributedStageSuitAI, DistributedStageBattleAI.DistributedStageBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
-        suitHandles = self.planner.genSuits()
+        self.planner = LevelSuitPlannerAI.LevelSuitPlannerAI(self.air, self, DistributedStageCogAI.DistributedStageCogAI, DistributedStageBattleAI.DistributedStageBattleAI, cogSpecModule.CogData, cogSpecModule.ReserveCogData, cogSpecModule.BattleCells, battleExpAggreg=self.battleExpAggreg)
+        suitHandles = self.planner.genCogs()
         messenger.send('plannerCreated-' + str(self.doId))
-        self.suits = suitHandles['activeSuits']
-        self.reserveSuits = suitHandles['reserveSuits']
-        self.d_setSuits()
+        self.cogs = suitHandles['activeCogs']
+        self.reserveCogs = suitHandles['reserveCogs']
+        self.d_setCogs()
         self.notify.debug('finish stage room %s %s creation' % (self.roomId, self.doId))
 
     def delete(self):
         self.notify.debug('delete: %s' % self.doId)
-        suits = self.suits
-        for reserve in self.reserveSuits:
-            suits.append(reserve[0])
+        cogs = self.cogs
+        for reserve in self.reserveCogs:
+            cogs.append(reserve[0])
 
         self.planner.destroy()
         del self.planner
-        for suit in suits:
+        for suit in cogs:
             if not suit.isDeleted():
                 suit.factoryIsGoingDown()
                 suit.requestDelete()
@@ -82,22 +82,22 @@ class DistributedStageRoomAI(DistributedLevelAI.DistributedLevelAI, StageRoomBas
     def getCogLevel(self):
         return self.cogLevel
 
-    def d_setSuits(self):
-        self.sendUpdate('setSuits', [self.getSuits(), self.getReserveSuits()])
+    def d_setCogs(self):
+        self.sendUpdate('setCogs', [self.getCogs(), self.getReserveCogs()])
 
-    def getSuits(self):
-        suitIds = []
-        for suit in self.suits:
-            suitIds.append(suit.doId)
+    def getCogs(self):
+        cogIds = []
+        for suit in self.cogs:
+            cogIds.append(suit.doId)
 
-        return suitIds
+        return cogIds
 
-    def getReserveSuits(self):
-        suitIds = []
-        for suit in self.reserveSuits:
-            suitIds.append(suit[0].doId)
+    def getReserveCogs(self):
+        cogIds = []
+        for suit in self.reserveCogs:
+            cogIds.append(suit[0].doId)
 
-        return suitIds
+        return cogIds
 
     def d_setBossConfronted(self, toonId):
         if toonId not in self.avIdList:

@@ -498,7 +498,7 @@ QuestsItemDict = {1: ['Pair of Glasses', 'Pairs of Glasses', 'a '],
  4010: ['Clear Castanet', 'Clear Castanets', 'a '],
  4011: ["Leo's Lyrics", "Leo's Lyrics", ''],
  5001: ['Silk necktie', 'Silk neckties', 'a '],
- 5002: ['Pinstripe Suit', 'Pinstripe Suits', 'a '],
+ 5002: ['Pinstripe Suit', 'Pinstripe Cogs', 'a '],
  5003: ['Pair of Scissors', 'Pairs of Scissors', 'a '],
  5004: ['Postcard', 'Postcards', 'a '],
  5005: ['Pen', 'Pens', 'a '],
@@ -552,7 +552,7 @@ QuestsItemDict = {1: ['Pair of Glasses', 'Pairs of Glasses', 'a '],
  6009: ['Zinnias', 'Zinnias', 'some '],
  6010: ['Zydeco Records', 'Zydeco Records', 'some '],
  6011: ['Zucchini', 'Zucchinis', 'a '],
- 6012: ['Zoot Suit', 'Zoot Suits', 'a '],
+ 6012: ['Zoot Suit', 'Zoot Cogs', 'a '],
  7001: ['Plain Bed', 'Plain Beds', 'a '],
  7002: ['Fancy Bed', 'Fancy Beds', 'a '],
  7003: ['Blue Bedspread', 'Blue Bedspreads', 'a '],
@@ -1541,7 +1541,7 @@ QuestDialogDict = {160: {GREETING: '',
         LEAVING: '',
         QUEST: "Hey, good job on those Cogs!\x07Here you go, it's blue and it's not plaid.\x07Sure hope she likes paisley.\x07Bring the bedspread back to Honey.",
         INCOMPLETE_PROGRESS: "That's all I've got for you right now.\x07Please bring that bedspread to Honey.",
-        COMPLETE: "Oh! That's lovely! Paisley suits me quite well.\x07Time for my beauty sleep, then! So long, _avName_.\x07What? You're still here? Can't you see I'm trying to sleep?\x07Here, take this and let me rest. I must look a fright!"},
+        COMPLETE: "Oh! That's lovely! Paisley cogs me quite well.\x07Time for my beauty sleep, then! So long, _avName_.\x07What? You're still here? Can't you see I'm trying to sleep?\x07Here, take this and let me rest. I must look a fright!"},
  7218: {QUEST: 'Dreamy Daphne could use a hand._where_'},
  7219: {GREETING: '',
         LEAVING: '',
@@ -3106,7 +3106,7 @@ FADoorCodes_WRONG_DOOR_HQ = 'Wrong door! Take the other door to the playground!'
 FADoorCodes_GO_TO_PLAYGROUND = 'Wrong way! You need to go to the playground!'
 FADoorCodes_DEFEAT_FLUNKY_TOM = 'Walk up to that Flunky to battle him!'
 FADoorCodes_TALK_TO_HQ_TOM = 'Go get your reward from Toon Headquarters!'
-FADoorCodes_SUIT_APPROACHING = None
+FADoorCodes_COG_APPROACHING = None
 FADoorCodes_BUILDING_TAKEOVER = "Watch out! There's a Cog in there!"
 FADoorCodes_SB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon! You need to complete your Sellbot Disguise first!\n\nBuild your Sellbot Disguise out of parts from the Factory."
 FADoorCodes_CB_DISGUISE_INCOMPLETE = "You'll get caught going in there as a Toon! You need to complete your Cashbot Disguise first!\n\nBuild your Cashbot Disguise by doing ToonTasks in Donald's Dreamland."
@@ -4769,12 +4769,12 @@ ShardPageLow = 'Quiet'
 ShardPageMed = 'Ideal'
 ShardPageHigh = 'Full'
 ShardPageChoiceReject = 'Sorry, that district is full. Please try another one.'
-SuitPageTitle = 'Cog Gallery'
-SuitPageMystery = DialogQuestion + DialogQuestion + DialogQuestion
-SuitPageQuota = '%s of %s'
-SuitPageCogRadar = '%s present'
-SuitPageBuildingRadarS = '%s building'
-SuitPageBuildingRadarP = '%s buildings'
+CogPageTitle = 'Cog Gallery'
+CogPageMystery = DialogQuestion + DialogQuestion + DialogQuestion
+CogPageQuota = '%s of %s'
+CogPageCogRadar = '%s present'
+CogPageBuildingRadarS = '%s building'
+CogPageBuildingRadarP = '%s buildings'
 DisguisePageTitle = Cog + ' Disguise'
 DisguisePageMeritAlert = 'Ready for\npromotion!'
 DisguisePageCogLevel = 'Level %s'
@@ -4880,7 +4880,7 @@ EmoteSad = 'Sad'
 EmoteAnnoyed = 'Annoyed'
 EmoteSleep = 'Sleepy'
 TIPPageTitle = 'TIP'
-SuitBaseNameWithLevel = '%(name)s\n%(dept)s\nLevel %(level)s'
+CogBaseNameWithLevel = '%(name)s\n%(dept)s\nLevel %(level)s'
 HealthForceAcknowledgeMessage = 'You cannot leave the playground until your Laff meter is smiling!'
 InventoryTotalGags = 'Total gags\n%d / %d'
 InventroyPinkSlips = '%s Pink Slips'
@@ -7774,7 +7774,7 @@ zone2TitleDict = {2513: ('Toon Hall', ''),
  1830: ('Lost and Flounder', ''),
  1831: ('Kelp Around the House', ''),
  1832: ("Melville's Massive Mizzenmast Mart", ''),
- 1833: ('This Transom Man Custom Tailored Suits', ''),
+ 1833: ('This Transom Man Custom Tailored Cogs', ''),
  1834: ('Rudderly Ridiculous!', ''),
  1835: ('', ''),
  4503: ('Gag Shop', ''),
@@ -9483,7 +9483,7 @@ BoardingGoShow = 'Going to\n%s in '
 BoardingGoPreShow = 'Confirming...'
 BossbotBossName = 'C.E.O.'
 BossbotRTWelcome = 'You toons will need different disguises.'
-BossbotRTRemoveSuit = 'First take off your cog suits...'
+BossbotRTRemoveSuit = 'First take off your cog cogs...'
 BossbotRTFightWaiter = 'and then fight these waiters.'
 BossbotRTWearWaiter = "Good Job! Now put on the waiters' clothes."
 BossbotBossPreTwo1 = "What's taking so long? "

@@ -5,7 +5,7 @@
 from otp.ai.AIBaseGlobal import *
 
 from direct.directnotify import DirectNotifyGlobal
-from toontown.suit import DistributedTutorialSuitAI
+from toontown.cog import DistributedTutorialCogAI
 from . import TutorialBattleManagerAI
 
 class SuitPlannerTutorialAI:
@@ -31,8 +31,8 @@ class SuitPlannerTutorialAI:
             self.air)
 
         # Create a flunky
-        newSuit = DistributedTutorialSuitAI.DistributedTutorialSuitAI(self.air, self)
-        newSuit.setupSuitDNA(1, 1, "c")
+        newSuit = DistributedTutorialCogAI.DistributedTutorialCogAI(self.air, self)
+        newSuit.setupCogDNA(1, 1, "c")
         # This is a special tutorial path state
         newSuit.generateWithRequired(self.zoneId)
         self.suit = newSuit

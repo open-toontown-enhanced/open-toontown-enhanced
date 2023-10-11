@@ -10,7 +10,7 @@ class BattleBlocker(BasicEntities.DistributedNodePathEntity):
 
     def __init__(self, cr):
         BasicEntities.DistributedNodePathEntity.__init__(self, cr)
-        self.suitIds = []
+        self.cogIds = []
         self.battleId = None
         return
 
@@ -29,8 +29,8 @@ class BattleBlocker(BasicEntities.DistributedNodePathEntity):
     def destroy(self):
         BasicEntities.DistributedNodePathEntity.destroy(self)
 
-    def setSuits(self, suitIds):
-        self.suitIds = suitIds
+    def setCogs(self, cogIds):
+        self.cogIds = cogIds
 
     def setBattle(self, battleId):
         self.battleId = battleId
@@ -69,11 +69,11 @@ class BattleBlocker(BasicEntities.DistributedNodePathEntity):
             if battle:
                 self.notify.debug('act like we collided with battle %d' % self.battleId)
                 callback = battle.handleBattleBlockerCollision
-        elif len(self.suitIds) > 0:
-            for suitId in self.suitIds:
-                suit = base.cr.doId2do.get(suitId)
+        elif len(self.cogIds) > 0:
+            for cogId in self.cogIds:
+                suit = base.cr.doId2do.get(cogId)
                 if suit:
-                    self.notify.debug('act like we collided with Suit %d ( in state %s )' % (suitId, suit.fsm.getCurrentState().getName()))
+                    self.notify.debug('act like we collided with Suit %d ( in state %s )' % (cogId, suit.fsm.getCurrentState().getName()))
                     callback = suit.handleBattleBlockerCollision
                     break
 

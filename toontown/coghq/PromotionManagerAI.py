@@ -1,7 +1,7 @@
 from otp.ai.AIBaseGlobal import *
 from direct.directnotify import DirectNotifyGlobal
 import random
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from . import CogDisguiseGlobals
 from toontown.toon.DistributedToonAI import DistributedToonAI
 from toontown.toonbase.ToontownBattleGlobals import getInvasionMultiplier
@@ -30,9 +30,9 @@ class PromotionManagerAI:
 
         self.notify.debug(f'recoverMerits: multiplier = {multiplier}')
         for cogDict in cogList:
-            dept = SuitDNA.suitDepts.index(cogDict['track'])
+            dept = CogDNA.suitDepts.index(cogDict['track'])
             if avId in cogDict['activeToons']:
-                if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), SuitDNA.suitDepts.index(cogDict['track'])):
+                if CogDisguiseGlobals.isSuitComplete(av.getCogParts(), CogDNA.suitDepts.index(cogDict['track'])):
                     self.notify.debug(f'recoverMerits: checking against cogDict: {cogDict}')
                     rand = random.random() * 100
                     if rand <= self.getPercentChance() and not cogDict['isVirtual']:

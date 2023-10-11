@@ -7,15 +7,15 @@ class DistributedBattleDinersAI(DistributedBattleFinalAI.DistributedBattleFinalA
     def __init__(self, air, bossCog, roundCallback, finishCallback, battleSide):
         DistributedBattleFinalAI.DistributedBattleFinalAI.__init__(self, air, bossCog, roundCallback, finishCallback, battleSide)
 
-    def startBattle(self, toonIds, suits):
+    def startBattle(self, toonIds, cogs):
         self.joinableFsm.request('Joinable')
         for toonId in toonIds:
             if self.addToon(toonId):
                 self.activeToons.append(toonId)
 
         self.d_setMembers()
-        for suit in suits:
-            self.pendingSuits.append(suit)
+        for suit in cogs:
+            self.pendingCogs.append(suit)
 
         self.d_setMembers()
         self.needAdjust = 1

@@ -7,7 +7,7 @@ from direct.fsm import StateData
 from direct.fsm import ClassicFSM, State
 from direct.fsm import State
 from toontown.town import TownBattle
-from toontown.suit import Suit
+from toontown.cog import Suit
 from . import Elevator
 from direct.task.Task import Task
 from otp.distributed.TelemetryLimiter import RotationLimitToH, TLGatherAllAvs
@@ -69,7 +69,7 @@ class SuitInterior(Place.Place):
         self.townBattle = TownBattle.TownBattle('town-battle-done')
         self.townBattle.load()
         for i in range(1, 3):
-            Suit.loadSuits(i)
+            Suit.loadCogs(i)
 
     def unload(self):
         Place.Place.unload(self)
@@ -83,7 +83,7 @@ class SuitInterior(Place.Place):
         self.townBattle.cleanup()
         del self.townBattle
         for i in range(1, 3):
-            Suit.unloadSuits(i)
+            Suit.unloadCogs(i)
 
     def setState(self, state, battleEvent = None):
         if battleEvent:

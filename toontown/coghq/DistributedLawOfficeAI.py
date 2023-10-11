@@ -5,7 +5,7 @@ from direct.task import Task
 from toontown.coghq import FactoryEntityCreatorAI, FactorySpecs
 from otp.level import LevelSpec
 from toontown.coghq import CogDisguiseGlobals
-from toontown.suit import DistributedFactorySuitAI
+from toontown.cog import DistributedFactoryCogAI
 from toontown.toonbase import ToontownGlobals, ToontownBattleGlobals
 from toontown.coghq import DistributedBattleFactoryAI
 from toontown.coghq import LawOfficeLayout
@@ -124,19 +124,19 @@ class DistributedLawOfficeAI(DistributedObjectAI, LawOfficeBase.LawOfficeBase):
     def getCogLevel(self):
         return self.level.cogLevel
 
-    def d_setSuits(self):
-        self.sendUpdate('setSuits', [self.getSuits(), self.getReserveSuits()])
+    def d_setCogs(self):
+        self.sendUpdate('setCogs', [self.getCogs(), self.getReserveCogs()])
 
-    def getSuits(self):
-        suitIds = []
-        for suit in self.suits:
-            suitIds.append(suit.doId)
+    def getCogs(self):
+        cogIds = []
+        for suit in self.cogs:
+            cogIds.append(suit.doId)
 
-        return suitIds
+        return cogIds
 
-    def getReserveSuits(self):
-        suitIds = []
-        for suit in self.reserveSuits:
-            suitIds.append(suit[0].doId)
+    def getReserveCogs(self):
+        cogIds = []
+        for suit in self.reserveCogs:
+            cogIds.append(suit[0].doId)
 
-        return suitIds
+        return cogIds

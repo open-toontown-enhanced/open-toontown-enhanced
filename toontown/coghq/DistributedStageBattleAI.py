@@ -12,8 +12,8 @@ from otp.otpbase.PythonUtil import enumerate
 class DistributedStageBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedStageBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxSuits=4):
-        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'StageReward', roundCallback, finishCallback, maxSuits)
+    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
+        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'StageReward', roundCallback, finishCallback, maxCogs)
         self.battleCalc.setSkillCreditMultiplier(1)
         if self.bossBattle:
             self.level.d_setBossConfronted(toonId)
@@ -25,12 +25,12 @@ class DistributedStageBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI
     def getTaskZoneId(self):
         return self.level.stageId
 
-    def storeSuitsKilledThisBattle(self):
+    def storeCogsKilledThisBattle(self):
         floor = self.level.getFloorNum()
-        if len(self.suitsKilledPerFloor) < floor + 1:
-            self.suitsKilledPerFloor.append(self.suitsKilledThisBattle)
+        if len(self.cogsKilledPerFloor) < floor + 1:
+            self.cogsKilledPerFloor.append(self.cogsKilledThisBattle)
         else:
-            self.suitsKilledPerFloor[floor].extend(self.suitsKilledThisBattle)
+            self.cogsKilledPerFloor[floor].extend(self.cogsKilledThisBattle)
 
     def handleToonsWon(self, toons):
         extraMerits = [
@@ -46,7 +46,7 @@ class DistributedStageBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI
             else:
                 self.notify.debug('toon %d not helpful list, skipping merits' % toon.doId)
 
-        for floorNum, cogsThisFloor in enumerate(self.suitsKilledPerFloor):
+        for floorNum, cogsThisFloor in enumerate(self.cogsKilledPerFloor):
             self.notify.info('merits for floor %s' % floorNum)
             for toon in toons:
                 recovered, notRecovered = self.air.questManager.recoverItems(toon, cogsThisFloor, self.getTaskZoneId())

@@ -28,7 +28,7 @@ from toontown.shtiker import TrackPage
 from toontown.shtiker import KartPage
 from toontown.shtiker import GardenPage
 from toontown.shtiker import GolfPage
-from toontown.shtiker import SuitPage
+from toontown.shtiker import CogPage
 from toontown.shtiker import DisguisePage
 from toontown.shtiker import PhotoAlbumPage
 from toontown.shtiker import FishPage
@@ -270,7 +270,7 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         del self.mapPage
         del self.invPage
         del self.questPage
-        del self.suitPage
+        del self.cogPage
         del self.sosPage
         del self.disguisePage
         del self.fishPage
@@ -356,9 +356,9 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
         self.trackPage = TrackPage.TrackPage()
         self.trackPage.load()
         self.book.addPage(self.trackPage, pageName=TTLocalizer.TrackPageShortTitle)
-        self.suitPage = SuitPage.SuitPage()
-        self.suitPage.load()
-        self.book.addPage(self.suitPage, pageName=TTLocalizer.SuitPageTitle)
+        self.cogPage = CogPage.CogPage()
+        self.cogPage.load()
+        self.book.addPage(self.cogPage, pageName=TTLocalizer.CogPageTitle)
         if base.config.GetBool('want-photo-album', 0):
             self.photoAlbumPage = PhotoAlbumPage.PhotoAlbumPage()
             self.photoAlbumPage.load()
@@ -1902,8 +1902,8 @@ class LocalToon(DistributedToon.DistributedToon, LocalAvatar.LocalAvatar):
             maze = base.cr.doFind('DistCogdoMazeGame')
             if maze:
                 if kindOfCheat == 0:
-                    for suitNum in list(maze.game.suitsById.keys()):
-                        suit = maze.game.suitsById[suitNum]
+                    for suitNum in list(maze.game.cogsById.keys()):
+                        suit = maze.game.cogsById[suitNum]
                         maze.sendUpdate('requestSuitHitByGag', [suit.type, suitNum])
 
                 elif kindOfCheat == 1:

@@ -27,7 +27,7 @@ import functools
 class DistributedMazeGame(DistributedMinigame):
     notify = directNotify.newCategory('DistributedMazeGame')
     CAMERA_TASK = 'MazeGameCameraTask'
-    UPDATE_SUITS_TASK = 'MazeGameUpdateSuitsTask'
+    UPDATE_COGS_TASK = 'MazeGameUpdateCogsTask'
     TREASURE_GRAB_EVENT_NAME = 'MazeTreasureGrabbed'
 
     def __init__(self, cr):
@@ -53,8 +53,8 @@ class DistributedMazeGame(DistributedMinigame):
         self.TOON_Z = 0
         self.MinSuitSpeedRange = [0.8 * self.TOON_SPEED, 0.6 * self.TOON_SPEED]
         self.MaxSuitSpeedRange = [1.1 * self.TOON_SPEED, 2.0 * self.TOON_SPEED]
-        self.FASTER_SUIT_CURVE = 1
-        self.SLOWER_SUIT_CURVE = self.getDifficulty() < 0.5
+        self.FASTER_COG_CURVE = 1
+        self.SLOWER_COG_CURVE = self.getDifficulty() < 0.5
         self.slowerSuitPeriods = {2000: {4: [128, 76],
                 8: [128,
                     99,
@@ -573,8 +573,8 @@ class DistributedMazeGame(DistributedMinigame):
         for i in range(self.maze.numTreasures):
             self.treasures.append(MazeTreasure.MazeTreasure(self.treasureModel, self.maze.treasurePosList[i], i, self.doId))
 
-        self.__loadSuits()
-        for suit in self.suits:
+        self.__loadCogs()
+        for suit in self.cogs:
             suit.onstage()
 
         self.sndTable = {'hitBySuit': [None] * self.numPlayers,
@@ -623,10 +623,10 @@ class DistributedMazeGame(DistributedMinigame):
         self.goalBar.destroy()
         del self.goalBar
         base.setCellsAvailable(base.rightCells, 1)
-        for suit in self.suits:
+        for suit in self.cogs:
             suit.offstage()
 
-        self.__unloadSuits()
+        self.__unloadCogs()
         for treasure in self.treasures:
             treasure.destroy()
 
@@ -701,7 +701,7 @@ class DistributedMazeGame(DistributedMinigame):
         self.goalBar.show()
         self.goalBar['value'] = 0.0
         base.setCellsAvailable(base.rightCells, 0)
-        self.__spawnUpdateSuitsTask()
+        self.__spawnUpdateCogsTask()
         orthoDrive = OrthoDrive(self.TOON_SPEED, maxFrameMove=self.MAX_FRAME_MOVE, customCollisionCallback=self.__doMazeCollisions, priority=1)
         self.orthoWalk = OrthoWalk(orthoDrive, broadcast=not self.isSinglePlayer())
         self.orthoWalk.start()
@@ -722,7 +722,7 @@ class DistributedMazeGame(DistributedMinigame):
         self.orthoWalk.stop()
         self.orthoWalk.destroy()
         del self.orthoWalk
-        self.__killUpdateSuitsTask()
+        self.__killUpdateCogsTask()
         self.timer.stop()
         self.timer.destroy()
         del self.timer
@@ -991,52 +991,52 @@ class DistributedMazeGame(DistributedMinigame):
         self.camParent.setHpr(render, 0, 0, 0)
         return Task.cont
 
-    def __loadSuits(self):
-        self.notify.debug('loadSuits')
-        self.suits = []
-        self.numSuits = 4 * self.numPlayers
+    def __loadCogs(self):
+        self.notify.debug('loadCogs')
+        self.cogs = []
+        self.numCogs = 4 * self.numPlayers
         safeZone = self.getSafezoneId()
         slowerTable = self.slowerSuitPeriods
-        if self.SLOWER_SUIT_CURVE:
+        if self.SLOWER_COG_CURVE:
             slowerTable = self.slowerSuitPeriodsCurve
-        slowerPeriods = slowerTable[safeZone][self.numSuits]
+        slowerPeriods = slowerTable[safeZone][self.numCogs]
         fasterTable = self.fasterSuitPeriods
-        if self.FASTER_SUIT_CURVE:
+        if self.FASTER_COG_CURVE:
             fasterTable = self.fasterSuitPeriodsCurve
-        fasterPeriods = fasterTable[safeZone][self.numSuits]
+        fasterPeriods = fasterTable[safeZone][self.numCogs]
         suitPeriods = slowerPeriods + fasterPeriods
         self.notify.debug('suit periods: ' + repr(suitPeriods))
         self.randomNumGen.shuffle(suitPeriods)
-        for i in range(self.numSuits):
-            self.suits.append(MazeSuit(i, self.maze, self.randomNumGen, suitPeriods[i], self.getDifficulty()))
+        for i in range(self.numCogs):
+            self.cogs.append(MazeSuit(i, self.maze, self.randomNumGen, suitPeriods[i], self.getDifficulty()))
 
-    def __unloadSuits(self):
-        self.notify.debug('unloadSuits')
-        for suit in self.suits:
+    def __unloadCogs(self):
+        self.notify.debug('unloadCogs')
+        for suit in self.cogs:
             suit.destroy()
 
-        del self.suits
+        del self.cogs
 
-    def __spawnUpdateSuitsTask(self):
-        self.notify.debug('spawnUpdateSuitsTask')
-        for suit in self.suits:
+    def __spawnUpdateCogsTask(self):
+        self.notify.debug('spawnUpdateCogsTask')
+        for suit in self.cogs:
             suit.gameStart(self.gameStartTime)
 
-        taskMgr.remove(self.UPDATE_SUITS_TASK)
-        taskMgr.add(self.__updateSuitsTask, self.UPDATE_SUITS_TASK)
+        taskMgr.remove(self.UPDATE_COGS_TASK)
+        taskMgr.add(self.__updateCogsTask, self.UPDATE_COGS_TASK)
 
-    def __killUpdateSuitsTask(self):
-        self.notify.debug('killUpdateSuitsTask')
-        taskMgr.remove(self.UPDATE_SUITS_TASK)
-        for suit in self.suits:
+    def __killUpdateCogsTask(self):
+        self.notify.debug('killUpdateCogsTask')
+        taskMgr.remove(self.UPDATE_COGS_TASK)
+        for suit in self.cogs:
             suit.gameEnd()
 
-    def __updateSuitsTask(self, task):
+    def __updateCogsTask(self, task):
         curT = globalClock.getFrameTime() - self.gameStartTime
-        curTic = int(curT * float(MazeGameGlobals.SUIT_TIC_FREQ))
+        curTic = int(curT * float(MazeGameGlobals.COG_TIC_FREQ))
         suitUpdates = []
-        for i in range(len(self.suits)):
-            updateTics = self.suits[i].getThinkTimestampTics(curTic)
+        for i in range(len(self.cogs)):
+            updateTics = self.cogs[i].getThinkTimestampTics(curTic)
             suitUpdates.extend(list(zip(updateTics, [i] * len(updateTics))))
 
         suitUpdates.sort(key=functools.cmp_to_key(lambda a, b: a[0] - b[0]))
@@ -1046,22 +1046,22 @@ class DistributedMazeGame(DistributedMinigame):
                 update = suitUpdates[i]
                 tic = update[0]
                 suitIndex = update[1]
-                suit = self.suits[suitIndex]
+                suit = self.cogs[suitIndex]
                 if tic > curTic:
                     curTic = tic
                     j = i + 1
                     while j < len(suitUpdates):
                         if suitUpdates[j][0] > tic:
                             break
-                        self.suits[suitUpdates[j][1]].prepareToThink()
+                        self.cogs[suitUpdates[j][1]].prepareToThink()
                         j += 1
 
                 unwalkables = []
                 for si in range(suitIndex):
-                    unwalkables.extend(self.suits[si].occupiedTiles)
+                    unwalkables.extend(self.cogs[si].occupiedTiles)
 
-                for si in range(suitIndex + 1, len(self.suits)):
-                    unwalkables.extend(self.suits[si].occupiedTiles)
+                for si in range(suitIndex + 1, len(self.cogs)):
+                    unwalkables.extend(self.cogs[si].occupiedTiles)
 
                 suit.think(curTic, curT, unwalkables)
 

@@ -3,7 +3,7 @@ from direct.distributed import DistributedObject
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
 from toontown.toonbase import ToontownBattleGlobals
-from toontown.battle import SuitBattleGlobals
+from toontown.battle import CogBattleGlobals
 from toontown.toonbase import TTLocalizer
 from . import HolidayDecorator
 from . import HalloweenHolidayDecorator
@@ -63,8 +63,8 @@ class NewsManager(DistributedObject.DistributedObject):
          cogType,
          numRemaining,
          skeleton))
-        cogName = SuitBattleGlobals.SuitAttributes[cogType]['name']
-        cogNameP = SuitBattleGlobals.SuitAttributes[cogType]['pluralname']
+        cogName = CogBattleGlobals.CogAttributes[cogType]['name']
+        cogNameP = CogBattleGlobals.CogAttributes[cogType]['pluralname']
         if skeleton:
             cogName = TTLocalizer.Skeleton
             cogNameP = TTLocalizer.SkeletonP

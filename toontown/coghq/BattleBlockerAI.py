@@ -6,7 +6,7 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
 
     def __init__(self, level, entId):
         DistributedEntityAI.DistributedEntityAI.__init__(self, level, entId)
-        self.suitIds = []
+        self.cogIds = []
         self.active = 1
 
     def destroy(self):
@@ -31,19 +31,19 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
     def getActive(self):
         return self.active
 
-    def addSuit(self, suit):
-        self.suitIds.append(suit.doId)
-        self.d_setSuits()
+    def addCog(self, suit):
+        self.cogIds.append(suit.doId)
+        self.d_setCogs()
 
     def removeSuit(self, suit):
         try:
-            self.suitIds.remove(suit.doId)
-            self.d_setSuits()
+            self.cogIds.remove(suit.doId)
+            self.d_setCogs()
         except:
-            self.notify.debug("didn't have suitId %d" % suit.doId)
+            self.notify.debug("didn't have cogId %d" % suit.doId)
 
-    def d_setSuits(self):
-        self.sendUpdate('setSuits', [self.suitIds])
+    def d_setCogs(self):
+        self.sendUpdate('setCogs', [self.cogIds])
 
     def b_setBattle(self, battleId):
         self.battle = battleId
@@ -68,13 +68,13 @@ class BattleBlockerAI(DistributedEntityAI.DistributedEntityAI):
     if __dev__:
 
         def attribChanged(self, *args):
-            self.suitIds = []
-            suits = self.level.planner.battleCellId2suits.get(self.cellId)
-            if suits:
-                for suit in suits:
-                    self.suitIds.append(suit.doId)
+            self.cogIds = []
+            cogs = self.level.planner.battleCellId2cogs.get(self.cellId)
+            if cogs:
+                for suit in cogs:
+                    self.cogIds.append(suit.doId)
 
             else:
-                self.notify.warning("Couldn't find battle cell id %d in battleCellId2suits" % self.cellId)
-            self.d_setSuits()
+                self.notify.warning("Couldn't find battle cell id %d in battleCellId2cogs" % self.cellId)
+            self.d_setCogs()
             self.registerBlocker()

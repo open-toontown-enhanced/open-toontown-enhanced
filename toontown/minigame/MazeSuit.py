@@ -5,8 +5,8 @@ from direct.showbase.RandomNumGen import RandomNumGen
 from panda3d.core import Point3
 from panda3d.core import CollisionSphere, CollisionNode
 from panda3d.direct import WaitInterval
-from toontown.suit import Suit
-from toontown.suit import SuitDNA
+from toontown.cog import Suit
+from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from . import MazeGameGlobals
 import functools
@@ -28,9 +28,9 @@ class MazeSuit(DirectObject):
      90,
      270]
     DEFAULT_SPEED = 4.0
-    SUIT_Z = 0.1
+    COG_Z = 0.1
 
-    def __init__(self, serialNum, maze, randomNumGen, cellWalkPeriod, difficulty, suitDnaName = 'flunky', startTile = None, ticFreq = MazeGameGlobals.SUIT_TIC_FREQ, walkSameDirectionProb = MazeGameGlobals.WALK_SAME_DIRECTION_PROB, walkTurnAroundProb = MazeGameGlobals.WALK_TURN_AROUND_PROB, uniqueRandomNumGen = True, walkAnimName = None):
+    def __init__(self, serialNum, maze, randomNumGen, cellWalkPeriod, difficulty, CogDNAName = 'flunky', startTile = None, ticFreq = MazeGameGlobals.COG_TIC_FREQ, walkSameDirectionProb = MazeGameGlobals.WALK_SAME_DIRECTION_PROB, walkTurnAroundProb = MazeGameGlobals.WALK_TURN_AROUND_PROB, uniqueRandomNumGen = True, walkAnimName = None):
         self.serialNum = serialNum
         self.maze = maze
         if uniqueRandomNumGen:
@@ -42,11 +42,11 @@ class MazeSuit(DirectObject):
         self._walkTurnAroundProb = walkTurnAroundProb
         self._walkAnimName = walkAnimName or 'walk'
         self.suit = Suit.Suit()
-        d = SuitDNA.SuitDNA()
-        d.newSuit(suitDnaName)
+        d = CogDNA.CogDNA()
+        d.newSuit(CogDNAName)
         self.suit.setDNA(d)
         if startTile is None:
-            defaultStartPos = MazeGameGlobals.SUIT_START_POSITIONS[self.serialNum]
+            defaultStartPos = MazeGameGlobals.COG_START_POSITIONS[self.serialNum]
             self.startTile = (defaultStartPos[0] * self.maze.width, defaultStartPos[1] * self.maze.height)
         else:
             self.startTile = startTile
@@ -103,7 +103,7 @@ class MazeSuit(DirectObject):
 
     def __getWorldPos(self, sTX, sTY):
         wx, wy = self.maze.tile2world(sTX, sTY)
-        return Point3(wx, wy, self.SUIT_Z)
+        return Point3(wx, wy, self.COG_Z)
 
     def onstage(self):
         sTX = int(self.startTile[0])
@@ -206,8 +206,8 @@ class MazeSuit(DirectObject):
         if curTic == self.lastTicBeforeRender:
             fromCoords = self.maze.tile2world(self.TX, self.TY)
             toCoords = self.maze.tile2world(self.nextTX, self.nextTY)
-            self.fromPos.set(fromCoords[0], fromCoords[1], self.SUIT_Z)
-            self.toPos.set(toCoords[0], toCoords[1], self.SUIT_Z)
+            self.fromPos.set(fromCoords[0], fromCoords[1], self.COG_Z)
+            self.toPos.set(toCoords[0], toCoords[1], self.COG_Z)
             self.moveIval = LerpPosInterval(self.suit, self.cellWalkDuration, self.toPos, startPos=self.fromPos, name=self.uniqueName(self.MOVE_IVAL_NAME))
             if self.direction != self.lastDirection:
                 self.fromH = self.directionHs[self.lastDirection]
@@ -227,7 +227,7 @@ class MazeSuit(DirectObject):
         self.nextThinkTic += self.ticPeriod
 
     @staticmethod
-    def thinkSuits(suitList, startTime, ticFreq = MazeGameGlobals.SUIT_TIC_FREQ):
+    def thinkCogs(suitList, startTime, ticFreq = MazeGameGlobals.COG_TIC_FREQ):
         curT = globalClock.getFrameTime() - startTime
         curTic = int(curT * float(ticFreq))
         suitUpdates = []

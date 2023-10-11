@@ -11,8 +11,8 @@ from direct.showbase.PythonUtil import addListsByValue
 class DistributedMintBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedMintBattleAI')
 
-    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxSuits=4):
-        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'MintReward', roundCallback, finishCallback, maxSuits)
+    def __init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, roundCallback=None, finishCallback=None, maxCogs=4):
+        DistributedLevelBattleAI.DistributedLevelBattleAI.__init__(self, air, battleMgr, pos, suit, toonId, zoneId, level, battleCellId, 'MintReward', roundCallback, finishCallback, maxCogs)
         self.battleCalc.setSkillCreditMultiplier(1)
         if self.bossBattle:
             self.level.d_setBossConfronted(toonId)
@@ -31,10 +31,10 @@ class DistributedMintBattleAI(DistributedLevelBattleAI.DistributedLevelBattleAI)
         index = ToontownGlobals.cogHQZoneId2deptIndex(self.level.mintId)
         extraMerits[index] = amount
         for toon in toons:
-            recovered, notRecovered = self.air.questManager.recoverItems(toon, self.suitsKilled, self.getTaskZoneId())
+            recovered, notRecovered = self.air.questManager.recoverItems(toon, self.cogsKilled, self.getTaskZoneId())
             self.toonItems[toon.doId][0].extend(recovered)
             self.toonItems[toon.doId][1].extend(notRecovered)
-            meritArray = self.air.promotionMgr.recoverMerits(toon, self.suitsKilled, self.getTaskZoneId(), getMintCreditMultiplier(self.getTaskZoneId()), extraMerits=extraMerits)
+            meritArray = self.air.promotionMgr.recoverMerits(toon, self.cogsKilled, self.getTaskZoneId(), getMintCreditMultiplier(self.getTaskZoneId()), extraMerits=extraMerits)
             if toon.doId in self.helpfulToons:
                 self.toonMerits[toon.doId] = addListsByValue(self.toonMerits[toon.doId], meritArray)
             else:

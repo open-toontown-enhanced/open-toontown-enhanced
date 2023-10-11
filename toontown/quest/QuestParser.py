@@ -10,9 +10,9 @@ from direct.showbase import DirectObject
 from . import BlinkingArrows
 from toontown.toon import ToonHeadFrame
 from toontown.char import CharDNA
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from toontown.char import Char
-from toontown.suit import Suit
+from toontown.cog import Suit
 from toontown.toonbase import TTLocalizer
 from toontown.toonbase import ToontownBattleGlobals
 from otp.speedchat import SpeedChatGlobals
@@ -541,7 +541,7 @@ class NPCMoviePlayer(DirectObject.DirectObject):
     def parseLoadSuit(self, line):
         token, name, suitType = line
         suit = Suit.Suit()
-        dna = SuitDNA.SuitDNA()
+        dna = CogDNA.CogDNA()
         dna.newSuit(suitType)
         suit.setDNA(dna)
         self.setVar(name, suit)

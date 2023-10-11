@@ -4,7 +4,7 @@ from .BattleBase import *
 from .BattleProps import *
 from .BattleSounds import *
 from toontown.toon.ToonDNA import *
-from toontown.suit.SuitDNA import *
+from toontown.cog.CogDNA import *
 from direct.directnotify import DirectNotifyGlobal
 import random
 import functools
@@ -20,11 +20,11 @@ ratioMissToHit = 1.5
 tPieShrink = 0.7
 pieFlyTaskName = 'MovieThrow-pieFly'
 
-def addHit(dict, suitId, hitCount):
-    if suitId in dict:
-        dict[suitId] += hitCount
+def addHit(dict, cogId, hitCount):
+    if cogId in dict:
+        dict[cogId] += hitCount
     else:
-        dict[suitId] = hitCount
+        dict[cogId] = hitCount
 
 
 def doFires(fires):
@@ -33,11 +33,11 @@ def doFires(fires):
 
     suitFiresDict = {}
     for fire in fires:
-        suitId = fire['target']['suit'].doId
-        if suitId in suitFiresDict:
-            suitFiresDict[suitId].append(fire)
+        cogId = fire['target']['suit'].doId
+        if cogId in suitFiresDict:
+            suitFiresDict[cogId].append(fire)
         else:
-            suitFiresDict[suitId] = [fire]
+            suitFiresDict[cogId] = [fire]
 
     suitFires = list(suitFiresDict.values())
     def compFunc(a, b):
@@ -53,14 +53,14 @@ def doFires(fires):
     groupHitDict = {}
 
     for fire in fires:
-        suitId = fire['target']['suit'].doId
+        cogId = fire['target']['suit'].doId
         if 1:
             if fire['target']['hp'] > 0:
-                addHit(singleHitDict, suitId, 1)
-                addHit(totalHitDict, suitId, 1)
+                addHit(singleHitDict, cogId, 1)
+                addHit(totalHitDict, cogId, 1)
             else:
-                addHit(singleHitDict, suitId, 0)
-                addHit(totalHitDict, suitId, 0)
+                addHit(singleHitDict, cogId, 0)
+                addHit(totalHitDict, cogId, 0)
 
     notify.debug('singleHitDict = %s' % singleHitDict)
     notify.debug('groupHitDict = %s' % groupHitDict)
@@ -74,7 +74,7 @@ def doFires(fires):
             ival = __doSuitFires(sf)
             if ival:
                 mtrack.append(Sequence(Wait(delay), ival))
-            delay = delay + TOON_FIRE_SUIT_DELAY
+            delay = delay + TOON_FIRE_COG_DELAY
 
     retTrack = Sequence()
     retTrack.append(mtrack)
@@ -153,7 +153,7 @@ def __propPreflight(props, suit, toon, battle):
     prop.lookAt(targetPnt)
 
 
-def __propPreflightGroup(props, suits, toon, battle):
+def __propPreflightGroup(props, cogs, toon, battle):
     prop = props[0]
     toon.update(0)
     prop.wrtReparentTo(battle)
@@ -162,10 +162,10 @@ def __propPreflightGroup(props, suits, toon, battle):
         prop.getChild(ci).setHpr(0, -90, 0)
 
     avgTargetPt = Point3(0, 0, 0)
-    for suit in suits:
+    for suit in cogs:
         avgTargetPt += MovieUtil.avatarFacePoint(suit, other=battle)
 
-    avgTargetPt /= len(suits)
+    avgTargetPt /= len(cogs)
     prop.lookAt(avgTargetPt)
 
 
@@ -231,8 +231,8 @@ def __throwPie(throw, delay, hitCount, showCannon = 1):
     sidestep = throw['sidestep']
     died = target['died']
     revived = target['revived']
-    leftSuits = target['leftSuits']
-    rightSuits = target['rightSuits']
+    leftCogs = target['leftCogs']
+    rightCogs = target['rightCogs']
     level = throw['level']
     battle = throw['battle']
     suitPos = suit.getPos(battle)

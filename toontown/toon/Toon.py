@@ -2,7 +2,7 @@ from otp.avatar import Avatar
 from otp.avatar.Avatar import teleportNotify
 from . import ToonDNA
 from direct.task.Task import Task
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from direct.actor import Actor
 from .ToonHead import *
 from panda3d.core import *
@@ -17,7 +17,7 @@ from toontown.effects import Wake
 from otp.avatar import Emote
 from . import Motion
 from toontown.hood import ZoneUtil
-from toontown.battle import SuitBattleGlobals
+from toontown.battle import CogBattleGlobals
 from otp.otpbase import OTPGlobals
 from toontown.effects import DustCloud
 from toontown.distributed import DelayDelete
@@ -2712,18 +2712,18 @@ class Toon(Avatar.Avatar, ToonHead):
             self.takeOffSuit()
         if launcher and not launcher.getPhaseComplete(5):
             return
-        from toontown.suit import Suit
+        from toontown.cog import Suit
         deptIndex = suitType
         suit = Suit.Suit()
-        dna = SuitDNA.SuitDNA()
+        dna = CogDNA.CogDNA()
         if rental == True:
-            if SuitDNA.suitDepts[deptIndex] == 's':
+            if CogDNA.suitDepts[deptIndex] == 's':
                 suitType = 'cold_caller'
-            elif SuitDNA.suitDepts[deptIndex] == 'm':
+            elif CogDNA.suitDepts[deptIndex] == 'm':
                 suitType = 'short_change'
-            elif SuitDNA.suitDepts[deptIndex] == 'l':
+            elif CogDNA.suitDepts[deptIndex] == 'l':
                 suitType = 'bottom_feeder'
-            elif SuitDNA.suitDepts[deptIndex] == 'c':
+            elif CogDNA.suitDepts[deptIndex] == 'c':
                 suitType = 'flunky'
             else:
                 self.notify.warning('Suspicious: Incorrect rental suit department requested')
@@ -2753,7 +2753,7 @@ class Toon(Avatar.Avatar, ToonHead):
         suitGeom = suit.getGeomNode()
         suitGeom.reparentTo(self)
         if rental == True:
-            suit.makeRentalSuit(SuitDNA.suitDepts[deptIndex])
+            suit.makeRentalSuit(CogDNA.suitDepts[deptIndex])
         self.suit = suit
         self.suitGeom = suitGeom
         self.setHeight(suit.getHeight())
@@ -2777,15 +2777,15 @@ class Toon(Avatar.Avatar, ToonHead):
             self.chatMgr.chatInputSpeedChat.addCogMenu(indices)
         self.suit.loop('neutral')
         self.isDisguised = 1
-        self.setFont(ToontownGlobals.getSuitFont())
+        self.setFont(ToontownGlobals.getCogFont())
         if setDisplayName:
             if hasattr(base, 'idTags') and base.idTags:
                 name = self.getAvIdName()
             else:
                 name = self.getName()
-            suitDept = SuitDNA.suitDepts.index(SuitDNA.getSuitDept(suitType))
-            suitName = SuitBattleGlobals.SuitAttributes[suitType]['name']
-            self.nametag.setDisplayName(TTLocalizer.SuitBaseNameWithLevel % {'name': name,
+            suitDept = CogDNA.suitDepts.index(CogDNA.getCogDept(suitType))
+            suitName = CogBattleGlobals.CogAttributes[suitType]['name']
+            self.nametag.setDisplayName(TTLocalizer.CogBaseNameWithLevel % {'name': name,
              'dept': suitName,
              'level': self.cogLevels[suitDept] + 1})
             self.nametag.setNameWordwrap(9.0)

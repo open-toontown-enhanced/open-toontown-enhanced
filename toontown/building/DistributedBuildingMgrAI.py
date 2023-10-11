@@ -43,7 +43,7 @@ class DistributedBuildingMgrAI:
     def isSuitBlock(self, blockNumber):
         return self.__buildings[blockNumber].isSuitBlock()
 
-    def getSuitBlocks(self):
+    def getCogBlocks(self):
         blocks = []
         for i in list(self.__buildings.values()):
             if i.isSuitBlock():

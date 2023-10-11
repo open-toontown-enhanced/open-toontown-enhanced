@@ -40,7 +40,7 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
             if TTLocalizer.BuildingNametagShadow:
                 self.nametag.setShadow(*TTLocalizer.BuildingNametagShadow)
             self.nametag.setContents(Nametag.CName)
-            self.nametag.setColorCode(NametagGroup.CCSuitBuilding)
+            self.nametag.setColorCode(NametagGroup.CCCogBuilding)
             self.nametag.setActive(0)
             self.nametag.setAvatar(self.getElevatorModel())
             name = self.cr.playGame.dnaStore.getTitleFromBlockNumber(self.bldg.block)
@@ -60,7 +60,7 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
         return
 
     def getBldgDoorOrigin(self):
-        return self.bldg.getSuitDoorOrigin()
+        return self.bldg.getCogDoorOrigin()
 
     def gotBldg(self, buildingList):
         self.bldgRequest = None
@@ -135,4 +135,4 @@ class DistributedElevatorExt(DistributedElevator.DistributedElevator):
         return self.bldg.interiorZoneId
 
     def getElevatorModel(self):
-        return self.bldg.getSuitElevatorNodePath()
+        return self.bldg.getCogElevatorNodePath()

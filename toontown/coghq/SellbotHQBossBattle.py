@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.interval.IntervalGlobal import *
-from toontown.suit import DistributedSellbotBoss
+from toontown.cog import DistributedSellbotBoss
 from direct.directnotify import DirectNotifyGlobal
 from toontown.coghq import CogHQBossBattle
 

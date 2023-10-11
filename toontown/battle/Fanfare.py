@@ -3,7 +3,7 @@ from .BattleBase import *
 from .BattleProps import *
 from .BattleSounds import *
 from toontown.toon.ToonDNA import *
-from toontown.suit.SuitDNA import *
+from toontown.cog.CogDNA import *
 from direct.particles.ParticleEffect import *
 from direct.gui.DirectGui import *
 from panda3d.core import *

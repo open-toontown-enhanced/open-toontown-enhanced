@@ -37,8 +37,8 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.activeIntervals = {}
         self.openSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_open.ogg')
         self.closeSfx = base.loader.loadSfx('phase_5/audio/sfx/elevator_door_close.ogg')
-        self.suits = []
-        self.reserveSuits = []
+        self.cogs = []
+        self.reserveCogs = []
         self.joiningReserves = []
         self.distBldgDoId = None
         self._CogdoGameRepeat = config.GetBool('cogdo-game-repeat', 0)
@@ -223,8 +223,8 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
 
     def __cleanup(self):
         self.toons = []
-        self.suits = []
-        self.reserveSuits = []
+        self.cogs = []
+        self.reserveCogs = []
         self.joiningReserves = []
         if self.elevatorModelIn != None:
             self.elevatorModelIn.removeNode()
@@ -318,30 +318,30 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
             if self.toons.count(toon) == 0:
                 self.__removeToon(toon)
 
-    def setSuits(self, suitIds, reserveIds, values):
-        oldsuits = self.suits
-        self.suits = []
+    def setCogs(self, cogIds, reserveIds, values):
+        oldcogs = self.cogs
+        self.cogs = []
         self.joiningReserves = []
-        for suitId in suitIds:
-            if suitId in self.cr.doId2do:
-                suit = self.cr.doId2do[suitId]
-                self.suits.append(suit)
+        for cogId in cogIds:
+            if cogId in self.cr.doId2do:
+                suit = self.cr.doId2do[cogId]
+                self.cogs.append(suit)
                 suit.fsm.request('Battle')
                 suit.buildingSuit = 1
                 suit.reparentTo(render)
-                if oldsuits.count(suit) == 0:
+                if oldcogs.count(suit) == 0:
                     self.joiningReserves.append(suit)
             else:
-                self.notify.warning('setSuits() - no suit: %d' % suitId)
+                self.notify.warning('setCogs() - no suit: %d' % cogId)
 
-        self.reserveSuits = []
+        self.reserveCogs = []
         for index in range(len(reserveIds)):
-            suitId = reserveIds[index]
-            if suitId in self.cr.doId2do:
-                suit = self.cr.doId2do[suitId]
-                self.reserveSuits.append((suit, values[index]))
+            cogId = reserveIds[index]
+            if cogId in self.cr.doId2do:
+                suit = self.cr.doId2do[cogId]
+                self.reserveCogs.append((suit, values[index]))
             else:
-                self.notify.warning('setSuits() - no suit: %d' % suitId)
+                self.notify.warning('setCogs() - no suit: %d' % cogId)
 
         if len(self.joiningReserves) > 0:
             self.fsm.request('ReservesJoining')
@@ -467,13 +467,13 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.elevIn = elevIn
         self.elevOut = elevOut
         self._haveEntranceElevator.set(True)
-        for index in range(len(self.suits)):
-            self.suits[index].setPos(SuitPositions[index])
-            if len(self.suits) > 2:
-                self.suits[index].setH(SuitHs[index])
+        for index in range(len(self.cogs)):
+            self.cogs[index].setPos(SuitPositions[index])
+            if len(self.cogs) > 2:
+                self.cogs[index].setH(SuitHs[index])
             else:
-                self.suits[index].setH(170)
-            self.suits[index].loop('neutral')
+                self.cogs[index].setH(170)
+            self.cogs[index].loop('neutral')
 
         for toon in self.toons:
             toon.reparentTo(self.elevatorModelIn)
@@ -610,7 +610,7 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
         self.__cleanupPenthouseIntro()
 
     def __playCloseElevatorOut(self, name, delay = 0):
-        track = Sequence(Wait(delay + SUIT_LEAVE_ELEVATOR_TIME), Parallel(SoundInterval(self.closeSfx), LerpPosInterval(self.leftDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], ElevatorUtils.getLeftClosePoint(ELEVATOR_NORMAL), startPos=Point3(0, 0, 0), blendType='easeOut'), LerpPosInterval(self.rightDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], ElevatorUtils.getRightClosePoint(ELEVATOR_NORMAL), startPos=Point3(0, 0, 0), blendType='easeOut')))
+        track = Sequence(Wait(delay + COG_LEAVE_ELEVATOR_TIME), Parallel(SoundInterval(self.closeSfx), LerpPosInterval(self.leftDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], ElevatorUtils.getLeftClosePoint(ELEVATOR_NORMAL), startPos=Point3(0, 0, 0), blendType='easeOut'), LerpPosInterval(self.rightDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], ElevatorUtils.getRightClosePoint(ELEVATOR_NORMAL), startPos=Point3(0, 0, 0), blendType='easeOut')))
         track.start()
         self.activeIntervals[name] = track
 
@@ -645,11 +645,11 @@ class DistributedCogdoInterior(DistributedObject.DistributedObject):
             suit.setH(180)
             suit.loop('neutral')
 
-        if len(self.suits) == len(self.joiningReserves):
+        if len(self.cogs) == len(self.joiningReserves):
             camSequence = Sequence(Func(camera.wrtReparentTo, localAvatar), Func(camera.setPos, Point3(0, 5, 5)), Func(camera.headsUp, self.elevatorModelOut))
         else:
             camSequence = Sequence(Func(camera.wrtReparentTo, self.elevatorModelOut), Func(camera.setPos, Point3(0, -8, 2)), Func(camera.setHpr, Vec3(0, 10, 0)))
-        track = Sequence(camSequence, Parallel(SoundInterval(self.openSfx), LerpPosInterval(self.leftDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getLeftClosePoint(ELEVATOR_NORMAL), blendType='easeOut'), LerpPosInterval(self.rightDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getRightClosePoint(ELEVATOR_NORMAL), blendType='easeOut')), Wait(SUIT_HOLD_ELEVATOR_TIME), Func(camera.wrtReparentTo, render), Func(callback))
+        track = Sequence(camSequence, Parallel(SoundInterval(self.openSfx), LerpPosInterval(self.leftDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getLeftClosePoint(ELEVATOR_NORMAL), blendType='easeOut'), LerpPosInterval(self.rightDoorOut, ElevatorData[ELEVATOR_NORMAL]['closeTime'], Point3(0, 0, 0), startPos=ElevatorUtils.getRightClosePoint(ELEVATOR_NORMAL), blendType='easeOut')), Wait(COG_HOLD_ELEVATOR_TIME), Func(camera.wrtReparentTo, render), Func(callback))
         track.start(ts)
         self.activeIntervals[name] = track
 

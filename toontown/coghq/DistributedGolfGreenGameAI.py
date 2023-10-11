@@ -22,7 +22,7 @@ class DistributedGolfGreenGameAI(BattleBlockerAI.BattleBlockerAI, NodePath, Basi
             self.switchId = 0
         self.gridScale = 1
         self.enabled = 1
-        self.hasShownSuits = 0
+        self.hasShownCogs = 0
         self.healReady = 1
         self.playedSound = 0
         self.canButton = 1
@@ -280,8 +280,8 @@ class DistributedGolfGreenGameAI(BattleBlockerAI.BattleBlockerAI, NodePath, Basi
 
     def registerBlocker(self):
         BattleBlockerAI.BattleBlockerAI.registerBlocker(self)
-        if hasattr(self, 'hideSuits'):
-            self.hideSuits()
+        if hasattr(self, 'hideCogs'):
+            self.hideCogs()
 
     def delete(self):
         taskMgr.remove(self.detectName)

@@ -30,7 +30,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
         self.howManyReported = 0
         self.offsetDict = {}
         self.kMovement = 0.02
-        self.suitId = 666
+        self.cogId = 666
         self.suitForces = [(6, 4),
          (2, 5),
          (2, 6.5),
@@ -240,9 +240,9 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
             self.timeBonus = TugOfWarGameGlobals.TIME_BONUS_MIN + int(self.timeBonus + 0.5)
             if self.gameType == TugOfWarGameGlobals.TOON_VS_COG:
                 if self.losingSide == 1:
-                    self.losers.append(self.suitId)
+                    self.losers.append(self.cogId)
                 else:
-                    self.winners.append(self.suitId)
+                    self.winners.append(self.cogId)
                 for i in range(0, self.numPlayers):
                     avId = self.avIdList[i]
                     if self.side[avId] != self.losingSide:
@@ -271,7 +271,7 @@ class DistributedTugOfWarGameAI(DistributedMinigameAI):
                 else:
                     self.scoreDict[avId] = self.suitJellybeanReward / 2 + TugOfWarGameGlobals.TIE_LOSS_JELLYBEANS
                     self.losers.append(avId)
-                    self.winners.append(self.suitId)
+                    self.winners.append(self.cogId)
 
         else:
             maxOffset = -100

@@ -10,8 +10,8 @@ from direct.task import Task
 from toontown.toonbase import ToontownGlobals
 from otp.otpbase import OTPGlobals
 from direct.actor import Actor
-from toontown.suit import Suit
-from toontown.suit import SuitDNA
+from toontown.cog import Suit
+from toontown.cog import CogDNA
 import random
 from toontown.battle import BattleProps
 from toontown.toon import NPCToons
@@ -115,8 +115,8 @@ class DistributedLawbotChair(DistributedObject.DistributedObject, FSM.FSM):
     def loadCogJuror(self):
         self.cleanupCogJuror()
         self.cogJuror = Suit.Suit()
-        level = self.randomGenerator.randrange(len(SuitDNA.suitsPerLevel))
-        self.cogJuror.dna = SuitDNA.SuitDNA()
+        level = self.randomGenerator.randrange(len(CogDNA.cogsPerLevel))
+        self.cogJuror.dna = CogDNA.CogDNA()
         self.cogJuror.dna.newSuitRandom(level=level, dept='l')
         self.cogJuror.setDNA(self.cogJuror.dna)
         self.cogJuror.pose('landing', 0)

@@ -16,7 +16,7 @@ class PlayingCardBase:
     def getRank(self):
         return self.rank
 
-    def getSuit(self):
+    def getCog(self):
         return self.suit
 
     def getValue(self):

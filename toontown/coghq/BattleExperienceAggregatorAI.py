@@ -3,8 +3,8 @@
 class BattleExperienceAggregatorAI:
 
     def __init__(self):
-        self.suitsKilled = []
-        self.suitsKilledPerFloor = []
+        self.cogsKilled = []
+        self.cogsKilledPerFloor = []
         self.toonSkillPtsGained = {}
         self.toonExp = {}
         self.toonOrigQuests = {}
@@ -15,8 +15,8 @@ class BattleExperienceAggregatorAI:
         self.helpfulToons = []
 
     def attachToBattle(self, battle):
-        battle.suitsKilled = self.suitsKilled
-        battle.suitsKilledPerFloor = self.suitsKilledPerFloor
+        battle.cogsKilled = self.cogsKilled
+        battle.cogsKilledPerFloor = self.cogsKilledPerFloor
         battle.battleCalc.toonSkillPtsGained = self.toonSkillPtsGained
         battle.toonExp = self.toonExp
         battle.toonOrigQuests = self.toonOrigQuests

@@ -5,9 +5,9 @@ from direct.fsm import StateData
 from toontown.toonbase import TTLocalizer
 from toontown.toontowngui import TTDialog
 from toontown.toonbase import ToontownGlobals
-from toontown.suit import SuitDNA
-from toontown.suit import Suit
-from toontown.battle import SuitBattleGlobals
+from toontown.cog import CogDNA
+from toontown.cog import Suit
+from toontown.battle import CogBattleGlobals
 from toontown.toon import NPCToons
 TTL = TTLocalizer
 
@@ -22,8 +22,8 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
         self.suitIndex = suitIndex
         base.summonDialog = self
         self.popup = None
-        self.suitName = SuitDNA.suitHeadTypes[self.suitIndex]
-        self.suitFullName = SuitBattleGlobals.SuitAttributes[self.suitName]['name']
+        self.suitName = CogDNA.suitHeadTypes[self.suitIndex]
+        self.suitFullName = CogBattleGlobals.CogAttributes[self.suitName]['name']
         return
 
     def unload(self):
@@ -43,7 +43,7 @@ class SummonCogDialog(DirectFrame, StateData.StateData):
         self.head = Suit.attachSuitHead(self, self.suitName)
         z = self.head.getZ()
         self.head.setPos(-0.4, -0.1, z + 0.2)
-        self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getSuitFont(), pos=(-0.4, 0, 0), scale=0.07)
+        self.suitLabel = DirectLabel(parent=self, relief=None, text=self.suitFullName, text_font=ToontownGlobals.getCogFont(), pos=(-0.4, 0, 0), scale=0.07)
         closeButtonImage = (gui.find('**/CloseBtn_UP'), gui.find('**/CloseBtn_DN'), gui.find('**/CloseBtn_Rllvr'))
         buttonImage = (guiButton.find('**/QuitBtn_UP'), guiButton.find('**/QuitBtn_DN'), guiButton.find('**/QuitBtn_RLVR'))
         disabledColor = Vec4(0.5, 0.5, 0.5, 1)

@@ -252,7 +252,7 @@ class MaxToon(MagicWord):
     def handleWord(self, invoker, avId, toon, *args):
         from toontown.toonbase import ToontownGlobals
         from toontown.quest import Quests
-        from toontown.suit import SuitDNA
+        from toontown.cog import CogDNA
         from toontown.coghq import CogDisguiseGlobals
 
         # TODO: Handle this better, like giving out all awards, set the quest tier, stuff like that.
@@ -280,7 +280,7 @@ class MaxToon(MagicWord):
         toon.b_setRewardHistory(Quests.LOOPING_FINAL_TIER, [])
 
         toon.b_setCogParts([*CogDisguiseGlobals.PartsPerSuitBitmasks])
-        toon.b_setCogTypes([SuitDNA.suitsPerDept - 1] * 4)
+        toon.b_setCogTypes([CogDNA.cogsPerDept - 1] * 4)
         toon.b_setCogLevels([ToontownGlobals.MaxCogSuitLevel] * 4)
 
         return f"Successfully maxed {toon.getName()}!"
@@ -475,7 +475,7 @@ class BossBattle(MagicWord):
             except ValueError:
                 start = 1
         
-        from toontown.suit.DistributedBossCogAI import AllBossCogs
+        from toontown.cog.DistributedBossCogAI import AllBossCogs
         boss = None
         for bc in AllBossCogs:
             if bc.isToonKnown(invoker.doId):
@@ -486,16 +486,16 @@ class BossBattle(MagicWord):
             if boss:
                 return "You're already in a boss battle.  Please finish this one."
             if type == "vp":
-                from toontown.suit.DistributedSellbotBossAI import DistributedSellbotBossAI
+                from toontown.cog.DistributedSellbotBossAI import DistributedSellbotBossAI
                 boss = DistributedSellbotBossAI(self.air)
             elif type == "cfo":
-                from toontown.suit.DistributedCashbotBossAI import DistributedCashbotBossAI
+                from toontown.cog.DistributedCashbotBossAI import DistributedCashbotBossAI
                 boss = DistributedCashbotBossAI(self.air)
             elif type == "cj":
-                from toontown.suit.DistributedLawbotBossAI import DistributedLawbotBossAI
+                from toontown.cog.DistributedLawbotBossAI import DistributedLawbotBossAI
                 boss = DistributedLawbotBossAI(self.air)
             elif type == "ceo":
-                from toontown.suit.DistributedBossbotBossAI import DistributedBossbotBossAI
+                from toontown.cog.DistributedBossbotBossAI import DistributedBossbotBossAI
                 boss = DistributedBossbotBossAI(self.air)
             else:
                 return f"Unknown boss type: \"{type}\""

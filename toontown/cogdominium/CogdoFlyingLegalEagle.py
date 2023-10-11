@@ -7,8 +7,8 @@ from direct.interval.IntervalGlobal import Sequence, Parallel, LerpScaleInterval
 from direct.directutil import Mopath
 from direct.showbase.PythonUtil import bound as clamp
 from panda3d.core import CollisionSphere, CollisionNode, CollisionTube, CollisionPolygon, Vec3, Point3
-from toontown.suit import Suit
-from toontown.suit import SuitDNA
+from toontown.cog import Suit
+from toontown.cog import CogDNA
 from toontown.toonbase import ToontownGlobals
 from toontown.battle import BattleProps
 from .CogdoFlyingUtil import swapAvatarShadowPlacer
@@ -29,7 +29,7 @@ class CogdoFlyingLegalEagle(FSM, DirectObject):
     CooldownEventName = 'LegalEagleCooldown'
     notify = DirectNotifyGlobal.directNotify.newCategory('CogdoFlyingLegalEagle')
 
-    def __init__(self, nest, index, suitDnaName = 'legal_eagle'):
+    def __init__(self, nest, index, CogDNAName = 'legal_eagle'):
         FSM.__init__(self, 'CogdoFlyingLegalEagle')
         self.defaultTransitions = {'Off': ['Roost'],
          'Roost': ['TakeOff', 'Off'],
@@ -47,8 +47,8 @@ class CogdoFlyingLegalEagle(FSM, DirectObject):
         self.isEagleInterested = False
         self.collSphere = None
         self.suit = Suit.Suit()
-        d = SuitDNA.SuitDNA()
-        d.newSuit(suitDnaName)
+        d = CogDNA.CogDNA()
+        d.newSuit(CogDNAName)
         self.suit.setDNA(d)
         self.suit.reparentTo(render)
         swapAvatarShadowPlacer(self.suit, 'legalEagle-%sShadowPlacer' % index)

@@ -683,15 +683,15 @@ class DistributedLaserField(BattleBlocker.BattleBlocker):
             if self.gridWireGN and self.gridBeamGN:
                 self.createGrid()
 
-    def hideSuit(self, suitIdarray):
-        for suitId in suitIdarray:
-            suit = base.cr.doId2do.get(suitId)
+    def hideSuit(self, cogIdarray):
+        for cogId in cogIdarray:
+            suit = base.cr.doId2do.get(cogId)
             if suit:
                 suit.stash()
 
-    def showSuit(self, suitIdarray):
-        for suitId in suitIdarray:
-            suit = base.cr.doId2do.get(suitId)
+    def showSuit(self, cogIdarray):
+        for cogId in cogIdarray:
+            suit = base.cr.doId2do.get(cogId)
             if suit:
                 suit.unstash()
                 suit.setVirtual()

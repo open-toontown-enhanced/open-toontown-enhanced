@@ -6,7 +6,7 @@ from toontown.toon import NPCToons
 from toontown.hood import ZoneUtil
 from toontown.toonbase import ToontownGlobals
 from toontown.quest import Quests
-from toontown.suit import SuitPlannerBase
+from toontown.cog import CogPlannerBase
 from . import QuestMapGlobals
 
 class QuestMap(DirectFrame):
@@ -43,9 +43,9 @@ class QuestMap(DirectFrame):
         self.hoodId = None
         self.zoneId = None
         self.suitPercentage = {}
-        for currHoodInfo in SuitPlannerBase.SuitPlannerBase.SuitHoodInfo:
-            tracks = currHoodInfo[SuitPlannerBase.SuitPlannerBase.SUIT_HOOD_INFO_TRACK]
-            self.suitPercentage[currHoodInfo[SuitPlannerBase.SuitPlannerBase.SUIT_HOOD_INFO_ZONE]] = tracks
+        for currHoodInfo in CogPlannerBase.CogPlannerBase.SuitHoodInfo:
+            tracks = currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_TRACK]
+            self.suitPercentage[currHoodInfo[CogPlannerBase.CogPlannerBase.COG_HOOD_INFO_ZONE]] = tracks
 
         return
 

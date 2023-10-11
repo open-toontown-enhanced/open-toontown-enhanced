@@ -1,4 +1,4 @@
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from toontown.toonbase import TTLocalizer
 from otp.otpbase import OTPGlobals
 from enum import IntEnum
@@ -469,10 +469,10 @@ def isPaidSuitComplete(av, parts, dept):
 
 
 def getTotalMerits(toon, index):
-    from toontown.battle import SuitBattleGlobals
-    cogIndex = toon.cogTypes[index] + SuitDNA.suitsPerDept * index
-    cogTypeStr = SuitDNA.suitHeadTypes[cogIndex]
-    cogBaseLevel = SuitBattleGlobals.SuitAttributes[cogTypeStr]['level']
+    from toontown.battle import CogBattleGlobals
+    cogIndex = toon.cogTypes[index] + CogDNA.cogsPerDept * index
+    cogTypeStr = CogDNA.suitHeadTypes[cogIndex]
+    cogBaseLevel = CogBattleGlobals.CogAttributes[cogTypeStr]['level']
     cogLevel = toon.cogLevels[index] - cogBaseLevel
     cogLevel = max(min(cogLevel, len(MeritsPerLevel[cogIndex]) - 1), 0)
     return MeritsPerLevel[cogIndex][cogLevel]
@@ -516,5 +516,5 @@ def asNumber(bitstring):
 
 def dept2deptIndex(dept):
     if type(dept) == str:
-        dept = SuitDNA.suitDepts.index(dept)
+        dept = CogDNA.suitDepts.index(dept)
     return dept

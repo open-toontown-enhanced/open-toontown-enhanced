@@ -26,7 +26,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
         self.pickupsDropped = 0
         self.maxPickups = 0
         self.numPickedUp = 0
-        self.suits = {}
+        self.cogs = {}
         self.lastRequestId = None
         self.requestStartTime = globalClock.getFrameTime()
         self.requestCount = None
@@ -39,33 +39,33 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
     def setExteriorZone(self, exteriorZone):
         DistCogdoGameAI.setExteriorZone(self, exteriorZone)
         self.difficulty = self.getDifficulty()
-        self.createSuits()
+        self.createCogs()
 
-    def createSuits(self):
+    def createCogs(self):
         serialNum = 0
-        self._numSuits = []
-        extraSuits = 0
-        for i in range(len(Globals.NumSuits)):
-            extraSuits = int(round(self.difficulty * Globals.SuitsModifier[i]))
-            self._numSuits.append(Globals.NumSuits[i] + extraSuits)
+        self._numCogs = []
+        extraCogs = 0
+        for i in range(len(Globals.NumCogs)):
+            extraCogs = int(round(self.difficulty * Globals.CogsModifier[i]))
+            self._numCogs.append(Globals.NumCogs[i] + extraCogs)
 
-        self.bosses = self._numSuits[0]
-        for i in range(self._numSuits[0]):
-            self.suits[serialNum] = Globals.SuitData[Globals.SuitTypes.Boss]['hp']
+        self.bosses = self._numCogs[0]
+        for i in range(self._numCogs[0]):
+            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.Boss]['hp']
             serialNum += 1
 
-        for i in range(self._numSuits[1]):
-            self.suits[serialNum] = Globals.SuitData[Globals.SuitTypes.FastMinion]['hp']
+        for i in range(self._numCogs[1]):
+            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.FastMinion]['hp']
             serialNum += 1
 
-        for i in range(self._numSuits[2]):
-            self.suits[serialNum] = Globals.SuitData[Globals.SuitTypes.SlowMinion]['hp']
+        for i in range(self._numCogs[2]):
+            self.cogs[serialNum] = Globals.SuitData[Globals.SuitTypes.SlowMinion]['hp']
             serialNum += 1
 
-        self._totalSuits = serialNum
-        self.maxPickups = self._numSuits[0] * Globals.SuitData[0]['memos']
-        self.maxPickups += self._numSuits[1] * Globals.SuitData[1]['memos']
-        self.maxPickups += self._numSuits[2] * Globals.SuitData[2]['memos']
+        self._totalCogs = serialNum
+        self.maxPickups = self._numCogs[0] * Globals.SuitData[0]['memos']
+        self.maxPickups += self._numCogs[1] * Globals.SuitData[1]['memos']
+        self.maxPickups += self._numCogs[2] * Globals.SuitData[2]['memos']
 
     def generate(self):
         DistCogdoGameAI.generate(self)
@@ -124,9 +124,9 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
             else:
                 secondsPerGrab = elapsed / self.requestCount
                 if self.requestCount >= 3 and secondsPerGrab <= 0.4:
-                    simbase.air.writeServerEvent('suspicious', avId, 'suitHit %s suits in %s seconds' % (self.requestCount, elapsed))
+                    simbase.air.writeServerEvent('suspicious', avId, 'suitHit %s cogs in %s seconds' % (self.requestCount, elapsed))
                     if simbase.config.GetBool('want-ban-cogdo-maze-suit-hit', False):
-                        toon.ban('suitHit %s suits in %s seconds' % (self.requestCount, elapsed))
+                        toon.ban('suitHit %s cogs in %s seconds' % (self.requestCount, elapsed))
 
                     result = False
 
@@ -135,8 +135,8 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
             self.requestCount = 1
             self.requestStartTime = globalClock.getFrameTime()
         if result:
-            self.suits[suitNum] -= 1
-            hp = self.suits[suitNum]
+            self.cogs[suitNum] -= 1
+            hp = self.cogs[suitNum]
             if hp <= 0:
                 self.suitDestroyed(suitType, suitNum)
 
@@ -149,7 +149,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
                 self.openDoor()
 
         self.createPickups(suitType)
-        del self.suits[suitNum]
+        del self.cogs[suitNum]
 
     def createPickups(self, suitType):
         for i in range(Globals.SuitData[suitType]['memos']):
@@ -174,8 +174,8 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
         DistCogdoGameAI.handleToonWentSad(self, toonId)
         self._removeToonFromGame(toonId)
 
-    def getNumSuits(self):
-        return list(self._numSuits)
+    def getNumCogs(self):
+        return list(self._numCogs)
 
     def d_broadcastPickup(self, senderId, pickupNum, networkTime):
         self.sendUpdate('pickUp', [
@@ -246,7 +246,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
             self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestSuitHitByGag: invalid suit type %s' % suitType)
             return False
 
-        if suitNum not in list(self.suits.keys()):
+        if suitNum not in list(self.cogs.keys()):
             self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestSuitHitByGag: invalid suit num %s' % suitNum)
             return False
 
@@ -273,7 +273,7 @@ class DistCogdoMazeGameAI(DistCogdoGameAI, DistCogdoMazeGameBase):
             self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitBySuit: invalid suit type %s' % suitType)
             return False
 
-        if suitNum not in list(self.suits.keys()):
+        if suitNum not in list(self.cogs.keys()):
             self.logSuspiciousEvent(senderId, 'CogdoMazeGameAI.requestHitBySuit: invalid suit num %s' % suitNum)
             return False
 

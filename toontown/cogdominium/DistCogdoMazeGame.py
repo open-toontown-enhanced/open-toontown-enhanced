@@ -13,7 +13,7 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
     def __init__(self, cr):
         DistCogdoGame.__init__(self, cr)
         self.game = CogdoMazeGame(self)
-        self._numSuits = (0, 0, 0)
+        self._numCogs = (0, 0, 0)
         if __debug__ and base.config.GetBool('schellgames-dev', True):
             self.accept('onCodeReload', self.__sgOnCodeReload)
 
@@ -43,12 +43,12 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         DistCogdoGame.enterLoaded(self)
         mazeFactory = self.createMazeFactory(self.createRandomNumGen())
         bossCode = None
-        if self._numSuits[0] > 0:
+        if self._numCogs[0] > 0:
             bossCode = ''
-            for u in range(self._numSuits[0]):
+            for u in range(self._numCogs[0]):
                 bossCode += '%X' % self.randomNumGen.randint(0, 15)
 
-        self.game.load(mazeFactory, self._numSuits, bossCode)
+        self.game.load(mazeFactory, self._numCogs, bossCode)
         return
 
     def exitLoaded(self):
@@ -90,8 +90,8 @@ class DistCogdoMazeGame(DistCogdoGame, DistCogdoMazeGameBase):
         self.game.endFinish()
         self.game.offstage()
 
-    def setNumSuits(self, numSuits):
-        self._numSuits = numSuits
+    def setNumCogs(self, numCogs):
+        self._numCogs = numCogs
 
     def d_sendRequestAction(self, action, data):
         self.sendUpdate('requestAction', [action, data])

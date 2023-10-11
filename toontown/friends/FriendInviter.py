@@ -8,7 +8,7 @@ from direct.fsm import ClassicFSM, State
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import TTLocalizer
 from toontown.toon import ToonTeleportPanel
-from toontown.suit import Suit
+from toontown.cog import Suit
 from toontown.pets import Pet
 from otp.otpbase import OTPLocalizer
 from otp.otpbase import OTPGlobals

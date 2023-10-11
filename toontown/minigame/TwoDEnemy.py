@@ -5,8 +5,8 @@ from direct.showbase import PythonUtil
 from direct.interval.IntervalGlobal import *
 from toontown.minigame import ToonBlitzGlobals
 from toontown.toonbase import ToontownGlobals
-from toontown.suit import Suit
-from toontown.suit import SuitDNA
+from toontown.cog import Suit
+from toontown.cog import CogDNA
 from toontown.battle.BattleProps import *
 from toontown.battle import MovieUtil
 from toontown.battle import BattleParticles, BattleProps
@@ -78,9 +78,9 @@ class TwoDEnemy(DirectObject):
     def setupEnemy(self, suitAttribs):
         suitType = suitAttribs[0]
         self.suit = Suit.Suit()
-        suitDNA = SuitDNA.SuitDNA()
-        suitDNA.newSuit(suitType)
-        self.suit.setDNA(suitDNA)
+        CogDNA = CogDNA.CogDNA()
+        CogDNA.newSuit(suitType)
+        self.suit.setDNA(CogDNA)
         self.suit.pose('walk', 0)
         self.suitName = 'Enemy-%s' % self.index
         self.suit.setName(self.suitName)
@@ -245,7 +245,7 @@ class TwoDEnemy(DirectObject):
         bigGearExplosion.setDepthWrite(False)
         if self.isMovingLeftRight:
             self.enterPause()
-            suitTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
+            cogTrack = Sequence(Func(self.collNodePath.stash), ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
             explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
             soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
             gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
@@ -261,7 +261,7 @@ class TwoDEnemy(DirectObject):
                 return pos
 
             deathMoveIval = LerpPosInterval(self.deathSuit, 1.5, pos=getFinalPos(), name='%s-deathSuitMove' % self.suitName, blendType='easeInOut', fluid=1)
-            suitTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
+            cogTrack = Sequence(Func(self.collNodePath.stash), Parallel(ActorInterval(self.deathSuit, 'lose', startFrame=80, endFrame=140), deathMoveIval), Func(removeDeathSuit, self.suit, self.deathSuit, name='remove-death-suit'))
             explosionTrack = Sequence(Wait(1.5), MovieUtil.createKapowExplosionTrack(self.deathSuit, explosionPoint=gearPoint))
             soundTrack = Sequence(SoundInterval(spinningSound, duration=1.6, startTime=0.6, volume=0.8, node=self.deathSuit), SoundInterval(deathSound, volume=0.32, node=self.deathSuit))
             gears1Track = Sequence(ParticleInterval(smallGears, self.deathSuit, worldRelative=0, duration=4.3, cleanup=True), name='gears1Track')
@@ -273,5 +273,5 @@ class TwoDEnemy(DirectObject):
                 del particle
 
         removeParticles = Parallel(Func(removeParticle, smallGears), Func(removeParticle, singleGear), Func(removeParticle, smallGearExplosion), Func(removeParticle, bigGearExplosion))
-        self.deathTrack = Sequence(Parallel(suitTrack, gears2MTrack, gears1Track, soundTrack), removeParticles, Func(self.destroy))
+        self.deathTrack = Sequence(Parallel(cogTrack, gears2MTrack, gears1Track, soundTrack), removeParticles, Func(self.destroy))
         self.deathTrack.start()

@@ -151,7 +151,7 @@ class PlayGame(StateData.StateData):
             loader.loadDNAFile(self.dnaStore, 'phase_4/dna/storage.dna')
             self.dnaStore.storeFont('humanist', ToontownGlobals.getInterfaceFont())
             self.dnaStore.storeFont('mickey', ToontownGlobals.getSignFont())
-            self.dnaStore.storeFont('suit', ToontownGlobals.getSuitFont())
+            self.dnaStore.storeFont('suit', ToontownGlobals.getCogFont())
             loader.loadDNAFile(self.dnaStore, 'phase_3.5/dna/storage_interior.dna')
 
     def unloadDnaStore(self):

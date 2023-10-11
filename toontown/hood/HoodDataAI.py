@@ -1,7 +1,7 @@
 from direct.directnotify import DirectNotifyGlobal
 from . import ZoneUtil
 from toontown.building import DistributedBuildingMgrAI
-from toontown.suit import DistributedSuitPlannerAI
+from toontown.cog import DistributedCogPlannerAI
 from toontown.safezone import ButterflyGlobals
 from toontown.safezone import DistributedButterflyAI
 from panda3d.core import *
@@ -17,7 +17,7 @@ class HoodDataAI:
         self.canonicalHoodId = canonicalHoodId
         self.treasurePlanner = None
         self.buildingManagers = []
-        self.suitPlanners = []
+        self.cogPlanners = []
         self.doId2do = {}
         self.replacementHood = None
         self.redirectingToMe = []
@@ -37,11 +37,11 @@ class HoodDataAI:
             self.treasurePlanner.stop()
             self.treasurePlanner.deleteAllTreasuresNow()
             self.treasurePlanner = None
-        for suitPlanner in self.suitPlanners:
-            suitPlanner.requestDelete()
-            del self.air.suitPlanners[suitPlanner.zoneId]
+        for cogPlanner in self.cogPlanners:
+            cogPlanner.requestDelete()
+            del self.air.cogPlanners[cogPlanner.zoneId]
 
-        self.suitPlanners = []
+        self.cogPlanners = []
         for buildingManager in self.buildingManagers:
             buildingManager.cleanup()
             del self.air.buildingManagers[buildingManager.branchID]
@@ -116,12 +116,12 @@ class HoodDataAI:
         for zone in self.air.zoneTable[self.canonicalHoodId]:
             if zone[2]:
                 zoneId = ZoneUtil.getTrueZoneId(zone[0], self.zoneId)
-                sp = DistributedSuitPlannerAI.DistributedSuitPlannerAI(self.air, zoneId)
+                sp = DistributedCogPlannerAI.DistributedCogPlannerAI(self.air, zoneId)
                 sp.generateWithRequired(zoneId)
                 sp.d_setZoneId(zoneId)
                 sp.initTasks()
-                self.suitPlanners.append(sp)
-                self.air.suitPlanners[zoneId] = sp
+                self.cogPlanners.append(sp)
+                self.air.cogPlanners[zoneId] = sp
 
     def createButterflies(self, playground):
         ButterflyGlobals.generateIndexes(self.zoneId, playground)

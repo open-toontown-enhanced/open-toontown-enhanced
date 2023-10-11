@@ -3,7 +3,7 @@ from direct.directnotify import DirectNotifyGlobal
 from . import Quests
 from toontown.toonbase import ToontownGlobals
 from toontown.fishing import FishGlobals
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from toontown.racing import RaceGlobals
 from toontown.estate import GardenGlobals
 from toontown.golf import GolfGlobals
@@ -72,14 +72,14 @@ class QuestRewardCounter:
         for dept in HQdepts:
             level = levels[dept]
             type = cogTypes[dept]
-            if type >= SuitDNA.suitsPerDept - 1:
+            if type >= CogDNA.cogsPerDept - 1:
                 for milestoneLevel in ToontownGlobals.CogSuitHPLevels:
                     if level >= milestoneLevel:
                         suitHp += 1
                     else:
                         break
 
-        self.notify.debug('Adding %s hp for cog suits' % suitHp)
+        self.notify.debug('Adding %s hp for cog cogs' % suitHp)
         self.maxHp += suitHp
         kartingHp = int(av.kartingTrophies.count(1) / RaceGlobals.TrophiesPerCup)
         self.notify.debug('Adding %s hp for karting trophies' % kartingHp)

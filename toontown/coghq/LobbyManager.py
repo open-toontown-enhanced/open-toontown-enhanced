@@ -20,7 +20,7 @@ class LobbyManager(DistributedObject.DistributedObject):
         self.ignoreAll()
         DistributedObject.DistributedObject.disable(self)
 
-    def getSuitDoorOrigin(self):
+    def getCogDoorOrigin(self):
         return 1
 
     def getBossLevel(self):

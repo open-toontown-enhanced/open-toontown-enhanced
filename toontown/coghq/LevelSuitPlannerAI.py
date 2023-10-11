@@ -1,6 +1,6 @@
 from panda3d.core import *
 from direct.showbase import DirectObject
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from direct.directnotify import DirectNotifyGlobal
 from toontown.coghq import LevelBattleManagerAI
 import random
@@ -14,21 +14,21 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
         self.level = level
         self.cogCtor = cogCtor
         self.cogSpecs = cogSpecs
-        if simbase.config.GetBool('level-reserve-suits', 0):
+        if simbase.config.GetBool('level-reserve-cogs', 0):
             self.reserveCogSpecs = reserveCogSpecs
         else:
             self.reserveCogSpecs = []
         self.battleCellSpecs = battleCellSpecs
         self.__genSuitInfos(self.level.getCogLevel(), self.level.getCogTrack())
         self.battleMgr = LevelBattleManagerAI.LevelBattleManagerAI(self.air, self.level, battleCtor, battleExpAggreg)
-        self.battleCellId2suits = {}
+        self.battleCellId2cogs = {}
         for id in list(self.battleCellSpecs.keys()):
-            self.battleCellId2suits[id] = []
+            self.battleCellId2cogs[id] = []
 
     def destroy(self):
         self.battleMgr.destroyBattleMgr()
         del self.battleMgr
-        self.battleCellId2suits = {}
+        self.battleCellId2cogs = {}
         self.ignoreAll()
         del self.cogSpecs
         del self.cogCtor
@@ -47,7 +47,7 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
         if __dev__:
             pass
 
-        def getSuitDict(spec, cogId, level=level, track=track):
+        def getCogDict(spec, cogId, level=level, track=track):
             suitDict = {}
             suitDict['track'] = track
             suitDict.update(spec)
@@ -57,24 +57,24 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
             return suitDict
 
         self.suitInfos = {}
-        self.suitInfos['activeSuits'] = []
+        self.suitInfos['activeCogs'] = []
         for i in range(len(self.cogSpecs)):
             spec = self.cogSpecs[i]
-            self.suitInfos['activeSuits'].append(getSuitDict(spec, i))
+            self.suitInfos['activeCogs'].append(getCogDict(spec, i))
 
         numReserve = len(self.reserveCogSpecs)
         joinChances = self.__genJoinChances(numReserve)
-        self.suitInfos['reserveSuits'] = []
+        self.suitInfos['reserveCogs'] = []
         for i in range(len(self.reserveCogSpecs)):
             spec = self.reserveCogSpecs[i]
-            suitDict = getSuitDict(spec, i)
+            suitDict = getCogDict(spec, i)
             suitDict['joinChance'] = joinChances[i]
-            self.suitInfos['reserveSuits'].append(suitDict)
+            self.suitInfos['reserveCogs'].append(suitDict)
 
     def __genSuitObject(self, suitDict, reserve):
         suit = self.cogCtor(simbase.air, self)
-        dna = SuitDNA.SuitDNA()
-        dna.newSuitRandom(level=SuitDNA.getRandomSuitType(suitDict['level']), dept=suitDict['track'])
+        dna = CogDNA.CogDNA()
+        dna.newSuitRandom(level=CogDNA.getRandomSuitType(suitDict['level']), dept=suitDict['track'])
         suit.dna = dna
         suit.setLevel(suitDict['level'])
         suit.setSkeleRevives(suitDict.get('revives'))
@@ -87,21 +87,21 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
         suit.boss = suitDict['boss']
         return suit
 
-    def genSuits(self):
+    def genCogs(self):
         suitHandles = {}
-        activeSuits = []
-        for activeSuitInfo in self.suitInfos['activeSuits']:
+        activeCogs = []
+        for activeSuitInfo in self.suitInfos['activeCogs']:
             suit = self.__genSuitObject(activeSuitInfo, 0)
             suit.setBattleCellIndex(activeSuitInfo['battleCell'])
-            activeSuits.append(suit)
+            activeCogs.append(suit)
 
-        suitHandles['activeSuits'] = activeSuits
-        reserveSuits = []
-        for reserveSuitInfo in self.suitInfos['reserveSuits']:
+        suitHandles['activeCogs'] = activeCogs
+        reserveCogs = []
+        for reserveSuitInfo in self.suitInfos['reserveCogs']:
             suit = self.__genSuitObject(reserveSuitInfo, 1)
-            reserveSuits.append([suit, reserveSuitInfo['joinChance'], reserveSuitInfo['battleCell']])
+            reserveCogs.append([suit, reserveSuitInfo['joinChance'], reserveSuitInfo['battleCell']])
 
-        suitHandles['reserveSuits'] = reserveSuits
+        suitHandles['reserveCogs'] = reserveCogs
         return suitHandles
 
     def __suitCanJoinBattle(self, cellId):
@@ -115,60 +115,60 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
         cellSpec = self.battleCellSpecs[cellIndex]
         pos = cellSpec['pos']
         zone = self.level.getZoneId(self.level.getEntityZoneEntId(cellSpec['parentEntId']))
-        maxSuits = 4
-        self.battleMgr.newBattle(cellIndex, zone, pos, suit, toonId, self.__handleRoundFinished, self.__handleBattleFinished, maxSuits)
-        for otherSuit in self.battleCellId2suits[cellIndex]:
+        maxCogs = 4
+        self.battleMgr.newBattle(cellIndex, zone, pos, suit, toonId, self.__handleRoundFinished, self.__handleBattleFinished, maxCogs)
+        for otherSuit in self.battleCellId2cogs[cellIndex]:
             if otherSuit is not suit:
                 if self.__suitCanJoinBattle(cellIndex):
                     self.battleMgr.requestBattleAddSuit(cellIndex, otherSuit)
                 else:
                     battle = self.battleMgr.getBattle(cellIndex)
                     if battle:
-                        self.notify.warning('battle not joinable: numSuits=%s, joinable=%s, fsm=%s, toonId=%s' % (len(battle.suits), battle.isJoinable(), battle.fsm.getCurrentState().getName(), toonId))
+                        self.notify.warning('battle not joinable: numCogs=%s, joinable=%s, fsm=%s, toonId=%s' % (len(battle.cogs), battle.isJoinable(), battle.fsm.getCurrentState().getName(), toonId))
                     else:
                         self.notify.warning('battle not joinable: no battle for cell %s, toonId=%s' % (cellIndex, toonId))
                     return 0
 
         return 1
 
-    def __handleRoundFinished(self, cellId, toonIds, totalHp, deadSuits):
+    def __handleRoundFinished(self, cellId, toonIds, totalHp, deadCogs):
         totalMaxHp = 0
         level = self.level
         battle = self.battleMgr.cellId2battle[cellId]
-        for suit in battle.suits:
+        for suit in battle.cogs:
             totalMaxHp += suit.maxHP
 
-        for suit in deadSuits:
-            level.suits.remove(suit)
+        for suit in deadCogs:
+            level.cogs.remove(suit)
 
         cellReserves = []
-        for info in level.reserveSuits:
+        for info in level.reserveCogs:
             if info[2] == cellId:
                 cellReserves.append(info)
 
-        numSpotsAvailable = 4 - len(battle.suits)
+        numSpotsAvailable = 4 - len(battle.cogs)
         if len(cellReserves) > 0 and numSpotsAvailable > 0:
             self.joinedReserves = []
             if __dev__:
                 pass
-            if len(battle.suits) == 0:
+            if len(battle.cogs) == 0:
                 hpPercent = 100
             else:
                 hpPercent = 100 - totalHp / totalMaxHp * 100.0
             for info in cellReserves:
                 if info[1] <= hpPercent and len(self.joinedReserves) < numSpotsAvailable:
-                    level.suits.append(info[0])
+                    level.cogs.append(info[0])
                     self.joinedReserves.append(info)
                     info[0].setBattleCellIndex(cellId)
 
             for info in self.joinedReserves:
-                level.reserveSuits.remove(info)
+                level.reserveCogs.remove(info)
 
             if len(self.joinedReserves) > 0:
                 self.reservesJoining(battle)
-                level.d_setSuits()
+                level.d_setCogs()
                 return
-        if len(battle.suits) == 0:
+        if len(battle.cogs) == 0:
             if battle:
                 battle.resume()
         else:
@@ -194,25 +194,25 @@ class LevelSuitPlannerAI(DirectObject.DirectObject):
 
     def suitBattleCellChange(self, suit, oldCell, newCell):
         if oldCell is not None:
-            if oldCell in self.battleCellId2suits:
-                self.battleCellId2suits[oldCell].remove(suit)
+            if oldCell in self.battleCellId2cogs:
+                self.battleCellId2cogs[oldCell].remove(suit)
             else:
-                self.notify.warning('FIXME crash bandaid suitBattleCellChange suit.doId =%s, oldCell=%s not in battleCellId2Suits.keys %s' % (suit.doId, oldCell, list(self.battleCellId2suits.keys())))
+                self.notify.warning('FIXME crash bandaid suitBattleCellChange suit.doId =%s, oldCell=%s not in battleCellId2Cogs.keys %s' % (suit.doId, oldCell, list(self.battleCellId2cogs.keys())))
             blocker = self.battleMgr.battleBlockers.get(oldCell)
             if blocker:
                 blocker.removeSuit(suit)
         if newCell is not None:
-            self.battleCellId2suits[newCell].append(suit)
+            self.battleCellId2cogs[newCell].append(suit)
 
-            def addSuitToBlocker(self=self):
+            def addCogToBlocker(self=self):
                 blocker = self.battleMgr.battleBlockers.get(newCell)
                 if blocker:
-                    blocker.addSuit(suit)
+                    blocker.addCog(suit)
                     return 1
                 return 0
 
-            if not addSuitToBlocker():
-                self.accept(self.getBattleBlockerEvent(newCell), addSuitToBlocker)
+            if not addCogToBlocker():
+                self.accept(self.getBattleBlockerEvent(newCell), addCogToBlocker)
         return
 
     def getBattleBlockerEvent(self, cellId):

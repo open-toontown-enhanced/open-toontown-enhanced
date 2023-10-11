@@ -50,7 +50,7 @@ def getBranchLoaderName(zoneId):
     return getLoaderName(getBranchZone(zoneId))
 
 
-def getSuitWhereName(zoneId):
+def getCogWhereName(zoneId):
     where = getWhereName(zoneId, 0)
     return where
 

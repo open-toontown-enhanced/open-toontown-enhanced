@@ -6,7 +6,7 @@ from . import CogHQLobby
 from toontown.hood import QuietZoneState
 from toontown.hood import ZoneUtil
 from toontown.town import TownBattle
-from toontown.suit import Suit
+from toontown.cog import Suit
 from panda3d.core import *
 
 class CogHQLoader(StateData.StateData):
@@ -32,7 +32,7 @@ class CogHQLoader(StateData.StateData):
         self.battleMusic = base.loader.loadMusic('phase_9/audio/bgm/encntr_suit_winning.ogg')
         self.townBattle = TownBattle.TownBattle(self.townBattleDoneEvent)
         self.townBattle.load()
-        Suit.loadSuits(3)
+        Suit.loadCogs(3)
         self.loadPlaceGeom(zoneId)
 
     def loadPlaceGeom(self, zoneId):
@@ -50,7 +50,7 @@ class CogHQLoader(StateData.StateData):
         self.townBattle.cleanup()
         del self.townBattle
         del self.battleMusic
-        Suit.unloadSuits(3)
+        Suit.unloadCogs(3)
         Suit.unloadSkelDialog()
         del self.hood
         ModelPool.garbageCollect()

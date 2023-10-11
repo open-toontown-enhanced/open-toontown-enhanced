@@ -3,7 +3,7 @@ from direct.interval.IntervalGlobal import *
 from .BattleBase import *
 from .BattleProps import *
 from toontown.toonbase.ToontownBattleGlobals import *
-from .SuitBattleGlobals import *
+from .CogBattleGlobals import *
 from direct.directnotify import DirectNotifyGlobal
 import random
 from . import MovieUtil
@@ -116,7 +116,7 @@ def chooseLureCloseShot(lures, openDuration, openName, attackDuration):
     duration = attackDuration - openDuration
     hasTrainTrackTrap = False
     battle = lures[0]['battle']
-    for suit in battle.suits:
+    for suit in battle.cogs:
         if hasattr(suit, 'battleTrap') and suit.battleTrap == UBER_GAG_LEVEL_INDEX:
             hasTrainTrackTrap = True
 
@@ -165,19 +165,19 @@ def chooseSoundOpenShot(sounds, targets, attackDuration):
 
 
 def chooseSoundCloseShot(sounds, targets, openDuration, openName, attackDuration):
-    numSuits = len(targets)
+    numCogs = len(targets)
     av = None
     duration = attackDuration - openDuration
-    if numSuits == 1:
+    if numCogs == 1:
         av = targets[0]['suit']
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
          suitGroupThreeQuarterLeftBehindShot]
-    elif numSuits >= 2 and numSuits <= 4:
+    elif numCogs >= 2 and numCogs <= 4:
         shotChoices = [allGroupLowShot, suitGroupThreeQuarterLeftBehindShot]
     else:
-        notify.error('Bad number of suits: %s' % numSuits)
+        notify.error('Bad number of cogs: %s' % numCogs)
     track = random.choice(shotChoices)(*[av, duration])
     return track
 
@@ -211,19 +211,19 @@ def chooseThrowOpenShot(throws, suitThrowsDict, attackDuration):
 
 
 def chooseThrowCloseShot(throws, suitThrowsDict, openDuration, openName, attackDuration):
-    numSuits = len(suitThrowsDict)
+    numCogs = len(suitThrowsDict)
     av = None
     duration = attackDuration - openDuration
-    if numSuits == 1:
+    if numCogs == 1:
         av = base.cr.doId2do[list(suitThrowsDict.keys())[0]]
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
          suitGroupThreeQuarterLeftBehindShot]
-    elif numSuits >= 2 and numSuits <= 4 or numSuits == 0:
+    elif numCogs >= 2 and numCogs <= 4 or numCogs == 0:
         shotChoices = [allGroupLowShot, suitGroupThreeQuarterLeftBehindShot]
     else:
-        notify.error('Bad number of suits: %s' % numSuits)
+        notify.error('Bad number of cogs: %s' % numCogs)
     track = random.choice(shotChoices)(*[av, duration])
     return track
 
@@ -257,19 +257,19 @@ def chooseSquirtOpenShot(squirts, suitSquirtsDict, attackDuration):
 
 
 def chooseSquirtCloseShot(squirts, suitSquirtsDict, openDuration, openName, attackDuration):
-    numSuits = len(suitSquirtsDict)
+    numCogs = len(suitSquirtsDict)
     av = None
     duration = attackDuration - openDuration
-    if numSuits == 1:
+    if numCogs == 1:
         av = base.cr.doId2do[list(suitSquirtsDict.keys())[0]]
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
          suitGroupThreeQuarterLeftBehindShot]
-    elif numSuits >= 2 and numSuits <= 4:
+    elif numCogs >= 2 and numCogs <= 4:
         shotChoices = [allGroupLowShot, suitGroupThreeQuarterLeftBehindShot]
     else:
-        notify.error('Bad number of suits: %s' % numSuits)
+        notify.error('Bad number of cogs: %s' % numCogs)
     track = random.choice(shotChoices)(*[av, duration])
     return track
 
@@ -305,19 +305,19 @@ def chooseDropOpenShot(drops, suitDropsDict, attackDuration):
 
 
 def chooseDropCloseShot(drops, suitDropsDict, openDuration, openName, attackDuration):
-    numSuits = len(suitDropsDict)
+    numCogs = len(suitDropsDict)
     av = None
     duration = attackDuration - openDuration
-    if numSuits == 1:
+    if numCogs == 1:
         av = base.cr.doId2do[list(suitDropsDict.keys())[0]]
         shotChoices = [avatarCloseUpThrowShot,
          avatarCloseUpThreeQuarterLeftShot,
          allGroupLowShot,
          suitGroupThreeQuarterLeftBehindShot]
-    elif numSuits >= 2 and numSuits <= 4 or numSuits == 0:
+    elif numCogs >= 2 and numCogs <= 4 or numCogs == 0:
         shotChoices = [allGroupLowShot, suitGroupThreeQuarterLeftBehindShot]
     else:
-        notify.error('Bad number of suits: %s' % numSuits)
+        notify.error('Bad number of cogs: %s' % numCogs)
     choice = random.choice(shotChoices)
     track = choice(av, duration)
     return track
@@ -952,19 +952,19 @@ def chooseFireOpenShot(throws, suitThrowsDict, attackDuration):
 
 
 def chooseFireCloseShot(throws, suitThrowsDict, openDuration, openName, attackDuration):
-    numSuits = len(suitThrowsDict)
+    numCogs = len(suitThrowsDict)
     av = None
     duration = attackDuration - openDuration
-    if numSuits == 1:
+    if numCogs == 1:
         av = base.cr.doId2do[list(suitThrowsDict.keys())[0]]
         shotChoices = [avatarCloseUpFireShot,
          avatarCloseUpThreeQuarterLeftFireShot,
          allGroupLowShot,
          suitGroupThreeQuarterLeftBehindShot]
-    elif numSuits >= 2 and numSuits <= 4 or numSuits == 0:
+    elif numCogs >= 2 and numCogs <= 4 or numCogs == 0:
         shotChoices = [allGroupLowShot, suitGroupThreeQuarterLeftBehindShot]
     else:
-        notify.error('Bad number of suits: %s' % numSuits)
+        notify.error('Bad number of cogs: %s' % numCogs)
     shotChoice = random.choice(shotChoices)
     track = shotChoice(*[av, duration])
     print('chooseFireOpenShot %s' % shotChoice)

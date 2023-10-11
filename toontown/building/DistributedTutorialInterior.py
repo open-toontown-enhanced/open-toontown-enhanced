@@ -11,8 +11,8 @@ import random
 from . import ToonInteriorColors
 from toontown.hood import ZoneUtil
 from toontown.char import Char
-from toontown.suit import SuitDNA
-from toontown.suit import Suit
+from toontown.cog import CogDNA
+from toontown.cog import Suit
 from toontown.quest import QuestParser
 
 class DistributedTutorialInterior(DistributedObject.DistributedObject):
@@ -146,9 +146,9 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
 
     def createSuit(self):
         self.suit = Suit.Suit()
-        suitDNA = SuitDNA.SuitDNA()
-        suitDNA.newSuit('flunky')
-        self.suit.setDNA(suitDNA)
+        CogDNA = CogDNA.CogDNA()
+        CogDNA.newSuit('flunky')
+        self.suit.setDNA(CogDNA)
         self.suit.loop('neutral')
         self.suit.setPosHpr(-20, 8, 0, 0, 0, 0)
         self.suit.reparentTo(self.interior)

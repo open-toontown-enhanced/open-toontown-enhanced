@@ -8,19 +8,19 @@ from . import BattleParticles
 from . import BattleProps
 from toontown.toonbase import TTLocalizer
 notify = DirectNotifyGlobal.directNotify.newCategory('MovieUtil')
-SUIT_LOSE_DURATION = 6.0
-SUIT_LURE_DISTANCE = 2.6
-SUIT_LURE_DOLLAR_DISTANCE = 5.1
-SUIT_EXTRA_REACH_DISTANCE = 0.9
-SUIT_EXTRA_RAKE_DISTANCE = 1.1
-SUIT_TRAP_DISTANCE = 2.6
-SUIT_TRAP_RAKE_DISTANCE = 4.5
-SUIT_TRAP_MARBLES_DISTANCE = 3.7
-SUIT_TRAP_TNT_DISTANCE = 5.1
+COG_LOSE_DURATION = 6.0
+COG_LURE_DISTANCE = 2.6
+COG_LURE_DOLLAR_DISTANCE = 5.1
+COG_EXTRA_REACH_DISTANCE = 0.9
+COG_EXTRA_RAKE_DISTANCE = 1.1
+COG_TRAP_DISTANCE = 2.6
+COG_TRAP_RAKE_DISTANCE = 4.5
+COG_TRAP_MARBLES_DISTANCE = 3.7
+COG_TRAP_TNT_DISTANCE = 5.1
 PNT3_NEARZERO = Point3(0.01, 0.01, 0.01)
 PNT3_ZERO = Point3(0.0, 0.0, 0.0)
 PNT3_ONE = Point3(1.0, 1.0, 1.0)
-largeSuits = ['flunky',
+largeCogs = ['flunky',
  'cold_caller',
  'glad_hander',
  'tightwad',
@@ -219,16 +219,16 @@ def virtualize(deathsuit):
 def createTrainTrackAppearTrack(dyingSuit, toon, battle, npcs):
     retval = Sequence()
     return retval
-    possibleSuits = []
+    possibleCogs = []
     for suitAttack in battle.movie.suitAttackDicts:
         suit = suitAttack['suit']
         if not suit == dyingSuit:
             if hasattr(suit, 'battleTrapProp') and suit.battleTrapProp and suit.battleTrapProp.getName() == 'traintrack':
-                possibleSuits.append(suitAttack['suit'])
+                possibleCogs.append(suitAttack['suit'])
 
     closestXDistance = 10000
     closestSuit = None
-    for suit in possibleSuits:
+    for suit in possibleCogs:
         suitPoint, suitHpr = battle.getActorPosHpr(suit)
         xDistance = abs(suitPoint.getX())
         if xDistance < closestXDistance:
@@ -249,19 +249,19 @@ def createTrainTrackAppearTrack(dyingSuit, toon, battle, npcs):
 
 
 def createSuitReviveTrack(suit, toon, battle, npcs = []):
-    suitTrack = Sequence()
+    cogTrack = Sequence()
     suitPos, suitHpr = battle.getActorPosHpr(suit)
     if hasattr(suit, 'battleTrapProp') and suit.battleTrapProp and suit.battleTrapProp.getName() == 'traintrack' and not suit.battleTrapProp.isHidden():
-        suitTrack.append(createTrainTrackAppearTrack(suit, toon, battle, npcs))
+        cogTrack.append(createTrainTrackAppearTrack(suit, toon, battle, npcs))
     deathSuit = suit.getLoseActor()
-    suitTrack.append(Func(notify.debug, 'before insertDeathSuit'))
-    suitTrack.append(Func(insertReviveSuit, suit, deathSuit, battle, suitPos, suitHpr))
-    suitTrack.append(Func(notify.debug, 'before actorInterval lose'))
-    suitTrack.append(ActorInterval(deathSuit, 'lose', duration=SUIT_LOSE_DURATION))
-    suitTrack.append(Func(notify.debug, 'before removeDeathSuit'))
-    suitTrack.append(Func(removeReviveSuit, suit, deathSuit, name='remove-death-suit'))
-    suitTrack.append(Func(notify.debug, 'after removeDeathSuit'))
-    suitTrack.append(Func(suit.loop, 'neutral'))
+    cogTrack.append(Func(notify.debug, 'before insertDeathSuit'))
+    cogTrack.append(Func(insertReviveSuit, suit, deathSuit, battle, suitPos, suitHpr))
+    cogTrack.append(Func(notify.debug, 'before actorInterval lose'))
+    cogTrack.append(ActorInterval(deathSuit, 'lose', duration=COG_LOSE_DURATION))
+    cogTrack.append(Func(notify.debug, 'before removeDeathSuit'))
+    cogTrack.append(Func(removeReviveSuit, suit, deathSuit, name='remove-death-suit'))
+    cogTrack.append(Func(notify.debug, 'after removeDeathSuit'))
+    cogTrack.append(Func(suit.loop, 'neutral'))
     spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
     deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
     deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=suit), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=suit), SoundInterval(deathSound, volume=0.32, node=suit))
@@ -291,22 +291,22 @@ def createSuitReviveTrack(suit, toon, battle, npcs = []):
     for mtoon in npcs:
         toonMTrack.append(Sequence(Wait(1.0), ActorInterval(mtoon, 'duck'), ActorInterval(mtoon, 'duck', startTime=1.8), Func(mtoon.loop, 'neutral')))
 
-    return Parallel(suitTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
+    return Parallel(cogTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
 
 
 def createSuitDeathTrack(suit, toon, battle, npcs = []):
-    suitTrack = Sequence()
+    cogTrack = Sequence()
     suitPos, suitHpr = battle.getActorPosHpr(suit)
     if hasattr(suit, 'battleTrapProp') and suit.battleTrapProp and suit.battleTrapProp.getName() == 'traintrack' and not suit.battleTrapProp.isHidden():
-        suitTrack.append(createTrainTrackAppearTrack(suit, toon, battle, npcs))
+        cogTrack.append(createTrainTrackAppearTrack(suit, toon, battle, npcs))
     deathSuit = suit.getLoseActor()
-    suitTrack.append(Func(notify.debug, 'before insertDeathSuit'))
-    suitTrack.append(Func(insertDeathSuit, suit, deathSuit, battle, suitPos, suitHpr))
-    suitTrack.append(Func(notify.debug, 'before actorInterval lose'))
-    suitTrack.append(ActorInterval(deathSuit, 'lose', duration=SUIT_LOSE_DURATION))
-    suitTrack.append(Func(notify.debug, 'before removeDeathSuit'))
-    suitTrack.append(Func(removeDeathSuit, suit, deathSuit, name='remove-death-suit'))
-    suitTrack.append(Func(notify.debug, 'after removeDeathSuit'))
+    cogTrack.append(Func(notify.debug, 'before insertDeathSuit'))
+    cogTrack.append(Func(insertDeathSuit, suit, deathSuit, battle, suitPos, suitHpr))
+    cogTrack.append(Func(notify.debug, 'before actorInterval lose'))
+    cogTrack.append(ActorInterval(deathSuit, 'lose', duration=COG_LOSE_DURATION))
+    cogTrack.append(Func(notify.debug, 'before removeDeathSuit'))
+    cogTrack.append(Func(removeDeathSuit, suit, deathSuit, name='remove-death-suit'))
+    cogTrack.append(Func(notify.debug, 'after removeDeathSuit'))
     spinningSound = base.loader.loadSfx('phase_3.5/audio/sfx/Cog_Death.ogg')
     deathSound = base.loader.loadSfx('phase_3.5/audio/sfx/ENC_cogfall_apart.ogg')
     deathSoundTrack = Sequence(Wait(0.8), SoundInterval(spinningSound, duration=1.2, startTime=1.5, volume=0.2, node=deathSuit), SoundInterval(spinningSound, duration=3.0, startTime=0.6, volume=0.8, node=deathSuit), SoundInterval(deathSound, volume=0.32, node=deathSuit))
@@ -336,18 +336,18 @@ def createSuitDeathTrack(suit, toon, battle, npcs = []):
     for mtoon in npcs:
         toonMTrack.append(Sequence(Wait(1.0), ActorInterval(mtoon, 'duck'), ActorInterval(mtoon, 'duck', startTime=1.8), Func(mtoon.loop, 'neutral')))
 
-    return Parallel(suitTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
+    return Parallel(cogTrack, deathSoundTrack, gears1Track, gears2MTrack, toonMTrack)
 
 
-def createSuitDodgeMultitrack(tDodge, suit, leftSuits, rightSuits):
-    suitTracks = Parallel()
-    suitDodgeList, sidestepAnim = avatarDodge(leftSuits, rightSuits, 'sidestep-left', 'sidestep-right')
+def createSuitDodgeMultitrack(tDodge, suit, leftCogs, rightCogs):
+    cogTracks = Parallel()
+    suitDodgeList, sidestepAnim = avatarDodge(leftCogs, rightCogs, 'sidestep-left', 'sidestep-right')
     for s in suitDodgeList:
-        suitTracks.append(Sequence(ActorInterval(s, sidestepAnim), Func(s.loop, 'neutral')))
+        cogTracks.append(Sequence(ActorInterval(s, sidestepAnim), Func(s.loop, 'neutral')))
 
-    suitTracks.append(Sequence(ActorInterval(suit, sidestepAnim), Func(suit.loop, 'neutral')))
-    suitTracks.append(Func(indicateMissed, suit))
-    return Sequence(Wait(tDodge), suitTracks)
+    cogTracks.append(Sequence(ActorInterval(suit, sidestepAnim), Func(suit.loop, 'neutral')))
+    cogTracks.append(Func(indicateMissed, suit))
+    return Sequence(Wait(tDodge), cogTracks)
 
 
 def createToonDodgeMultitrack(tDodge, toon, leftToons, rightToons):
@@ -376,9 +376,9 @@ def createToonDodgeMultitrack(tDodge, toon, leftToons, rightToons):
 
 
 def createSuitTeaseMultiTrack(suit, delay = 0.01):
-    suitTrack = Sequence(Wait(delay), ActorInterval(suit, 'victory', startTime=0.5, endTime=1.9), Func(suit.loop, 'neutral'))
+    cogTrack = Sequence(Wait(delay), ActorInterval(suit, 'victory', startTime=0.5, endTime=1.9), Func(suit.loop, 'neutral'))
     missedTrack = Sequence(Wait(delay + 0.2), Func(indicateMissed, suit, 0.9))
-    return Parallel(suitTrack, missedTrack)
+    return Parallel(cogTrack, missedTrack)
 
 
 SPRAY_LEN = 1.5
@@ -486,7 +486,7 @@ def getToonTeleportInInterval(toon):
     return Parallel(holeAnimTrack, jumpTrack)
 
 
-def getSuitRakeOffset(suit):
+def getCogRakeOffset(suit):
     suitName = suit.getStyleName()
     if suitName == 'glad_hander':
         return 1.4
@@ -551,7 +551,7 @@ def getSuitRakeOffset(suit):
     elif suitName == 'mr_hollywood':
         return 1.3
     else:
-        notify.warning('getSuitRakeOffset(suit) - Unknown suit name: %s' % suitName)
+        notify.warning('getCogRakeOffset(suit) - Unknown suit name: %s' % suitName)
         return 0
 
 

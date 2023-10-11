@@ -6,9 +6,9 @@ from toontown.battle import DistributedBattle
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toon import TTEmote
 from otp.avatar import Emote
-from toontown.battle import SuitBattleGlobals
+from toontown.battle import CogBattleGlobals
 import random
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from direct.fsm import State
 from direct.fsm import ClassicFSM
 from toontown.toonbase import ToontownGlobals
@@ -88,8 +88,8 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         self.lockLevelViz()
 
     def __faceOff(self, ts, name, callback):
-        if len(self.suits) == 0:
-            self.notify.warning('__faceOff(): no suits.')
+        if len(self.cogs) == 0:
+            self.notify.warning('__faceOff(): no cogs.')
             return
         if len(self.toons) == 0:
             self.notify.warning('__faceOff(): no toons.')
@@ -101,32 +101,32 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
         p = toon.getPos(self)
         toon.setPos(self, p[0], p[1], 0.0)
         toon.setShadowHeight(0)
-        if len(self.suits) == 1:
+        if len(self.cogs) == 1:
             leaderIndex = 0
         elif self.bossBattle == 1:
-            for suit in self.suits:
+            for suit in self.cogs:
                 if suit.boss:
-                    leaderIndex = self.suits.index(suit)
+                    leaderIndex = self.cogs.index(suit)
                     break
 
         else:
             maxTypeNum = -1
-            for suit in self.suits:
-                suitTypeNum = SuitDNA.getSuitType(suit.dna.name)
+            for suit in self.cogs:
+                suitTypeNum = CogDNA.getCogType(suit.dna.name)
                 if maxTypeNum < suitTypeNum:
                     maxTypeNum = suitTypeNum
-                    leaderIndex = self.suits.index(suit)
+                    leaderIndex = self.cogs.index(suit)
 
         delay = FACEOFF_TAUNT_T
-        suitTrack = Parallel()
+        cogTrack = Parallel()
         suitLeader = None
-        for suit in self.suits:
+        for suit in self.cogs:
             suit.setState('Battle')
             suitIsLeader = 0
             oneSuitTrack = Sequence()
             oneSuitTrack.append(Func(suit.loop, 'neutral'))
             oneSuitTrack.append(Func(suit.headsUp, toonPos))
-            if self.suits.index(suit) == leaderIndex:
+            if self.cogs.index(suit) == leaderIndex:
                 suitLeader = suit
                 suitIsLeader = 1
                 if self.bossBattle == 1 and self.levelDoId in base.cr.doId2do:
@@ -136,14 +136,14 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
                     else:
                         taunt = level.getBossBattleTaunt()
                 else:
-                    taunt = SuitBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
+                    taunt = CogBattleGlobals.getFaceoffTaunt(suit.getStyleName(), suit.doId)
                 oneSuitTrack.append(Func(suit.setChatAbsolute, taunt, CFSpeech | CFTimeout))
-            destPos, destHpr = self.getActorPosHpr(suit, self.suits)
+            destPos, destHpr = self.getActorPosHpr(suit, self.cogs)
             oneSuitTrack.append(Wait(delay))
             if suitIsLeader == 1:
                 oneSuitTrack.append(Func(suit.clearChat))
             oneSuitTrack.append(self.createAdjustInterval(suit, destPos, destHpr))
-            suitTrack.append(oneSuitTrack)
+            cogTrack.append(oneSuitTrack)
 
         suitHeight = suitLeader.getHeight()
         suitOffsetPnt = Point3(0, 0, suitHeight)
@@ -173,7 +173,7 @@ class DistributedLevelBattle(DistributedBattle.DistributedBattle):
             camTrack.append(Func(camera.wrtReparentTo, self))
             camTrack.append(Func(camera.setPos, self.camFOPos))
             camTrack.append(Func(camera.lookAt, suit))
-        mtrack = Parallel(suitTrack, toonTrack)
+        mtrack = Parallel(cogTrack, toonTrack)
         if self.hasLocalToon():
             NametagGlobals.setMasterArrowsOn(0)
             mtrack = Parallel(mtrack, camTrack)

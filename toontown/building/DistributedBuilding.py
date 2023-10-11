@@ -4,7 +4,7 @@ from direct.interval.IntervalGlobal import *
 from direct.directtools.DirectGeometry import *
 from .ElevatorConstants import *
 from .ElevatorUtils import *
-from .SuitBuildingGlobals import *
+from .CogBuildingGlobals import *
 from direct.gui.DirectGui import *
 from panda3d.core import *
 from toontown.toonbase import ToontownGlobals
@@ -12,7 +12,7 @@ from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import ClassicFSM, State
 from direct.distributed import DistributedObject
 import random
-from toontown.suit import SuitDNA
+from toontown.cog import CogDNA
 from toontown.toonbase import TTLocalizer
 from toontown.distributed import DelayDelete
 from toontown.toon import TTEmote
@@ -24,7 +24,7 @@ FO_DICT = {'s': 'tt_m_ara_cbe_fieldOfficeMoverShaker',
  'c': 'tt_m_ara_cbe_fieldOfficeMoverShaker'}
 
 class DistributedBuilding(DistributedObject.DistributedObject):
-    SUIT_INIT_HEIGHT = 125
+    COG_INIT_HEIGHT = 125
     TAKEOVER_SFX_PREFIX = 'phase_5/audio/sfx/'
 
     def __init__(self, cr):
@@ -94,7 +94,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             del self.leftDoor
             del self.rightDoor
         del self.suitDoorOrigin
-        self.cleanupSuitBuilding()
+        self.cleanupCogBuilding()
         self.unloadSfx()
         del self.fsm
         DistributedObject.DistributedObject.delete(self)
@@ -103,15 +103,15 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.block = block
         self.interiorZoneId = interiorZoneId
 
-    def setSuitData(self, suitTrack, difficulty, numFloors):
-        self.track = suitTrack
+    def setCogData(self, cogTrack, difficulty, numFloors):
+        self.track = cogTrack
         self.difficulty = difficulty
         self.numFloors = numFloors
 
     def setState(self, state, timestamp):
         self.fsm.request(state, [globalClockDelta.localElapsedTime(timestamp)])
 
-    def getSuitElevatorNodePath(self):
+    def getCogElevatorNodePath(self):
         if self.mode != 'suit':
             self.setToSuit()
         return self.elevatorNodePath
@@ -121,7 +121,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             self.setToCogdo()
         return self.elevatorNodePath
 
-    def getSuitDoorOrigin(self):
+    def getCogDoorOrigin(self):
         if self.mode != 'suit':
             self.setToSuit()
         return self.suitDoorOrigin
@@ -328,7 +328,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                 corpIcon = cogIcons.find('**/MoneyIcon').copyTo(self.cab)
             corpIcon.setPos(0, 6.79, 6.8)
             corpIcon.setScale(3)
-            from toontown.suit import Suit
+            from toontown.cog import Suit
             corpIcon.setColor(Suit.Suit.medallionColors[dept])
             cogIcons.removeNode()
         self.leftDoor = self.elevatorModel.find('**/left-door')
@@ -388,7 +388,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.loadAnimToSuitSfx()
         sideBldgNodes = self.getNodePaths()
         nodePath = hidden.find(self.getSbSearchString())
-        newNP = self.setupSuitBuilding(nodePath)
+        newNP = self.setupCogBuilding(nodePath)
         closeDoors(self.leftDoor, self.rightDoor)
         newNP.stash()
         sideBldgNodes.append(newNP)
@@ -396,10 +396,10 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         tracks = Parallel(name=self.taskName('toSuitTrack'))
         for i in sideBldgNodes:
             name = i.getName()
-            timeForDrop = TO_SUIT_BLDG_TIME * 0.85
+            timeForDrop = TO_COG_BLDG_TIME * 0.85
             if name[0] == 's':
                 showTrack = Sequence(name=self.taskName('ToSuitFlatsTrack') + '-' + str(sideBldgNodes.index(i)))
-                initPos = Point3(0, 0, self.SUIT_INIT_HEIGHT) + i.getPos()
+                initPos = Point3(0, 0, self.COG_INIT_HEIGHT) + i.getPos()
                 showTrack.append(Func(i.setPos, initPos))
                 showTrack.append(Func(i.unstash))
                 if i == sideBldgNodes[len(sideBldgNodes) - 1]:
@@ -409,7 +409,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                 showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name=self.taskName('ToSuitAnim') + '-' + str(sideBldgNodes.index(i))))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogLandSound, 0, 1, None, 0.0))
-                showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_SUIT_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
+                showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_COG_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogSettleSound, 0, 1, None, 0.0))
                 tracks.append(showTrack)
@@ -417,7 +417,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                     soundPlayed = 1
             elif name[0] == 't':
                 hideTrack = Sequence(name=self.taskName('ToSuitToonFlatsTrack'))
-                timeTillSquish = (self.SUIT_INIT_HEIGHT - 20.0) / self.SUIT_INIT_HEIGHT
+                timeTillSquish = (self.COG_INIT_HEIGHT - 20.0) / self.COG_INIT_HEIGHT
                 timeTillSquish *= timeForDrop
                 hideTrack.append(LerpFunctionInterval(self.adjustColorScale, fromData=1, toData=0.25, duration=timeTillSquish, extraArgs=[i]))
                 hideTrack.append(LerpScaleInterval(i, timeForDrop - timeTillSquish, Vec3(1, 1, 0.01)))
@@ -432,7 +432,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.transitionTrack.start(timeStamp)
         return
 
-    def setupSuitBuilding(self, nodePath):
+    def setupCogBuilding(self, nodePath):
         dnaStore = self.cr.playGame.dnaStore
         level = int(self.difficulty / 2) + 1
         suitNP = dnaStore.findNode('suit_landmark_' + chr(self.track) + str(level))
@@ -445,10 +445,10 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             buildingTitle = TTLocalizer.CogsInc
         else:
             buildingTitle += TTLocalizer.CogsIncExt
-        buildingTitle += '\n%s' % SuitDNA.getDeptFullname(chr(self.track))
+        buildingTitle += '\n%s' % CogDNA.getDeptFullname(chr(self.track))
         textNode = TextNode('sign')
         textNode.setTextColor(1.0, 1.0, 1.0, 1.0)
-        textNode.setFont(ToontownGlobals.getSuitFont())
+        textNode.setFont(ToontownGlobals.getCogFont())
         textNode.setAlign(TextNode.ACenter)
         textNode.setWordwrap(17.0)
         textNode.setText(buildingTitle)
@@ -471,7 +471,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         self.loadElevator(suitBuildingNP)
         return suitBuildingNP
 
-    def cleanupSuitBuilding(self):
+    def cleanupCogBuilding(self):
         if hasattr(self, 'floorIndicator'):
             del self.floorIndicator
 
@@ -497,10 +497,10 @@ class DistributedBuilding(DistributedObject.DistributedObject):
         tracks = Parallel(name=self.taskName('toCogdoTrack'))
         for i in sideBldgNodes:
             name = i.getName()
-            timeForDrop = TO_SUIT_BLDG_TIME * 0.85
+            timeForDrop = TO_COG_BLDG_TIME * 0.85
             if name[0] == 'c':
                 showTrack = Sequence(name=self.taskName('ToCogdoFlatsTrack') + '-' + str(sideBldgNodes.index(i)))
-                initPos = Point3(0, 0, self.SUIT_INIT_HEIGHT) + i.getPos()
+                initPos = Point3(0, 0, self.COG_INIT_HEIGHT) + i.getPos()
                 showTrack.append(Func(i.setPos, initPos))
                 showTrack.append(Func(i.unstash))
                 if i == sideBldgNodes[len(sideBldgNodes) - 1]:
@@ -510,7 +510,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                 showTrack.append(LerpPosInterval(i, timeForDrop, i.getPos(), name=self.taskName('ToCogdoAnim') + '-' + str(sideBldgNodes.index(i))))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogLandSound, 0, 1, None, 0.0))
-                showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_SUIT_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
+                showTrack.append(self.createBounceTrack(i, 2, 0.65, TO_COG_BLDG_TIME - timeForDrop, slowInitBounce=1.0))
                 if not soundPlayed:
                     showTrack.append(Func(base.playSfx, self.cogSettleSound, 0, 1, None, 0.0))
                 tracks.append(showTrack)
@@ -518,7 +518,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
                     soundPlayed = 1
             elif name[0] == 't':
                 hideTrack = Sequence(name=self.taskName('ToCogdoToonFlatsTrack'))
-                timeTillSquish = (self.SUIT_INIT_HEIGHT - 20.0) / self.SUIT_INIT_HEIGHT
+                timeTillSquish = (self.COG_INIT_HEIGHT - 20.0) / self.COG_INIT_HEIGHT
                 timeTillSquish *= timeForDrop
                 hideTrack.append(LerpFunctionInterval(self.adjustColorScale, fromData=1, toData=0.25, duration=timeTillSquish, extraArgs=[i]))
                 hideTrack.append(LerpScaleInterval(i, timeForDrop - timeTillSquish, Vec3(1, 1, 0.01)))
@@ -548,7 +548,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             buildingTitle += TTLocalizer.CogdominiumsExt
         textNode = TextNode('sign')
         textNode.setTextColor(1.0, 1.0, 1.0, 1.0)
-        textNode.setFont(ToontownGlobals.getSuitFont())
+        textNode.setFont(ToontownGlobals.getCogFont())
         textNode.setAlign(TextNode.ACenter)
         textNode.setWordwrap(12.0)
         textNode.setText(buildingTitle)
@@ -857,7 +857,7 @@ class DistributedBuilding(DistributedObject.DistributedObject):
             nodePath = npc.getPath(i)
             self.adjustSbNodepathScale(nodePath)
             self.notify.debug('net transform = %s' % str(nodePath.getNetTransform()))
-            self.setupSuitBuilding(nodePath)
+            self.setupCogBuilding(nodePath)
 
     def setToCogdo(self):
         self.stopTransition()

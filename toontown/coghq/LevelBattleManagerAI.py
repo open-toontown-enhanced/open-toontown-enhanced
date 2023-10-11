@@ -29,14 +29,14 @@ class LevelBattleManagerAI(BattleManagerAI.BattleManagerAI):
         del self.battleExpAggreg
         return
 
-    def newBattle(self, cellId, zoneId, pos, suit, toonId, roundCallback=None, finishCallback=None, maxSuits=4):
+    def newBattle(self, cellId, zoneId, pos, suit, toonId, roundCallback=None, finishCallback=None, maxCogs=4):
         battle = self.cellId2battle.get(cellId, None)
         if battle != None:
             self.notify.debug('battle already created by battle blocker, add toon %d' % toonId)
             battle.signupToon(toonId, pos[0], pos[1], pos[2])
             return battle
         else:
-            battle = self.battleCtor(self.air, self, pos, suit, toonId, zoneId, self.level, cellId, roundCallback, finishCallback, maxSuits)
+            battle = self.battleCtor(self.air, self, pos, suit, toonId, zoneId, self.level, cellId, roundCallback, finishCallback, maxCogs)
             self.battleExpAggreg.attachToBattle(battle)
             battle.battleCalc.setSkillCreditMultiplier(self.level.getBattleCreditMultiplier())
             battle.addToon(toonId)

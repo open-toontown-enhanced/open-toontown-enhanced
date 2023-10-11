@@ -27,7 +27,7 @@ class DistributedCogThiefGame(DistributedMinigame):
     StageHalfHeight = 100.0
     BarrelScale = 0.25
     TOON_Z = 0
-    UPDATE_SUITS_TASK = 'CogThiefGameUpdateSuitsTask'
+    UPDATE_COGS_TASK = 'CogThiefGameUpdateCogsTask'
     REWARD_COUNTDOWN_TASK = 'cogThiefGameRewardCountdown'
     ControlKeyLimitTime = 1.0
 
@@ -269,7 +269,7 @@ class DistributedCogThiefGame(DistributedMinigame):
     def enterPlay(self):
         self.notify.debug('enterPlay')
         self.startGameWalk()
-        self.spawnUpdateSuitsTask()
+        self.spawnUpdateCogsTask()
         self.accept('control', self.controlKeyPressed)
         self.pieHandler = CollisionHandlerEvent()
         self.pieHandler.setInPattern('pieHit-%fn')
@@ -302,7 +302,7 @@ class DistributedCogThiefGame(DistributedMinigame):
             cogThief = self.cogInfo[key]['suit']
             cogThief.cleanup()
 
-        self.removeUpdateSuitsTask()
+        self.removeUpdateCogsTask()
         self.notify.debug('enterCleanup')
 
     def exitCleanup(self):
@@ -532,19 +532,19 @@ class DistributedCogThiefGame(DistributedMinigame):
         suit = cog['suit']
         suit.updateGoal(timestamp, inResponseToClientStamp, goalType, goalId, newPos)
 
-    def spawnUpdateSuitsTask(self):
-        self.notify.debug('spawnUpdateSuitsTask')
+    def spawnUpdateCogsTask(self):
+        self.notify.debug('spawnUpdateCogsTask')
         for cogIndex in self.cogInfo:
             suit = self.cogInfo[cogIndex]['suit']
             suit.gameStart(self.gameStartTime)
 
-        taskMgr.remove(self.UPDATE_SUITS_TASK)
-        taskMgr.add(self.updateSuitsTask, self.UPDATE_SUITS_TASK)
+        taskMgr.remove(self.UPDATE_COGS_TASK)
+        taskMgr.add(self.updateCogsTask, self.UPDATE_COGS_TASK)
 
-    def removeUpdateSuitsTask(self):
-        taskMgr.remove(self.UPDATE_SUITS_TASK)
+    def removeUpdateCogsTask(self):
+        taskMgr.remove(self.UPDATE_COGS_TASK)
 
-    def updateSuitsTask(self, task):
+    def updateCogsTask(self, task):
         if self.gameIsEnding:
             return task.done
         for cogIndex in self.cogInfo:

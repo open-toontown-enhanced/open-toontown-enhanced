@@ -235,7 +235,7 @@ class GolfTrophiesUI(DirectFrame):
         yOffset = 0.23
         for j in range(GolfGlobals.NumCups):
             for i in range(GolfGlobals.TrophiesPerCup):
-                trophyPanel = DirectLabel(parent=self, relief=None, pos=(xStart + i * xOffset, 0.0, yStart - j * yOffset), state=DGG.NORMAL, image=DGG.getDefaultDialogGeom(), image_scale=(0.75, 1, 1), image_color=(0.8, 0.8, 0.8, 1), text=TTLocalizer.SuitPageMystery[0], text_scale=0.45, text_fg=(0, 0, 0, 1), text_pos=(0, 0, -0.25), text_font=ToontownGlobals.getInterfaceFont(), text_wordwrap=5.5)
+                trophyPanel = DirectLabel(parent=self, relief=None, pos=(xStart + i * xOffset, 0.0, yStart - j * yOffset), state=DGG.NORMAL, image=DGG.getDefaultDialogGeom(), image_scale=(0.75, 1, 1), image_color=(0.8, 0.8, 0.8, 1), text=TTLocalizer.CogPageMystery[0], text_scale=0.45, text_fg=(0, 0, 0, 1), text_pos=(0, 0, -0.25), text_font=ToontownGlobals.getInterfaceFont(), text_wordwrap=5.5)
                 trophyPanel.scale = 0.2
                 trophyPanel.setScale(trophyPanel.scale)
                 self.trophyPanels.append(trophyPanel)
@@ -244,7 +244,7 @@ class GolfTrophiesUI(DirectFrame):
         yStart = -0.38
         xOffset = 0.25
         for i in range(GolfGlobals.NumCups):
-            cupPanel = DirectLabel(parent=self, relief=None, pos=(xStart + i * xOffset, 0.0, yStart), state=DGG.NORMAL, image=DGG.getDefaultDialogGeom(), image_scale=(0.75, 1, 1), image_color=(0.8, 0.8, 0.8, 1), text=TTLocalizer.SuitPageMystery[0], text_scale=0.45, text_fg=(0, 0, 0, 1), text_pos=(0, 0, -0.25), text_font=ToontownGlobals.getInterfaceFont(), text_wordwrap=5.5)
+            cupPanel = DirectLabel(parent=self, relief=None, pos=(xStart + i * xOffset, 0.0, yStart), state=DGG.NORMAL, image=DGG.getDefaultDialogGeom(), image_scale=(0.75, 1, 1), image_color=(0.8, 0.8, 0.8, 1), text=TTLocalizer.CogPageMystery[0], text_scale=0.45, text_fg=(0, 0, 0, 1), text_pos=(0, 0, -0.25), text_font=ToontownGlobals.getInterfaceFont(), text_wordwrap=5.5)
             cupPanel.scale = 0.3
             cupPanel.setScale(cupPanel.scale)
             self.cupPanels.append(cupPanel)
@@ -306,7 +306,7 @@ class GolfTrophiesUI(DirectFrame):
                 toBeNukedGolfTrophy = trophyPanel.find('**/*GolfTrophy*')
                 if not toBeNukedGolfTrophy.isEmpty():
                     toBeNukedGolfTrophy.removeNode()
-                trophyPanel['text'] = TTLocalizer.SuitPageMystery[0]
+                trophyPanel['text'] = TTLocalizer.CogPageMystery[0]
                 trophyPanel['image_color'] = Vec4(0.8, 0.8, 0.8, 1)
                 trophyPanel.unbind(DGG.ENTER)
                 trophyPanel.unbind(DGG.EXIT)
@@ -329,7 +329,7 @@ class GolfTrophiesUI(DirectFrame):
                 toBeNukedGolfCup = cupPanel.find('**/*GolfTrophy*')
                 if not toBeNukedGolfCup.isEmpty():
                     toBeNukedGolfCup.removeNode()
-                cupPanel['text'] = TTLocalizer.SuitPageMystery[0]
+                cupPanel['text'] = TTLocalizer.CogPageMystery[0]
                 cupPanel['image_color'] = Vec4(0.8, 0.8, 0.8, 1)
                 cupPanel.unbind(DGG.ENTER)
                 cupPanel.unbind(DGG.EXIT)
