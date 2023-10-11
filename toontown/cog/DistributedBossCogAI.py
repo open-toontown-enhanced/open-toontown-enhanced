@@ -148,9 +148,9 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
     def isToonKnown(self, toonId):
         return toonId in self.involvedToons or toonId in self.looseToons
 
-    def isToonWearingRentalCog(self, toonId):
+    def isToonWearingRentalDisguise(self, toonId):
         if not self.isToonKnown(toonId):
-            self.notify.warning('isToonWearingRentalCog: unknown toonId %s' % toonId)
+            self.notify.warning('isToonWearingRentalDisguise: unknown toonId %s' % toonId)
             return False
         toon = self.air.doId2do.get(toonId)
         if toon:
@@ -159,7 +159,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
             else:
                 return not CogDisguiseGlobals.isPaidDisguiseComplete(toon, toon.getCogParts(), self.dept)
         else:
-            self.notify.warning('isToonWearingRentalCog: toonId %s does not exist' % toonId)
+            self.notify.warning('isToonWearingRentalDisguise: toonId %s does not exist' % toonId)
             return False
 
     def __countNormalDisguiseToons(self):
@@ -168,7 +168,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
     def __countRentalDisguiseToons(self):
         count = 0
         for toonId in self.involvedToons + self.looseToons:
-            if self.isToonWearingRentalCog(toonId):
+            if self.isToonWearingRentalDisguise(toonId):
                 count += 1
 
         return count
@@ -243,7 +243,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         try:
 
             def hasCog(id):
-                if not self.isToonWearingRentalCog(id):
+                if not self.isToonWearingRentalDisguise(id):
                     return 1
                 else:
                     return 0
@@ -416,7 +416,7 @@ class DistributedBossCogAI(DistributedAvatarAI.DistributedAvatarAI):
         toons = self.involvedToons[:]
         random.shuffle(toons)
         teamA, teamB, loose = [], [], []
-        for i, toon in enumerate(sorted(toons, key=self.isToonWearingRentalCog)):
+        for i, toon in enumerate(sorted(toons, key=self.isToonWearingRentalDisguise)):
             if i < 8:
                 if i % 2 == 0:
                     teamA.append(toon)

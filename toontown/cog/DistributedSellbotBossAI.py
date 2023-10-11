@@ -391,7 +391,7 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         if not toon.readyForPromotion(self.deptIndex):
             return False
         else:
-            if self.isToonWearingRentalCog(toon.doId):
+            if self.isToonWearingRentalDisguise(toon.doId):
                 return False
         return True
 
