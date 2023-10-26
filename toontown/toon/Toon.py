@@ -739,10 +739,7 @@ class Toon(Avatar.Avatar, ToonHead):
         bookActor2 = Actor.Actor(other=bookActor)
         bookActor3 = Actor.Actor(other=bookActor)
         self.__bookActors = [bookActor, bookActor2, bookActor3]
-        hands = self.getRightHands()
-        for bookActor, hand in zip(self.__bookActors, hands):
-            bookActor.reparentTo(hand)
-            bookActor.hide()
+        self.parentBooksToRightHands()
 
         return self.__bookActors
 
@@ -845,7 +842,6 @@ class Toon(Avatar.Avatar, ToonHead):
         self.loadAnims(TorsoAnimDict[torsoStyle], 'torso', '250')
         if genClothes == 1 and not len(torsoStyle) == 1:
             self.generateToonClothes()
-        return
 
     def swapToonTorso(self, torsoStyle, copy = 1, genClothes = 1):
         self.unparentToonParts()
@@ -859,6 +855,7 @@ class Toon(Avatar.Avatar, ToonHead):
         self.rescaleToon()
         self.resetHeight()
         self.setupToonNodes()
+        self.parentBooksToRightHands()
         self.generateBackpack()
 
     def generateToonHead(self, copy = 1):
@@ -1330,6 +1327,12 @@ class Toon(Avatar.Avatar, ToonHead):
 
     def hideBooks(self):
         for bookActor in self.getBookActors():
+            bookActor.hide()
+
+    def parentBooksToRightHands(self):
+        hands: list[NodePath] = self.getRightHands()
+        for bookActor, hand in zip(self.__bookActors, hands):
+            bookActor.reparentTo(hand)
             bookActor.hide()
 
     def getWake(self):
