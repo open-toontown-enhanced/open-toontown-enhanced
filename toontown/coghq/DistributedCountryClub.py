@@ -26,7 +26,6 @@ class DistributedCountryClub(DistributedObject.DistributedObject):
         self.titleColor = (1, 1, 1, 1)
         self.titleText = OnscreenText.OnscreenText('', fg=self.titleColor, shadow=(0, 0, 0, 1), font=ToontownGlobals.getSignFont(), pos=(0, -0.5), scale=0.1, drawOrder=0, mayChange=1)
         self.titleSequence = None
-        return
 
     def generate(self):
         self.notify.debug('generate: %s' % self.doId)
@@ -44,9 +43,8 @@ class DistributedCountryClub(DistributedObject.DistributedObject):
         base.localAvatar.setPosHpr(0, 0, 0, 0, 0, 0)
         self.accept('SOSPanelEnter', self.handleSOSPanel)
         self.factoryViews = FactoryCameraViews.FactoryCameraViews(self)
-        base.localAvatar.chatMgr.chatInputSpeedChat.addFactoryMenu()
+        base.localAvatar.chatMgr.chatInputSpeedChat.addCogGolfCourseMenu()
         self.__setupHighSky()
-        return
 
     def startSky(self):
         self.sky = loader.loadModel('phase_12/models/bossbotHQ/BossTestSkyBox')
@@ -154,7 +152,6 @@ class DistributedCountryClub(DistributedObject.DistributedObject):
             zoneList.extend(room.zoneIds)
 
         base.cr.sendSetZoneMsg(self.zoneId, zoneList)
-        return
 
     def listenForFloorEvents(self, room):
         roomNum = room.getRoomNum()
@@ -266,7 +263,7 @@ class DistributedCountryClub(DistributedObject.DistributedObject):
         DistributedObject.DistributedObject.delete(self)
         self.ignore('SOSPanelEnter')
         bboard.remove('countryClub')
-        base.localAvatar.chatMgr.chatInputSpeedChat.removeFactoryMenu()
+        base.localAvatar.chatMgr.chatInputSpeedChat.removeCogGolfCourseMenu()
         self.factoryViews.delete()
         del self.factoryViews
 

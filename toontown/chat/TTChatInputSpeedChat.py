@@ -327,6 +327,39 @@ ceoMenuStructure = [2300,
  2311,
  2316,
  2317]
+cogGolfCourseMenuStructure = [
+ [OTPLocalizer.SCMenuCogGolfCourseGolfGame,
+  2400,
+  2401,
+  2402,
+  2403,
+  2404,
+  2405,
+  2406],
+ [OTPLocalizer.SCMenuCogGolfCourseMazeRace,
+  2407,
+  2408,
+  2409,
+  2410,
+  2411,
+  2412,
+  2413,
+  2414,
+  2415,
+  2416,
+  2417,
+  2418,
+  2419],
+ [OTPLocalizer.SCMenuCogGolfCourseMoleStomp,
+  2420,
+  2421,
+  2422,
+  2423,
+  2424,
+  2425],
+  1702,
+  1704
+]
 
 class TTChatInputSpeedChat(DirectObject.DirectObject):
     DefaultSCColorScheme = SCColorScheme()
@@ -367,6 +400,7 @@ class TTChatInputSpeedChat(DirectObject.DirectObject):
         if self.allowWhiteListSpeedChat:
             self.addWhiteList()
         self.factoryMenu = None
+        self.cogGolfCourseMenu: SCMenuHolder | None = None
         self.kartRacingMenu = None
         self.cogMenu = None
         self.cfoMenu = None
@@ -552,6 +586,20 @@ class TTChatInputSpeedChat(DirectObject.DirectObject):
             del self.speedChat[i]
             self.factoryMenu.destroy()
             self.factoryMenu = None
+
+    def addCogGolfCourseMenu(self):
+        if self.cogGolfCourseMenu is None:
+            menu: SCMenu = SCMenu()
+            menu.rebuildFromStructure(cogGolfCourseMenuStructure)
+            self.cogGolfCourseMenu = SCMenuHolder(OTPLocalizer.SCMenuCogGolfCourse, menu = menu)
+            self.speedChat[2:2] = [self.cogGolfCourseMenu]
+
+    def removeCogGolfCourseMenu(self):
+        if self.cogGolfCourseMenu:
+            i = self.speedChat.index(self.cogGolfCourseMenu)
+            del self.speedChat[i]
+            self.cogGolfCourseMenu.destroy()
+            self.cogGolfCourseMenu = None
 
     def addKartRacingMenu(self):
         if self.kartRacingMenu == None:

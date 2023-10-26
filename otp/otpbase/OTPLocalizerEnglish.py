@@ -246,6 +246,10 @@ SCMenuToontasks = 'TOONTASKS'
 SCMenuBattle = 'BATTLE'
 SCMenuGagShop = 'GAG SHOP'
 SCMenuFactory = 'FACTORY'
+SCMenuCogGolfCourse = 'COG GOLF COURSE'
+SCMenuCogGolfCourseGolfGame = 'GOLF GAME'
+SCMenuCogGolfCourseMazeRace = 'MAZE RACE'
+SCMenuCogGolfCourseMoleStomp = 'MOLE STOMP'
 SCMenuKartRacing = 'RACING'
 SCMenuFactoryMeet = 'MEET'
 SCMenuCFOBattle = 'C.F.O.'
@@ -1236,6 +1240,35 @@ SpeedChatStaticTextToontown = {100: 'Hi!',
  2315: 'Hurry, your cog is hungry!',
  2316: 'Please save the snacks for sadder toons.',
  2317: 'Take the snacks before they fall.',
+ # CGC - COG GOLF
+ 2400: 'Hurry, time is running out!',
+ 2401: 'Sweet! I won a gag.',
+ 2402: 'Phew, that was a close one.',
+ 2403: 'Those puzzles were a piece of cake!',
+ 2404: 'Those puzzles were too challenging!',
+ 2405: 'Wow, this puzzle is difficult.',
+ 2406: 'Wow, this puzzle is easy.',
+ # CGC - HEDGE MAZE
+ 2407: 'Booyah! First place!',
+ 2408: 'Drat! Fourth place :-(',
+ 2409: "I'll do better next time.",
+ 2410: "I'm getting tired waiting for you turtles.",
+ 2411: 'None of you will beat me!',
+ 2412: 'See you at the end!',
+ 2413: 'Wow, that was a close one.',
+ 2414: 'Wow, that was a fun maze!',
+ 2415: 'Wow, this maze is tough to navigate.',
+ 2416: 'Wow! You are GOOD at this maze!',
+ 2417: "Y'all need to hurry up!",
+ 2418: "You'll never find the end!",
+ 2419: "You're too good at this maze.",
+ # CGC - MOLE STOMP
+ 2420: 'Stomp on the red moles.',
+ 2421: 'Watch out for the yellow moles!',
+ 2422: "I'll stomp the moles on the bottom left.",
+ 2423: "I'll stomp the moles on the bottom right.",
+ 2424: "I'll stomp the moles on the top left.",
+ 2425: "I'll stomp the moles on the top right.",
  3010: 'Anyone want to race?',
  3020: "Let's race!",
  3030: 'Want to race?',
