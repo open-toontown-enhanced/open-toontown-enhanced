@@ -3,13 +3,10 @@ import random
 
 class PhotoGameBase:
 
-    def __init__(self):
-        pass
-
     def load(self):
         self.data = PhotoGameGlobals.AREA_DATA[self.getSafezoneId()]
 
-    def generateAssignmentTemplates(self, numAssignments):
+    def generateAssignmentTemplates(self, numAssignments: int) -> list[tuple[int, str]]:
         self.data = PhotoGameGlobals.AREA_DATA[self.getSafezoneId()]
         random.seed(self.doId)
         assignmentTemplates = []

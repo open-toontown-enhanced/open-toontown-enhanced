@@ -1,11 +1,16 @@
 from .DistributedMinigameAI import *
 from direct.distributed.ClockDelta import *
-from direct.fsm import ClassicFSM, State
-from direct.fsm import State
-from direct.task import Task
+from direct.fsm.ClassicFSM import ClassicFSM
+from direct.fsm.State import State
 from . import PhotoGameGlobals
 from toontown.minigame import PhotoGameBase
-import random
+
+class AssignmentDataEntry:
+    def __init__(self):
+        self.subjectIndex: int | None = None
+        self.pose: str | None = None
+        self.playerScores: list[float] | None = None
+        self.highScorer: int | None = None
 
 class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedPhotoGameAI')
@@ -13,7 +18,14 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
     def __init__(self, air, minigameId):
         DistributedMinigameAI.__init__(self, air, minigameId)
         PhotoGameBase.PhotoGameBase.__init__(self)
-        self.gameFSM = ClassicFSM.ClassicFSM('DistributedPhotoGameAI', [State.State('inactive', self.enterInactive, self.exitInactive, ['play']), State.State('play', self.enterPlay, self.exitPlay, ['cleanup']), State.State('cleanup', self.enterCleanup, self.exitCleanup, ['inactive'])], 'inactive', 'inactive')
+        self.assignmentData: list[AssignmentDataEntry] | None = None
+        self.gameFSM: ClassicFSM = ClassicFSM(
+            'DistributedPhotoGameAI', 
+            [State('inactive', self.enterInactive, self.exitInactive, ['play']), 
+             State('play', self.enterPlay, self.exitPlay, ['cleanup']),
+             State('cleanup', self.enterCleanup, self.exitCleanup, ['inactive'])],
+             'inactive', 'inactive'
+        )
         self.addChildGameFSM(self.gameFSM)
 
     def delete(self):
@@ -25,16 +37,13 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         self.notify.debug('setGameReady')
         DistributedMinigameAI.setGameReady(self)
 
-    def setGameStart(self, timestamp):
+    def setGameStart(self, timestamp: float):
         self.notify.debug('setGameStart')
         DistributedMinigameAI.setGameStart(self, timestamp)
         assignmentTemplates = self.generateAssignmentTemplates(PhotoGameGlobals.ONSCREENASSIGNMENTS)
         self.assignmentData = self.generateAssignmentData(assignmentTemplates)
         self.gameFSM.request('play')
-        self.filmCountList = [0,
-         0,
-         0,
-         0]
+        self.filmCountList: list[int] = [0, 0, 0, 0]
 
     def setGameAbort(self):
         self.notify.debug('setGameAbort')
@@ -56,7 +65,7 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
     def enterPlay(self):
         self.notify.debug('enterPlay')
         if not config.GetBool('endless-photo-game', 0):
-            taskMgr.doMethodLater(self.data['TIME'], self.timerExpired, self.taskName('gameTimer'))
+            self.doMethodLater(self.data['TIME'], self.timerExpired, self.taskName('gameTimer'))
 
     def timerExpired(self, task = None):
         self.notify.debug('timer expired')
@@ -65,25 +74,15 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         if task:
             return task.done
 
-    def __playing(self):
-        if not hasattr(self, 'gameFSM'):
-            return 0
-        return self.gameFSM.getCurrentState().getName() == 'play'
-
-    def generateAssignmentData(self, assignmentTemplates):
+    def generateAssignmentData(self, assignmentTemplates: list[tuple[int, str]]) -> list[AssignmentDataEntry]:
         assignmentData = []
         for template in assignmentTemplates:
-            playerScores = [0,
-             0,
-             0,
-             0]
-            highScorer = None
-            dataEntry = [template[0],
-             template[1],
-             playerScores,
-             highScorer]
+            dataEntry = AssignmentDataEntry()
+            dataEntry.subjectIndex = template[0]
+            dataEntry.pose = template[1]
+            dataEntry.playerScores = [0, 0, 0, 0]
+            dataEntry.highScorer = None
             assignmentData.append(dataEntry)
-
         return assignmentData
 
     def checkForFilmOut(self):
@@ -111,9 +110,8 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         playerIndex = self.avIdList.index(avId)
         self.filmCountList[playerIndex] = self.data['FILMCOUNT']
         self.checkForFilmOut()
-        return
 
-    def newClientPhotoScore(self, subjectIndex, pose, score):
+    def newClientPhotoScore(self, subjectIndex: int, pose, score: float):
         avId = self.air.getAvatarIdFromSender()
         if self.gameFSM.getCurrentState() is None or self.gameFSM.getCurrentState().getName() != 'play':
             if self.gameFSM.getCurrentState() is None:
@@ -136,16 +134,16 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         assignmentIndex = None
         for dataIndex in range(len(self.assignmentData)):
             assignment = self.assignmentData[dataIndex]
-            if assignment[0] == subjectIndex and assignment[1] == pose:
+            if assignment.subjectIndex == subjectIndex and assignment.pose == pose:
                 assignmentIndex = dataIndex
 
-        if assignmentIndex != None and self.assignmentData[assignmentIndex][2][playerIndex] < score:
-            self.assignmentData[assignmentIndex][2][playerIndex] = score
-            highScorer = self.assignmentData[assignmentIndex][3]
+        if assignmentIndex != None and self.assignmentData[assignmentIndex].playerScores[playerIndex] < score:
+            self.assignmentData[assignmentIndex].playerScores[playerIndex] = score
+            highScorer = self.assignmentData[assignmentIndex].highScorer
             if highScorer == None:
-                self.assignmentData[assignmentIndex][3] = playerIndex
-            elif self.assignmentData[assignmentIndex][2][highScorer] < self.assignmentData[assignmentIndex][2][playerIndex]:
-                self.assignmentData[assignmentIndex][3] = playerIndex
+                self.assignmentData[assignmentIndex].highScorer = playerIndex
+            elif self.assignmentData[assignmentIndex].playerScores[highScorer] < self.assignmentData[assignmentIndex].playerScores[playerIndex]:
+                self.assignmentData[assignmentIndex].highScorer = playerIndex
             self.sendUpdate('newAIPhotoScore', [avId, assignmentIndex, score])
         self.notify.debug('newClientPhotoScore %s %s %s %s' % (avId,
          subjectIndex,
@@ -154,17 +152,12 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         for data in self.assignmentData:
             self.notify.debug(str(data))
 
-        return
-
     def calculateScores(self):
-        playerBonus = [0.0,
-         0.0,
-         0.0,
-         0.0]
-        teamScore = 0.0
+        playerBonus: list[float] = [0.0, 0.0, 0.0, 0.0]
+        teamScore: float = 0.0
         for data in self.assignmentData:
-            scores = data[2]
-            highestIndex = data[3]
+            scores = data.playerScores
+            highestIndex = data.highScorer
             if highestIndex != None:
                 highestScore = scores[highestIndex]
                 self.notify.debug('\nHighIndex:%s' % highestIndex)
@@ -186,11 +179,10 @@ class DistributedPhotoGameAI(DistributedMinigameAI, PhotoGameBase.PhotoGameBase)
         self.notify.debug(str(teamScore))
         self.notify.debug('dict')
         self.notify.debug(str(self.scoreDict))
-        return
 
     def exitPlay(self):
-        taskMgr.remove(self.taskName('gameTimer'))
-        taskMgr.remove(self.taskName('game-over'))
+        self.removeTask(self.taskName('gameTimer'))
+        self.removeTask(self.taskName('game-over'))
 
     def enterCleanup(self):
         self.notify.debug('enterCleanup')
