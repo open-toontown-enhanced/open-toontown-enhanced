@@ -1,12 +1,13 @@
-from panda3d.core import *
+from panda3d.core import LineSegs, TextNode
 from toontown.toonbase.ToonBaseGlobal import *
+from direct.gui.DirectGui import DirectButton, DirectFrame, DirectLabel, OnscreenText, DGG
 from direct.directnotify import DirectNotifyGlobal
 from direct.interval.IntervalGlobal import *
 from direct.task import Task
 from math import *
 from direct.distributed.ClockDelta import *
 from toontown.golf import GolfGlobals
-from panda3d.core import LineSegs
+from toontown.toonbase import TTLocalizer, ToontownGlobals
 AUTO_HIDE_TIMEOUT = 3
 
 class GolfScoreBoard:
@@ -122,7 +123,6 @@ class GolfScoreBoard:
         self.lines.drawTo(self.lineVStart + 11 * self.lineVertOffset, 0, self.lineHStart - 4 * 0.13)
         self.scoreboard.attachNewNode(self.lines.create())
         self.hide()
-        return
 
     def getScoreLabel(self, avIdorIndex, holeNum):
         index = None
@@ -226,4 +226,3 @@ class GolfScoreBoard:
         self.scoreboard = None
         self.golfCourse = None
         taskMgr.remove('hide score board')
-        return

@@ -662,7 +662,6 @@ class DistributedVehicle(DistributedSmoothNode.DistributedSmoothNode, Kart.Kart,
             self.speedGauge = None
             self.speedometerImages.removeNode()
             self.speedometerImages = None
-        return
 
     def setTurbo(self, setting):
         self.turbo = setting
@@ -676,13 +675,12 @@ class DistributedVehicle(DistributedSmoothNode.DistributedSmoothNode, Kart.Kart,
         if self.cameraTrack:
             self.cameraTrack.finish()
             self.cameraTrack = None
-        return
 
     def startTurbo(self):
         newCameraPos = Point3(0, -25, 16)
         newCameraFov = 67.5
         turboDuration = 3
-        startFov = base.camLens.getMinFov().getX()
+        startFov = base.camLens.getMinFov()
         if self.cameraTrack:
             self.cameraTrack.pause()
         cameraZoomIn = Parallel(LerpPosInterval(camera, 2, newCameraPos), LerpFunc(base.camLens.setMinFov, fromData=startFov, toData=newCameraFov, duration=2))

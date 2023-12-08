@@ -73,6 +73,9 @@ class DistributedTwoDGame(DistributedMinigame):
         for avId in list(self.toonSDs.keys()):
             toonSD = self.toonSDs[avId]
             toonSD.destroy()
+            toon = self.getAvatar(avId)
+            if toon:
+                toon.unstashBodyCollisions()
 
         del self.toonSDs
         self.cameraMgr.destroy()
@@ -138,8 +141,7 @@ class DistributedTwoDGame(DistributedMinigame):
                 toon.hideName()
                 toon.startSmooth()
                 toon.startLookAround()
-                distCNP = toon.find('**/distAvatarCollNode*')
-                distCNP.node().setIntoCollideMask(BitMask32.allOff())
+                toon.stashBodyCollisions()
                 toonSD = TwoDGameToonSD.TwoDGameToonSD(avId, self)
                 self.toonSDs[avId] = toonSD
                 toonSD.enter()
@@ -193,7 +195,6 @@ class DistributedTwoDGame(DistributedMinigame):
         self.timer.posInTopRightCorner()
         self.timer.setTime(ToonBlitzGlobals.GameDuration[self.getSafezoneId()])
         self.timer.countdown(ToonBlitzGlobals.GameDuration[self.getSafezoneId()], self.timerExpired)
-        return
 
     def exitPlay(self):
         handlers = [None,
@@ -207,7 +208,6 @@ class DistributedTwoDGame(DistributedMinigame):
         self.ignore('jumpStart')
         self.ignore('enemyHit')
         self.ignore('twoDTreasureGrabbed')
-        return
 
     def enterPause(self):
         self.notify.debug('enterPause')
@@ -255,7 +255,6 @@ class DistributedTwoDGame(DistributedMinigame):
         del self.twoDWalk
         self.twoDDrive = None
         del self.twoDDrive
-        return
 
     def exitCleanup(self):
         pass
@@ -269,7 +268,6 @@ class DistributedTwoDGame(DistributedMinigame):
              self.shootKeyHandler]
             self.twoDDrive.arrowKeys.setPressHandlers(handlers)
             self.twoDDrive.start()
-        return
 
     def ignoreInputs(self):
         if hasattr(self, 'twoDDrive'):
@@ -281,7 +279,6 @@ class DistributedTwoDGame(DistributedMinigame):
             self.twoDDrive.arrowKeys.setPressHandlers(handlers)
             self.twoDDrive.lastAction = None
             self.twoDDrive.stop()
-        return
 
     def __updateLocalToonTask(self, task):
         dt = globalClock.getDt()

@@ -1,7 +1,8 @@
+from panda3d.core import *
+from panda3d.ode import OdeTriMeshData, OdeTriMeshGeom, OdeBody, OdeRayGeom
 from direct.distributed import DistributedObjectAI
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
-from panda3d.core import *
 from . import DistributedPhysicsWorldAI
 from direct.fsm.FSM import FSM
 from toontown.ai.ToonBarrier import *
@@ -26,7 +27,6 @@ class GolfHoleBase:
         self.frame = 0
         self.onSlick = 0
         self.didHoleBreak = 0
-        return
 
     def loadLevel(self):
         tm = self.holeInfo['terrainModel']

@@ -31,9 +31,6 @@ class DistributedBattleBldg(DistributedBattleBase.DistributedBattleBase):
         playMovieState = self.fsm.getStateNamed('PlayMovie')
         playMovieState.addTransition('BuildingReward')
 
-    def generate(self):
-        DistributedBattleBase.DistributedBattleBase.generate(self)
-
     def setBossBattle(self, value):
         self.bossBattle = value
         if self.bossBattle:

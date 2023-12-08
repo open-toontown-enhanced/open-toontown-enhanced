@@ -78,9 +78,9 @@ class TwoDEnemy(DirectObject):
     def setupEnemy(self, cogAttribs):
         cogType = cogAttribs[0]
         self.cog = Cog.Cog()
-        CogDNA = CogDNA.CogDNA()
-        CogDNA.newCog(cogType)
-        self.cog.setDNA(CogDNA)
+        dna = CogDNA.CogDNA()
+        dna.newCog(cogType)
+        self.cog.setDNA(dna)
         self.cog.pose('walk', 0)
         self.cogName = 'Enemy-%s' % self.index
         self.cog.setName(self.cogName)
@@ -125,7 +125,6 @@ class TwoDEnemy(DirectObject):
         self.cog.setPos(initX, initY, initZ)
         self.cog.dropShadow.hide()
         self.setupCollision()
-        return
 
     def setupCollision(self):
         collSphere = CollisionSphere(0, 0, 2, 2)
@@ -144,7 +143,6 @@ class TwoDEnemy(DirectObject):
             self.moveIval.pause()
             del self.moveIval
         self.moveIval = None
-        return
 
     def start(self, elapsedTime):
         if self.moveIval:

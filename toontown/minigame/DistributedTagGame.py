@@ -1,9 +1,9 @@
 from panda3d.core import *
+from panda3d.otp import NametagGlobals
 from toontown.toonbase.ToonBaseGlobal import *
 from .DistributedMinigame import *
 from direct.interval.IntervalGlobal import *
 from direct.fsm import ClassicFSM, State
-from direct.fsm import State
 from toontown.safezone import Walk
 from toontown.toonbase import ToontownTimer
 from direct.gui import OnscreenText

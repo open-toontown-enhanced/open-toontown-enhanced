@@ -1,9 +1,9 @@
+from panda3d.core import *
+from panda3d.ode import OdeWorld, OdeSimpleSpace, OdeJointGroup, OdePlaneGeom, OdeBody, OdeMass, OdeSphereGeom, \
+    OdeBoxGeom, OdeSliderJoint, OdeTriMeshData, OdeTriMeshGeom, OdeHingeJoint
 from direct.distributed import DistributedObject
 from direct.directnotify import DirectNotifyGlobal
 from toontown.toonbase import ToontownGlobals
-from panda3d.core import *
-from math import *
-import math
 from direct.fsm.FSM import FSM
 from toontown.minigame import ArrowKeys
 from direct.showbase import PythonUtil
@@ -11,7 +11,7 @@ from direct.task import Task
 from direct.distributed.ClockDelta import *
 from . import BuildGeometry
 from toontown.golf import GolfGlobals
-import random, time
+import random, math, time
 
 def scalp(vec, scal):
     vec0 = vec[0] * scal
@@ -21,7 +21,7 @@ def scalp(vec, scal):
 
 
 def length(vec):
-    return sqrt(vec[0] ** 2 + vec[1] ** 2 + vec[2] ** 2)
+    return math.sqrt(vec[0] ** 2 + vec[1] ** 2 + vec[2] ** 2)
 
 
 class PhysicsWorldBase:
@@ -110,7 +110,6 @@ class PhysicsWorldBase:
         self.world = None
         self.space = None
         self.ignore(self.collisionEventName)
-        return
 
     def setupSimulation(self):
         self.world.setAutoDisableFlag(0)
