@@ -629,7 +629,7 @@ class BattleCalculatorAI:
             self.notify.debug('ACC BONUS: toon attack received accuracy ' + 'bonus of ' + str(self.AccuracyBonuses[numPrevHits]) + ' from previous attack by (' + str(attack[TOON_ID_COL]) + ') which hit')
         return self.AccuracyBonuses[numPrevHits]
 
-    def __applyToonAttackDamages(self, toonId, hpbonus = 0, kbbonus = 0):
+    def __applyToonAttackDamages(self, toonId):
         totalDamages = 0
         if not self.APPLY_HEALTH_ADJUSTMENTS:
             return totalDamages
@@ -638,18 +638,13 @@ class BattleCalculatorAI:
         if track != NO_ATTACK and track != SOS and track != TRAP and track != NPCSOS:
             targets = self.__getToonTargets(attack)
             for position in range(len(targets)):
-                if hpbonus:
-                    if targets[position] in self.__createToonTargetList(toonId):
-                        damageDone = attack[TOON_HPBONUS_COL]
-                    else:
-                        damageDone = 0
-                elif kbbonus:
-                    if targets[position] in self.__createToonTargetList(toonId):
-                        damageDone = attack[TOON_KBBONUS_COL][position]
-                    else:
-                        damageDone = 0
-                else:
-                    damageDone = attack[TOON_HP_COL][position]
+                damageDone: int = 0
+                if targets[position] in self.__createToonTargetList(toonId):
+                    if track != HEAL and attack[TOON_HPBONUS_COL] > 0:
+                        damageDone += attack[TOON_HPBONUS_COL]
+                    if (track != LURE and track != DROP and track != SOUND) and attack[TOON_KBBONUS_COL][position] > 0:
+                        damageDone += [TOON_KBBONUS_COL][position]
+                damageDone += attack[TOON_HP_COL][position]
                 if damageDone <= 0 or self.immortalCogs:
                     continue
                 if track == HEAL or track == PETSOS:
@@ -667,12 +662,7 @@ class BattleCalculatorAI:
                 currTarget.setHP(currTarget.getHP() - damageDone)
                 targetId = currTarget.getDoId()
                 if self.notify.getDebug():
-                    if hpbonus:
-                        self.notify.debug(str(targetId) + ': cog takes ' + str(damageDone) + ' damage from HP-Bonus')
-                    elif kbbonus:
-                        self.notify.debug(str(targetId) + ': cog takes ' + str(damageDone) + ' damage from KB-Bonus')
-                    else:
-                        self.notify.debug(str(targetId) + ': cog takes ' + str(damageDone) + ' damage')
+                    self.notify.debug(str(targetId) + ': cog takes ' + str(damageDone) + ' damage')
                 totalDamages = totalDamages + damageDone
                 if currTarget.getHP() <= 0:
                     if currTarget.getSkeleRevives() >= 1:
@@ -812,7 +802,7 @@ class BattleCalculatorAI:
                         if self.notify.getDebug():
                             self.notify.debug('Applying hp bonus to track ' + str(attack[TOON_TRACK_COL]) + ' of ' + str(attack[TOON_HPBONUS_COL]))
                     elif len(attack[TOON_KBBONUS_COL]) > tgtPos:
-                        attack[TOON_KBBONUS_COL][tgtPos] = totalDmgs * 0.5
+                        attack[TOON_KBBONUS_COL][tgtPos] = math.ceil(totalDmgs * 0.5)
                         if self.notify.getDebug():
                             self.notify.debug('Applying kb bonus to track ' + str(attack[TOON_TRACK_COL]) + ' of ' + str(attack[TOON_KBBONUS_COL][tgtPos]) + ' to target ' + str(tgtPos))
                     else:
@@ -927,9 +917,6 @@ class BattleCalculatorAI:
                         attack = self.battle.toonAttacks[currToonAttack]
                         atkTrack, atkLevel = self.__getActualTrackLevel(attack)
                 damagesDone = self.__applyToonAttackDamages(currToonAttack)
-                self.__applyToonAttackDamages(currToonAttack, hpbonus=1)
-                if atkTrack != LURE and atkTrack != DROP and atkTrack != SOUND:
-                    self.__applyToonAttackDamages(currToonAttack, kbbonus=1)
                 if lastTrack != atkTrack:
                     lastAttacks = []
                     lastTrack = atkTrack
