@@ -3,6 +3,15 @@ This repository contains the code for Open Toontown Enhanced, based on the lates
 
 Based on [Open Toontown](https://github.com/open-toontown/open-toontown)
 
+# Socials
+Feel free to follow our socials!
+
+[Discord](https://discord.gg/XZTd3jA6ZD)
+
+[YouTube](https://youtube.com/@toontownenhanced)
+
+[X](https://x.com/ttenhanced)
+
 # Setup
 After cloning the repository, you will need to clone the [resources](https://github.com/open-toontown-enhanced/resources) repository inside the directory where you cloned the source repo.
 
