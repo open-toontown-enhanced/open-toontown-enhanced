@@ -146,9 +146,9 @@ class DistributedTutorialInterior(DistributedObject.DistributedObject):
 
     def createCog(self):
         self.cog = Cog.Cog()
-        CogDNA = CogDNA.CogDNA()
-        CogDNA.newCog('flunky')
-        self.cog.setDNA(CogDNA)
+        dna = CogDNA.CogDNA()
+        dna.newCog('flunky')
+        self.cog.setDNA(dna)
         self.cog.loop('neutral')
         self.cog.setPosHpr(-20, 8, 0, 0, 0, 0)
         self.cog.reparentTo(self.interior)

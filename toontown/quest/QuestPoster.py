@@ -147,10 +147,10 @@ class QuestPoster(DirectFrame):
         return lm
 
     def createCogHead(self, cogName):
-        CogDNA = CogDNA.CogDNA()
-        CogDNA.newCog(cogName)
+        dna = CogDNA.CogDNA()
+        dna.newCog(cogName)
         cog = Cog.Cog()
-        cog.setDNA(CogDNA)
+        cog.setDNA(dna)
         headParts = cog.getHeadParts()
         head = hidden.attachNewNode('head')
         for part in headParts:
