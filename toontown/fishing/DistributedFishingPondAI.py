@@ -10,6 +10,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
         DistributedObjectAI.__init__(self, air)
         self.area: int | None = None
         self.targets: dict[int, DistributedFishingTargetAI] = {}
+        self.avsFishingHere: list[int] = []
 
     def generate(self):
         DistributedObjectAI.generate(self)
@@ -24,14 +25,25 @@ class DistributedFishingPondAI(DistributedObjectAI):
         del self.targets
         DistributedObjectAI.delete(self)
 
-    def hitTarget(self, doId: int):
+    def addAvId(self, avId: int):
+        if avId not in self.avsFishingHere:
+            self.avsFishingHere.append(avId)
+
+    def removeAvId(self, avId: int):
+        if avId in self.avsFishingHere:
+            self.avsFishingHere.remove(avId)
+
+    def hitTarget(self, avId: int):
         senderId = self.air.getAvatarIdFromSender()
         av = self.air.doId2do.get(senderId)
         if not av:
             return
-        target = self.targets.get(doId)
+        target = self.targets.get(avId)
         if not target:
-            self.air.writeServerEvent('suspicious', senderId, f"Toon tried to hit invalid fishing target {doId}.")
+            self.air.writeServerEvent('suspicious', senderId, f"Toon tried to hit invalid fishing target: {avId}.")
+            return
+        if avId not in self.avsFishingHere:
+            self.air.writeServerEvent('suspicious', senderId, f'Toon tried to hit a target despite not being in a spot: {avId}.')
             return
 
     def setArea(self, area: int):

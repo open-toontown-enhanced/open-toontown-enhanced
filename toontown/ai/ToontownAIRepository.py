@@ -44,6 +44,7 @@ from toontown.racing.DistributedStartingBlockAI import DistributedViewingBlockAI
 from toontown.racing.DistributedViewPadAI import DistributedViewPadAI
 from toontown.racing.RaceManagerAI import RaceManagerAI
 from toontown.uberdog.DistributedPartyManagerAI import DistributedPartyManagerAI
+from toontown.safezone.DistributedFishingSpotAI import DistributedFishingSpotAI
 from toontown.safezone.SafeZoneManagerAI import SafeZoneManagerAI
 from toontown.shtiker.CogPageManagerAI import CogPageManagerAI
 from toontown.spellbook.ToontownMagicWordManagerAI import ToontownMagicWordManagerAI
@@ -402,8 +403,31 @@ class ToontownAIRepository(ToontownInternalRepository):
 
         return fishingPonds, fishingPondGroups
 
-    def findFishingSpots(self, dnaData, pond):
-        return []  # TODO
+    def findFishingSpots(self, dnaPondGroup: DNAGroup, distPond: DistributedFishingPondAI):
+        """
+        Scans the given DNAGroup pond for fishing spots.  These
+        are defined as all the props whose code includes the string
+        "fishing_spot".  Fishing spots should be the only thing under a pond
+        node. For each such prop, creates a DistributedFishingSpotAI.
+        Returns the list of distributed objects created.
+        """
+        fishingSpots = []
+        # Search the children of the pond
+        for i in range(dnaPondGroup.getNumChildren()):
+            dnaGroup = dnaPondGroup.at(i)
+            if ((isinstance(dnaGroup, DNAProp)) and 
+                (dnaGroup.getCode().find('fishing_spot') >= 0)):
+                # Here's a fishing spot!
+                pos = dnaGroup.getPos()
+                hpr = dnaGroup.getHpr()
+                fs = DistributedFishingSpotAI(
+                     self, distPond, (pos[0], pos[1], pos[2], hpr[0], hpr[1], hpr[2])
+                )
+                fs.generateWithRequired(distPond.zoneId)
+                fishingSpots.append(fs)
+            else:
+                self.notify.debug("Found dnaGroup that is not a fishing_spot under a pond group")
+        return fishingSpots
 
     def findPartyHats(self, dnaData, zoneId):
         return []  # TODO
