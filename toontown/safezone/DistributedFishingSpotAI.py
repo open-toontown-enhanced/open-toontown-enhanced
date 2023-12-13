@@ -2,6 +2,7 @@ from panda3d.core import AsyncTask
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
 
+from ..fishing.FishBase import FishBase
 from ..fishing import FishGlobals
 
 class DistributedFishingSpotAI(DistributedObjectAI):
@@ -11,6 +12,7 @@ class DistributedFishingSpotAI(DistributedObjectAI):
         DistributedObjectAI.__init__(self, air)
         self.pond = pond
         self.pondDoId: int = pond.getDoId()
+        self.canonicalZoneId: int = pond.canonicalZoneId
         self.posHpr = posHpr
         self.avId: int = 0
         self.timeoutTask: AsyncTask | None = None
@@ -110,10 +112,21 @@ class DistributedFishingSpotAI(DistributedObjectAI):
         if not target:
             self.air.writeServerEvent('suspicious', senderId, f"Toon {avId} tried to hit invalid fishing target: {targetId}.")
             return
+        codeAndItem: tuple = self.air.fishManager.getItem(av, self.canonicalZoneId)
+        code: int | None = codeAndItem[0]
+        if code is None:
+            return
         self.__stopTimeoutTask()
-        # todo: implement fishmanagerai
-        code = FishGlobals.BootItem
-        self.d_setMovie(FishGlobals.PullInMovie, code)
+        item: FishBase | int | None = codeAndItem[1]
+        if code == FishGlobals.QuestItem or code == FishGlobals.JellybeanItem:
+            self.d_setMovie(FishGlobals.PullInMovie, code, item)
+        elif code == FishGlobals.FishItem or code == FishGlobals.FishItemNewEntry \
+                or code == FishGlobals.FishItemNewRecord:
+            genusSpeciesWeight: tuple[int, int, float] = item.getVitals()
+            self.d_setMovie(FishGlobals.PullInMovie, code, genusSpeciesWeight[0],
+                            genusSpeciesWeight[1], genusSpeciesWeight[2])
+        else:
+            self.d_setMovie(FishGlobals.PullInMovie, code)
         self.__startTimeoutTask()
 
     def d_setMovie(self, mode: int = 0, code: int = 0, itemDesc1: int = 0, itemDesc2: int = 0,

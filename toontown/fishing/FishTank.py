@@ -28,19 +28,18 @@ class FishTank:
 
         return [genusList, speciesList, weightList]
 
-    def hasFish(self, genus, species):
+    def hasFish(self, genus: int, species: int, weight: float = 0) -> tuple[bool, bool]:
+        hasFish: bool = False
+        hasBiggerFish: bool = False
+
         for fish in self.fishList:
             if fish.getGenus() == genus and fish.getSpecies() == species:
-                return 1
+                hasFish = True
+                if fish.getWeight() >= weight:
+                    hasBiggerFish = True
+                break
 
-        return 0
-
-    def hasBiggerFish(self, genus, species, weight):
-        for fish in self.fishList:
-            if fish.getGenus() == genus and fish.getSpecies() == species and fish.getWeight() >= weight:
-                return 1
-
-        return 0
+        return (hasFish, hasBiggerFish)
 
     def addFish(self, fish):
         self.fishList.append(fish)

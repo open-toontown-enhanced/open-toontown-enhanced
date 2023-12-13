@@ -36,6 +36,7 @@ from toontown.hood.TTHoodDataAI import TTHoodDataAI
 from toontown.pets.PetManagerAI import PetManagerAI
 from toontown.quest.QuestManagerAI import QuestManagerAI
 from toontown.racing import RaceGlobals
+from toontown.fishing.FishManagerAI import FishManagerAI
 from toontown.fishing.DistributedFishingPondAI import DistributedFishingPondAI
 from toontown.racing.DistributedLeaderBoardAI import DistributedLeaderBoardAI
 from toontown.racing.DistributedRacePadAI import DistributedRacePadAI
@@ -95,6 +96,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.safeZoneManager = None
         self.magicWordManager = None
         self.partyManager = None
+        self.fishManager: FishManagerAI | None = None
         self.zoneTable = {}
         self.dnaStoreMap = {}
         self.dnaDataMap = {}
@@ -181,6 +183,9 @@ class ToontownAIRepository(ToontownInternalRepository):
 
         # Create our Cog suit manager...
         self.cogDisguiseMgr = CogDisguiseManagerAI(self)
+
+        # Create our fish manager...
+        self.fishManager = FishManagerAI(self)
 
     def createGlobals(self):
         """

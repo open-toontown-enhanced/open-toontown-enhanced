@@ -666,7 +666,7 @@ def getRandomWeight(genus, species, rodIndex = None, rNumGen = None):
     return int(round(randWeight * 16))
 
 
-def getRandomFishVitals(zoneId, rodId, rNumGen = None):
+def getRandomFishVitals(zoneId: int, rodId: int, rNumGen = None) -> tuple[bool, int, int, int]:
     rarity = __rollRarityDice(rodId, rNumGen)
     rodDict = __pondInfoDict.get(zoneId)
     rarityDict = rodDict.get(rodId)
@@ -677,13 +677,12 @@ def getRandomFishVitals(zoneId, rodId, rNumGen = None):
         else:
             genus, species = rNumGen.choice(fishList)
         weight = getRandomWeight(genus, species, rodId, rNumGen)
-        return (1,
+        return (True,
          genus,
          species,
          weight)
     else:
-        return (0, 0, 0, 0)
-    return
+        return (False, 0, 0, 0)
 
 
 def getWeightRange(genus, species):

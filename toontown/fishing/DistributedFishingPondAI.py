@@ -1,6 +1,7 @@
 from typing import Optional
 from direct.directnotify import DirectNotifyGlobal
 from direct.distributed.DistributedObjectAI import DistributedObjectAI
+from toontown.hood import ZoneUtil
 from .DistributedFishingTargetAI import DistributedFishingTargetAI
 from . import FishingTargetGlobals
 
@@ -11,6 +12,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
         DistributedObjectAI.__init__(self, air)
         self.area: int | None = None
         self.targets: dict[int, DistributedFishingTargetAI] = {}
+        self.canonicalZoneId: int | None = None
 
     def generate(self):
         DistributedObjectAI.generate(self)
@@ -18,6 +20,7 @@ class DistributedFishingPondAI(DistributedObjectAI):
             target = DistributedFishingTargetAI(self.air, self)
             target.generateWithRequired(self.zoneId)
             self.targets[target.getDoId()] = target
+        self.canonicalZoneId = ZoneUtil.getCanonicalZoneId(self.zoneId)
 
     def delete(self):
         for target in self.targets.values():
