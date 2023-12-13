@@ -790,7 +790,7 @@ def doClipOnTie(attack):
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
@@ -1084,7 +1084,7 @@ def doFingerWag(attack):
         partDelay = 1.3
         damageDelay = 2.7
         dodgeDelay = 1.7
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 1.3
         damageDelay = 2.7
         dodgeDelay = 1.8
@@ -1279,7 +1279,7 @@ def doBrainStorm(attack):
         partDelay = 1.2
         damageDelay = 4.5
         dodgeDelay = 3.3
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 1.2
         damageDelay = 4.5
         dodgeDelay = 3.3
@@ -1340,7 +1340,7 @@ def doBuzzWord(attack):
         partDuration = 2.2
         damageDelay = 4.5
         dodgeDelay = 3.8
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 1.3
         partDuration = 2
         damageDelay = 2.5
@@ -1891,7 +1891,7 @@ def doRolodex(attack):
         part3Duration = 1
         damageDelay = 3.8
         dodgeDelay = 2.5
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         propPosPoints = [Point3(0.12, 0.24, 0.01), VBase3(99.032, 5.973, -179.839)]
         propScale = Point3(0.91, 0.91, 0.91)
         partDelay = 2.9
@@ -1985,7 +1985,7 @@ def doPlayHardball(attack):
         cogDelay = 1.09
         damageDelay = 2.76
         dodgeDelay = 1.86
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         cogDelay = 1.79
         damageDelay = 3.46
         dodgeDelay = 2.56
@@ -2048,7 +2048,7 @@ def doPowerTie(attack):
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         throwDelay = 2.17
         damageDelay = 3.3
         dodgeDelay = 3.1
@@ -2084,7 +2084,7 @@ def doDoubleTalk(attack):
         partDelay = 3.3
         damageDelay = 3.5
         dodgeDelay = 3.3
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 3.3
         damageDelay = 3.5
         dodgeDelay = 3.3
@@ -2118,7 +2118,7 @@ def doFreezeAssets(attack):
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.3
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.3
@@ -2309,7 +2309,7 @@ def doSchmooze(attack):
         partDelay = 1.3
         damageDelay = 1.8
         dodgeDelay = 1.1
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 1.3
         damageDelay = 2.5
         dodgeDelay = 1.8
@@ -2617,7 +2617,7 @@ def doBounceCheck(attack):
         throwDelay = 2.5
         dodgeDelay = 4.3
         damageDelay = 5.1
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         throwDelay = 1.8
         dodgeDelay = 3.6
         damageDelay = 4.4
@@ -2957,7 +2957,7 @@ def doLiquidate(attack):
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.45
-    elif cogType == 'bloodsucker':
+    elif cogType == 'b':
         partDelay = 0.2
         damageDelay = 3.5
         dodgeDelay = 2.45
