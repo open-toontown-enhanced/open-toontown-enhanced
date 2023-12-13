@@ -58,8 +58,9 @@ class DistributedFishingPond(DistributedObject):
                 distVec = Vec3(targetPos - self.localToonBobPos)
                 dist = distVec.length()
                 if dist < target.getRadius():
-                    self.notify.debug('checkTargets: hit target: %s' % target.getDoId())
-                    self.d_hitTarget(target)
+                    targetDoId = target.getDoId()
+                    self.notify.debug('checkTargets: hit target: %s' % targetDoId)
+                    self.d_hitTarget(targetDoId)
                     return Task.done
 
             taskMgr.doMethodLater(self.pollInterval, self.checkTargets, self.taskName('checkTargets'))
@@ -67,9 +68,8 @@ class DistributedFishingPond(DistributedObject):
             self.notify.warning('localToonSpot became None while checking targets')
         return Task.done
 
-    def d_hitTarget(self, target: DistributedObject):
-        self.localToonSpot.hitTarget()
-        self.sendUpdate('hitTarget', [target.getDoId()])
+    def d_hitTarget(self, targetDoId: int):
+        self.localToonSpot.hitTarget(targetDoId)
 
     def setPondBingoManager(self, pondBingoMgr: DistributedObject):
         self.pondBingoMgr = pondBingoMgr

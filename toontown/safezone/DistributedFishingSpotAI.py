@@ -42,7 +42,6 @@ class DistributedFishingSpotAI(DistributedObjectAI):
         self.__stopTimeoutTask()
         self.acceptOnce(self.air.getAvatarExitEvent(self.avId), self.__handleUnexpectedExit)
         self.avId = avId
-        self.pond.addAvId(avId)
         self.d_setOccupied(avId)
         self.d_setMovie(FishGlobals.EnterMovie)
         self.__startTimeoutTask(2)
@@ -57,7 +56,6 @@ class DistributedFishingSpotAI(DistributedObjectAI):
     def removeAvatar(self):
         self.__stopTimeoutTask()
         self.ignore(self.air.getAvatarExitEvent(self.avId))
-        self.pond.removeAvId(self.avId)
         self.avId = 0
 
     def normalExit(self):
@@ -98,6 +96,24 @@ class DistributedFishingSpotAI(DistributedObjectAI):
             return
         av.b_setMoney(money - castCost)
         self.d_setMovie(FishGlobals.CastMovie, power = power, heading = heading)
+        self.__startTimeoutTask()
+
+    def hitTarget(self, targetId: int):
+        avId = self.air.getAvatarIdFromSender()
+        if avId != self.avId:
+            self.air.writeServerEvent('suspicious', avId, f'hitTarget: {avId} is not fishing in this spot!')
+            return
+        av = self.air.doId2do.get(avId)
+        if not av:
+            return
+        target = self.pond.getTarget(targetId)
+        if not target:
+            self.air.writeServerEvent('suspicious', senderId, f"Toon {avId} tried to hit invalid fishing target: {targetId}.")
+            return
+        self.__stopTimeoutTask()
+        # todo: implement fishmanagerai
+        code = FishGlobals.BootItem
+        self.d_setMovie(FishGlobals.PullInMovie, code)
         self.__startTimeoutTask()
 
     def d_setMovie(self, mode: int = 0, code: int = 0, itemDesc1: int = 0, itemDesc2: int = 0,

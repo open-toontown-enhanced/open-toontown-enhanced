@@ -796,8 +796,9 @@ class DistributedFishingSpot(DistributedObject.DistributedObject):
         self.bob.setPos(self.ptop, 0, 0, 0)
         self.av.update(0)
 
-    def hitTarget(self):
+    def hitTarget(self, targetDoId: int):
         self.fsm.request('waitForAI')
+        self.sendUpdate('hitTarget', [targetDoId])
 
     def enterOff(self):
         pass
