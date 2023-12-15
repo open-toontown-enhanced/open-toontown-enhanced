@@ -668,7 +668,7 @@ class BattleCalculatorAI:
                 totalDamages = totalDamages + damageDone
                 if currTarget.getHP() <= 0:
                     if currTarget.getSkeleRevives() >= 1:
-                        currTarget.useSkeleRevive()
+                        currTarget.useSkeleRevive(track)
                         attack[COG_REVIVE_COL] = attack[COG_REVIVE_COL] | 1 << position
                     else:
                         self.cogLeftBattle(targetId)
