@@ -643,7 +643,7 @@ class BattleCalculatorAI:
                     if track != HEAL and attack[TOON_HPBONUS_COL] > 0:
                         damageDone += attack[TOON_HPBONUS_COL]
                     if (track != LURE and track != DROP and track != SOUND) and attack[TOON_KBBONUS_COL][position] > 0:
-                        damageDone += [TOON_KBBONUS_COL][position]
+                        damageDone += attack[TOON_KBBONUS_COL][position]
                 damageDone += attack[TOON_HP_COL][position]
                 if damageDone <= 0 or self.immortalCogs:
                     continue
