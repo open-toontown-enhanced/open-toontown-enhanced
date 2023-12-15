@@ -659,6 +659,8 @@ class BattleCalculatorAI:
                     totalDamages = totalDamages + damageDone
                     continue
                 currTarget = targets[position]
+                if currTarget.reviveTrack == track:
+                    continue
                 currTarget.setHP(currTarget.getHP() - damageDone)
                 targetId = currTarget.getDoId()
                 if self.notify.getDebug():

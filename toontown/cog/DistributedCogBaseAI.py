@@ -18,9 +18,8 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
         self.virtual = 0
         self.skeleRevives = 0
         self.maxSkeleRevives = 0
-        self.reviveFlag = 0
+        self.reviveTrack: int | None = None
         self.buildingHeight = None
-        return
 
     def generate(self):
         DistributedAvatarAI.DistributedAvatarAI.generate(self)
@@ -29,7 +28,6 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
         self.sp = None
         del self.dna
         DistributedAvatarAI.DistributedAvatarAI.delete(self)
-        return
 
     def requestRemoval(self):
         if self.sp != None:
@@ -110,17 +108,16 @@ class DistributedCogBaseAI(DistributedAvatarAI.DistributedAvatarAI, CogBase.CogB
     def getMaxSkeleRevives(self):
         return self.maxSkeleRevives
 
-    def useSkeleRevive(self):
+    def useSkeleRevive(self, track = None):
         self.skeleRevives -= 1
         self.currHP = self.maxHP
-        self.reviveFlag = 1
+        self.reviveTrack = track
 
-    def reviveCheckAndClear(self):
-        returnValue = 0
-        if self.reviveFlag == 1:
-            returnValue = 1
-            self.reviveFlag = 0
-        return returnValue
+    def reviveCheckAndClear(self) -> bool:
+        if self.reviveTrack is not None:
+            self.reviveTrack = None
+            return True
+        return False
 
     def getHP(self):
         return self.currHP
