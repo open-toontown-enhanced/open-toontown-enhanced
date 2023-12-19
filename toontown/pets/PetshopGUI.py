@@ -405,11 +405,9 @@ class PetshopGUI(DirectObject):
         self.dialogStack = []
         self.petSeeds = petSeeds
         self.timer = ToontownTimer.ToontownTimer()
-        self.timer.reparentTo(aspect2d)
         self.timer.posInTopRightCorner()
         self.timer.countdown(PetConstants.PETCLERK_TIMER, self.__timerExpired)
         self.doDialog(Dialog_MainMenu)
-        return
 
     def __timerExpired(self):
         messenger.send(self.eventDict['guiDone'], [True])
