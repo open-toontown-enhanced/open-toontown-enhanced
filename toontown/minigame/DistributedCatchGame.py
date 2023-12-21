@@ -5,7 +5,6 @@ from direct.interval.IntervalGlobal import *
 from .OrthoWalk import *
 from direct.showbase.PythonUtil import Functor, bound, lineupPos, lerp
 from direct.fsm import ClassicFSM, State
-from direct.fsm import State
 from toontown.toonbase import TTLocalizer
 from . import CatchGameGlobals
 from direct.task.Task import Task
@@ -483,8 +482,9 @@ class DistributedCatchGame(DistributedMinigame):
             avId = self.avIdList[i]
             avName = self.getAvatarName(avId)
             scorePanel = MinigameAvatarScorePanel.MinigameAvatarScorePanel(avId, avName)
+            scorePanel.reparentTo(base.a2dTopRight)
             scorePanel.setScale(0.9)
-            scorePanel.setPos(0.75 - spacing * (self.numPlayers - 1 - i), 0.0, 0.85)
+            scorePanel.setPos(-.58 - spacing * (self.numPlayers - 1 - i), 0.0, -.15)
             scorePanel.makeTransparent(0.75)
             self.scorePanels.append(scorePanel)
 

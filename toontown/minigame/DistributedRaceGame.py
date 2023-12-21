@@ -6,7 +6,6 @@ from .DistributedMinigame import *
 from direct.gui.DirectGui import *
 from panda3d.core import *
 from direct.fsm import ClassicFSM, State
-from direct.fsm import State
 from direct.task.Task import Task
 from toontown.toonbase import ToontownTimer
 from . import RaceGameGlobals
@@ -310,13 +309,17 @@ class DistributedRaceGame(DistributedMinigame):
         self.diceButtonList = []
         for i in range(1, 5):
             button = self.dice.find('**/dice_button' + str(i))
-            button_down = self.dice.find('**/dice_button' + str(i) + '_down')
-            button_ro = self.dice.find('**/dice_button' + str(i) + '_ro')
-            diceButton = DirectButton(image=(button,
-             button_down,
-             button_ro,
-             None), relief=None, pos=(-0.9 + (i - 1) * 0.2, 0.0, -0.85), scale=0.25, command=self.handleInputChoice, extraArgs=[i])
-            diceButton.hide()
+            buttonDown = self.dice.find('**/dice_button' + str(i) + '_down')
+            buttonRo = self.dice.find('**/dice_button' + str(i) + '_ro')
+            diceButton = DirectButton(
+                    image = (button, buttonDown, buttonRo, None),
+                    parent = base.a2dBottomLeft,
+                    relief = None,
+                    pos = (.43 + (i - 1) * 0.2, 0.0, .15),
+                    scale = .25,
+                    command = self.handleInputChoice,
+                    extraArgs = [i]
+            )
             self.diceButtonList.append(diceButton)
 
         self.waitingChoicesLabel = DirectLabel(text=TTLocalizer.RaceGameWaitingChoices, text_fg=VBase4(1, 1, 1, 1), relief=None, pos=(-0.6, 0, -0.75), scale=0.075)
@@ -327,7 +330,6 @@ class DistributedRaceGame(DistributedMinigame):
         self.chanceCardText.hide()
         self.cardSound = base.loader.loadSfx('phase_3.5/audio/sfx/GUI_stickerbook_turn.ogg')
         self.chanceMarkers = []
-        return
 
     def unload(self):
         self.notify.debug('unload')

@@ -71,8 +71,8 @@ class Purchase(PurchaseBase):
          purchaseModels.find('**/PurchScrn_BTN_RLVR'),
          purchaseModels.find('**/PurchScrn_BTN_UP')), text=TTLocalizer.GagShopBackToPlayground, text_fg=(0, 0.1, 0.7, 1), text_scale=0.05, text_pos=(0, 0.015, 0), image3_color=Vec4(0.6, 0.6, 0.6, 1), text3_fg=Vec4(0, 0, 0.4, 1), command=self.__handleBackToPlayground)
         self.timer = ToontownTimer.ToontownTimer()
-        self.timer.reparentTo(self.frame)
         self.timer.posInTopRightCorner()
+        self.timer.hide()
         numAvs = 0
         count = 0
         localToonIndex = 0
@@ -119,16 +119,22 @@ class Purchase(PurchaseBase):
         self.foreground = loader.loadModel('phase_3.5/models/modules/TT_A1')
         self.foreground.setPos(12.5, -20, -5.5)
         self.foreground.setHpr(180, 0, 0)
-        self.backgroundL = loader.loadModel('phase_3.5/models/modules/TT_A1')
+        self.backgroundL = self.foreground.copyTo(hidden)
         self.backgroundL.setPos(-12.5, -25, -5)
         self.backgroundL.setHpr(180, 0, 0)
         self.backgroundR = self.backgroundL.copyTo(hidden)
-        self.backgroundR.setPos(20, -25, -5)
+        self.backgroundR.setPos(26, -25, -5)
         streets = loader.loadModel('phase_3.5/models/modules/street_modules')
         sidewalk = streets.find('**/street_sidewalk_40x40')
         self.sidewalk = sidewalk.copyTo(hidden)
         self.sidewalk.setPos(-20, -25, -5.5)
         self.sidewalk.setColor(0.9, 0.6, 0.4)
+        self.sidewalkL = sidewalk.copyTo(hidden)
+        self.sidewalkL.setPos(-40, -25, -5.5)
+        self.sidewalkL.setColor(.9, .6, .4)
+        self.sidewalkR = sidewalk.copyTo(hidden)
+        self.sidewalkR.setPos(0, -25, -5.5)
+        self.sidewalkR.setColor(.9, .6, .4)
         streets.removeNode()
         doors = loader.loadModel('phase_4/models/modules/doors')
         door = doors.find('**/door_single_square_ur_door')
@@ -164,6 +170,7 @@ class Purchase(PurchaseBase):
         self.backToPlayground.destroy()
         del self.backToPlayground
         self.timer.stop()
+        self.timer.destroy()
         del self.timer
         for counter in self.counters:
             counter.destroy()
@@ -194,6 +201,10 @@ class Purchase(PurchaseBase):
         del self.backgroundR
         self.sidewalk.removeNode()
         del self.sidewalk
+        self.sidewalkL.removeNode()
+        del self.sidewalkL
+        self.sidewalkR.removeNode()
+        del self.sidewalkR
         self.door.removeNode()
         del self.door
         self.collisionFloor.removeNode()
@@ -287,6 +298,8 @@ class Purchase(PurchaseBase):
         self.backgroundL.reparentTo(render)
         self.backgroundR.reparentTo(render)
         self.sidewalk.reparentTo(render)
+        self.sidewalkL.reparentTo(render)
+        self.sidewalkR.reparentTo(render)
         self.door.reparentTo(render)
         size = 20
         z = -2.5
@@ -585,6 +598,8 @@ class Purchase(PurchaseBase):
         self.backgroundL.reparentTo(hidden)
         self.backgroundR.reparentTo(hidden)
         self.sidewalk.reparentTo(hidden)
+        self.sidewalkL.reparentTo(hidden)
+        self.sidewalkR.reparentTo(hidden)
         self.door.reparentTo(hidden)
         self.title.reparentTo(self.frame)
         self.convertingVotesToBeansLabel.hide()
@@ -619,6 +634,7 @@ class Purchase(PurchaseBase):
             return
         if not self.tutorialMode:
             if not config.GetBool('disable-purchase-timer', 0):
+                self.timer.show()
                 self.timer.countdown(self.remain, self.__timerExpired)
             if config.GetBool('metagame-disable-playAgain', 0):
                 if self.metagameRound > -1:

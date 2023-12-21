@@ -138,7 +138,19 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
         self.filmImage = loader.loadModel('phase_4/models/minigames/photogame_filmroll')
         self.filmImage.reparentTo(hidden)
         self.tripodModel = loader.loadModel('phase_4/models/minigames/toon_cannon')
-        self.filmPanel = DirectLabel(parent=hidden, relief=None, pos=(1.16, 0.0, 0.45), scale=0.65, text=str(self.filmCount), text_scale=0.2, text_fg=(0.95, 0.95, 0, 1), text_pos=(0.08, -0.15), text_font=ToontownGlobals.getSignFont(), image=self.filmImage, image_scale=Point3(1.0, 0.0, 0.85))
+        self.filmPanel = DirectLabel(
+                parent = hidden,
+                relief = None,
+                pos = (-.23, -1.2, -.55),
+                scale = 0.65,
+                text = str(self.filmCount),
+                text_scale = 0.2,
+                text_fg = (0.95, 0.95, 0, 1),
+                text_pos = (0.08, -0.15),
+                text_font = ToontownGlobals.getSignFont(),
+                image = self.filmImage,
+                image_scale = Point3(1.0, 0.0, 0.85)
+        )
         self.filmPanelTitle = DirectLabel(parent=self.filmPanel, relief=None, pos=(0.08, 0, 0.04), scale=0.08, text=TTLocalizer.PhotoGameFilm, text_fg=(0.95, 0.95, 0, 1), text_shadow=(0, 0, 0, 1))
         self.music = base.loader.loadMusic('phase_4/audio/bgm/MG_cannon_game.ogg')
         self.sndPhotoMove = base.loader.loadSfx('phase_4/audio/sfx/MG_cannon_adjust.ogg')
@@ -867,7 +879,7 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
         if not base.config.GetBool('endless-cannon-game', 0):
             self.timer.show()
             self.timer.countdown(self.data['TIME'], self.__gameTimerExpired)
-        self.filmPanel.reparentTo(aspect2d)
+        self.filmPanel.reparentTo(base.a2dTopRight)
         self.scoreMult = MinigameGlobals.getScoreMult(self.cr.playGame.hood.id)
         self.clockStopTime = None
         self.gameFSM.request('aim')
@@ -876,8 +888,8 @@ class DistributedPhotoGame(DistributedMinigame, PhotoGameBase.PhotoGameBase):
         self.generateAssignments(assignmentTemplates)
         self.generateAssignmentPanels()
         self.scorePanel = self.makeScoreFrame()
-        self.scorePanel.reparentTo(aspect2d)
-        self.scorePanel.setPos(1.05, 0.0, -0.725)
+        self.scorePanel.reparentTo(base.a2dBottomRight)
+        self.scorePanel.setPos(-.3, 0.0, .3)
         self.updateAssignmentPanels()
         for subject in self.subjects:
             subject.useLOD(1000)
