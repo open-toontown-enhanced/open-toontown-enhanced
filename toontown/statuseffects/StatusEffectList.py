@@ -6,7 +6,7 @@ class StatusEffectList(BlobList):
     def makeBlob(self, store):
         dg = PyDatagram()
         if self._list:
-            for item in self.__list:
+            for item in self._list:
                 StatusEffect.encodeStatusEffect(dg, item)
 
         return dg.getMessage()
@@ -21,6 +21,19 @@ class StatusEffectList(BlobList):
                 _list.append(item)
 
         return _list
+
+    def decRounds(self):
+        needsUpdate: bool = False
+        if self._list:
+            for item in self._list[:]:
+                rounds: int = item.getRounds()
+                if rounds != -1:
+                    item.setRounds(rounds - 1)
+                    if item.getRounds() == 0:
+                        self._list.remove(item)
+                    needsUpdate = True
+
+        return needsUpdate
 
     def getDamageBoost(self) -> int:
         if len(self) == 0:

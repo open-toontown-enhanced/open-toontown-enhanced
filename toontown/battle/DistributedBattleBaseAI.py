@@ -1635,11 +1635,16 @@ class DistributedBattleBaseAI(DistributedObjectAI.DistributedObjectAI, BattleBas
             self.__removeToon(deadToon)
             needUpdate = 1
 
+        for activeCog in self.activeCogs:
+            statusEffects = activeCog.getStatusEffectList()
+            needsStatusUpdate = statusEffects.decRounds()
+            #if needsUpdate:
+            #    activeCog.d_setStatusEffects()
+
         self.clearAttacks()
         self.d_setMovie()
         self.d_setChosenToonAttacks()
         self.localMovieDone(needUpdate, deadToons, deadCogs, lastActiveCogDied)
-        return
 
     def enterResume(self):
         for cog in self.cogs:

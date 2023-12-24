@@ -1,4 +1,5 @@
 from typing import Optional
+from panda3d.core import Notify
 from direct.directnotify.DirectNotifyGlobal import directNotify
 from direct.distributed.PyDatagram import PyDatagram
 from direct.distributed.PyDatagramIterator import PyDatagramIterator
@@ -8,7 +9,7 @@ class StatusEffect:
     notify = directNotify.newCategory('StatusEffect')
 
     def __init__(self, *args):
-        self.rounds: int = -1
+        self.rounds: int = self.getDefaultRounds()
         if len(args) >= 1 and isinstance(args[0], PyDatagramIterator):
             self.decodeDatagram(*args)
         else:
@@ -17,8 +18,14 @@ class StatusEffect:
     def getTypeCode(self) -> int:
         return StatusEffectTypes.StatusEffectTypes[self.__class__]
 
+    def setRounds(self, rounds: int):
+        self.rounds = rounds
+
     def getRounds(self) -> int:
         return self.rounds
+
+    def getDefaultRounds(self) -> int:
+        return -1
 
     def getDamageBoost(self) -> int:
         return 0
