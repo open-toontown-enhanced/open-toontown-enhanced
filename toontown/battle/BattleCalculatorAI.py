@@ -8,6 +8,9 @@ from toontown.toon import NPCToons
 from toontown.pets import PetTricks, DistributedPetProxyAI
 from direct.showbase.PythonUtil import lerp
 
+# temporary test:
+from toontown.statuseffects.StatusEffectDamageBoost import StatusEffectDamageBoost
+
 class BattleCalculatorAI:
     AccuracyBonuses = [
      0, 20, 40, 60]
@@ -1145,6 +1148,17 @@ class BattleCalculatorAI:
 
         return targetList
 
+    # sample test for damage boost
+    # note: won't appear on client-side
+    # this is just a test, will be removed later
+    def __testDamageBoost(self, theCog):
+        if hasattr(theCog, 'damageBoostApplied'):
+            return
+        damageBoost: int = 12
+        statusEffectObj = StatusEffectDamageBoost(damageBoost)
+        theCog.getStatusEffectList().append(statusEffectObj)
+        theCog.damageBoostApplied = True
+
     def __calcCogAtkHp(self, attackIndex):
         targetList = self.__createCogTargetList(attackIndex)
         attack = self.battle.cogAttacks[attackIndex]
@@ -1162,7 +1176,8 @@ class BattleCalculatorAI:
                         atkType = attack[COG_ATK_COL]
                         theCog = self.battle.findCog(attack[COG_ID_COL])
                         atkInfo = CogBattleGlobals.getCogAttack(theCog.dna.name, theCog.getLevel(), atkType)
-                        result = atkInfo['hp']
+                        self.__testDamageBoost(theCog)
+                        result = atkInfo['hp'] + theCog.getStatusEffectList().getDamageBoost()
             targetIndex = self.battle.activeToons.index(toonId)
             attack[COG_HP_COL][targetIndex] = result
 

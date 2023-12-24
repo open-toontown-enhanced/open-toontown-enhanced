@@ -16,6 +16,8 @@ import random
 from .Avatar import Avatar
 from . import AvatarDNA
 
+from toontown.statuseffects.StatusEffectList import StatusEffectList
+
 class DistributedAvatar(DistributedActor, Avatar):
     HpTextGenerator = TextNode('HpTextGenerator')
     HpTextEnabled = 1
@@ -34,7 +36,7 @@ class DistributedAvatar(DistributedActor, Avatar):
         self.hp = None
         self.maxHp = None
         self.hpTextSeq = None
-        return
+        self.statusEffects: StatusEffectList = StatusEffectList()
 
     def disable(self):
         try:
@@ -153,6 +155,9 @@ class DistributedAvatar(DistributedActor, Avatar):
 
     def getMaxHp(self):
         return self.maxHp
+
+    def setStatusEffects(self, statusEffects: str):
+        self.statusEffects = StatusEffectList(statusEffects)
 
     def getName(self):
         return Avatar.getName(self)

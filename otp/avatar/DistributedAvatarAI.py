@@ -5,12 +5,15 @@ from direct.fsm import State
 from direct.distributed import DistributedNodeAI
 from direct.task import Task
 
+from toontown.statuseffects.StatusEffectList import StatusEffectList
+
 class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
 
     def __init__(self, air):
         DistributedNodeAI.DistributedNodeAI.__init__(self, air)
         self.hp = 0
         self.maxHp = 0
+        self.statusEffects: StatusEffectList = StatusEffectList()
 
     def b_setName(self, name):
         self.setName(name)
@@ -50,6 +53,22 @@ class DistributedAvatarAI(DistributedNodeAI.DistributedNodeAI):
 
     def getHp(self):
         return self.hp
+
+    def b_setStatusEffects(self, statusEffects: StatusEffectList):
+        self.setStatusEffects(statusEffects)
+        self.d_setStatusEffects(statusEffects)
+
+    def setStatusEffects(self, statusEffects: StatusEffectList):
+        self.statusEffects = statusEffects
+
+    def d_setStatusEffects(self):
+        self.sendUpdate('setStatusEffects', [self.statusEffects.getBlob()])
+
+    def getStatusEffects(self) -> str:
+        return self.statusEffects.getBlob()
+
+    def getStatusEffectList(self) -> StatusEffectList:
+        return self.statusEffects
 
     def b_setLocationName(self, locationName):
         self.d_setLocationName(locationName)
